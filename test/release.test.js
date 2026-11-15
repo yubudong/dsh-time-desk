@@ -230,12 +230,35 @@ test("partial upload is resumable and preserves uploaded asset IDs", async () =>
     1,
   );
 });
+test("published release source binding rejects moved tags even if archives are identical", async () => {
+  const f = files();
+  const api = fake({
+    existing: {
+      id: 1,
+      draft: false,
+      prerelease: false,
+      body: "Source commit: `" + "b".repeat(40) + "`",
+    },
+    remoteAssets: f.map((x, i) => ({
+      id: i,
+      name: x.name,
+      size: x.size,
+      digest: "sha256:" + x.sha256,
+    })),
+  });
+  await assert.rejects(
+    publishRelease(context(), f, api),
+    /another source commit/,
+  );
+  assert.deepEqual(api.events, ["tag"]);
+});
 test("published release rerun validates and never uploads edits or republishes", async () => {
   const f = files();
   const existing = {
     id: 1,
     draft: false,
     prerelease: false,
+    body: "Source commit: `" + COMMIT + "`",
     html_url: "https://example.test/release",
   };
   const api = fake({
@@ -312,7 +335,12 @@ test("prereleases retain their channel and cannot silently become stable", async
 test("remote extras or missing public assets require manual review", async () => {
   const f = files(),
     api = fake({
-      existing: { id: 1, draft: false, prerelease: false },
+      existing: {
+        id: 1,
+        draft: false,
+        prerelease: false,
+        body: "Source commit: `" + COMMIT + "`",
+      },
       remoteAssets: [],
     });
   await assert.rejects(publishRelease(context(), f, api), /missing/);

@@ -120,6 +120,10 @@ export async function publishRelease(context, files, api) {
   if (release && !release.draft) {
     if (release.prerelease !== context.prerelease)
       throw Error("Published channel differs from the tag");
+    if (!release.body?.includes("Source commit: `" + context.commit + "`"))
+      throw Error(
+        "Published release belongs to another source commit; refusing moved-tag reuse",
+      );
     await verifyRemote(api, release, files);
     return {
       url: release.html_url,
