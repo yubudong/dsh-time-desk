@@ -1,0 +1,57 @@
+name: Prepare market update
+on:
+  workflow_run:
+    workflows: ["Publish Time Desk"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing public release tag
+        type: string
+        required: true
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: time-desk-market-update
+  cancel-in-progress: false
+jobs:
+  market:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: ubuntu-latest
+    steps:
+      # Automation code comes from the trusted default branch, not artifacts.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          pattern: release-candidate-*
+          merge-multiple: true
+          path: release
+      - name: Prepare and verify market materials
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: node scripts/market.mjs prepare
+      - name: Submit with dedicated authorization or keep manual materials
+        env:
+          MARKET_SYNC_TOKEN: ${{ secrets.MARKET_SYNC_TOKEN }}
+        run: node scripts/market.mjs submit
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: market-materials-${{ github.run_id }}
+          path: release/market/
+          if-no-files-found: warn
+          retention-days: 30

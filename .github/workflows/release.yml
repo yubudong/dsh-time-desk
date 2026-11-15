@@ -1,0 +1,104 @@
+name: Publish Time Desk
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag to retry (never overwrites a public release)
+        type: string
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.repository }}-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+jobs:
+  preflight:
+    if: github.event.deleted != true
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
+      commit: ${{ steps.version.outputs.commit }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - id: version
+        env:
+          RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+        run: node scripts/release.mjs check
+  checks:
+    needs: preflight
+    uses: ./.github/workflows/checks.yml
+    with:
+      ref: ${{ needs.preflight.outputs.commit }}
+  package:
+    needs: [preflight, checks]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.preflight.outputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run privacy
+      - run: npm run build
+      - run: git diff --exit-code -- dist
+      - run: node scripts/privacy.mjs --worktree
+      - run: mkdir -p release
+      - run: npm pack --pack-destination release
+      - run: python scripts/package_release.py node
+      - env:
+          RELEASE_TAG: ${{ needs.preflight.outputs.tag }}
+        run: node scripts/release.mjs verify
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-candidate-${{ needs.preflight.outputs.tag }}
+          path: |
+            release/*.tgz
+            release/*-source.zip
+            release/SHA256SUMS.txt
+            release/release-plan.json
+          if-no-files-found: error
+          retention-days: 14
+  publish:
+    needs: [preflight, package]
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    outputs:
+      url: ${{ steps.publish.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.preflight.outputs.commit }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-candidate-${{ needs.preflight.outputs.tag }}
+          path: release
+      - id: publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.preflight.outputs.tag }}
+        run: node scripts/release.mjs publish

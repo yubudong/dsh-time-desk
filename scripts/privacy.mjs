@@ -22,6 +22,8 @@ export function privacyIssues(name, bytes) {
     /backup.*\.json$/i.test(base)
   )
     issues.push("runtime or backup path");
+  if (/(?:^|\/)(?:node_modules|\.git)(?:\/|$)/i.test(normalized))
+    issues.push("development/internal path");
   if (/\.(?:png|gif|webp|woff2?)$/i.test(base)) return issues;
   const text = bytes.toString("utf8");
   const checks = [
@@ -63,7 +65,7 @@ async function walk(root, relative) {
   }
   return files;
 }
-export async function audit(root = process.cwd()) {
+export async function audit(root = process.cwd(), { worktree = false } = {}) {
   let files = [],
     basis = "allowlist";
   try {
@@ -74,7 +76,7 @@ export async function audit(root = process.cwd()) {
     })
       .split("\0")
       .filter(Boolean);
-    if (files.length) basis = "git-staged";
+    if (files.length) basis = worktree ? "git-worktree" : "git-staged";
   } catch {}
   if (!files.length) {
     for (const dir of [
@@ -86,6 +88,7 @@ export async function audit(root = process.cwd()) {
       ".github",
       "market",
       "dist",
+      "changes",
     ]) {
       try {
         files.push(...(await walk(root, dir)));
@@ -141,8 +144,48 @@ export async function audit(root = process.cwd()) {
   );
   return files;
 }
+export function auditEntries(entries) {
+  if (!Array.isArray(entries) || !entries.length || entries.length > 5000)
+    throw Error("Invalid archive entry list");
+  const seen = new Set();
+  for (const { name, base64 } of entries) {
+    if (
+      typeof name !== "string" ||
+      typeof base64 !== "string" ||
+      name.startsWith("/") ||
+      name.includes("\\") ||
+      name.split("/").includes("..") ||
+      seen.has(name)
+    )
+      throw Error("Unsafe or duplicate archive entry");
+    seen.add(name);
+    const issues = privacyIssues(name, Buffer.from(base64, "base64"));
+    if (issues.length) throw Error(name + ": " + issues.join(", "));
+  }
+  console.log(
+    JSON.stringify({
+      privacy: "PASS",
+      basis: "archive-bytes",
+      checkedFiles: entries.length,
+    }),
+  );
+}
 if (
   process.argv[1] &&
   pathToFileURL(path.resolve(process.argv[1])).href === import.meta.url
-)
-  await audit();
+) {
+  if (process.argv.includes("--entries-stdin")) {
+    const chunks = [];
+    let size = 0;
+    for await (const chunk of process.stdin) {
+      size += chunk.length;
+      if (size > 64 * 1024 * 1024)
+        throw Error("Archive audit input exceeds limit");
+      chunks.push(chunk);
+    }
+    auditEntries(JSON.parse(Buffer.concat(chunks).toString("utf8")));
+  } else
+    await audit(process.cwd(), {
+      worktree: process.argv.includes("--worktree"),
+    });
+}

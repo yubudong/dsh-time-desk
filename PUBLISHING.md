@@ -1,60 +1,119 @@
-# 发布准备与市场投稿
+# 自动发布与市场同步
 
-本项目的公开目标拟为 `https://github.com/yubudong/dsh-time-desk`。仓库地址、Issue 草稿和市场索引是准备材料；只有实际创建／推送／提交成功后，才可宣称已发布或上架。
+项目：<https://github.com/yubudong/dsh-time-desk>。
 
-## 当前名称检查
+第一期实现自动发版与市场材料／PR，不包含用户侧更新检查、自动安装或工作台界面改动。GitHub 发版成功与市场审核通过是两种状态。
 
-2026-11-15 检查公开 GitHub 搜索 `dsh-time-desk in:name` 和精确短语搜索，未发现匹配仓库；npm 公共注册表的 `dsh-time-desk` 返回 404。当前 GitHub 登录账号下的同名仓库也返回 404。
+## 正常发一个新版本
 
-GitHub 名称按 owner 区分；上述结果不是商标检查，也不预留名称。公开前应重新核对目标账号、可见性和 npm 名称。
+以下以尚未发布的 `0.5.1` 为例；不要重用已经公开的标签或版本：
 
-## 公开前的文件检查
+```sh
+npm version 0.5.1 --no-git-tag-version --ignore-scripts
+```
 
-1. 使用此独立目录，不要推送 DSH Profile 或整个个人工作区。
-2. 运行 `npm run privacy`、`npm run check`、`npm run build`、`npm test`。
-3. `git add` 后再次运行 `npm run privacy`。已有 Git 索引时，它检查实际暂存的 blob，防止工作区与暂存区不一致。
-4. 检查 `git diff --cached --stat` 和具体修改。不得包含任务数据、聊天记录、JSON 备份、截图中的个人信息、密钥和本机路径。
-5. `npm pack --pack-destination release`，然后 `python scripts/package_release.py node`，检查 ZIP、TGZ 和 SHA256SUMS。
-6. 不提交 `node_modules`、`release`、私有数据或凭据。`dist` 需要提交，保证 Git 安装也有预构建文件。
+复制 `changes/TEMPLATE.md` 为 `changes/0.5.1.md`，填写新增、修复、数据升级和验证／限制，删掉所有占位项。然后：
 
-Git 提交应使用 GitHub noreply 地址，不必公开个人邮箱。公开资源中保留的 `life_desk_v1`、`life_desk_spirit` 与 `dsh-life-desk` 旧格式标签是兼容代码，不是个人数据库。
+```sh
+npm ci --ignore-scripts --no-audit --no-fund
+npm run check
+npm run build
+npm test
+git add -- package.json package-lock.json src assets dist changes test
+npm run privacy
+git diff --cached --stat
+# 逐项复核内容，再提交；不要提交自己的数据和截图。
+git commit -m "Release 0.5.1"
+git tag v0.5.1
+git push origin main
+git push origin v0.5.1
+```
 
-## GitHub
+必须提交同步生成的 `dist`。发布检查会重建并比较它，避免 Git 安装得到旧程序。普通分支提交只运行 CI，只有 `v*` 标签触发发布。
 
-- 先确认 owner 是 `yubudong`、仓库名是 `dsh-time-desk`、是否公开。
-- 审核本地提交后再创建远端和 push，不要先上传真实数据再删除；Git 历史仍可能保留。
-- 确认默认分支包含 `package.json`、`cordis.patch.yml`、`dist`、许可证和 README。
-- 创建版本标签与 Release 后，上传审核过的 TGZ、source ZIP 与校验和。不要上传自己的 JSON 备份。
-- 如果需要 npm，发布前重新检查名称与登录账号；使用包自身的无安装脚本分发内容。当前未承诺已经发布 npm。
+## 发布流程
 
-## Awesome DSH Plugin
+`Publish Time Desk` 按以下顺序执行：
 
-当前用户配置的索引之一：`https://cdn.jsdelivr.net/npm/dsh-plugin-catalog/index.json`。
+1. 核对精确 SemVer 标签、包清单、锁文件版本和包名；核对仓库、完整 Commit、已提交且无占位内容的版本说明。
+2. macOS／Windows／Linux × Node 22／24：隐私检查、类型检查、构建、预构建文件一致性、生成文件隐私检查、自动测试和打包检查。
+3. 固定 Node 22 和 Python 3.12 构建 TGZ、源码 ZIP 与 SHA-256 清单；只选择允许的 Git 跟踪文件，源码 ZIP 使用提交时间构造确定性元数据。
+4. 检查完整源码与归档字节，不只检查暂存区；隔离导入 Host 包，核对包名、版本与文件路径。
+5. 上传候选构建到本次 Actions Artifact，供有写入权限的发布任务下载。测试／构建任务没有仓库写权限，也不持有市场投稿凭据。
+6. 建立草稿 Release，上传缺失附件，核对文件名、大小和摘要，再次核对标签 Commit，最后公开。
 
-参考：[贡献指南](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md)。
+安装包、源码包和 `SHA256SUMS.txt` 必须同时完整。失败时不会自动公开残缺版本；候选构建保留 14 天。
 
-- 仓库公开且安装可验证后，向目录仓库提交一个 YAML 文件。
-- 本地已准备 `market/awesome/yubudong__dsh-time-desk.yml`，投稿路径是对方仓库的 `data/plugins/yubudong__dsh-time-desk.yml`。
-- 不直接修改对方生成的 README；提交描述仅包含已实现功能和已说明限制。
-- 该目录 README 当前说明：其原生 Discover format-1 索引覆盖已知 npm 版本。GitHub-only 收录与原生索引出现不是同一个状态；若选择仅 GitHub 发布，需向维护者核对当前支持的固定发行包方案。
-- 生成 PR 不代表被维护者合并。
+## 测试版
 
-## DSH STORE
+版本与标签使用 `0.5.1-beta.1`／`v0.5.1-beta.1`。它会被标记为 Pre-release，不替换稳定版 Latest，不更新市场稳定安装入口。测试版同样执行完整检查，不能省略更新说明。
 
-当前用户配置的另一索引：`https://dsh-store.cn/plugin-market.json`。
+构建元数据（如 `+build.1`）不是测试版标记。需要测试通道时必须使用 SemVer 的 `-beta.N` 等预发布部分。
 
-参考：[提交表单](https://github.com/AI-Scarlett/DSH-Store/issues/new?template=plugin-submission.yml)。
+## 上传中断与重试
 
-- 仓库公开后，在上述表单提交 GitHub 项目地址；根目录插件无需填写子目录。
-- 已准备 `market/dsh-store-submission.md`。先核对版本、权限和平台验证状态，再创建 Issue。
-- 其当前流程会读取默认分支并固定 Commit 做静态预检，是否收录以该市场实际审核结果为准。
+可以在 Actions 的 `Publish Time Desk` 中选择 Run workflow 并填入原标签，或：
 
-## 固定 Commit 的原生索引候选
+```sh
+gh workflow run release.yml -f tag=v0.5.1
+```
 
-完成本地提交后运行 `npm run market:index`，生成 `release/market-index.candidate.json`。它使用当前提交的完整 SHA、包版本和兼容范围，拒绝有未提交修改的源码。
+- 未建立草稿：通过检查后创建。
+- 草稿已有部分附件：只补传缺失附件，已有附件摘要必须一致。
+- 已公开：只检查，返回 `already-published`，不编辑说明、不替换附件、不再公开一次。
+- 同名附件内容不同、标签移动、通道不一致、未知附件或来源不匹配：停止，保留当前状态供人工核对。不要使用 `--clobber` 掩盖问题。
 
-该索引候选需要经当前安装版本的 `parseMarketIndex` 校验，并在 GitHub 真正公开该 Commit 后验证远端可访问性。它不是已经发布的市场源，也不会自动修改用户的索引配置。
+同一标签的任务串行执行，不取消正在运行的发布。重新构建必须得到相同字节；运行环境变化导致摘要不同也会停止，不会覆盖已公开资产。
 
-## 维护
+0.5.0 是此前手工发布版本，不含本流程的标签内脚本和版本说明；不要尝试用本流程覆盖它。新增的自动发行版使用新版本号。
 
-之后统一修改 `dsh-time-desk` 目录。旧 `dsh-life-desk` 开发目录只保留作本地历史参考，不混入新仓库。更换包注册不应删除独立工作台存储；升级前后检查 revision、计时器和记录 ID。
+## 市场同步独立运行
+
+`Prepare market update` 在发布工作流成功后启动，也支持手动输入已有公开标签：
+
+```sh
+gh workflow run market-sync.yml -f tag=v0.5.1
+```
+
+它使用默认分支上的受信任自动化代码，读取并核对真实公开 Release 与固定 Commit 的包清单，不执行下载产物中的代码。发版失败时不会开始投稿；市场失败也不会回滚或覆盖 GitHub Release。
+
+### Awesome DSH Plugin
+
+- 总会准备版本固定的 `awesome-entry.yml` 和 `awesome-pr.md`。
+- 未配置专用凭据时，任务成功产出材料，并在 Summary 明确显示 `manual-required`；不是已经提交的 PR。
+- 在 Actions Secret 配置 `MARKET_SYNC_TOKEN` 后可自动投稿。该凭据需要属于仓库 owner，并实际有权写入其目录 fork、向上游创建／更新 PR；GitHub 的具体 token 类型和资源限制以实际授权为准。
+- 默认 `GITHUB_TOKEN` 不用于跨仓库投稿。不从开发机提取令牌，也不把令牌写入仓库、附件、日志或 Summary。
+- 自动化先找自己已有的开放 PR；只有其修改范围全部为自己的条目时才更新，首次收录申请未合并也复用它。无匹配时创建一个版本分支与 PR。
+- PR 内容相同则不再写入；不修改别人的条目、不重生成对方 README，不强推 fork 默认分支。匹配不唯一或范围异常时转人工核对。
+- 收录是否通过、仓库年龄等条件仍由上游决定。
+
+材料保存在本次运行的 `market-materials-*` Artifact，保留 30 天。向上游投稿失败时，仍可下载材料人工提交。
+
+贡献规范：<https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md>。
+
+### DSH STORE
+
+生成 `dsh-store-update.md`，优先等待其已有版本扫描与审核。当前没有接入正式版本更新 API，因此不自动重复建 Issue、刷评论或催审。已有投稿：<https://github.com/AI-Scarlett/DSH-Store/issues/1916>。
+
+## 隐私与边界
+
+- 发布任务运行在 GitHub 的干净检出目录，不连接开发者的 DSH Profile，也不读取真实任务、会话或备份。
+- `npm run privacy` 检查暂存区；`node scripts/privacy.mjs --worktree` 检查重建后的文件；打包脚本再检查归档字节。
+- Git 提交／标签／归档都不应包含个人截图、任务内容、凭据或本机路径。通用测试使用虚构数据。
+- 发布说明应写清数据兼容与降级限制。自动发版不能替代界面实机验证，也不等于对用户设备执行升级。
+- 不要为了运行自动化把个人主凭据复制进 CI；市场凭据缺失时，使用材料降级流程即可。
+
+源码归档与 npm 包都遵循文件范围限制；隐私启发式检查无法识别所有个人信息，提交前仍应人工审阅。
+
+## 本地诊断
+
+```sh
+npm run test:automation
+node scripts/release.mjs check --tag v0.5.1
+mkdir -p release
+npm pack --pack-destination release
+python scripts/package_release.py node
+node scripts/release.mjs verify --tag v0.5.1
+```
+
+`check`／`verify` 需要检出对应已提交的标签。`publish` 是真实外部写入命令，仅在明确要发布且有正确权限时使用；正常由 Actions 调用。

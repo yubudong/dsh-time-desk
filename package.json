@@ -51,10 +51,15 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "test": "node --test",
-    "format": "prettier --write src test scripts/build.mjs scripts/notices.mjs",
+    "format": "prettier --write src test scripts/*.mjs .github/workflows/*.yml changes",
     "check": "tsc --noEmit",
     "privacy": "node scripts/privacy.mjs",
     "market:index": "node scripts/market-index.mjs",
+    "release:check": "node scripts/release.mjs check",
+    "release:verify": "node scripts/release.mjs verify",
+    "market:prepare": "node scripts/market.mjs prepare",
+    "market:submit": "node scripts/market.mjs submit",
+    "test:automation": "node --test test/release.test.js test/market.test.js",
     "pack:release": "npm run build && npm test && npm pack"
   },
   "devDependencies": {
