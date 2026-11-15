@@ -2,7 +2,7 @@
 
 项目：<https://github.com/yubudong/dsh-time-desk>。
 
-第一期实现自动发版与市场材料／PR，不包含用户侧更新检查、自动安装或工作台界面改动。GitHub 发版成功与市场审核通过是两种状态。
+第一期实现自动发版与市场材料／PR，不包含用户侧更新检查、自动安装或工作台界面改动。GitHub 发版成功与市场审核通过是两种状态。实跑结果见 [验收记录](changes/AUTOMATION-ACCEPTANCE.md)。
 
 ## 正常发一个新版本
 
