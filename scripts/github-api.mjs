@@ -1,5 +1,27 @@
 import { execFileSync } from "node:child_process";
 
+export async function releaseForTag(request, prefix, tag) {
+  const published = await request(
+    prefix + "/releases/tags/" + encodeURIComponent(tag),
+    { missing: true },
+  );
+  if (published) return published;
+  // GitHub's tag endpoint omits drafts. Authenticated listing is required.
+  for (let page = 1; page <= 20; page++) {
+    const releases = await request(
+      prefix + "/releases?per_page=100&page=" + page,
+    );
+    const matches = releases.filter((r) => r.tag_name === tag);
+    if (matches.length > 1)
+      throw Error("Multiple releases share this tag; manual review required");
+    if (matches.length) return matches[0];
+    if (releases.length < 100) return null;
+  }
+  throw Error(
+    "Release listing exceeded its bound; refusing to create a duplicate draft",
+  );
+}
+
 export function githubApi(repository, { token = process.env.GH_TOKEN } = {}) {
   if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository))
     throw Error("Invalid GitHub repository");
@@ -35,9 +57,10 @@ export function githubApi(repository, { token = process.env.GH_TOKEN } = {}) {
       return request(prefix + "/commits/" + encodeURIComponent(tag)).sha;
     },
     async release(tag) {
-      return request(prefix + "/releases/tags/" + encodeURIComponent(tag), {
-        missing: true,
-      });
+      return releaseForTag(request, prefix, tag);
+    },
+    async releaseById(id) {
+      return request(prefix + "/releases/" + id);
     },
     async createDraft(c) {
       return request(prefix + "/releases", {
