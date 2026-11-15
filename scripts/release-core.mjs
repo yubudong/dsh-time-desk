@@ -155,8 +155,14 @@ export async function publishRelease(context, files, api) {
   // Recheck source and draft state immediately before the public transition.
   if ((await api.tagCommit(context.tag)) !== context.commit)
     throw Error("Tag moved during publication");
-  const fresh = await api.release(context.tag);
-  if (!fresh?.draft || fresh.id !== release.id)
+  const fresh = await api.releaseById(release.id);
+  if (
+    !fresh?.draft ||
+    fresh.id !== release.id ||
+    fresh.tag_name !== context.tag ||
+    fresh.prerelease !== context.prerelease ||
+    !fresh.body?.includes("Source commit: `" + context.commit + "`")
+  )
     throw Error("Release state changed during publication");
   release = await api.publish(release.id, context.prerelease);
   if (release.draft) throw Error("Release remained a draft");

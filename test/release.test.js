@@ -8,7 +8,39 @@ import {
   sha256,
   expectedAssets,
 } from "../scripts/release-core.mjs";
+import { releaseForTag } from "../scripts/github-api.mjs";
 const COMMIT = "a".repeat(40);
+test("GitHub drafts are discovered through authenticated listing when tag lookup is 404", async () => {
+  const calls = [];
+  const draft = { id: 99, tag_name: "v0.5.1", draft: true };
+  const request = async (endpoint) => {
+    calls.push(endpoint);
+    return endpoint.includes("/tags/") ? null : [draft];
+  };
+  assert.deepEqual(
+    await releaseForTag(request, "repos/owner/repo", "v0.5.1"),
+    draft,
+  );
+  assert.equal(calls.length, 2);
+});
+test("ambiguous draft matches are rejected instead of creating another release", async () => {
+  const request = async (endpoint) =>
+    endpoint.includes("/tags/")
+      ? null
+      : [{ tag_name: "v0.5.1" }, { tag_name: "v0.5.1" }];
+  await assert.rejects(
+    releaseForTag(request, "repos/owner/repo", "v0.5.1"),
+    /Multiple releases/,
+  );
+});
+test("final publication uses release ID even when tag lookup hides drafts", async () => {
+  const api = fake();
+  api.release = async () => null;
+  assert.equal(
+    (await publishRelease(context(), files(), api)).state,
+    "published",
+  );
+});
 function context(version = "0.5.1") {
   return releaseContext({
     tag: "v" + version,
@@ -65,11 +97,15 @@ function fake({
     async release() {
       return release && structuredClone(release);
     },
+    async releaseById() {
+      return release && structuredClone(release);
+    },
     async createDraft(c) {
       events.push("draft");
       release = {
         id: 1,
         draft: true,
+        tag_name: c.tag,
         prerelease: c.prerelease,
         body: "Source commit: `" + c.commit + "`",
         html_url: "https://example.test/release",
