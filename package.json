@@ -1,0 +1,76 @@
+{
+  "name": "dsh-time-desk",
+  "version": "0.5.0",
+  "author": "yubudong",
+  "repository": {"type":"git","url":"https://github.com/yubudong/dsh-time-desk.git"},
+  "homepage":"https://github.com/yubudong/dsh-time-desk#readme",
+  "bugs":{"url":"https://github.com/yubudong/dsh-time-desk/issues"},
+  "keywords":["dsh","dsh-plugin","deepseek-harness","time-management","habits","pomodoro","calendar","lunar"],
+  "description": "A local-first personal workspace for DeepSeek Harness: projects, habits, life tasks, lunar recurrence and focus sessions.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.2.2-rc.2 <0.3.0"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./client": "./dist/client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg",
+    "./spirit-icon": "./assets/time-spirit-a.png",
+    "./spirit-animation": "./assets/time-spirit-a.webp",
+    "./spirit-gif": "./assets/time-spirit-a.gif",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "assets",
+    "locale",
+    "icon.svg",
+    "cordis.patch.yml",
+    "README.md",
+    "PRIVACY.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-sidebar",
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-locale"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test",
+    "format": "prettier --write src test scripts/build.mjs scripts/notices.mjs",
+    "check": "tsc --noEmit",
+    "privacy": "node scripts/privacy.mjs",
+    "market:index": "node scripts/market-index.mjs",
+    "pack:release": "npm run build && npm test && npm pack"
+  },
+  "devDependencies": {
+    "@fullcalendar/core": "6.1.20",
+    "@fullcalendar/daygrid": "6.1.20",
+    "@fullcalendar/interaction": "6.1.20",
+    "@fullcalendar/react": "6.1.20",
+    "@fullcalendar/timegrid": "6.1.20",
+    "@types/react": "^19.0.0",
+    "esbuild": "^0.25.0",
+    "lunar-typescript": "^1.8.0",
+    "prettier": "^3.5.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "rrule": "^2.8.1",
+    "typescript": "^5.8.0",
+    "zod": "^4.0.0"
+  }
+}

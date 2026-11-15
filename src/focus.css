@@ -1,0 +1,721 @@
+/* Quiet timer controls inherit DSH tokens. The reader's explicit black theme is user-requested. */
+.ld-timer-v2 {
+  display: block !important;
+  padding: 0 0 22px !important;
+  margin: 0 0 24px !important;
+  border-bottom: 1px solid var(--ld-line) !important;
+}
+.ld-timer-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.ld-timer-context {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+.ld-timer-state {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--ld-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.ld-timer-state:before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ld-muted);
+}
+.ld-timer-state.state-running:before {
+  background: var(--ld-accent);
+}
+.ld-timer-state.state-finished:before {
+  background: var(--dsw-alias-state-success-primary);
+}
+.ld-timer-task-name {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ld-root .ld-timer-task-select {
+  width: 100%;
+  font-size: 12px;
+  border-color: transparent;
+  background: transparent;
+  padding: 2px 0;
+  color: var(--ld-ink);
+}
+.ld-timer-time {
+  text-align: center;
+}
+.ld-timer-time-label {
+  display: block;
+  font-size: 10px;
+  color: var(--ld-muted);
+  margin-bottom: 5px;
+  letter-spacing: 0.4px;
+}
+.ld-clock-digits {
+  font-size: 50px;
+  font-weight: 350;
+  letter-spacing: -1.7px;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.ld-clock-ring {
+  position: relative;
+  width: min(100%, 215px);
+  aspect-ratio: 1;
+  margin: auto;
+}
+.ld-clock-ring svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--ld-muted);
+  stroke-width: 1;
+}
+.ld-clock-ring .ld-clock-track {
+  stroke: var(--dsw-alias-bg-layer-2);
+  stroke-width: 5;
+}
+.ld-clock-ring .ld-clock-arc {
+  stroke: var(--ld-accent);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.ld-clock-ring > span {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 35px;
+  letter-spacing: -1px;
+  font-weight: 350;
+  font-variant-numeric: tabular-nums;
+}
+.ld-clock-flip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 33px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+}
+.ld-flip-tile {
+  display: inline-flex;
+  position: relative;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 7px;
+  background: var(--dsw-alias-bg-layer-2);
+  min-width: 1.8em;
+  perspective: 400px;
+}
+.ld-flip-tile:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--ld-line);
+}
+.ld-flip-value {
+  display: inline-block;
+  animation: ld-clock-flip 0.18s ease-out;
+}
+.ld-flip-colon {
+  color: var(--ld-muted);
+  font-size: 0.65em;
+}
+.ld-clock-flip.static .ld-flip-value {
+  animation: none;
+}
+@keyframes ld-clock-flip {
+  from {
+    transform: rotateX(-25deg);
+    opacity: 0.65;
+  }
+  to {
+    transform: rotateX(0);
+    opacity: 1;
+  }
+}
+.ld-clock-hourglass {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-size: 37px;
+  letter-spacing: -1px;
+  font-variant-numeric: tabular-nums;
+}
+.ld-clock-hourglass svg {
+  height: 120px;
+  width: auto;
+}
+.ld-hourglass-frame {
+  fill: none;
+  stroke: var(--ld-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.ld-sand {
+  fill: var(--ld-accent);
+  opacity: 0.7;
+}
+.ld-sand-stream {
+  fill: none;
+  stroke: var(--ld-accent);
+  stroke-width: 1;
+  opacity: 0.5;
+}
+.ld-timer-task-progress {
+  display: flex;
+  align-items: center;
+  gap: 6px 9px;
+  flex-wrap: wrap;
+  font-size: 10px;
+  color: var(--ld-muted);
+  margin-top: 16px;
+  line-height: 1.6;
+}
+.ld-timer-task-progress > span:first-child {
+  font-weight: 550;
+  flex: none;
+}
+.ld-timer-task-progress .ld-tomatoes {
+  margin-top: 0;
+}
+.ld-timer-task-progress .ld-tomatoes > span {
+  display: none;
+}
+.ld-timer-controls {
+  position: relative;
+  margin-top: 17px;
+  min-width: 0;
+}
+.ld-timer-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.ld-timer-buttons .ld-btn {
+  font-size: 11px !important;
+}
+.ld-timer-preferences {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 10px;
+  margin-top: 12px;
+}
+.ld-timer-preferences > button {
+  padding: 2px 0;
+  font-size: 10px;
+  color: var(--ld-muted);
+  line-height: 1.6;
+}
+.ld-timer-preferences > button:hover {
+  color: var(--ld-ink);
+}
+.ld-timer-preferences > button[aria-expanded="true"] {
+  color: var(--ld-accent);
+}
+.ld-timer-drawer {
+  background: var(--ld-surface);
+  border: 1px solid var(--ld-line);
+  border-radius: 9px;
+  padding: 14px;
+  margin-top: 12px;
+  font-size: 12px;
+  max-height: 55vh;
+  overflow: auto;
+  line-height: 1.7;
+}
+.ld-timer-drawer > strong {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.ld-timer-drawer .ld-help {
+  margin-bottom: 12px;
+}
+.ld-timer-drawer .ld-field {
+  margin: 10px 0 14px;
+}
+.ld-duration-presets {
+  display: flex;
+  gap: 6px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+.ld-duration-presets > button {
+  border: 1px solid var(--ld-line);
+  border-radius: 6px;
+  min-width: 34px;
+  height: 32px;
+  font-size: 12px;
+}
+.ld-duration-presets > button[aria-pressed="true"] {
+  border-color: var(--ld-accent);
+  color: var(--ld-accent);
+  background: var(--dsw-alias-bg-layer-2);
+}
+.ld-face-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin: 12px 0;
+}
+.ld-face-options > button {
+  padding: 12px 7px;
+  border: 1px solid var(--ld-line);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 95px;
+}
+.ld-face-options > button[aria-pressed="true"] {
+  border-color: var(--ld-accent);
+  background: var(--dsw-alias-bg-layer-2);
+}
+.ld-face-options > button > span {
+  font-size: 10px;
+  color: var(--ld-muted);
+}
+.ld-face-options .ld-clock-digits {
+  font-size: 22px;
+  letter-spacing: -0.6px;
+}
+.ld-face-options .ld-clock-ring {
+  width: 65px;
+}
+.ld-face-options .ld-clock-ring > span {
+  font-size: 14px;
+  letter-spacing: -0.4px;
+}
+.ld-face-options .ld-clock-flip {
+  font-size: 16px;
+}
+.ld-face-options .ld-flip-tile {
+  padding: 2px 3px;
+  min-width: 0;
+  border-radius: 4px;
+}
+.ld-face-options .ld-clock-hourglass {
+  font-size: 15px;
+  gap: 2px;
+}
+.ld-face-options .ld-clock-hourglass svg {
+  height: 48px;
+}
+.ld-focus-stat {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 11px;
+  padding: 5px 0;
+}
+.ld-focus-stat > span {
+  color: var(--ld-muted);
+}
+.ld-timer-v2.ld-timer-bar {
+  display: grid !important;
+  grid-template-columns: minmax(180px, 1fr) auto;
+  gap: 9px 20px;
+  align-items: center;
+  border: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.ld-timer-bar .ld-timer-overview {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) auto;
+  align-items: center;
+  gap: 22px;
+}
+.ld-timer-bar .ld-timer-context {
+  gap: 2px;
+}
+.ld-timer-bar .ld-clock-digits {
+  font-size: 34px;
+  letter-spacing: -1px;
+}
+.ld-timer-bar .ld-timer-time-label {
+  margin-bottom: 1px;
+}
+.ld-timer-bar .ld-timer-task-progress {
+  grid-column: 1;
+  grid-row: 2;
+  margin-top: 0;
+}
+.ld-timer-bar .ld-timer-controls {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  margin-top: 0;
+  max-width: 360px;
+}
+.ld-timer-bar .ld-timer-buttons {
+  justify-content: flex-end;
+}
+.ld-timer-bar .ld-timer-preferences {
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+.ld-timer-bar .ld-timer-drawer {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: min(390px, 75vw);
+  max-height: 65vh;
+  z-index: 30;
+}
+.ld-reader {
+  --ld-base: #000;
+  --ld-surface: #111315;
+  --ld-ink: #ededeb;
+  --ld-muted: #a5a6a7;
+  --ld-line: #303236;
+  --ld-accent: #e7e7e4;
+  --dsw-alias-bg-layer-2: #1a1c20;
+  --dsw-alias-border-l2: #45474d;
+  --dsw-alias-state-success-primary: #a8c4ae;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  background: #000;
+  color: var(--ld-ink);
+  z-index: 100000;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px clamp(22px, 4vw, 70px);
+  overflow: auto;
+  outline: none !important;
+}
+/* Electron drag rectangles are independent of z-index. A fullscreen reader
+   must subtract itself from underlying window-drag regions, including controls. */
+.ld-reader,
+.ld-reader * {
+  -webkit-app-region: no-drag !important;
+  app-region: no-drag !important;
+}
+/* Keep mode buttons below the native caption/drag band on macOS and Windows.
+   Attribute specificity preserves this clearance in short/mobile layouts. */
+.ld-reader[data-reader-mode] {
+  padding-top: max(72px, env(safe-area-inset-top, 0px));
+}
+.ld-reader:fullscreen {
+  width: 100%;
+  height: 100%;
+  background: #000;
+}
+.ld-reader-top {
+  position: relative;
+  z-index: 5;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  font-size: 11px;
+  flex: none;
+}
+.ld-reader-top > div:last-child {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.ld-reader-top > div:last-child > span {
+  color: var(--ld-muted);
+  font-size: 10px;
+}
+.ld-reader-top button {
+  padding: 6px 9px;
+  border-radius: 6px;
+  color: var(--ld-muted);
+}
+.ld-reader-top button:hover {
+  color: var(--ld-ink);
+  background: var(--ld-surface);
+}
+.ld-reader-mode {
+  display: flex;
+  gap: 5px;
+}
+.ld-reader-mode button[aria-pressed="true"] {
+  color: var(--ld-ink);
+  background: var(--ld-surface);
+}
+.ld-reader-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex: 1;
+  padding: 25px 0;
+  min-height: 0;
+  max-width: 100%;
+  text-align: center;
+}
+.ld-reader-caption {
+  font-size: clamp(15px, 2.2vw, 29px);
+  color: var(--ld-muted);
+  max-width: 80vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ld-reader-display .ld-clock-digits {
+  font-size: clamp(72px, 17vw, 280px);
+  font-weight: 300;
+  letter-spacing: -0.055em;
+  line-height: 1.1;
+  opacity: var(--reader-brightness, 0.9);
+}
+.ld-reader-display > .ld-clock-ring {
+  width: clamp(220px, 48vmin, 560px);
+  flex: none;
+  opacity: var(--reader-brightness, 0.9);
+}
+.ld-reader-display > .ld-clock-ring > span {
+  font-size: clamp(36px, 7vmin, 86px);
+}
+.ld-reader-display > .ld-clock-flip {
+  font-size: clamp(42px, 10vw, 160px);
+  gap: 10px;
+  opacity: var(--reader-brightness, 0.9);
+}
+.ld-reader-display .ld-flip-tile {
+  padding: 0.06em 0.2em;
+  border-radius: 14px;
+  min-width: 1.65em;
+}
+.ld-reader-display > .ld-clock-hourglass {
+  flex-direction: row;
+  gap: clamp(20px, 4vw, 70px);
+  font-size: clamp(64px, 12vw, 210px);
+  opacity: var(--reader-brightness, 0.9);
+}
+.ld-reader-display > .ld-clock-hourglass svg {
+  height: clamp(150px, 28vh, 360px);
+}
+.ld-reader-remaining {
+  color: var(--ld-muted);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+.ld-reader-current {
+  font-size: 12px;
+  color: var(--ld-muted);
+  font-variant-numeric: tabular-nums;
+  margin-top: 10px;
+}
+.ld-reader-display .ld-timer-task-progress {
+  justify-content: center;
+  font-size: 12px;
+  margin-top: 4px;
+  max-width: 85vw;
+}
+.ld-reader-display .ld-timer-state {
+  font-size: 12px;
+  min-height: 18px;
+}
+.ld-reader-bottom {
+  width: min(720px, 100%);
+  flex: none;
+  margin-top: 10px;
+}
+.ld-reader-bottom > .ld-timer-controls {
+  margin-top: 0;
+}
+.ld-reader-bottom .ld-timer-buttons,
+.ld-reader-bottom .ld-timer-preferences {
+  justify-content: center;
+}
+.ld-reader-bottom .ld-timer-preferences {
+  margin-top: 12px;
+}
+.ld-reader-bottom > .ld-timer-controls > .ld-help {
+  text-align: center;
+}
+.ld-reader-brightness {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  font-size: 10px;
+  color: var(--ld-muted);
+}
+.ld-reader-brightness input[type="range"] {
+  width: 110px;
+  height: 14px;
+  padding: 0;
+  accent-color: var(--ld-muted);
+  cursor: pointer;
+}
+.ld-reader-bottom > p {
+  text-align: center;
+  color: var(--ld-muted);
+  font-size: 10px;
+  margin-top: 10px;
+}
+.ld-reader-timer-controls .ld-timer-drawer {
+  position: absolute;
+  bottom: calc(100% + 15px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(420px, 86vw);
+  max-height: 65vh;
+  background: var(--ld-surface);
+  z-index: 2;
+}
+.ld-reader-timer-controls .ld-face-options .ld-clock-digits {
+  font-size: 22px;
+}
+.ld-reader-timer-controls .ld-face-options .ld-clock-flip {
+  font-size: 16px;
+}
+.ld-reader-timer-controls .ld-face-options .ld-clock-ring {
+  width: 65px;
+}
+.ld-reader-timer-controls .ld-face-options .ld-clock-ring > span {
+  font-size: 14px;
+}
+.ld-reader-timer-controls .ld-face-options .ld-clock-hourglass {
+  font-size: 15px;
+}
+.ld-reader-auto-hide {
+  transition: opacity 0.25s ease;
+}
+.ld-reader.controls-hidden .ld-reader-auto-hide {
+  opacity: 0;
+}
+.ld-reader.controls-hidden .ld-reader-auto-hide:focus-within {
+  opacity: 1;
+}
+.ld-reader.reduce-motion .ld-flip-value {
+  animation: none;
+}
+.ld-reader.reduce-motion .ld-reader-auto-hide {
+  transition: none;
+}
+@container life-desk (max-width:700px) {
+  .ld-timer-v2.ld-timer-bar {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+  .ld-timer-bar .ld-timer-controls {
+    grid-column: 1;
+    grid-row: 3;
+    max-width: none;
+  }
+  .ld-timer-bar .ld-timer-buttons,
+  .ld-timer-bar .ld-timer-preferences {
+    justify-content: flex-start;
+  }
+  .ld-timer-bar .ld-timer-drawer {
+    left: 0;
+    right: auto;
+    width: min(380px, 80vw);
+  }
+}
+@media (max-width: 600px) {
+  .ld-reader {
+    padding: 16px;
+  }
+  .ld-reader-top {
+    gap: 8px;
+  }
+  .ld-reader-top > div:last-child > span {
+    display: none;
+  }
+  .ld-reader-top > div:last-child {
+    gap: 5px;
+  }
+  .ld-reader-top button {
+    font-size: 10px;
+    padding: 5px;
+  }
+  .ld-reader-display > .ld-clock-hourglass {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ld-reader-display > .ld-clock-hourglass svg {
+    height: 140px;
+  }
+  .ld-reader-display > .ld-clock-flip {
+    gap: 4px;
+  }
+  .ld-reader-display .ld-flip-tile {
+    border-radius: 7px;
+  }
+  .ld-reader-display {
+    gap: 10px;
+  }
+  .ld-reader-bottom {
+    margin-top: 0;
+  }
+  .ld-reader-current {
+    margin-top: 2px;
+  }
+}
+@media (max-height: 650px) {
+  .ld-reader {
+    padding-block: 12px;
+  }
+  .ld-reader-display {
+    gap: 7px;
+    padding: 10px 0;
+  }
+  .ld-reader-display > .ld-clock-ring {
+    width: min(39vh, 320px);
+  }
+  .ld-reader-display > .ld-clock-hourglass svg {
+    height: 120px;
+  }
+  .ld-reader-display .ld-clock-digits {
+    font-size: min(17vw, 29vh);
+  }
+  .ld-reader-current {
+    margin-top: 0;
+  }
+  .ld-reader-brightness {
+    margin-top: 8px;
+  }
+  .ld-reader-bottom > p {
+    margin-top: 5px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ld-flip-value {
+    animation: none !important;
+  }
+  .ld-reader-auto-hide {
+    transition: none;
+  }
+}

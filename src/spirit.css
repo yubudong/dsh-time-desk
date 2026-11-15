@@ -1,0 +1,335 @@
+.ld-root:has(> .ld-shell) {
+  position: relative;
+}
+.ld-shell.ld-spirit-open {
+  grid-template-columns: 188px minmax(0, 1fr) 370px;
+}
+.ld-shell.ld-collapsed.ld-spirit-open {
+  grid-template-columns: 66px minmax(0, 1fr) 370px;
+}
+.ld-spirit-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  background: var(--ld-base);
+  border-left: 1px solid var(--ld-line);
+  padding: 24px 18px 18px;
+  overflow: hidden;
+}
+.ld-spirit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 15px;
+  flex: none;
+}
+.ld-spirit-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ld-spirit-heading > svg {
+  color: var(--ld-accent);
+}
+.ld-spirit-heading strong {
+  font-size: 14px;
+}
+.ld-spirit-dot {
+  height: 6px;
+  width: 6px;
+  border-radius: 50%;
+  background: var(--dsw-alias-state-success-primary);
+  margin-left: 3px;
+}
+.ld-spirit-dot.working {
+  background: var(--ld-accent);
+}
+.ld-spirit-controls {
+  display: flex;
+  gap: 5px;
+}
+.ld-spirit-controls button {
+  width: 27px;
+  height: 27px;
+  font-size: 20px;
+  color: var(--ld-muted);
+  border-radius: 5px;
+}
+.ld-spirit-controls button:hover {
+  background: var(--dsw-alias-bg-layer-2);
+}
+.ld-spirit-model {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.ld-spirit-model select {
+  flex: 1;
+  min-width: 0;
+  font-size: 11px;
+  padding: 7px;
+}
+.ld-spirit-model button {
+  width: 28px;
+  height: 28px;
+  color: var(--ld-muted);
+}
+.ld-spirit-model-caption {
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ld-muted);
+  margin: 7px 0 16px;
+}
+.ld-spirit-messages {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 8px 2px 15px;
+  scroll-behavior: smooth;
+  overflow-wrap: anywhere;
+}
+.ld-spirit-welcome {
+  padding: 30px 7px 20px;
+}
+.ld-spirit-welcome > .ld-spirit-art {
+  color: var(--ld-accent);
+  margin-bottom: 18px;
+}
+.ld-spirit-welcome h2 {
+  font-size: 21px;
+  line-height: 1.6;
+  font-weight: 500;
+  max-width: 250px;
+  margin-bottom: 12px;
+}
+.ld-spirit-welcome p {
+  font-size: 12px;
+  color: var(--ld-muted);
+  line-height: 1.9;
+}
+.ld-spirit-examples {
+  display: grid;
+  gap: 8px;
+  margin-top: 30px;
+}
+.ld-spirit-examples button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  line-height: 1.8;
+  text-align: left;
+  padding: 9px;
+  border: 1px solid var(--ld-line);
+  border-radius: 7px;
+}
+.ld-spirit-examples button span {
+  color: var(--ld-muted);
+  flex: none;
+}
+.ld-spirit-message {
+  font-size: 12px;
+  line-height: 1.9;
+  margin: 0 0 18px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.ld-spirit-message small {
+  display: block;
+  font-size: 10px;
+  color: var(--ld-muted);
+  margin-bottom: 5px;
+}
+.ld-spirit-user {
+  background: var(--dsw-alias-bg-layer-2);
+  padding: 10px 12px;
+  border-radius: 10px 10px 3px 10px;
+  margin-left: 22px;
+}
+.ld-spirit-assistant {
+  padding: 3px 3px 3px 0;
+}
+.ld-spirit-operation {
+  font-size: 10px;
+  color: var(--ld-muted);
+  padding: 6px 0;
+  display: flex;
+  gap: 7px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.ld-spirit-operation p {
+  width: 100%;
+  font-size: 10px;
+  max-height: 100px;
+  overflow: auto;
+}
+.ld-operation-state {
+  font-size: 12px;
+  min-width: 12px;
+}
+.ld-operation-state.done {
+  color: var(--dsw-alias-state-success-primary);
+}
+.ld-operation-state.error,
+.ld-spirit-error,
+.ld-spirit-message.ld-spirit-error {
+  color: var(--dsw-alias-state-error-primary);
+}
+.ld-spirit-thinking {
+  font-size: 11px;
+  color: var(--ld-muted);
+  padding: 5px 0 15px;
+}
+.ld-spirit-thinking span {
+  margin-left: 5px;
+}
+.ld-spirit-error {
+  font-size: 11px;
+  border-top: 1px solid var(--ld-line);
+  padding: 9px 0;
+  overflow-wrap: anywhere;
+}
+.ld-spirit-error button {
+  margin-left: 8px;
+  font-size: 11px;
+  text-decoration: underline;
+}
+.ld-spirit-provider-errors {
+  font-size: 10px;
+  color: var(--ld-muted);
+  padding: 7px 0;
+  max-height: 100px;
+  overflow: auto;
+}
+.ld-spirit-provider-errors summary {
+  cursor: pointer;
+}
+.ld-spirit-compose {
+  flex: none;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 12px;
+  padding: 10px 11px;
+  background: var(--ld-surface);
+  margin-top: 8px;
+}
+.ld-spirit-compose textarea {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: 100%;
+  min-height: 58px;
+  max-height: 170px;
+  resize: vertical;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.ld-spirit-compose textarea:focus-visible {
+  outline: none;
+}
+.ld-spirit-compose:focus-within {
+  border-color: var(--ld-accent);
+}
+.ld-spirit-compose-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding-top: 6px;
+}
+.ld-spirit-compose-foot > span {
+  font-size: 9px;
+  color: var(--ld-muted);
+}
+.ld-life-template-help {
+  margin-bottom: 10px !important;
+}
+.ld-life-templates {
+  margin-bottom: 24px;
+}
+.ld-life-filters {
+  border-top: 1px solid var(--ld-line);
+  padding-top: 18px;
+  margin-bottom: 23px;
+}
+.ld-life-filters .ld-btn {
+  border-color: transparent !important;
+  background: transparent !important;
+}
+.ld-life-filters .ld-btn[aria-pressed="true"] {
+  background: var(--dsw-alias-bg-layer-2) !important;
+}
+.ld-review-link summary {
+  font-size: 12px;
+  color: var(--ld-muted);
+  cursor: pointer;
+}
+.ld-review-link .ld-check-label {
+  margin-top: 8px;
+}
+.ld-dialog .ld-form + .ld-actions {
+  margin-top: 18px;
+}
+@container life-desk (max-width:1250px) {
+  .ld-shell.ld-spirit-open {
+    grid-template-columns: 160px minmax(0, 1fr) 340px;
+  }
+  .ld-shell.ld-collapsed.ld-spirit-open {
+    grid-template-columns: 66px minmax(0, 1fr) 340px;
+  }
+  .ld-spirit-open .ld-today-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ld-spirit-open .ld-support {
+    border-left: 0;
+    border-top: 1px solid var(--ld-line);
+    padding: 22px 0 0;
+  }
+  .ld-spirit-open .ld-page-top {
+    flex-wrap: wrap;
+  }
+}
+@container life-desk (max-width:950px) {
+  .ld-shell.ld-spirit-open,
+  .ld-shell.ld-collapsed.ld-spirit-open {
+    grid-template-columns: 60px minmax(0, 1fr);
+  }
+  .ld-spirit-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: min(370px, calc(100% - 60px));
+    z-index: 30;
+    box-shadow: -12px 0 35px color-mix(in srgb, var(--ld-ink) 6%, transparent);
+  }
+  .ld-spirit-open .ld-nav button > span,
+  .ld-spirit-open .ld-brand > span {
+    display: none;
+  }
+  .ld-spirit-open .ld-nav-project {
+    display: none;
+  }
+  .ld-spirit-open .ld-nav button {
+    font-size: 0;
+    justify-content: center;
+    gap: 0;
+  }
+  .ld-spirit-open .ld-nav {
+    padding-inline: 8px;
+  }
+  .ld-spirit-open .ld-brand {
+    padding-inline: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ld-spirit-messages {
+    scroll-behavior: auto;
+  }
+}
