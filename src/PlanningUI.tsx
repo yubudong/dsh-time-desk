@@ -80,7 +80,19 @@ export function createPlanningUI({ t, Btn, Field }: any) {
     busy,
     onSaved,
     onDirty,
-  }: any) {
+    onDetails,
+    resetToken,
+  }: {
+    open: boolean;
+    onClose: () => void;
+    projects: any[];
+    act: (action: any) => Promise<any>;
+    busy: boolean;
+    onSaved: () => void;
+    onDirty: (dirty: boolean) => void;
+    onDetails: (draft: any, requestId: string) => void;
+    resetToken: number;
+  }) {
     const empty = () => ({
       title: "",
       area: "inbox",
@@ -103,9 +115,23 @@ export function createPlanningUI({ t, Btn, Field }: any) {
       if (open && !busy) input.current?.focus();
     }, [open, busy]);
     useEffect(() => {
-      onDirty(!!draft.title.trim());
-    }, [draft.title]);
+      onDirty(
+        !!(
+          draft.title.trim() ||
+          draft.projectId ||
+          draft.date ||
+          draft.deadline ||
+          draft.minutes ||
+          draft.pomodoros ||
+          draft.area !== "inbox"
+        ),
+      );
+    }, [draft]);
     useEffect(() => () => onDirty(false), []);
+    useEffect(() => {
+      setDraft(empty());
+      setError("");
+    }, [resetToken]);
     if (!open) return null;
     async function save(e: any) {
       e.preventDefault();
@@ -130,6 +156,7 @@ export function createPlanningUI({ t, Btn, Field }: any) {
     }
     return (
       <section
+        id="ld-quick-capture"
         className="ld-quick-panel"
         aria-label={t("quickCapture")}
         onKeyDown={(e) => {
@@ -165,6 +192,17 @@ export function createPlanningUI({ t, Btn, Field }: any) {
                 projects={projects}
               />
             </details>
+            <Btn
+              type="button"
+              onClick={() =>
+                onDetails(
+                  { ...draft, area: draft.projectId ? "work" : draft.area },
+                  requestId.current,
+                )
+              }
+            >
+              {t("captureDetails")}
+            </Btn>
           </fieldset>
           <p className="ld-help">{t("captureHint")}</p>
           {error && (

@@ -16564,7 +16564,8 @@ var l77 = {
 
 // src/locales.ts
 var copy = {
-  quickCapture: ["\u5FEB\u901F\u65B0\u589E", "Quick capture"],
+  quickCapture: ["\u5FEB\u901F\u8BB0\u5F55", "Quick capture"],
+  captureDetails: ["\u8BE6\u7EC6\u7F16\u8F91", "Edit details"],
   quickPlaceholder: ["\u5148\u8BB0\u4E0B\u4E00\u4EF6\u4E8B\u2026", "Capture something\u2026"],
   taskTitle: ["\u4E8B\u9879\u6807\u9898", "Task title"],
   captureSave: ["\u8BB0\u4E0B", "Capture"],
@@ -30291,7 +30292,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.7.0",
+        "data-reader-version": "0.7.1",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -30383,7 +30384,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.7.0")))
+      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.7.1")))
     );
   }
   return {
@@ -30533,7 +30534,9 @@ function createPlanningUI({ t: t3, Btn, Field }) {
     act,
     busy,
     onSaved,
-    onDirty
+    onDirty,
+    onDetails,
+    resetToken
   }) {
     const empty = () => ({
       title: "",
@@ -30554,9 +30557,15 @@ function createPlanningUI({ t: t3, Btn, Field }) {
       if (open && !busy) input.current?.focus();
     }, [open, busy]);
     useEffect3(() => {
-      onDirty(!!draft.title.trim());
-    }, [draft.title]);
+      onDirty(
+        !!(draft.title.trim() || draft.projectId || draft.date || draft.deadline || draft.minutes || draft.pomodoros || draft.area !== "inbox")
+      );
+    }, [draft]);
     useEffect3(() => () => onDirty(false), []);
+    useEffect3(() => {
+      setDraft(empty());
+      setError("");
+    }, [resetToken]);
     if (!open) return null;
     async function save(e3) {
       e3.preventDefault();
@@ -30582,6 +30591,7 @@ function createPlanningUI({ t: t3, Btn, Field }) {
     return /* @__PURE__ */ React7.createElement(
       "section",
       {
+        id: "ld-quick-capture",
         className: "ld-quick-panel",
         "aria-label": t3("quickCapture"),
         onKeyDown: (e3) => {
@@ -30608,7 +30618,17 @@ function createPlanningUI({ t: t3, Btn, Field }) {
           setDraft,
           projects
         }
-      ))), /* @__PURE__ */ React7.createElement("p", { className: "ld-help" }, t3("captureHint")), error && /* @__PURE__ */ React7.createElement("p", { role: "alert", className: "ld-error" }, error))
+      )), /* @__PURE__ */ React7.createElement(
+        Btn,
+        {
+          type: "button",
+          onClick: () => onDetails(
+            { ...draft, area: draft.projectId ? "work" : draft.area },
+            requestId.current
+          )
+        },
+        t3("captureDetails")
+      )), /* @__PURE__ */ React7.createElement("p", { className: "ld-help" }, t3("captureHint")), error && /* @__PURE__ */ React7.createElement("p", { role: "alert", className: "ld-error" }, error))
     );
   }
   function PlanPanel({ plan, date, act, busy }) {
@@ -32115,7 +32135,7 @@ function apply(ctx) {
     const [error, setError] = useState4("");
     const [showNotes, setShowNotes] = useState4(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.7.0";
+    const current = v3.currentVersion || "0.7.1";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -32459,6 +32479,7 @@ function apply(ctx) {
     const { data, error, busy } = useStore();
     const [tab, setTab] = useState4("today"), [project, setProject] = useState4(""), [selectedDay, setDay] = useState4(""), [search, setSearch] = useState4(""), [collapsed, setCollapsed] = useState4(false), [board, setBoard] = useState4(false), [editor, setEditor] = useState4(null), [message, setMessage] = useState4(""), [ai, setAi] = useState4(false), [lifeCategory, setLifeCategory] = useState4("");
     const [captureOpen, setCaptureOpen] = useState4(false);
+    const [captureReset, setCaptureReset] = useState4(0);
     const [captureDirty, setCaptureDirty] = useState4(false);
     const captureButton = useRef4(null);
     const [updateView, setUpdateView] = useState4(null);
@@ -32991,11 +33012,16 @@ function apply(ctx) {
         "button",
         {
           className: "ld-nav-add",
-          "aria-label": t3("add"),
-          onClick: () => openTask()
+          ref: captureButton,
+          "aria-label": t3("quickCapture"),
+          "aria-expanded": captureOpen,
+          "aria-controls": "ld-quick-capture",
+          "aria-keyshortcuts": "Control+Shift+K Meta+Shift+K",
+          title: t3("quickCapture") + " \xB7 \u2318/Ctrl+Shift+K",
+          onClick: () => setCaptureOpen(!captureOpen)
         },
         /* @__PURE__ */ React8.createElement(Icon, { name: "plus" }),
-        !collapsed && t3("add")
+        !collapsed && t3("quickCapture")
       ), /* @__PURE__ */ React8.createElement("div", { className: "ld-nav-items" }, [...NAV, "inbox"].map((n2) => /* @__PURE__ */ React8.createElement(
         "button",
         {
@@ -33048,17 +33074,6 @@ function apply(ctx) {
           }
         )),
         /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
-          "button",
-          {
-            ref: captureButton,
-            className: "ld-btn ld-primary",
-            "aria-expanded": captureOpen,
-            "aria-keyshortcuts": "Control+Shift+K Meta+Shift+K",
-            title: t3("quickCapture") + " \xB7 \u2318/Ctrl+Shift+K",
-            onClick: () => setCaptureOpen(!captureOpen)
-          },
-          t3("quickCapture")
-        ), /* @__PURE__ */ React8.createElement(
           "select",
           {
             className: "ld-mood",
@@ -33083,6 +33098,11 @@ function apply(ctx) {
         QuickCapture,
         {
           open: captureOpen,
+          resetToken: captureReset,
+          onDetails: (draft, requestId) => {
+            setCaptureOpen(false);
+            openTask(draft, { fromCapture: true, requestId });
+          },
           onClose: () => {
             setCaptureOpen(false);
             captureButton.current?.focus();
@@ -33154,7 +33174,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React8.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.7.0", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React8.createElement(
+        /* @__PURE__ */ React8.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.7.1", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React8.createElement(
           "button",
           {
             className: "ld-update-badge",
@@ -33187,7 +33207,22 @@ function apply(ctx) {
       Editor,
       {
         editor,
-        close: () => setEditor(null),
+        close: () => {
+          const fromCapture = editor.fromCapture;
+          setEditor(null);
+          if (fromCapture) {
+            setCaptureOpen(true);
+          }
+        },
+        onSaved: () => {
+          if (editor.fromCapture) {
+            setCaptureReset((value) => value + 1);
+            setCaptureDirty(false);
+            reviewDrafts.delete("quick-capture");
+          }
+          setEditor(null);
+          if (editor.fromCapture) captureButton.current?.focus();
+        },
         run,
         data,
         day,
@@ -33195,7 +33230,15 @@ function apply(ctx) {
       }
     ));
   }
-  function Editor({ editor, close, run, data, day, busy }) {
+  function Editor({
+    editor,
+    close,
+    onSaved = close,
+    run,
+    data,
+    day,
+    busy
+  }) {
     const type = editor.type;
     const [item, setItem] = useState4(structuredClone(editor.item));
     const [scope, setScope] = useState4(editor.occurrence ? "single" : "series");
@@ -33210,7 +33253,9 @@ function apply(ctx) {
       latestRule ? { ...latestRule, effective: item.id ? day : latestRule.effective } : null
     );
     const dirty = useRef4(false);
+    const submissionId = useRef4(editor.requestId || uid());
     const change = (k3, v3) => {
+      submissionId.current = uid();
       dirty.current = true;
       setItem((old) => ({ ...old, [k3]: v3 }));
     };
@@ -33295,6 +33340,7 @@ function apply(ctx) {
                 collection: "tasks",
                 id: item.id,
                 version: item.version,
+                requestId: submissionId.current,
                 item: normalized
               }
             );
@@ -33323,7 +33369,7 @@ function apply(ctx) {
             version: item.version,
             item
           });
-        if (result) close();
+        if (result) onSaved();
       } catch (e4) {
         setLocalError(e4.message);
       }

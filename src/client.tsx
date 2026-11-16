@@ -1551,6 +1551,7 @@ export function apply(ctx: any) {
       [ai, setAi] = useState(false),
       [lifeCategory, setLifeCategory] = useState("");
     const [captureOpen, setCaptureOpen] = useState(false);
+    const [captureReset, setCaptureReset] = useState(0);
     const [captureDirty, setCaptureDirty] = useState(false);
     const captureButton = useRef<HTMLButtonElement>(null);
     const [updateView, setUpdateView] = useState<any>(null);
@@ -2427,11 +2428,16 @@ export function apply(ctx: any) {
             </div>
             <button
               className="ld-nav-add"
-              aria-label={t("add")}
-              onClick={() => openTask()}
+              ref={captureButton}
+              aria-label={t("quickCapture")}
+              aria-expanded={captureOpen}
+              aria-controls="ld-quick-capture"
+              aria-keyshortcuts="Control+Shift+K Meta+Shift+K"
+              title={t("quickCapture") + " · ⌘/Ctrl+Shift+K"}
+              onClick={() => setCaptureOpen(!captureOpen)}
             >
               <Icon name="plus" />
-              {!collapsed && t("add")}
+              {!collapsed && t("quickCapture")}
             </button>
             <div className="ld-nav-items">
               {[...NAV, "inbox"].map((n) => (
@@ -2507,16 +2513,6 @@ export function apply(ctx: any) {
                   />
                 </div>
                 <div className="ld-actions">
-                  <button
-                    ref={captureButton}
-                    className="ld-btn ld-primary"
-                    aria-expanded={captureOpen}
-                    aria-keyshortcuts="Control+Shift+K Meta+Shift+K"
-                    title={t("quickCapture") + " · ⌘/Ctrl+Shift+K"}
-                    onClick={() => setCaptureOpen(!captureOpen)}
-                  >
-                    {t("quickCapture")}
-                  </button>
                   <select
                     className="ld-mood"
                     aria-label={t("mood")}
@@ -2556,6 +2552,11 @@ export function apply(ctx: any) {
               </div>
               <QuickCapture
                 open={captureOpen}
+                resetToken={captureReset}
+                onDetails={(draft: any, requestId: string) => {
+                  setCaptureOpen(false);
+                  openTask(draft, { fromCapture: true, requestId });
+                }}
                 onClose={() => {
                   setCaptureOpen(false);
                   captureButton.current?.focus();
@@ -2693,7 +2694,22 @@ export function apply(ctx: any) {
         {editor && (
           <Editor
             editor={editor}
-            close={() => setEditor(null)}
+            close={() => {
+              const fromCapture = editor.fromCapture;
+              setEditor(null);
+              if (fromCapture) {
+                setCaptureOpen(true);
+              }
+            }}
+            onSaved={() => {
+              if (editor.fromCapture) {
+                setCaptureReset((value) => value + 1);
+                setCaptureDirty(false);
+                reviewDrafts.delete("quick-capture");
+              }
+              setEditor(null);
+              if (editor.fromCapture) captureButton.current?.focus();
+            }}
             run={run}
             data={data}
             day={day}
@@ -2703,7 +2719,15 @@ export function apply(ctx: any) {
       </Ambient>
     );
   }
-  function Editor({ editor, close, run, data, day, busy }: any) {
+  function Editor({
+    editor,
+    close,
+    onSaved = close,
+    run,
+    data,
+    day,
+    busy,
+  }: any) {
     const type = editor.type;
     const [item, setItem] = useState<any>(structuredClone(editor.item));
     const [scope, setScope] = useState(editor.occurrence ? "single" : "series");
@@ -2720,7 +2744,9 @@ export function apply(ctx: any) {
         : null,
     );
     const dirty = useRef(false);
+    const submissionId = useRef(editor.requestId || uid());
     const change = (k: string, v: any) => {
+      submissionId.current = uid();
       dirty.current = true;
       setItem((old: any) => ({ ...old, [k]: v }));
     };
@@ -2835,6 +2861,7 @@ export function apply(ctx: any) {
                     collection: "tasks",
                     id: item.id,
                     version: item.version,
+                    requestId: submissionId.current,
                     item: normalized,
                   },
             );
@@ -2863,7 +2890,7 @@ export function apply(ctx: any) {
             version: item.version,
             item,
           });
-        if (result) close();
+        if (result) onSaved();
       } catch (e) {
         setLocalError(e.message);
       }

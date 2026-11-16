@@ -1,5 +1,6 @@
 export const copy = {
-  quickCapture: ["快速新增", "Quick capture"],
+  quickCapture: ["快速记录", "Quick capture"],
+  captureDetails: ["详细编辑", "Edit details"],
   quickPlaceholder: ["先记下一件事…", "Capture something…"],
   taskTitle: ["事项标题", "Task title"],
   captureSave: ["记下", "Capture"],
