@@ -1898,13 +1898,12 @@ export function apply(ctx: any) {
               </button>
             </div>
           </nav>
-          <main
-            className={"ld-content " + (tab !== "today" ? "ld-not-today" : "")}
-          >
-            <div className="ld-top-timer">
-              <Timer bar />
-            </div>
-            <div className="ld-page-top">
+          <div className="ld-workspace">
+            <div
+              className="ld-page-top"
+              role="region"
+              aria-label={t("workspaceActions")}
+            >
               <div className="ld-search">
                 <Icon name="search" size={17} />
                 <input
@@ -1949,73 +1948,87 @@ export function apply(ctx: any) {
                 </Btn>
               </div>
             </div>
-            <header className="ld-page-heading">
-              <div>
-                <div className="ld-eyebrow">
-                  {tab === "today"
-                    ? new Intl.DateTimeFormat(
-                        ctx.locale.getLocale().active.startsWith("zh")
-                          ? "zh-CN"
-                          : "en",
-                        {
-                          weekday: "long",
-                          month: "long",
-                          day: "numeric",
-                          timeZone: "UTC",
-                        },
-                      ).format(new Date(day + "T12:00:00Z"))
-                    : t("appSubtitle")}
+            <main
+              className={
+                "ld-content " + (tab !== "today" ? "ld-not-today" : "")
+              }
+            >
+              <div className="ld-top-timer">
+                <Timer bar />
+              </div>
+              <header className="ld-page-heading">
+                <div>
+                  <div className="ld-eyebrow">
+                    {tab === "today"
+                      ? new Intl.DateTimeFormat(
+                          ctx.locale.getLocale().active.startsWith("zh")
+                            ? "zh-CN"
+                            : "en",
+                          {
+                            weekday: "long",
+                            month: "long",
+                            day: "numeric",
+                            timeZone: "UTC",
+                          },
+                        ).format(new Date(day + "T12:00:00Z"))
+                      : t("appSubtitle")}
+                  </div>
+                  <h1>{title}</h1>
                 </div>
-                <h1>{title}</h1>
-              </div>
-              <div className="ld-day-nav">
-                <button
-                  aria-label="Previous day"
-                  onClick={() => setDay(shift(day, tab === "review" ? -7 : -1))}
-                >
-                  ‹
-                </button>
-                <input
-                  type="date"
-                  value={day}
-                  aria-label={t("date")}
-                  onChange={(e) => {
-                    if (e.target.value) setDay(e.target.value);
-                  }}
-                />
-                <button
-                  aria-label="Next day"
-                  onClick={() => setDay(shift(day, tab === "review" ? 7 : 1))}
-                >
-                  ›
-                </button>
-                <Btn onClick={() => setDay(today(timeZone))}>
-                  {t("backToday")}
-                </Btn>
-              </div>
-            </header>
-            {error && (
-              <div className="ld-error" role="alert">
-                {error} <Btn onClick={() => void refresh()}>{t("retry")}</Btn>
-              </div>
-            )}
-            {message && (
-              <div className="ld-status" role="status">
-                {message}
-                <button aria-label={t("close")} onClick={() => setMessage("")}>
-                  ×
-                </button>
-                <button onClick={() => run({ action: "undo" })}>
-                  {t("undo")}
-                </button>
-              </div>
-            )}
-            {Body()}
-            <footer className="ld-footer">
-              {t("local")} · {timeZone}{" "}
-              <button onClick={() => void refresh()}>{t("retry")}</button>
-            </footer>
-          </main>
+                <div className="ld-day-nav">
+                  <button
+                    aria-label="Previous day"
+                    onClick={() =>
+                      setDay(shift(day, tab === "review" ? -7 : -1))
+                    }
+                  >
+                    ‹
+                  </button>
+                  <input
+                    type="date"
+                    value={day}
+                    aria-label={t("date")}
+                    onChange={(e) => {
+                      if (e.target.value) setDay(e.target.value);
+                    }}
+                  />
+                  <button
+                    aria-label="Next day"
+                    onClick={() => setDay(shift(day, tab === "review" ? 7 : 1))}
+                  >
+                    ›
+                  </button>
+                  <Btn onClick={() => setDay(today(timeZone))}>
+                    {t("backToday")}
+                  </Btn>
+                </div>
+              </header>
+              {error && (
+                <div className="ld-error" role="alert">
+                  {error} <Btn onClick={() => void refresh()}>{t("retry")}</Btn>
+                </div>
+              )}
+              {message && (
+                <div className="ld-status" role="status">
+                  {message}
+                  <button
+                    aria-label={t("close")}
+                    onClick={() => setMessage("")}
+                  >
+                    ×
+                  </button>
+                  <button onClick={() => run({ action: "undo" })}>
+                    {t("undo")}
+                  </button>
+                </div>
+              )}
+              {Body()}
+              <footer className="ld-footer">
+                {t("local")} · {timeZone}{" "}
+                <button onClick={() => void refresh()}>{t("retry")}</button>
+              </footer>
+            </main>
+          </div>
           <SpiritPanel
             open={ai}
             onClose={() => setAi(false)}

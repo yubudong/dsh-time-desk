@@ -188,8 +188,17 @@
 .ld-nav-bottom button {
   font-size: 12px;
 }
+/* The toolbar is a separate grid row, outside the only page scroller. */
+.ld-workspace {
+  --ld-page-inline: clamp(22px, 3vw, 48px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
 .ld-content {
-  padding: 26px clamp(22px, 3vw, 48px) 26px;
+  padding: 26px var(--ld-page-inline) 26px;
   overflow: auto;
   min-height: 0;
 }
@@ -198,9 +207,30 @@
   justify-content: space-between;
   gap: 18px;
   align-items: center;
-  margin-bottom: 38px;
+  margin: 0;
+  min-width: 0;
+  padding: 20px var(--ld-page-inline) 16px;
+  background: var(--ld-base);
+  border-bottom: 1px solid var(--ld-line);
+  position: relative;
+  z-index: 20;
+}
+.ld-page-top,
+.ld-page-top * {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+.ld-page-top > .ld-actions {
+  margin-left: auto;
+  flex-shrink: 0;
+  max-width: 100%;
+}
+.ld-page-top .ld-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 .ld-search {
+  flex: 1;
   display: flex;
   align-items: center;
   gap: 9px;
@@ -859,8 +889,8 @@
   .ld-shell {
     grid-template-columns: 160px minmax(0, 1fr);
   }
-  .ld-content {
-    padding-inline: 25px;
+  .ld-workspace {
+    --ld-page-inline: 25px;
   }
   .ld-search input {
     width: 150px;
@@ -908,9 +938,6 @@
   .ld-support > .ld-section:last-child {
     grid-column: 1/-1;
   }
-  .ld-page-top {
-    margin-bottom: 25px;
-  }
   .ld-board {
     grid-template-columns: 1fr;
   }
@@ -919,12 +946,20 @@
   }
 }
 @container life-desk (max-width:530px) {
+  .ld-workspace {
+    --ld-page-inline: 16px;
+  }
   .ld-content {
-    padding: 22px 16px;
+    padding: 22px var(--ld-page-inline);
   }
   .ld-page-top {
+    padding-top: 16px;
+    padding-bottom: 12px;
     flex-wrap: wrap;
     gap: 10px;
+  }
+  .ld-page-top .ld-mood {
+    max-width: 88px;
   }
   .ld-search {
     width: 100%;

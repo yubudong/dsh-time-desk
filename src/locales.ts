@@ -1,4 +1,5 @@
 export const copy = {
+  workspaceActions: ["工作台操作", "Workspace actions"],
   carriedFrom: ["延续自", "Carried from"],
   originalPlan: ["原安排", "Originally scheduled"],
   earlierRecurring: ["之前未完成的重复事项", "Earlier recurring occurrences"],
