@@ -61,6 +61,46 @@ export const copy = {
     "未能自动打开插件管理，请从左侧导航打开。",
     "Could not open Plugin Manager automatically; use the sidebar.",
   ],
+  prepareUpgrade: ["准备升级", "Prepare upgrade"],
+  upgradeBlockTimer: [
+    "有正在进行的专注或休息计时，请先结束这一轮。",
+    "Finish the running focus or break timer first.",
+  ],
+  upgradeBlockEditor: [
+    "请先保存或关闭正在编辑的内容。",
+    "Save or close the open editor first.",
+  ],
+  upgradeBlockAssistant: [
+    "时间精灵正在处理请求，请稍后再试。",
+    "The assistant is still working; try again shortly.",
+  ],
+  upgradeBlockBusy: [
+    "正在保存数据，请稍后再试。",
+    "Data is still being saved; try again shortly.",
+  ],
+  upgradePrepared: ["已保存升级前快照", "Pre-upgrade snapshot saved"],
+  upgradePreparedHint: [
+    "已在插件管理器中打开插件页，请在那里完成安装；完成后回到这里核对版本。",
+    "Plugin Manager has been opened. Finish the install there, then return here to verify the version.",
+  ],
+  upgradePending: ["升级准备中", "Upgrade prepared"],
+  upgradePendingHint: [
+    "已保存此版本的升级前快照。安装完成后回到这里核对结果。",
+    "A pre-upgrade snapshot was saved. Return here after installing to confirm the result.",
+  ],
+  upgradeDone: ["已升级到", "Upgraded to"],
+  upgradeClearPending: ["知道了", "Dismiss"],
+  snapshotsTitle: ["升级前快照", "Pre-upgrade snapshots"],
+  snapshotRestore: ["恢复", "Restore"],
+  restoreSnapshotConfirm: [
+    "将用此快照覆盖当前工作台数据（含任务、习惯与专注记录），并结束当前计时。建议先导出备份。继续？",
+    "This snapshot will replace the current workspace, including tasks, habits and focus records, and end any timer. Exporting a backup first is recommended. Continue?",
+  ],
+  snapshotRestored: ["已恢复升级前快照", "Pre-upgrade snapshot restored"],
+  openPluginManagerAgain: [
+    "再次打开插件管理",
+    "Open Plugin Manager again",
+  ],
   feedFallbackNote: [
     "GitHub 接口受限，已通过项目发布订阅读取版本；安装附件未在此核对，请在插件管理器中校验来源。",
     "The GitHub API was rate-limited, so the version came from the project release feed. Assets were not verified here; validate the source in Plugin Manager.",

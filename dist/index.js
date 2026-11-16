@@ -36210,6 +36210,148 @@ function createUpdateService({
   };
 }
 
+// src/upgrade.js
+var MAX_SNAPSHOTS = 3;
+var MAX_STATE_CHARS = 2 * 1024 * 1024;
+var DEFAULT2 = { pending: null, snapshots: [] };
+function summary(snapshot) {
+  return {
+    id: snapshot.id,
+    fromVersion: snapshot.fromVersion,
+    targetVersion: snapshot.targetVersion,
+    createdAt: snapshot.createdAt,
+    bytes: snapshot.bytes,
+    counts: snapshot.counts
+  };
+}
+function createUpgradeService({
+  unit,
+  readState,
+  restoreState,
+  clock = () => Date.now()
+}) {
+  let global = { ...DEFAULT2 };
+  let queue = Promise.resolve();
+  const snapshot = () => ({
+    pending: global.pending,
+    snapshots: global.snapshots.map(summary),
+    currentVersion: global.currentVersion || null
+  });
+  async function persist() {
+    await unit.setGlobal(structuredClone(global));
+  }
+  function ensureRoom(state) {
+    const encoded = JSON.stringify(state);
+    if (encoded.length > MAX_STATE_CHARS)
+      throw Error("\u5DE5\u4F5C\u53F0\u6570\u636E\u8FC7\u5927\uFF0C\u65E0\u6CD5\u521B\u5EFA\u5347\u7EA7\u524D\u5FEB\u7167");
+    return encoded.length;
+  }
+  return {
+    async init() {
+      const stored = (await unit.loadAll())?.global;
+      if (stored && typeof stored === "object") {
+        global = {
+          pending: stored.pending && typeof stored.pending === "object" ? stored.pending : null,
+          snapshots: Array.isArray(stored.snapshots) ? stored.snapshots.filter((x) => x && typeof x.id === "string" && x.state).slice(-MAX_SNAPSHOTS) : []
+        };
+      }
+      return snapshot();
+    },
+    operate(a) {
+      const run = queue.then(async () => {
+        const command = a.command;
+        if (command === "preflight") {
+          const state = await readState();
+          const timer = state.timer;
+          const blockers = [];
+          if (timer)
+            blockers.push({
+              code: "timer",
+              phase: timer.phase,
+              status: timer.status
+            });
+          return {
+            ok: blockers.length === 0,
+            blockers,
+            timer: timer ? { phase: timer.phase, status: timer.status } : null
+          };
+        }
+        if (command === "prepare") {
+          const state = await readState();
+          if (state.timer) throw Error("\u8BF7\u5148\u7ED3\u675F\u5F53\u524D\u8BA1\u65F6\uFF0C\u518D\u51C6\u5907\u5347\u7EA7");
+          const from = a.fromVersion || "unknown";
+          const target = a.targetVersion;
+          if (!parseVersion(target)) throw Error("\u76EE\u6807\u7248\u672C\u53F7\u65E0\u6548");
+          if (parseVersion(from) && compareVersions(target, from) <= 0)
+            throw Error("\u76EE\u6807\u7248\u672C\u5FC5\u987B\u9AD8\u4E8E\u5F53\u524D\u7248\u672C");
+          for (const key of ["projects", "tasks", "habits", "focusLogs"])
+            if (!Array.isArray(state[key]))
+              throw Error(
+                "\u5FEB\u7167\u6570\u636E\u7F3A\u5C11 " + key + "\uFF1Akeys=" + Object.keys(state || {}).join(",") + " type=" + Object.prototype.toString.call(state)
+              );
+          const bytes = ensureRoom(state);
+          const record2 = {
+            id: "snapshot-" + clock() + "-" + global.snapshots.length,
+            fromVersion: from,
+            targetVersion: target,
+            createdAt: clock(),
+            bytes,
+            counts: {
+              projects: state.projects.length,
+              tasks: state.tasks.length,
+              habits: state.habits.length,
+              focusLogs: state.focusLogs.length
+            },
+            state
+          };
+          global.snapshots = [...global.snapshots, record2].slice(
+            -MAX_SNAPSHOTS
+          );
+          global.pending = {
+            targetVersion: target,
+            fromVersion: from,
+            preparedAt: record2.createdAt,
+            snapshotId: record2.id
+          };
+          global.currentVersion = from;
+          await persist();
+          return { ok: true, prepared: summary(record2), ...snapshot() };
+        }
+        if (command === "snapshots") return snapshot();
+        if (command === "clearPending") {
+          global.pending = null;
+          await persist();
+          return snapshot();
+        }
+        if (command === "restoreSnapshot") {
+          if (a.confirm !== true) throw Error("\u6062\u590D\u9700\u8981\u786E\u8BA4");
+          const record2 = global.snapshots.find((x) => x.id === a.id);
+          if (!record2) throw Error("\u5FEB\u7167\u4E0D\u5B58\u5728");
+          await restoreState({
+            backup: {
+              format: "dsh-time-desk",
+              exportedAt: new Date(record2.createdAt).toISOString(),
+              state: record2.state
+            },
+            revision: a.revision,
+            confirm: true
+          });
+          global.pending = null;
+          await persist();
+          return { ok: true, restored: summary(record2), ...snapshot() };
+        }
+        return snapshot();
+      });
+      queue = run.catch(() => {
+      });
+      return run;
+    },
+    async close() {
+      await unit.close();
+    }
+  };
+}
+
 // src/host.js
 var inject = [
   "storage",
@@ -36257,7 +36399,7 @@ async function apply(ctx) {
       hasGlobal: true,
       layout: "single"
     });
-    const currentVersion = true ? "0.5.3" : "0.0.0";
+    const currentVersion = true ? "0.6.0" : "0.0.0";
     updateService = createUpdateService({
       unit: updateUnit,
       currentVersion,
@@ -36270,6 +36412,31 @@ async function apply(ctx) {
     console.warn("time desk update checks unavailable:", error62.message);
     updateService = null;
   }
+  let upgradeService = null;
+  try {
+    const upgradeUnit = await ctx.storage.backend.get("json").kv.open({
+      name: "life_desk_upgrade",
+      version: 1,
+      tables: [],
+      hasGlobal: true,
+      layout: "single"
+    });
+    upgradeService = createUpgradeService({
+      unit: upgradeUnit,
+      readState: () => service.operate({ action: "read" }),
+      restoreState: (a) => service.operate({
+        action: "restoreBackup",
+        backup: a.backup,
+        revision: a.revision,
+        confirm: true
+      })
+    });
+    await upgradeService.init();
+    ctx.effect(() => () => upgradeService.close());
+  } catch (error62) {
+    console.warn("time desk upgrade snapshots unavailable:", error62.message);
+    upgradeService = null;
+  }
   let spiritService = null;
   ctx.effect(
     () => ctx.connection.fetch.register({
@@ -36281,6 +36448,21 @@ async function apply(ctx) {
           if (req.headers.get("content-length") && Number(req.headers.get("content-length")) > 12 * 1024 * 1024)
             throw new Error("\u8BF7\u6C42\u6700\u591A 12 MB");
           const a = req.method === "GET" ? { action: "read" } : await req.json();
+          if (a.action === "upgrade") {
+            if (!upgradeService) throw new Error("\u5347\u7EA7\u5FEB\u7167\u6682\u4E0D\u53EF\u7528");
+            if (![
+              "preflight",
+              "prepare",
+              "snapshots",
+              "restoreSnapshot",
+              "clearPending"
+            ].includes(a.command))
+              throw new Error("\u4E0D\u652F\u6301\u7684\u5347\u7EA7\u64CD\u4F5C");
+            return Response.json(
+              { ok: true, value: await upgradeService.operate(a) },
+              { headers: { "Cache-Control": "no-store" } }
+            );
+          }
           if (a.action === "update") {
             if (!updateService) throw new Error("\u66F4\u65B0\u68C0\u67E5\u6682\u4E0D\u53EF\u7528");
             if (!["status", "check", "settings", "ignore"].includes(a.command))

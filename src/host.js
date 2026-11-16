@@ -6,6 +6,7 @@ import {
   detectInstallKind,
   detectDshVersion,
 } from "./update.js";
+import { createUpgradeService } from "./upgrade.js";
 import { ProjectInput, TaskInput, HabitInput, Settings } from "./schema.js";
 export const inject = [
   "storage",
@@ -78,6 +79,32 @@ export async function apply(ctx) {
     console.warn("time desk update checks unavailable:", error.message);
     updateService = null;
   }
+  let upgradeService = null;
+  try {
+    const upgradeUnit = await ctx.storage.backend.get("json").kv.open({
+      name: "life_desk_upgrade",
+      version: 1,
+      tables: [],
+      hasGlobal: true,
+      layout: "single",
+    });
+    upgradeService = createUpgradeService({
+      unit: upgradeUnit,
+      readState: () => service.operate({ action: "read" }),
+      restoreState: (a) =>
+        service.operate({
+          action: "restoreBackup",
+          backup: a.backup,
+          revision: a.revision,
+          confirm: true,
+        }),
+    });
+    await upgradeService.init();
+    ctx.effect(() => () => upgradeService.close());
+  } catch (error) {
+    console.warn("time desk upgrade snapshots unavailable:", error.message);
+    upgradeService = null;
+  }
   let spiritService = null;
   ctx.effect(() =>
     ctx.connection.fetch.register({
@@ -93,6 +120,23 @@ export async function apply(ctx) {
             throw new Error("请求最多 12 MB");
           const a =
             req.method === "GET" ? { action: "read" } : await req.json();
+          if (a.action === "upgrade") {
+            if (!upgradeService) throw new Error("升级快照暂不可用");
+            if (
+              ![
+                "preflight",
+                "prepare",
+                "snapshots",
+                "restoreSnapshot",
+                "clearPending",
+              ].includes(a.command)
+            )
+              throw new Error("不支持的升级操作");
+            return Response.json(
+              { ok: true, value: await upgradeService.operate(a) },
+              { headers: { "Cache-Control": "no-store" } },
+            );
+          }
           if (a.action === "update") {
             if (!updateService) throw new Error("更新检查暂不可用");
             if (!["status", "check", "settings", "ignore"].includes(a.command))

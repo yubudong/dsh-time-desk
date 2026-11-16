@@ -92,6 +92,8 @@ export function apply(ctx: any) {
   const fetchAction = createRequest(send, t);
   const updateRequest = (command: string, extra: any = {}) =>
     fetchAction({ action: "update", command, ...extra });
+  const upgradeRequest = (command: string, extra: any = {}) =>
+    fetchAction({ action: "upgrade", command, ...extra });
   const SpiritPanel = createSpiritPanel({ send, t, refresh });
   const timerUI = createTimerUI({ useStore, act, t, ctx });
   const { Timer, Fullscreen } = timerUI;
@@ -933,7 +935,19 @@ export function apply(ctx: any) {
       </>
     );
   }
-  function UpdateSection({ update, request, remember }: any) {
+  function UpdateSection({
+    update,
+    request,
+    remember,
+    upgrade,
+    upgradeRequest,
+    rememberUpgrade,
+    revision,
+    editorOpen,
+    spiritBusy,
+    saving,
+    refresh,
+  }: any) {
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState("");
     const [showNotes, setShowNotes] = useState(false);
@@ -979,6 +993,85 @@ export function apply(ctx: any) {
         ctx.layout.selectPanel("plugins");
       } catch {
         setError(t("openPluginsFailed"));
+      }
+    };
+    const up = upgrade || {};
+    const pending = up.pending || null;
+    const snapshots = up.snapshots || [];
+    const upgraded = !!(pending && pending.targetVersion === current);
+    const [preparing, setPreparing] = useState(false);
+    const [upgradeError, setUpgradeError] = useState("");
+    const [blockers, setBlockers] = useState<string[]>([]);
+    const [restored, setRestored] = useState("");
+    const openUpgradeManager = () => {
+      try {
+        ctx.layout.selectPanel("plugins");
+      } catch {
+        setUpgradeError(t("openPluginsFailed"));
+      }
+    };
+    const startUpgrade = async (target: string) => {
+      setUpgradeError("");
+      setBlockers([]);
+      setRestored("");
+      const localBlockers: string[] = [];
+      if (editorOpen) localBlockers.push(t("upgradeBlockEditor"));
+      if (spiritBusy()) localBlockers.push(t("upgradeBlockAssistant"));
+      if (saving) localBlockers.push(t("upgradeBlockBusy"));
+      if (localBlockers.length) {
+        setBlockers(localBlockers);
+        return;
+      }
+      setPreparing(true);
+      try {
+        const pre = await upgradeRequest("preflight");
+        if (pre.timer) {
+          setBlockers([t("upgradeBlockTimer")]);
+          return;
+        }
+        rememberUpgrade(
+          await upgradeRequest("prepare", {
+            targetVersion: target,
+            fromVersion: current,
+          }),
+        );
+        openUpgradeManager();
+      } catch (e: any) {
+        setUpgradeError(e?.message || t("updateCheckFailed"));
+      } finally {
+        setPreparing(false);
+      }
+    };
+    const restore = async (snap: any) => {
+      if (
+        !window.confirm(
+          t("restoreSnapshotConfirm") +
+            "\n\nv" +
+            snap.fromVersion +
+            " → v" +
+            snap.targetVersion,
+        )
+      )
+        return;
+      setUpgradeError("");
+      try {
+        await upgradeRequest("restoreSnapshot", {
+          id: snap.id,
+          confirm: true,
+          revision,
+        });
+        await refresh();
+        rememberUpgrade(await upgradeRequest("snapshots"));
+        setRestored(t("snapshotRestored"));
+      } catch (e: any) {
+        setUpgradeError(e?.message || t("updateCheckFailed"));
+      }
+    };
+    const dismissPending = async () => {
+      try {
+        rememberUpgrade(await upgradeRequest("clearPending"));
+      } catch (e: any) {
+        setUpgradeError(e?.message || t("updateCheckFailed"));
       }
     };
     const link = releaseUrl ? (
@@ -1073,8 +1166,15 @@ export function apply(ctx: any) {
               </>
             )}
             <div className="ld-actions">
+              <Btn
+                primary
+                disabled={preparing}
+                onClick={() => void startUpgrade(state.version)}
+              >
+                {preparing ? t("checkingUpdate") : t("prepareUpgrade")}
+              </Btn>
               {link}
-              <Btn onClick={openPlugins}>{t("openPluginManager")}</Btn>
+              <Btn onClick={openUpgradeManager}>{t("openPluginManager")}</Btn>
               <Btn onClick={() => void ignore(state.version)}>
                 {t("ignoreVersion")}
               </Btn>
@@ -1108,6 +1208,72 @@ export function apply(ctx: any) {
             </div>
           </div>
         )}
+        {blockers.length > 0 && (
+          <div className="ld-update-card" role="alert">
+            <strong>{t("prepareUpgrade")}</strong>
+            {blockers.map((x) => (
+              <p className="ld-help" key={x}>
+                {x}
+              </p>
+            ))}
+          </div>
+        )}
+        {upgradeError && (
+          <p className="ld-error" role="alert">
+            {upgradeError}
+          </p>
+        )}
+        {restored && (
+          <p className="ld-update-ok" role="status">
+            {restored}
+          </p>
+        )}
+        {pending && (
+          <div className="ld-update-card">
+            <strong>
+              {upgraded
+                ? t("upgradeDone") + " v" + current
+                : t("upgradePending") + " · v" + pending.targetVersion}
+            </strong>
+            <p className="ld-help">
+              {upgraded
+                ? t("upgradeDone") + " v" + current + "。"
+                : t("upgradePendingHint")}
+            </p>
+            <div className="ld-actions">
+              {upgraded ? (
+                <Btn onClick={() => void dismissPending()}>
+                  {t("upgradeClearPending")}
+                </Btn>
+              ) : (
+                <Btn onClick={openUpgradeManager}>
+                  {t("openPluginManagerAgain")}
+                </Btn>
+              )}
+            </div>
+          </div>
+        )}
+        {snapshots.length > 0 && (
+          <div className="ld-update-card">
+            <strong>
+              {t("snapshotsTitle")} · {snapshots.length}
+            </strong>
+            {snapshots
+              .slice()
+              .reverse()
+              .map((snap: any) => (
+                <div className="ld-snapshot-row" key={snap.id}>
+                  <span>
+                    v{snap.fromVersion} → v{snap.targetVersion}
+                  </span>
+                  <small>{new Date(snap.createdAt).toLocaleString()}</small>
+                  <Btn onClick={() => void restore(snap)}>
+                    {t("snapshotRestore")}
+                  </Btn>
+                </div>
+              ))}
+          </div>
+        )}
         {install === "development" && (
           <p className="ld-help">{t("updateDevHint")}</p>
         )}
@@ -1116,8 +1282,23 @@ export function apply(ctx: any) {
     );
   }
   function SettingsView({ env }: any) {
-    const { data, timeZone, run, busy, setMessage, update, request, remember } =
-      env;
+    const {
+      data,
+      timeZone,
+      run,
+      busy,
+      setMessage,
+      update,
+      request,
+      remember,
+      upgrade,
+      upgradeRequest,
+      rememberUpgrade,
+      revision,
+      editorOpen,
+      spiritBusy,
+      refresh,
+    } = env;
     const [v, setV] = useState({ ...data.settings });
     const [backup, setBackup] = useState<any>(null);
     const download = (obj: any) => {
@@ -1328,8 +1509,10 @@ export function apply(ctx: any) {
       [ai, setAi] = useState(false),
       [lifeCategory, setLifeCategory] = useState("");
     const [updateView, setUpdateView] = useState<any>(null);
+    const [upgradeView, setUpgradeView] = useState<any>(null);
     const [updateNotice, setUpdateNotice] = useState("");
     const updateChecking = useRef(false);
+    const spiritBusyRef = useRef(false);
     const timeZone =
       data?.settings?.timeZone ||
       Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -1422,6 +1605,11 @@ export function apply(ctx: any) {
           if (alive) rememberUpdate(v);
         })
         .catch(() => {});
+      upgradeRequest("snapshots")
+        .then((v: any) => {
+          if (alive) setUpgradeView(v);
+        })
+        .catch(() => {});
       return () => {
         alive = false;
       };
@@ -1481,6 +1669,13 @@ export function apply(ctx: any) {
       update: updateView,
       request: updateRequest,
       remember: rememberUpdate,
+      upgrade: upgradeView,
+      upgradeRequest,
+      rememberUpgrade: setUpgradeView,
+      revision: data.revision,
+      editorOpen: !!editor,
+      spiritBusy: () => spiritBusyRef.current,
+      refresh,
     };
     function taskRows(items: any[], empty = true) {
       return items.length ? (
@@ -2284,6 +2479,9 @@ export function apply(ctx: any) {
             open={ai}
             onClose={() => setAi(false)}
             reducedMotion={data.settings.reduceMotion}
+            onBusyChange={(value: boolean) => {
+              spiritBusyRef.current = value;
+            }}
           />
         </div>
         {editor && (

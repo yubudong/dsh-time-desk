@@ -5,7 +5,12 @@ const { useState, useEffect, useRef } = React;
 
 export function createSpiritPanel({ send, t, refresh }: any) {
   const request = createRequest(send, t, "api/life-desk-spirit", 45000);
-  return function SpiritPanel({ open, onClose, reducedMotion = false }: any) {
+  return function SpiritPanel({
+    open,
+    onClose,
+    reducedMotion = false,
+    onBusyChange = () => {},
+  }: any) {
     const [view, setView] = useState<any>(null),
       [catalog, setCatalog] = useState<any>(null),
       [draft, setDraft] = useState(""),
@@ -16,6 +21,9 @@ export function createSpiritPanel({ send, t, refresh }: any) {
       end = useRef<HTMLDivElement>(null),
       requestId = useRef(crypto.randomUUID()),
       lastTool = useRef("");
+    useEffect(() => {
+      onBusyChange(pending);
+    }, [pending]);
     const receive = (v: any) => {
       setView(v);
       const tool = v.messages

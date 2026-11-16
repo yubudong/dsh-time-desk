@@ -1064,3 +1064,27 @@
 .ld-root a.ld-btn {
   color: inherit;
 }
+.ld-snapshot-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2px 12px;
+  padding: 9px 0;
+  border-top: 1px solid var(--ld-line);
+}
+.ld-snapshot-row:first-of-type {
+  border-top: 0;
+}
+.ld-snapshot-row > span {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.ld-snapshot-row > small {
+  grid-column: 1;
+  color: var(--ld-muted);
+  font-size: 10px;
+}
+.ld-snapshot-row > .ld-btn {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+}

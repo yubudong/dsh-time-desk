@@ -18,6 +18,16 @@ test("compiled distribution exposes one operation to both UI route and agent too
     },
     async close() {},
   };
+  let upgradeGlobal = null;
+  const upgradeKick = {
+    async loadAll() {
+      return { global: structuredClone(upgradeGlobal), tables: {} };
+    },
+    async setGlobal(v) {
+      upgradeGlobal = structuredClone(v);
+    },
+    async close() {},
+  };
   const updateKick = {
     async loadAll() {
       return { global: structuredClone(updateGlobal), tables: {} };
@@ -41,11 +51,17 @@ test("compiled distribution exposes one operation to both UI route and agent too
                 for (const table of descriptor.tables)
                   assert.match(table, /^[a-z][a-z0-9_]*$/);
                 assert.ok(
-                  ["life_desk_v1", "life_desk_update"].includes(
-                    descriptor.name,
-                  ),
+                  [
+                    "life_desk_v1",
+                    "life_desk_update",
+                    "life_desk_upgrade",
+                  ].includes(descriptor.name),
                 );
-                return descriptor.name === "life_desk_v1" ? kick : updateKick;
+                return descriptor.name === "life_desk_v1"
+                  ? kick
+                  : descriptor.name === "life_desk_update"
+                    ? updateKick
+                    : upgradeKick;
               },
             },
           };
@@ -92,6 +108,17 @@ test("compiled distribution exposes one operation to both UI route and agent too
     tool.execute({ action: "update", command: "settings", autoCheck: true }),
     /仅可查看/,
   );
+  const preflight = await (
+    await route.fetch(
+      new Request("http://local/api/life-desk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "upgrade", command: "preflight" }),
+      }),
+    )
+  ).json();
+  assert.equal(preflight.value.ok, true);
+  assert.equal(preflight.value.timer, null);
   const written = await tool.execute({
     action: "save",
     revision: 0,

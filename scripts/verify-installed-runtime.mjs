@@ -118,15 +118,20 @@ try {
     await request({ action: "update", command: "status" })
   ).json();
   assert.equal(status.ok, true);
-  assert.match(status.value.currentVersion, /^0\.5\./);
-  assert.ok(["development", "managed", "unknown"].includes(status.value.installKind));
+  assert.match(status.value.currentVersion, /^\d+\.\d+\.\d+/);
+  assert.ok(
+    ["development", "managed", "unknown"].includes(status.value.installKind),
+  );
   assert.equal(status.value.state.kind, "none");
   const check = await (
     await request({ action: "update", command: "check", force: true })
   ).json();
   assert.equal(check.ok, true);
   // Network is optional in CI: either a verified state or an explicit error.
-  assert.ok(check.value.state?.kind || check.value.error, "update check returned no state");
+  assert.ok(
+    check.value.state?.kind || check.value.error,
+    "update check returned no state",
+  );
   console.log(
     "update check:",
     JSON.stringify({
@@ -148,6 +153,44 @@ try {
     timerId: started.value.timer.id,
   });
   assert.equal(ended.status, 200);
+  const upgradePreflight = await (
+    await request({ action: "upgrade", command: "preflight" })
+  ).json();
+  assert.equal(upgradePreflight.ok, true);
+  assert.equal(upgradePreflight.value.timer, null);
+  const readShape = (await (await request({ action: "read" })).json()).value;
+  console.log(
+    "READKEYS",
+    Object.keys(readShape).join(","),
+    "projects",
+    Array.isArray(readShape.projects),
+  );
+  const preparedUpgrade = await (
+    await request({
+      action: "upgrade",
+      command: "prepare",
+      fromVersion: "0.6.0",
+      targetVersion: "0.6.1",
+    })
+  ).json();
+  assert.equal(preparedUpgrade.ok, true);
+  assert.equal(preparedUpgrade.value.snapshots.length, 1);
+  const liveRevision = (await (await request({ action: "read" })).json()).value
+    .revision;
+  const restoredUpgrade = await (
+    await request({
+      action: "upgrade",
+      command: "restoreSnapshot",
+      id: preparedUpgrade.value.snapshots[0].id,
+      confirm: true,
+      revision: liveRevision,
+    })
+  ).json();
+  assert.equal(restoredUpgrade.ok, true);
+  assert.equal(restoredUpgrade.value.pending, null);
+  const afterRestore = (await (await request({ action: "read" })).json()).value;
+  assert.equal(afterRestore.tasks[0].title, "Runtime test");
+  console.log("upgrade snapshot: prepared and restored through the real route");
   for (const callback of disposers.splice(0).reverse())
     if (typeof callback === "function") await callback();
   const reopened = await backend.kv.open({
