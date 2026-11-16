@@ -1061,3 +1061,6 @@
   border-radius: 20px;
   padding: 1px 8px;
 }
+.ld-root a.ld-btn {
+  color: inherit;
+}
