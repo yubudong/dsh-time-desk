@@ -998,3 +998,66 @@
     transition: none !important;
   }
 }
+
+/* Phase 2A: version visibility. Read-only discovery, never installs anything. */
+.ld-update {
+  margin-top: 34px;
+  padding-top: 24px;
+  border-top: 1px solid var(--ld-line);
+}
+.ld-update-meta {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 7px 20px;
+  font-size: 12px;
+}
+.ld-update-meta > span {
+  color: var(--ld-muted);
+}
+.ld-update-meta strong {
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.ld-update-ok {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--dsw-alias-state-success-primary);
+}
+.ld-update-card {
+  margin-top: 14px;
+  border: 1px solid var(--ld-line);
+  border-radius: 9px;
+  padding: 14px;
+  background: var(--ld-surface);
+  display: grid;
+  gap: 9px;
+}
+.ld-update-card .ld-actions {
+  flex-wrap: wrap;
+}
+.ld-update-toggle {
+  justify-self: start;
+  font-size: 11px;
+  color: var(--ld-muted);
+  padding: 2px 0;
+}
+.ld-release-notes {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: 11px/1.7 var(--dsh-font-family-code-default, ui-monospace, monospace);
+  background: var(--dsw-alias-bg-layer-2);
+  border-radius: 7px;
+  padding: 10px 12px;
+  max-height: 220px;
+  overflow: auto;
+  color: var(--ld-muted);
+}
+.ld-update-badge {
+  font-size: 10px;
+  color: var(--ld-accent);
+  text-decoration: none !important;
+  border: 1px solid color-mix(in srgb, var(--ld-accent) 40%, var(--ld-line));
+  border-radius: 20px;
+  padding: 1px 8px;
+}

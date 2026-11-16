@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { createService } from "./model.js";
 import { createSpirit } from "./spirit.js";
+import {
+  createUpdateService,
+  detectInstallKind,
+  detectDshVersion,
+} from "./update.js";
 import { ProjectInput, TaskInput, HabitInput, Settings } from "./schema.js";
 export const inject = [
   "storage",
@@ -28,6 +33,8 @@ const guide = {
   ai: "时间精灵通过独立 DSH Agent 会话使用同一个 life_desk 工具；所有写入返回真实结果后再宣称完成。",
   assistant:
     "command=read/models 查看时间精灵状态或 DSH 模型目录；command=selectModel、item={provider,model} 设置精灵模型，省略 item 跟随 DSH 默认。此工具不能发送或伪造用户消息。",
+  update:
+    "command=status/check 查看或检查新版本；只检查自己的 GitHub 稳定发布，不下载、不安装、不修改插件文件。安装升级仍需用户在 DSH 插件管理器确认。",
 };
 export async function apply(ctx) {
   const unit = await ctx.storage.backend.get("json").kv.open({
@@ -46,6 +53,31 @@ export async function apply(ctx) {
   }
   ctx.effect(() => () => service.close());
   ctx.provide("lifeDesk", { operate: (a) => service.operate(a) });
+  let updateService = null;
+  try {
+    const updateUnit = await ctx.storage.backend.get("json").kv.open({
+      name: "life_desk_update",
+      version: 1,
+      tables: [],
+      hasGlobal: true,
+      layout: "single",
+    });
+    const currentVersion =
+      typeof __LIFE_DESK_VERSION__ !== "undefined"
+        ? __LIFE_DESK_VERSION__
+        : "0.0.0";
+    updateService = createUpdateService({
+      unit: updateUnit,
+      currentVersion,
+      installKind: detectInstallKind(),
+      dshVersion: detectDshVersion(),
+    });
+    await updateService.init();
+    ctx.effect(() => () => updateService.close());
+  } catch (error) {
+    console.warn("time desk update checks unavailable:", error.message);
+    updateService = null;
+  }
   let spiritService = null;
   ctx.effect(() =>
     ctx.connection.fetch.register({
@@ -61,6 +93,15 @@ export async function apply(ctx) {
             throw new Error("请求最多 12 MB");
           const a =
             req.method === "GET" ? { action: "read" } : await req.json();
+          if (a.action === "update") {
+            if (!updateService) throw new Error("更新检查暂不可用");
+            if (!["status", "check", "settings", "ignore"].includes(a.command))
+              throw new Error("不支持的更新操作");
+            return Response.json(
+              { ok: true, value: await updateService.operate(a) },
+              { headers: { "Cache-Control": "no-store" } },
+            );
+          }
           return Response.json(
             { ok: true, value: await service.operate(a) },
             { headers: { "Cache-Control": "no-store" } },
@@ -87,6 +128,7 @@ export async function apply(ctx) {
             enum: [
               "help",
               "assistant",
+              "update",
               "read",
               "save",
               "trash",
@@ -135,6 +177,7 @@ export async function apply(ctx) {
           round: { type: "integer" },
           backup: { type: "object", additionalProperties: true },
           confirm: { type: "boolean" },
+          autoCheck: { type: "boolean" },
           keys: { type: "array", items: { type: "string" } },
           offset: { type: "integer" },
           limit: { type: "integer" },
@@ -163,6 +206,16 @@ export async function apply(ctx) {
           return spiritService.operate({
             action: a.command,
             selection: a.item || null,
+          });
+        }
+        if (a.action === "update") {
+          if (!updateService) throw new Error("更新检查暂不可用");
+          const command = a.command || "status";
+          if (!["status", "check"].includes(command))
+            throw new Error("AI 仅可查看版本或检查更新");
+          return updateService.operate({
+            command,
+            force: command === "check" ? false : undefined,
           });
         }
         if (a.action === "help")

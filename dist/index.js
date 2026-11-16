@@ -447,11 +447,11 @@ var require_rrule = __commonJS({
           }
           function __awaiter(thisArg, _arguments, P, generator) {
             function adopt(value) {
-              return value instanceof P ? value : new P(function(resolve) {
-                resolve(value);
+              return value instanceof P ? value : new P(function(resolve2) {
+                resolve2(value);
               });
             }
-            return new (P || (P = Promise))(function(resolve, reject) {
+            return new (P || (P = Promise))(function(resolve2, reject) {
               function fulfilled(value) {
                 try {
                   step(generator.next(value));
@@ -467,7 +467,7 @@ var require_rrule = __commonJS({
                 }
               }
               function step(result) {
-                result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+                result.done ? resolve2(result.value) : adopt(result.value).then(fulfilled, rejected);
               }
               step((generator = generator.apply(thisArg, _arguments || [])).next());
             });
@@ -663,14 +663,14 @@ var require_rrule = __commonJS({
             }, i);
             function verb(n) {
               i[n] = o[n] && function(v) {
-                return new Promise(function(resolve, reject) {
-                  v = o[n](v), settle2(resolve, reject, v.done, v.value);
+                return new Promise(function(resolve2, reject) {
+                  v = o[n](v), settle2(resolve2, reject, v.done, v.value);
                 });
               };
             }
-            function settle2(resolve, reject, d, v) {
+            function settle2(resolve2, reject, d, v) {
               Promise.resolve(v).then(function(v2) {
-                resolve({ value: v2, done: d });
+                resolve2({ value: v2, done: d });
               }, reject);
             }
           }
@@ -8326,7 +8326,7 @@ var recursive = /* @__PURE__ */ new WeakMap();
 var NONE = 0;
 var ASSUMED = 1;
 var PROVEN = 2;
-function isRecursive(inst, stack, resolve) {
+function isRecursive(inst, stack, resolve2) {
   const cached2 = recursive.get(inst);
   if (cached2 !== void 0)
     return cached2 ? PROVEN : NONE;
@@ -8336,7 +8336,7 @@ function isRecursive(inst, stack, resolve) {
   let result = NONE;
   const check2 = (child) => {
     if (result !== PROVEN && child?._zod) {
-      const answer = isRecursive(child, stack, resolve);
+      const answer = isRecursive(child, stack, resolve2);
       if (answer > result)
         result = answer;
     }
@@ -8347,7 +8347,7 @@ function isRecursive(inst, stack, resolve) {
       const desc = Object.getOwnPropertyDescriptor(sh, key);
       if (spread && !desc.enumerable)
         continue;
-      const child = desc.get ? ASSUMED : desc.value?._zod ? isRecursive(desc.value, stack, resolve) : NONE;
+      const child = desc.get ? ASSUMED : desc.value?._zod ? isRecursive(desc.value, stack, resolve2) : NONE;
       if (child > answer)
         answer = child;
     }
@@ -8411,7 +8411,7 @@ function isRecursive(inst, stack, resolve) {
       break;
     // `$ZodLazy` caches its inner on the def, so a resolved edge is followed exactly
     case "lazy": {
-      const inner = def._cachedInner ?? (resolve ? inst._zod.innerType : void 0);
+      const inner = def._cachedInner ?? (resolve2 ? inst._zod.innerType : void 0);
       merge2(inner ? isRecursive(inner, stack, false) : ASSUMED);
       break;
     }
@@ -35684,13 +35684,13 @@ async function createSpirit(ctx, unit) {
       }
       if (a.action === "watch") {
         if (a.after === version2 && !signal?.aborted)
-          await new Promise((resolve) => {
+          await new Promise((resolve2) => {
             let timer;
             const done = () => {
               clearTimeout(timer);
               waiters.delete(done);
               signal?.removeEventListener("abort", done);
-              resolve();
+              resolve2();
             };
             waiters.add(done);
             timer = setTimeout(done, 1e4);
@@ -35778,6 +35778,438 @@ async function createSpirit(ctx, unit) {
   };
 }
 
+// src/update.js
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+// src/update-core.js
+var UPDATE_REPOSITORY = "yubudong/dsh-time-desk";
+var UPDATE_API = "https://api.github.com/repos/" + UPDATE_REPOSITORY + "/releases/latest";
+var UPDATE_PAGE = "https://github.com/" + UPDATE_REPOSITORY + "/releases";
+var UPDATE_FEED = "https://github.com/" + UPDATE_REPOSITORY + "/releases.atom";
+var AUTO_CHECK_INTERVAL = 24 * 60 * 60 * 1e3;
+var MANUAL_CHECK_COOLDOWN = 30 * 1e3;
+var MAX_NOTES = 4e3;
+var VERSION = /^v?([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$/;
+function parseVersion(value) {
+  if (typeof value !== "string") return null;
+  const m = VERSION.exec(value.trim());
+  if (!m) return null;
+  return {
+    major: Number(m[1]),
+    minor: Number(m[2]),
+    patch: Number(m[3]),
+    prerelease: m[4] ? m[4].split(".") : []
+  };
+}
+var numeric = (x) => /^[0-9]+$/.test(x);
+function compareIdentifier(a, b) {
+  const na = numeric(a), nb = numeric(b);
+  if (na && nb) return Number(a) - Number(b);
+  if (na) return -1;
+  if (nb) return 1;
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+function compareVersions(a, b) {
+  const x = parseVersion(a), y = parseVersion(b);
+  if (!x || !y) throw Error("Invalid version");
+  for (const k of ["major", "minor", "patch"])
+    if (x[k] !== y[k]) return x[k] < y[k] ? -1 : 1;
+  if (!x.prerelease.length && !y.prerelease.length) return 0;
+  if (!x.prerelease.length) return 1;
+  if (!y.prerelease.length) return -1;
+  const n = Math.max(x.prerelease.length, y.prerelease.length);
+  for (let i = 0; i < n; i++) {
+    if (!x.prerelease[i]) return -1;
+    if (!y.prerelease[i]) return 1;
+    const c = compareIdentifier(x.prerelease[i], y.prerelease[i]);
+    if (c) return c < 0 ? -1 : 1;
+  }
+  return 0;
+}
+function comparatorRange(token) {
+  const m = /^(>=|<=|>|<|=|\^|~)?(.*)$/.exec(token);
+  const op = m[1] || "=";
+  const v = parseVersion(m[2]);
+  if (!v) return null;
+  if (op === "=") return { test: (x) => compareVersions(x, m[2]) === 0 };
+  if (op === "^") {
+    const upper = v.major > 0 ? `${v.major + 1}.0.0-0` : v.minor > 0 ? `0.${v.minor + 1}.0-0` : `0.0.${v.patch + 1}-0`;
+    return {
+      test: (x) => compareVersions(x, m[2]) >= 0 && compareVersions(x, upper) < 0
+    };
+  }
+  if (op === "~") {
+    const upper = `${v.major}.${v.minor + 1}.0-0`;
+    return {
+      test: (x) => compareVersions(x, m[2]) >= 0 && compareVersions(x, upper) < 0
+    };
+  }
+  const test = {
+    ">=": (x) => compareVersions(x, m[2]) >= 0,
+    ">": (x) => compareVersions(x, m[2]) > 0,
+    "<=": (x) => compareVersions(x, m[2]) <= 0,
+    "<": (x) => compareVersions(x, m[2]) < 0
+  }[op];
+  return test ? { test } : null;
+}
+function satisfiesRange(version2, range) {
+  if (!parseVersion(version2) || typeof range !== "string" || !range.trim())
+    return null;
+  const branches = range.split("||").map((b) => b.trim()).filter(Boolean);
+  if (!branches.length) return null;
+  const parsed = [];
+  for (const branch of branches) {
+    const comparators = branch.split(/\s+/).map(comparatorRange);
+    if (comparators.some((c) => !c)) return null;
+    parsed.push(comparators);
+  }
+  return parsed.some((list) => list.every((c) => c.test(version2)));
+}
+function expectedAssets(version2) {
+  return [
+    `dsh-time-desk-${version2}.tgz`,
+    `dsh-time-desk-${version2}-source.zip`,
+    "SHA256SUMS.txt"
+  ];
+}
+function sanitizeNotes(text) {
+  if (typeof text !== "string") return "";
+  return text.replace(/<script[\s\S]*?<\/script>/gi, "").replace(/<[^>]+>/g, "").replace(/\r\n/g, "\n").trim().slice(0, MAX_NOTES);
+}
+function normalizeRelease(json2, { currentVersion, allowUnverified = false } = {}) {
+  if (!json2 || typeof json2 !== "object") throw Error("\u53D1\u5E03\u4FE1\u606F\u683C\u5F0F\u65E0\u6CD5\u8BC6\u522B");
+  if (json2.draft) throw Error("\u8BE5\u53D1\u5E03\u4ECD\u662F\u8349\u7A3F");
+  if (json2.prerelease) throw Error("\u53EA\u68C0\u67E5\u7A33\u5B9A\u7248\uFF0C\u8BE5\u53D1\u5E03\u662F\u9884\u53D1\u5E03\u7248");
+  const version2 = String(json2.tag_name || "").replace(/^v/, "");
+  if (!parseVersion(version2)) throw Error("\u53D1\u5E03\u7248\u672C\u53F7\u65E0\u6CD5\u8BC6\u522B");
+  if (!json2.html_url || !/^https:\/\/github\.com\//.test(json2.html_url))
+    throw Error("\u53D1\u5E03\u94FE\u63A5\u6765\u6E90\u5F02\u5E38");
+  const names = expectedAssets(version2);
+  const source = Array.isArray(json2.assets) ? json2.assets : [];
+  const present = new Set(source.map((a) => a?.name));
+  const missing = names.filter((n) => !present.has(n));
+  const assetsVerified = missing.length === 0;
+  if (!assetsVerified && !allowUnverified)
+    throw Error("\u53D1\u5E03\u9644\u4EF6\u4E0D\u5B8C\u6574\uFF1A" + missing.join("\u3001"));
+  if (assetsVerified) {
+    const badDigest = source.find(
+      (a) => names.includes(a.name) && a.name !== "SHA256SUMS.txt" && !/^sha256:[a-f0-9]{64}$/.test(a.digest || "")
+    );
+    if (badDigest) throw Error("\u53D1\u5E03\u9644\u4EF6\u7F3A\u5C11\u6821\u9A8C\u503C\uFF1A" + badDigest.name);
+  }
+  return {
+    version: version2,
+    url: json2.html_url,
+    publishedAt: json2.published_at || "",
+    notes: sanitizeNotes(json2.body),
+    assetsVerified,
+    assets: source.filter((a) => names.includes(a?.name)).map((a) => ({
+      name: a.name,
+      digest: a.digest || "",
+      size: a.size || 0
+    })),
+    newer: currentVersion ? compareVersions(version2, currentVersion) > 0 : true
+  };
+}
+var decodeEntities = (s) => s.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n))).replace(/&amp;/g, "&");
+function parseReleaseFeed(xml, { currentVersion } = {}) {
+  if (typeof xml !== "string" || xml.length > 512 * 1024)
+    throw Error("\u53D1\u5E03\u8BA2\u9605\u5185\u5BB9\u65E0\u6CD5\u8BC6\u522B");
+  let best = null;
+  let bestVersion = null;
+  for (const [, entry] of xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)) {
+    const href = /<link[^>]*rel="alternate"[^>]*href="([^"]+)"/.exec(entry);
+    if (!href || !/\/releases\/tag\/v[^"]+$/.test(href[1])) continue;
+    const version2 = href[1].split("/tag/v")[1];
+    const parsed = parseVersion(version2);
+    if (!parsed || parsed.prerelease.length) continue;
+    const updated = /<updated>([^<]+)<\/updated>/.exec(entry);
+    const content = /<content[^>]*>([\s\S]*?)<\/content>/.exec(entry);
+    if (!best || compareVersions(version2, bestVersion) > 0) {
+      bestVersion = version2;
+      best = {
+        tag_name: "v" + version2,
+        html_url: href[1],
+        published_at: updated ? updated[1] : "",
+        body: content ? decodeEntities(content[1]) : "",
+        assets: [],
+        draft: false,
+        prerelease: false
+      };
+    }
+  }
+  if (!best) throw Error("\u53D1\u5E03\u8BA2\u9605\u4E2D\u6CA1\u6709\u7A33\u5B9A\u7248\u672C");
+  return normalizeRelease(best, { currentVersion, allowUnverified: true });
+}
+function updateState({
+  release,
+  currentVersion,
+  dshVersion,
+  dshRange,
+  ignoredVersion
+}) {
+  if (!release) return { kind: "none" };
+  if (!release.newer) return { kind: "latest", version: release.version };
+  if (ignoredVersion && ignoredVersion === release.version)
+    return { kind: "ignored", version: release.version };
+  if (!dshRange) return { kind: "unknown-compat", version: release.version };
+  const ok = dshVersion ? satisfiesRange(dshVersion, dshRange) : null;
+  if (ok === false)
+    return {
+      kind: "incompatible",
+      version: release.version,
+      dshRange,
+      dshVersion
+    };
+  if (ok === null)
+    return { kind: "unknown-compat", version: release.version, dshRange };
+  return { kind: "available", version: release.version, dshRange };
+}
+
+// src/update.js
+var MAX_BODY = 512 * 1024;
+var TIMEOUT = 1e4;
+var DEFAULT = {
+  autoCheck: false,
+  ignoredVersion: "",
+  lastCheck: 0,
+  cache: null
+};
+function fileExists(path) {
+  try {
+    return existsSync(path);
+  } catch {
+    return false;
+  }
+}
+function detectInstallKind(moduleUrl = import.meta.url) {
+  try {
+    let dir = dirname(fileURLToPath(moduleUrl));
+    for (let i = 0; i < 4; i++) {
+      const manifest = join(dir, "package.json");
+      if (fileExists(manifest)) {
+        const data = JSON.parse(readFileSync(manifest, "utf8"));
+        if (data?.name === "dsh-time-desk") {
+          if (dir.includes(`${join("node_modules")}`)) return "managed";
+          return fileExists(join(dir, ".git")) ? "development" : "managed";
+        }
+      }
+      const parent = resolve(dir, "..");
+      if (parent === dir) break;
+      dir = parent;
+    }
+  } catch {
+  }
+  return "unknown";
+}
+function detectDshVersion() {
+  for (const key of ["DSH_VERSION", "DSH_APP_VERSION", "DSH_RUNTIME_VERSION"]) {
+    const value = process.env?.[key];
+    if (value && parseVersion(value)) return value;
+  }
+  const resources = process.resourcesPath;
+  if (!resources) return null;
+  for (const rel of ["app.asar/dsh/package.json", "app/dsh/package.json"]) {
+    try {
+      const data = JSON.parse(readFileSync(join(resources, rel), "utf8"));
+      if (data?.version && parseVersion(data.version)) return data.version;
+    } catch {
+    }
+  }
+  return null;
+}
+async function boundedText(fetchImpl, url2, accept) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT);
+  try {
+    const res = await fetchImpl(url2, {
+      signal: controller.signal,
+      headers: {
+        Accept: accept,
+        "User-Agent": "dsh-time-desk-update-check"
+      },
+      redirect: "follow"
+    });
+    if (res.status === 404)
+      throw Object.assign(Error("\u672A\u627E\u5230\u6B63\u5F0F\u53D1\u5E03\u7248\u672C"), { code: "missing" });
+    if (res.status === 403 || res.status === 429)
+      throw Object.assign(Error("\u68C0\u67E5\u8BF7\u6C42\u8FC7\u4E8E\u9891\u7E41\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5"), {
+        code: "rate"
+      });
+    if (!res.ok) throw Error(`\u68C0\u67E5\u5931\u8D25\uFF08HTTP ${res.status}\uFF09`);
+    const length = Number(res.headers.get("content-length") || 0);
+    if (length > MAX_BODY) throw Error("\u53D1\u5E03\u4FE1\u606F\u8FC7\u5927\uFF0C\u5DF2\u505C\u6B62\u8BFB\u53D6");
+    const text = await res.text();
+    if (text.length > MAX_BODY) throw Error("\u53D1\u5E03\u4FE1\u606F\u8FC7\u5927\uFF0C\u5DF2\u505C\u6B62\u8BFB\u53D6");
+    return text;
+  } catch (error62) {
+    if (error62.name === "AbortError") throw Error("\u68C0\u67E5\u66F4\u65B0\u8D85\u65F6\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5");
+    throw error62;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+async function boundedJson(fetchImpl, url2) {
+  return JSON.parse(
+    await boundedText(fetchImpl, url2, "application/vnd.github+json")
+  );
+}
+async function dshRangeOf(fetchImpl, version2) {
+  try {
+    const manifest = JSON.parse(
+      await boundedText(
+        fetchImpl,
+        `https://raw.githubusercontent.com/${UPDATE_REPOSITORY}/v${version2}/package.json`,
+        "application/json"
+      )
+    );
+    if (manifest?.name === "dsh-time-desk" && manifest.version === version2)
+      return typeof manifest.engines?.dsh === "string" ? manifest.engines.dsh : null;
+  } catch {
+  }
+  return null;
+}
+async function fetchLatest({
+  fetchImpl = globalThis.fetch,
+  currentVersion
+} = {}) {
+  if (typeof fetchImpl !== "function") throw Error("\u5F53\u524D\u73AF\u5883\u4E0D\u652F\u6301\u7F51\u7EDC\u68C0\u67E5");
+  let release;
+  let degraded = null;
+  try {
+    release = normalizeRelease(await boundedJson(fetchImpl, UPDATE_API), {
+      currentVersion
+    });
+  } catch (error62) {
+    if (error62.code !== "rate") throw error62;
+    release = parseReleaseFeed(
+      await boundedText(fetchImpl, UPDATE_FEED, "application/atom+xml"),
+      { currentVersion }
+    );
+    degraded = "feed";
+  }
+  return {
+    release,
+    dshRange: await dshRangeOf(fetchImpl, release.version),
+    degraded,
+    fetchedAt: Date.now()
+  };
+}
+function createUpdateService({
+  unit,
+  currentVersion,
+  installKind = "unknown",
+  dshVersion = null,
+  fetchImpl = globalThis.fetch,
+  clock = () => Date.now()
+}) {
+  let prefs = { ...DEFAULT };
+  let queue = Promise.resolve();
+  const snapshot = (extra = {}) => ({
+    currentVersion,
+    installKind,
+    dshVersion: dshVersion || null,
+    repository: UPDATE_REPOSITORY,
+    autoInterval: AUTO_CHECK_INTERVAL,
+    releasePage: UPDATE_PAGE,
+    prefs: {
+      autoCheck: !!prefs.autoCheck,
+      ignoredVersion: prefs.ignoredVersion || ""
+    },
+    lastCheck: prefs.lastCheck || 0,
+    cache: prefs.cache || null,
+    degraded: prefs.cache && prefs.cache.degraded || null,
+    ...extra
+  });
+  function state() {
+    if (!prefs.cache) return { kind: "none" };
+    return updateState({
+      release: prefs.cache.release,
+      currentVersion,
+      dshVersion,
+      dshRange: prefs.cache.dshRange,
+      ignoredVersion: prefs.ignoredVersion
+    });
+  }
+  async function persist() {
+    await unit.setGlobal({ ...prefs });
+  }
+  return {
+    async init() {
+      const all = await unit.loadAll();
+      const stored = all?.global;
+      if (stored && typeof stored === "object")
+        prefs = {
+          autoCheck: !!stored.autoCheck,
+          ignoredVersion: typeof stored.ignoredVersion === "string" ? stored.ignoredVersion : "",
+          lastCheck: Number.isFinite(stored.lastCheck) ? stored.lastCheck : 0,
+          cache: stored.cache && typeof stored.cache === "object" ? stored.cache : null
+        };
+      return snapshot({ state: state() });
+    },
+    operate(a) {
+      const run = queue.then(async () => {
+        const command = a.command;
+        if (command === "settings") {
+          if (typeof a.autoCheck === "boolean") prefs.autoCheck = a.autoCheck;
+          await persist();
+          return snapshot({ state: state() });
+        }
+        if (command === "ignore") {
+          const v = typeof a.version === "string" ? a.version.replace(/^v/, "") : "";
+          if (v && !parseVersion(v)) throw Error("\u7248\u672C\u53F7\u65E0\u6548");
+          prefs.ignoredVersion = v;
+          await persist();
+          return snapshot({ state: state() });
+        }
+        if (command === "check") {
+          const now = clock();
+          if (!a.force && prefs.lastCheck && now - prefs.lastCheck < MANUAL_CHECK_COOLDOWN)
+            return snapshot({
+              state: state(),
+              throttled: true,
+              checkedAt: prefs.lastCheck
+            });
+          try {
+            const result = await fetchLatest({ fetchImpl, currentVersion });
+            prefs.cache = {
+              release: result.release,
+              dshRange: result.dshRange,
+              degraded: result.degraded || null
+            };
+            prefs.lastCheck = clock();
+            await persist();
+            return snapshot({
+              state: state(),
+              checkedAt: prefs.lastCheck,
+              dshRange: result.dshRange,
+              degraded: result.degraded || null
+            });
+          } catch (error62) {
+            prefs.lastCheck = clock();
+            await persist();
+            return snapshot({
+              state: state(),
+              checkedAt: prefs.lastCheck,
+              error: { code: error62.code || "network", message: error62.message }
+            });
+          }
+        }
+        return snapshot({ state: state() });
+      });
+      queue = run.catch(() => {
+      });
+      return run;
+    },
+    async close() {
+      await queue;
+      await unit.close();
+    }
+  };
+}
+
 // src/host.js
 var inject = [
   "storage",
@@ -35796,7 +36228,8 @@ var guide = {
   rules: "\u516C\u5386 weekly.days:0=\u5468\u65E5\u81F36=\u5468\u516D\u3002lunar.month/day \u662F\u519C\u5386\uFF0Cdate \u4ECD\u4E3A\u9996\u6B21\u751F\u6548\u516C\u5386\u65E5\u3002leap=regular/only/both\uFF0Cmissing=last/skip\u3002preview \u53EF\u68C0\u67E5\u672A\u6765\u4E09\u6B21\u65E5\u671F\u3002\u65E5\u671F\u4F7F\u7528 settings.timeZone\u3002\u666E\u901A\u672A\u5B8C\u6210\u4EFB\u52A1\u4ECE\u5B89\u6392\u65E5\u5F00\u59CB\u5728\u540E\u7EED\u65E5\u671F\u6301\u7EED\u5F85\u529E\uFF0C\u622A\u6B62\u65E5\u662F\u6700\u665A\u671F\u9650\uFF1B\u65E0\u9700\u4E3A\u4ECA\u65E5\u663E\u793A\u800C\u6539\u671F\u3002range \u662F\u65E5\u5386\u53D1\u751F\u65E5\u67E5\u8BE2\uFF0C\u4E0D\u7B49\u4E8E\u5305\u542B\u5EF6\u7EED\u4EFB\u52A1\u7684\u4ECA\u65E5\u6267\u884C\u6E05\u5355\u3002",
   authority: "\u660E\u786E\u65B0\u589E/\u6253\u5361\u53EF\u76F4\u63A5\u6267\u884C\uFF1B\u6279\u91CF\u6539\u671F\u3001\u5220\u9664\u9879\u76EE\u3001\u6574\u7EC4\u91CD\u590D\u8C03\u6574\u548C\u5907\u4EFD\u8986\u76D6\u524D\u5148\u5C55\u793A\u5F71\u54CD\u8303\u56F4\u5E76\u5F81\u5F97\u7528\u6237\u540C\u610F\u3002\u52FF\u63A8\u6D4B\u91D1\u989D\u3001\u8D26\u671F\u3001\u4E60\u60EF\u9891\u7387\uFF1B\u4EC5\u4F7F\u7528\u7528\u6237\u63D0\u4F9B\u7684\u4FE1\u606F\u3002\u8BF7\u6C42\u91CD\u8BD5\u590D\u7528 requestId\u3002",
   ai: "\u65F6\u95F4\u7CBE\u7075\u901A\u8FC7\u72EC\u7ACB DSH Agent \u4F1A\u8BDD\u4F7F\u7528\u540C\u4E00\u4E2A life_desk \u5DE5\u5177\uFF1B\u6240\u6709\u5199\u5165\u8FD4\u56DE\u771F\u5B9E\u7ED3\u679C\u540E\u518D\u5BA3\u79F0\u5B8C\u6210\u3002",
-  assistant: "command=read/models \u67E5\u770B\u65F6\u95F4\u7CBE\u7075\u72B6\u6001\u6216 DSH \u6A21\u578B\u76EE\u5F55\uFF1Bcommand=selectModel\u3001item={provider,model} \u8BBE\u7F6E\u7CBE\u7075\u6A21\u578B\uFF0C\u7701\u7565 item \u8DDF\u968F DSH \u9ED8\u8BA4\u3002\u6B64\u5DE5\u5177\u4E0D\u80FD\u53D1\u9001\u6216\u4F2A\u9020\u7528\u6237\u6D88\u606F\u3002"
+  assistant: "command=read/models \u67E5\u770B\u65F6\u95F4\u7CBE\u7075\u72B6\u6001\u6216 DSH \u6A21\u578B\u76EE\u5F55\uFF1Bcommand=selectModel\u3001item={provider,model} \u8BBE\u7F6E\u7CBE\u7075\u6A21\u578B\uFF0C\u7701\u7565 item \u8DDF\u968F DSH \u9ED8\u8BA4\u3002\u6B64\u5DE5\u5177\u4E0D\u80FD\u53D1\u9001\u6216\u4F2A\u9020\u7528\u6237\u6D88\u606F\u3002",
+  update: "command=status/check \u67E5\u770B\u6216\u68C0\u67E5\u65B0\u7248\u672C\uFF1B\u53EA\u68C0\u67E5\u81EA\u5DF1\u7684 GitHub \u7A33\u5B9A\u53D1\u5E03\uFF0C\u4E0D\u4E0B\u8F7D\u3001\u4E0D\u5B89\u88C5\u3001\u4E0D\u4FEE\u6539\u63D2\u4EF6\u6587\u4EF6\u3002\u5B89\u88C5\u5347\u7EA7\u4ECD\u9700\u7528\u6237\u5728 DSH \u63D2\u4EF6\u7BA1\u7406\u5668\u786E\u8BA4\u3002"
 };
 async function apply(ctx) {
   const unit = await ctx.storage.backend.get("json").kv.open({
@@ -35815,6 +36248,28 @@ async function apply(ctx) {
   }
   ctx.effect(() => () => service.close());
   ctx.provide("lifeDesk", { operate: (a) => service.operate(a) });
+  let updateService = null;
+  try {
+    const updateUnit = await ctx.storage.backend.get("json").kv.open({
+      name: "life_desk_update",
+      version: 1,
+      tables: [],
+      hasGlobal: true,
+      layout: "single"
+    });
+    const currentVersion = true ? "0.5.3" : "0.0.0";
+    updateService = createUpdateService({
+      unit: updateUnit,
+      currentVersion,
+      installKind: detectInstallKind(),
+      dshVersion: detectDshVersion()
+    });
+    await updateService.init();
+    ctx.effect(() => () => updateService.close());
+  } catch (error62) {
+    console.warn("time desk update checks unavailable:", error62.message);
+    updateService = null;
+  }
   let spiritService = null;
   ctx.effect(
     () => ctx.connection.fetch.register({
@@ -35826,6 +36281,15 @@ async function apply(ctx) {
           if (req.headers.get("content-length") && Number(req.headers.get("content-length")) > 12 * 1024 * 1024)
             throw new Error("\u8BF7\u6C42\u6700\u591A 12 MB");
           const a = req.method === "GET" ? { action: "read" } : await req.json();
+          if (a.action === "update") {
+            if (!updateService) throw new Error("\u66F4\u65B0\u68C0\u67E5\u6682\u4E0D\u53EF\u7528");
+            if (!["status", "check", "settings", "ignore"].includes(a.command))
+              throw new Error("\u4E0D\u652F\u6301\u7684\u66F4\u65B0\u64CD\u4F5C");
+            return Response.json(
+              { ok: true, value: await updateService.operate(a) },
+              { headers: { "Cache-Control": "no-store" } }
+            );
+          }
           return Response.json(
             { ok: true, value: await service.operate(a) },
             { headers: { "Cache-Control": "no-store" } }
@@ -35851,6 +36315,7 @@ async function apply(ctx) {
             enum: [
               "help",
               "assistant",
+              "update",
               "read",
               "save",
               "trash",
@@ -35899,6 +36364,7 @@ async function apply(ctx) {
           round: { type: "integer" },
           backup: { type: "object", additionalProperties: true },
           confirm: { type: "boolean" },
+          autoCheck: { type: "boolean" },
           keys: { type: "array", items: { type: "string" } },
           offset: { type: "integer" },
           limit: { type: "integer" }
@@ -35927,6 +36393,16 @@ async function apply(ctx) {
           return spiritService.operate({
             action: a.command,
             selection: a.item || null
+          });
+        }
+        if (a.action === "update") {
+          if (!updateService) throw new Error("\u66F4\u65B0\u68C0\u67E5\u6682\u4E0D\u53EF\u7528");
+          const command = a.command || "status";
+          if (!["status", "check"].includes(command))
+            throw new Error("AI \u4EC5\u53EF\u67E5\u770B\u7248\u672C\u6216\u68C0\u67E5\u66F4\u65B0");
+          return updateService.operate({
+            command,
+            force: command === "check" ? false : void 0
           });
         }
         if (a.action === "help")

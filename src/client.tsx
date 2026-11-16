@@ -90,6 +90,8 @@ export function apply(ctx: any) {
     return transport?.fetch ? transport.fetch(input, init) : fetch(input, init);
   };
   const fetchAction = createRequest(send, t);
+  const updateRequest = (command: string, extra: any = {}) =>
+    fetchAction({ action: "update", command, ...extra });
   const SpiritPanel = createSpiritPanel({ send, t, refresh });
   const timerUI = createTimerUI({ useStore, act, t, ctx });
   const { Timer, Fullscreen } = timerUI;
@@ -931,8 +933,191 @@ export function apply(ctx: any) {
       </>
     );
   }
+  function UpdateSection({ update, request, remember }: any) {
+    const [busy, setBusy] = useState(false);
+    const [error, setError] = useState("");
+    const [showNotes, setShowNotes] = useState(false);
+    const v = update || {};
+    const current = v.currentVersion || __LIFE_DESK_VERSION__;
+    const state = v.state || { kind: "none" };
+    const cache = v.cache?.release || null;
+    const install = v.installKind || "unknown";
+    const installText =
+      install === "development"
+        ? t("installDevelopment")
+        : install === "managed"
+          ? t("installManaged")
+          : t("installUnknown");
+    const releaseUrl = cache?.url || v.releasePage || "";
+    const check = async (force = true) => {
+      setBusy(true);
+      setError("");
+      try {
+        remember(await request("check", { force }));
+      } catch (e: any) {
+        setError(e?.message || t("updateCheckFailed"));
+      } finally {
+        setBusy(false);
+      }
+    };
+    const setAuto = async (next: boolean) => {
+      try {
+        remember(await request("settings", { autoCheck: next }));
+      } catch (e: any) {
+        setError(e?.message || t("updateCheckFailed"));
+      }
+    };
+    const ignore = async (version: string) => {
+      try {
+        remember(await request("ignore", { version }));
+      } catch (e: any) {
+        setError(e?.message || t("updateCheckFailed"));
+      }
+    };
+    const openPlugins = () => {
+      try {
+        ctx.layout.selectPanel("plugins");
+      } catch {
+        setError(t("openPluginsFailed"));
+      }
+    };
+    const link = releaseUrl ? (
+      <a className="ld-btn" href={releaseUrl} target="_blank" rel="noreferrer">
+        {t("viewRelease")}
+      </a>
+    ) : null;
+    return (
+      <section className="ld-section ld-update" id="ld-update">
+        <h2>{t("versionUpdate")}</h2>
+        <div className="ld-update-meta">
+          <span>{t("currentVersion")}</span>
+          <strong>v{current}</strong>
+          <span>{t("installKindLabel")}</span>
+          <strong>{installText}</strong>
+          <span>{t("currentDsh")}</span>
+          <strong>
+            {v.dshVersion ? "v" + v.dshVersion : t("unknownValue")}
+          </strong>
+          <span>{t("lastChecked")}</span>
+          <strong>
+            {v.lastCheck
+              ? new Date(v.lastCheck).toLocaleString()
+              : t("neverChecked")}
+          </strong>
+        </div>
+        <div className="ld-actions" style={{ marginTop: 14 }}>
+          <Btn primary disabled={busy} onClick={() => void check(true)}>
+            {busy ? t("checkingUpdate") : t("checkNow")}
+          </Btn>
+          <label className="ld-check-label">
+            <input
+              type="checkbox"
+              checked={!!v.prefs?.autoCheck}
+              disabled={busy}
+              onChange={(e) => void setAuto(e.target.checked)}
+            />
+            {t("autoCheckUpdate")}
+          </label>
+        </div>
+        <p className="ld-help">
+          {t("autoCheckHint")} {t("updateStableOnly")}
+        </p>
+        {v.error && !error && (
+          <p className="ld-error" role="alert">
+            {t("updateCheckFailed")}：{v.error.message}
+          </p>
+        )}
+        {error && (
+          <p className="ld-error" role="alert">
+            {error}
+          </p>
+        )}
+        {v.degraded === "feed" && (
+          <p className="ld-help">{t("feedFallbackNote")}</p>
+        )}
+        {state.kind === "none" && (
+          <p className="ld-help">{t("neverChecked")}</p>
+        )}
+        {state.kind === "latest" && (
+          <p className="ld-update-ok" role="status">
+            {t("upToDate")} · v{state.version}
+          </p>
+        )}
+        {(state.kind === "available" || state.kind === "unknown-compat") && (
+          <div className="ld-update-card">
+            <strong>
+              {t("updateFound")} v{state.version}
+            </strong>
+            {state.kind === "unknown-compat" && (
+              <p className="ld-help">
+                {t("updateUnknownCompat")}{" "}
+                {state.dshRange
+                  ? t("compatRange") + " " + state.dshRange + "。"
+                  : ""}{" "}
+                {!v.dshVersion && t("compatUnknownNote")}
+              </p>
+            )}
+            {cache?.notes && (
+              <>
+                <button
+                  type="button"
+                  className="ld-update-toggle"
+                  aria-expanded={showNotes}
+                  onClick={() => setShowNotes(!showNotes)}
+                >
+                  {t("releaseNotes")} {showNotes ? "⌃" : "⌄"}
+                </button>
+                {showNotes && (
+                  <pre className="ld-release-notes">{cache.notes}</pre>
+                )}
+              </>
+            )}
+            <div className="ld-actions">
+              {link}
+              <Btn onClick={openPlugins}>{t("openPluginManager")}</Btn>
+              <Btn onClick={() => void ignore(state.version)}>
+                {t("ignoreVersion")}
+              </Btn>
+            </div>
+          </div>
+        )}
+        {state.kind === "incompatible" && (
+          <div className="ld-update-card">
+            <strong>{t("updateIncompatible")}</strong>
+            <p className="ld-help">
+              {t("updateFound")} v{state.version} · {t("compatRange")}{" "}
+              {state.dshRange} · {t("currentDsh")} v{state.dshVersion}
+            </p>
+            <div className="ld-actions">
+              {link}
+              <Btn onClick={() => void ignore(state.version)}>
+                {t("ignoreVersion")}
+              </Btn>
+            </div>
+          </div>
+        )}
+        {state.kind === "ignored" && (
+          <div className="ld-update-card">
+            <strong>
+              {t("updateIgnored")} · v{state.version}
+            </strong>
+            <div className="ld-actions">
+              <Btn onClick={() => void ignore("")}>
+                {t("restoreVersionAlert")}
+              </Btn>
+            </div>
+          </div>
+        )}
+        {install === "development" && (
+          <p className="ld-help">{t("updateDevHint")}</p>
+        )}
+        <p className="ld-help">{t("updateNetworkNote")}</p>
+      </section>
+    );
+  }
   function SettingsView({ env }: any) {
-    const { data, timeZone, run, busy, setMessage } = env;
+    const { data, timeZone, run, busy, setMessage, update, request, remember } =
+      env;
     const [v, setV] = useState({ ...data.settings });
     const [backup, setBackup] = useState<any>(null);
     const download = (obj: any) => {
@@ -1126,6 +1311,7 @@ export function apply(ctx: any) {
             </div>
           )}
         </section>
+        <UpdateSection update={update} request={request} remember={remember} />
       </>
     );
   }
@@ -1141,6 +1327,9 @@ export function apply(ctx: any) {
       [message, setMessage] = useState(""),
       [ai, setAi] = useState(false),
       [lifeCategory, setLifeCategory] = useState("");
+    const [updateView, setUpdateView] = useState<any>(null);
+    const [updateNotice, setUpdateNotice] = useState("");
+    const updateChecking = useRef(false);
     const timeZone =
       data?.settings?.timeZone ||
       Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -1225,6 +1414,36 @@ export function apply(ctx: any) {
       if (!data) return;
       if (!selectedDay) setDay(today(timeZone));
     }, [data?.settings?.timeZone]);
+    const rememberUpdate = (next: any) => setUpdateView(next);
+    useEffect(() => {
+      let alive = true;
+      updateRequest("status")
+        .then((v: any) => {
+          if (alive) rememberUpdate(v);
+        })
+        .catch(() => {});
+      return () => {
+        alive = false;
+      };
+    }, []);
+    useEffect(() => {
+      const v = updateView;
+      if (!v?.prefs?.autoCheck || updateChecking.current) return;
+      const interval = v.autoInterval || 24 * 60 * 60 * 1000;
+      if (Date.now() - (v.lastCheck || 0) < interval) return;
+      updateChecking.current = true;
+      updateRequest("check", { auto: true, force: false })
+        .then((r: any) => {
+          updateChecking.current = false;
+          rememberUpdate(r);
+          const kind = r?.state?.kind;
+          if (kind === "available" || kind === "unknown-compat")
+            setUpdateNotice(t("updateNotice") + " v" + r.state.version);
+        })
+        .catch(() => {
+          updateChecking.current = false;
+        });
+    }, [updateView?.prefs?.autoCheck, updateView?.lastCheck]);
     if (!data)
       return (
         <div className="ld-root">
@@ -1259,6 +1478,9 @@ export function apply(ctx: any) {
       setTab,
       openTask,
       setMessage,
+      update: updateView,
+      request: updateRequest,
+      remember: rememberUpdate,
     };
     function taskRows(items: any[], empty = true) {
       return items.length ? (
@@ -2022,9 +2244,38 @@ export function apply(ctx: any) {
                   </button>
                 </div>
               )}
+              {updateNotice && (
+                <div className="ld-status" role="status">
+                  {updateNotice}
+                  <button
+                    aria-label={t("close")}
+                    onClick={() => setUpdateNotice("")}
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
               {Body()}
               <footer className="ld-footer">
-                {t("local")} · {timeZone}{" "}
+                {t("local")} · {timeZone} · v{__LIFE_DESK_VERSION__}{" "}
+                {updateView?.state?.kind === "available" && (
+                  <button
+                    className="ld-update-badge"
+                    onClick={() => {
+                      setTab("settings");
+                      setTimeout(
+                        () =>
+                          document.getElementById("ld-update")?.scrollIntoView({
+                            block: "start",
+                            behavior: "smooth",
+                          }),
+                        60,
+                      );
+                    }}
+                  >
+                    {t("updateAvailable")}
+                  </button>
+                )}
                 <button onClick={() => void refresh()}>{t("retry")}</button>
               </footer>
             </main>

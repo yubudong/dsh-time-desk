@@ -114,6 +114,33 @@ try {
   ).json();
   assert.deepEqual(preference.value.timer, started.value.timer);
   assert.equal(preference.value.settings.focusMinutes, 45);
+  const status = await (
+    await request({ action: "update", command: "status" })
+  ).json();
+  assert.equal(status.ok, true);
+  assert.match(status.value.currentVersion, /^0\.5\./);
+  assert.ok(["development", "managed", "unknown"].includes(status.value.installKind));
+  assert.equal(status.value.state.kind, "none");
+  const check = await (
+    await request({ action: "update", command: "check", force: true })
+  ).json();
+  assert.equal(check.ok, true);
+  // Network is optional in CI: either a verified state or an explicit error.
+  assert.ok(check.value.state?.kind || check.value.error, "update check returned no state");
+  console.log(
+    "update check:",
+    JSON.stringify({
+      kind: check.value.state?.kind,
+      error: check.value.error?.code,
+      version: check.value.currentVersion,
+      install: check.value.installKind,
+      dsh: check.value.dshVersion,
+    }),
+  );
+  await assert.rejects(
+    tool.execute({ action: "update", command: "settings", autoCheck: true }),
+    /仅可查看/,
+  );
   const ended = await request({
     action: "timer",
     command: "discard",

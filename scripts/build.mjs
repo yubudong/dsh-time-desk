@@ -11,6 +11,7 @@ await build({
   target: "node22",
   legalComments: "eof",
   sourcemap: false,
+  define: { __LIFE_DESK_VERSION__: JSON.stringify(manifest.version) },
 });
 const client = await build({
   entryPoints: ["src/client.tsx"],

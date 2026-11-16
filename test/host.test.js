@@ -4,10 +4,9 @@ import { apply } from "../dist/index.js";
 
 test("compiled distribution exposes one operation to both UI route and agent tool", async () => {
   let global = null;
+  let updateGlobal = null;
   const tables = { backups: {} };
-  let route, tool;
-  const disposers = [];
-  const unit = {
+  const kick = {
     async loadAll() {
       return structuredClone({ global, tables });
     },
@@ -19,6 +18,17 @@ test("compiled distribution exposes one operation to both UI route and agent too
     },
     async close() {},
   };
+  const updateKick = {
+    async loadAll() {
+      return { global: structuredClone(updateGlobal), tables: {} };
+    },
+    async setGlobal(v) {
+      updateGlobal = structuredClone(v);
+    },
+    async close() {},
+  };
+  let route, tool;
+  const disposers = [];
   const ctx = {
     storage: {
       backend: {
@@ -30,8 +40,12 @@ test("compiled distribution exposes one operation to both UI route and agent too
                 assert.match(descriptor.name, /^[a-z][a-z0-9_]*$/);
                 for (const table of descriptor.tables)
                   assert.match(table, /^[a-z][a-z0-9_]*$/);
-                assert.equal(descriptor.name, "life_desk_v1");
-                return unit;
+                assert.ok(
+                  ["life_desk_v1", "life_desk_update"].includes(
+                    descriptor.name,
+                  ),
+                );
+                return descriptor.name === "life_desk_v1" ? kick : updateKick;
               },
             },
           };
@@ -69,6 +83,15 @@ test("compiled distribution exposes one operation to both UI route and agent too
   const help = await tool.execute({ action: "help" });
   assert.ok(help.schemas.tasks.properties.repeat);
   assert.match(help.guide.rules, /农历/);
+  const update = await tool.execute({ action: "update", command: "status" });
+  assert.match(update.currentVersion, /^\d+\.\d+\.\d+/);
+  assert.equal(update.state.kind, "none");
+  assert.deepEqual(update.prefs, { autoCheck: false, ignoredVersion: "" });
+  assert.equal(typeof update.releasePage, "string");
+  await assert.rejects(
+    tool.execute({ action: "update", command: "settings", autoCheck: true }),
+    /仅可查看/,
+  );
   const written = await tool.execute({
     action: "save",
     revision: 0,
