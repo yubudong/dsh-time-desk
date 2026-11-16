@@ -22,7 +22,7 @@ const guide = {
   backup:
     "返回备份；restoreBackup 需要 backup、confirm=true 和最新 revision，先得到用户明确同意。restorePrevious 恢复导入前的持久备份。",
   rules:
-    "公历 weekly.days:0=周日至6=周六。lunar.month/day 是农历，date 仍为首次生效公历日。leap=regular/only/both，missing=last/skip。preview 可检查未来三次日期。日期使用 settings.timeZone。",
+    "公历 weekly.days:0=周日至6=周六。lunar.month/day 是农历，date 仍为首次生效公历日。leap=regular/only/both，missing=last/skip。preview 可检查未来三次日期。日期使用 settings.timeZone。普通未完成任务从安排日开始在后续日期持续待办，截止日是最晚期限；无需为今日显示而改期。range 是日历发生日查询，不等于包含延续任务的今日执行清单。",
   authority:
     "明确新增/打卡可直接执行；批量改期、删除项目、整组重复调整和备份覆盖前先展示影响范围并征得用户同意。勿推测金额、账期、习惯频率；仅使用用户提供的信息。请求重试复用 requestId。",
   ai: "时间精灵通过独立 DSH Agent 会话使用同一个 life_desk 工具；所有写入返回真实结果后再宣称完成。",

@@ -16564,6 +16564,9 @@ var l77 = {
 
 // src/locales.ts
 var copy = {
+  carriedFrom: ["\u5EF6\u7EED\u81EA", "Carried from"],
+  originalPlan: ["\u539F\u5B89\u6392", "Originally scheduled"],
+  earlierRecurring: ["\u4E4B\u524D\u672A\u5B8C\u6210\u7684\u91CD\u590D\u4E8B\u9879", "Earlier recurring occurrences"],
   tryNativeFullscreen: ["\u8FDB\u5165\u7CFB\u7EDF\u5168\u5C4F", "Enter system fullscreen"],
   restComplete: ["\u4F11\u606F\u7ED3\u675F", "Break finished"],
   timerStateready: ["\u51C6\u5907\u4E13\u6CE8", "Ready to focus"],
@@ -29366,20 +29369,56 @@ function taskFocus(state, task, originalDate) {
     running: !!(state.timer?.phase === "focus" && match(state.timer))
   };
 }
+var unfinished = (x4) => !["done", "skipped", "cancelled"].includes(x4.status);
+var singleOutstanding = (x4) => !x4.repeat || ["none", "completion"].includes(x4.repeat.kind);
+var occurrenceKey = (x4) => x4.id + "@" + (x4.originalDate || x4.date || "");
+function outstandingView(state, task) {
+  if (!task.date) return task;
+  const record = state.occurrences.find(
+    (x4) => x4.taskId === task.id && !x4.deletedAt && (task.repeat?.kind !== "completion" || x4.originalDate === task.date)
+  );
+  const effectiveDate = record?.date || task.date;
+  return occurrences({ ...state, tasks: [task] }, effectiveDate, effectiveDate).find(
+    (x4) => x4.originalDate === (record?.originalDate || task.date)
+  ) || task;
+}
 function todayTasks(state, items, date) {
   const tasks = state.tasks.filter((x4) => !x4.deletedAt);
-  const current = items.filter((x4) => x4.date === date);
-  const active = current.filter(
-    (x4) => !["done", "skipped", "cancelled"].includes(x4.status)
+  const current = items.filter((x4) => !x4.deletedAt && x4.date === date);
+  const singles = new Map(
+    tasks.filter(singleOutstanding).map((x4) => [x4.id, outstandingView(state, x4)])
   );
-  const priority = tasks.filter((x4) => x4.priorityDate === date).map((x4) => current.find((c3) => c3.id === x4.id) || x4).filter((x4) => !["done", "skipped", "cancelled"].includes(x4.status));
+  const carried = [...singles.values()].filter((x4) => x4.date && x4.date < date && !x4.event && unfinished(x4)).map((x4) => ({ ...x4, carriedFrom: x4.date })).sort(
+    (a3, b3) => (a3.date + (a3.time || "99:99")).localeCompare(
+      b3.date + (b3.time || "99:99")
+    )
+  );
+  const active = current.filter(unfinished);
+  const priority = tasks.filter((x4) => x4.priorityDate === date).map(
+    (x4) => current.find((c3) => c3.id === x4.id) || carried.find((c3) => c3.id === x4.id) || singles.get(x4.id) || x4
+  ).filter(unfinished);
   const ids = new Set(priority.map((x4) => x4.id));
+  const priorityKeys = new Set(priority.map(occurrenceKey));
+  const completed = [
+    ...new Map(
+      [...items, ...singles.values()].filter(
+        (x4) => !x4.deletedAt && x4.status === "done" && (x4.date === date || x4.completedAt && today(state.settings.timeZone, Date.parse(x4.completedAt)) === date)
+      ).map((x4) => [occurrenceKey(x4), x4])
+    ).values()
+  ];
   return {
     priority,
     schedule: active.filter((x4) => x4.time || x4.event),
-    todos: active.filter((x4) => !x4.time && !x4.event && !ids.has(x4.id)),
+    todos: [
+      ...carried.filter((x4) => !ids.has(x4.id)),
+      ...active.filter((x4) => !x4.time && !x4.event && !ids.has(x4.id))
+    ],
+    completed,
+    previousRecurring: items.filter(
+      (x4) => x4.date < date && !x4.deletedAt && !x4.event && !singleOutstanding(x4) && unfinished(x4) && !priorityKeys.has(occurrenceKey(x4))
+    ),
     due: tasks.filter(
-      (x4) => x4.deadline && x4.deadline <= shift(date, 7) && x4.status !== "done" && !x4.event
+      (x4) => x4.deadline && x4.deadline <= shift(date, 7) && unfinished(singles.get(x4.id) || x4) && !x4.event
     ).sort((a3, b3) => a3.deadline.localeCompare(b3.deadline))
   };
 }
@@ -30077,7 +30116,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.5.0",
+        "data-reader-version": "0.5.1",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -30169,7 +30208,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.5.0")))
+      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.5.1")))
     );
   }
   return {
@@ -31905,9 +31944,9 @@ function apply(ctx) {
             /* @__PURE__ */ React7.createElement("span", { className: "ld-task-title" }, x4.priorityDate === day && /* @__PURE__ */ React7.createElement("span", { className: "ld-star" }, "\u2727 "), x4.title),
             /* @__PURE__ */ React7.createElement("span", { className: "ld-task-meta" }, [
               p3?.title,
-              x4.date,
-              x4.time,
-              x4.deadline ? "\u21B3 " + x4.deadline : "",
+              x4.carriedFrom ? t3("carriedFrom") + " " + x4.carriedFrom + (x4.time ? " " + x4.time : "") : x4.date,
+              x4.carriedFrom ? "" : x4.time,
+              x4.deadline ? t3("deadline") + " " + x4.deadline : "",
               x4.minutes ? x4.minutes + " " + t3("min") : "",
               x4.repeat.kind !== "none" ? "\u21BB" : "",
               x4.repeat.kind === "lunar" && x4.date ? lunarLabel(x4.date) : "",
@@ -32008,17 +32047,8 @@ function apply(ctx) {
           },
           /* @__PURE__ */ React7.createElement("span", null, x4.deadline === day ? t3("dueToday") : x4.deadline < day ? t3("pastDeadline") : x4.deadline),
           /* @__PURE__ */ React7.createElement("span", null, x4.title),
-          /* @__PURE__ */ React7.createElement("small", null, x4.date || t3("noneDate"))
-        ))), /* @__PURE__ */ React7.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React7.createElement("summary", null, t3("done"), " \xB7", " ", current.filter((x4) => x4.status === "done").length), taskRows(
-          current.filter((x4) => x4.status === "done"),
-          false
-        )), /* @__PURE__ */ React7.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React7.createElement("summary", null, t3("overdue"), " \xB7", " ", range.filter(
-          (x4) => x4.date < day && !x4.event && !["done", "skipped", "cancelled"].includes(x4.status)
-        ).length), taskRows(
-          range.filter(
-            (x4) => x4.date < day && !x4.event && !["done", "skipped", "cancelled"].includes(x4.status)
-          )
-        )), /* @__PURE__ */ React7.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React7.createElement("summary", null, t3("inbox"), " \xB7", " ", tasks.filter((x4) => !x4.date && x4.status !== "done").length), taskRows(
+          /* @__PURE__ */ React7.createElement("small", null, x4.date ? t3("originalPlan") + " " + x4.date : t3("noneDate"))
+        ))), /* @__PURE__ */ React7.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React7.createElement("summary", null, t3("done"), " \xB7 ", groups.completed.length), taskRows(groups.completed, false)), groups.previousRecurring.length > 0 && /* @__PURE__ */ React7.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React7.createElement("summary", null, t3("earlierRecurring"), " \xB7", " ", groups.previousRecurring.length), taskRows(groups.previousRecurring)), /* @__PURE__ */ React7.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React7.createElement("summary", null, t3("inbox"), " \xB7", " ", tasks.filter((x4) => !x4.date && x4.status !== "done").length), taskRows(
           tasks.filter((x4) => !x4.date && x4.status !== "done")
         ))), /* @__PURE__ */ React7.createElement("aside", { className: "ld-support" }, /* @__PURE__ */ React7.createElement("div", { className: "ld-side-timer" }, /* @__PURE__ */ React7.createElement(Timer, null)), /* @__PURE__ */ React7.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React7.createElement("h2", null, t3("todayHabits")), /* @__PURE__ */ React7.createElement(HabitCards, { env: viewEnv })), /* @__PURE__ */ React7.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React7.createElement("h2", null, t3("upcoming")), range.filter(
           (x4) => x4.date > day && x4.date <= shift(day, 14) && (x4.event || x4.reminderMinutes !== null || x4.deadline) && !["done", "cancelled", "skipped"].includes(x4.status)

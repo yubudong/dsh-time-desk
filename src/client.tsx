@@ -1325,9 +1325,14 @@ export function apply(ctx: any) {
                   <span className="ld-task-meta">
                     {[
                       p?.title,
-                      x.date,
-                      x.time,
-                      x.deadline ? "↳ " + x.deadline : "",
+                      x.carriedFrom
+                        ? t("carriedFrom") +
+                          " " +
+                          x.carriedFrom +
+                          (x.time ? " " + x.time : "")
+                        : x.date,
+                      x.carriedFrom ? "" : x.time,
+                      x.deadline ? t("deadline") + " " + x.deadline : "",
                       x.minutes ? x.minutes + " " + t("min") : "",
                       x.repeat.kind !== "none" ? "↻" : "",
                       x.repeat.kind === "lunar" && x.date
@@ -1497,42 +1502,30 @@ export function apply(ctx: any) {
                               : x.deadline}
                         </span>
                         <span>{x.title}</span>
-                        <small>{x.date || t("noneDate")}</small>
+                        <small>
+                          {x.date
+                            ? t("originalPlan") + " " + x.date
+                            : t("noneDate")}
+                        </small>
                       </button>
                     ))}
                   </section>
                 )}
                 <details className="ld-details">
                   <summary>
-                    {t("done")} ·{" "}
-                    {current.filter((x: any) => x.status === "done").length}
+                    {t("done")} · {groups.completed.length}
                   </summary>
-                  {taskRows(
-                    current.filter((x: any) => x.status === "done"),
-                    false,
-                  )}
+                  {taskRows(groups.completed, false)}
                 </details>
-                <details className="ld-details">
-                  <summary>
-                    {t("overdue")} ·{" "}
-                    {
-                      range.filter(
-                        (x: any) =>
-                          x.date < day &&
-                          !x.event &&
-                          !["done", "skipped", "cancelled"].includes(x.status),
-                      ).length
-                    }
-                  </summary>
-                  {taskRows(
-                    range.filter(
-                      (x: any) =>
-                        x.date < day &&
-                        !x.event &&
-                        !["done", "skipped", "cancelled"].includes(x.status),
-                    ),
-                  )}
-                </details>
+                {groups.previousRecurring.length > 0 && (
+                  <details className="ld-details">
+                    <summary>
+                      {t("earlierRecurring")} ·{" "}
+                      {groups.previousRecurring.length}
+                    </summary>
+                    {taskRows(groups.previousRecurring)}
+                  </details>
+                )}
                 <details className="ld-details">
                   <summary>
                     {t("inbox")} ·{" "}

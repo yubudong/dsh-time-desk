@@ -1,11 +1,25 @@
 {
   "name": "dsh-time-desk",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "author": "yubudong",
-  "repository": {"type":"git","url":"https://github.com/yubudong/dsh-time-desk.git"},
-  "homepage":"https://github.com/yubudong/dsh-time-desk#readme",
-  "bugs":{"url":"https://github.com/yubudong/dsh-time-desk/issues"},
-  "keywords":["dsh","dsh-plugin","deepseek-harness","time-management","habits","pomodoro","calendar","lunar"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yubudong/dsh-time-desk.git"
+  },
+  "homepage": "https://github.com/yubudong/dsh-time-desk#readme",
+  "bugs": {
+    "url": "https://github.com/yubudong/dsh-time-desk/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "time-management",
+    "habits",
+    "pomodoro",
+    "calendar",
+    "lunar"
+  ],
   "description": "A local-first personal workspace for DeepSeek Harness: projects, habits, life tasks, lunar recurrence and focus sessions.",
   "type": "module",
   "license": "MIT",

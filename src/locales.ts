@@ -1,4 +1,7 @@
 export const copy = {
+  carriedFrom: ["延续自", "Carried from"],
+  originalPlan: ["原安排", "Originally scheduled"],
+  earlierRecurring: ["之前未完成的重复事项", "Earlier recurring occurrences"],
   tryNativeFullscreen: ["进入系统全屏", "Enter system fullscreen"],
   restComplete: ["休息结束", "Break finished"],
   timerStateready: ["准备专注", "Ready to focus"],
