@@ -1,4 +1,72 @@
 export const copy = {
+  quickCapture: ["快速新增", "Quick capture"],
+  quickPlaceholder: ["先记下一件事…", "Capture something…"],
+  taskTitle: ["事项标题", "Task title"],
+  captureSave: ["记下", "Capture"],
+  captureOptions: ["项目、日期与估时", "Project, dates & estimates"],
+  captureHint: [
+    "只写标题会存入收件箱；可继续记下一件。Esc 收起并保留草稿。",
+    "A title alone goes to Inbox. Keep capturing; Esc closes without discarding the draft.",
+  ],
+  planStart: ["安排日", "Planned start"],
+  area: ["领域", "Area"],
+  noProject: ["无项目", "No project"],
+  estimateMinutes: [
+    "预计分钟（0 为未估时）",
+    "Estimated minutes (0 = unknown)",
+  ],
+  estimatePomodoros: [
+    "预计番茄数（0 为未估算）",
+    "Estimated focus rounds (0 = unknown)",
+  ],
+  dailyPlan: ["今日计划", "Daily plan"],
+  estimatedMin: ["已估算分钟", "Estimated minutes"],
+  unestimatedTasks: ["件尚未估时", "without an estimate"],
+  recordedFocus: ["已记录专注分钟", "Recorded focus minutes"],
+  availableToday: ["这一天的可用分钟", "Available minutes for this day"],
+  notSet: ["未设置", "Not set"],
+  capacityHint: [
+    "先设置可用时间，再判断是否安排过量",
+    "Set your available time to compare the workload",
+  ],
+  overCapacity: [
+    "已估算部分已超出可用时间",
+    "Known estimates exceed capacity by",
+  ],
+  withinCapacity: [
+    "已估算部分未超过可用时间",
+    "Known estimates fit within capacity",
+  ],
+  estimateHint: [
+    "分钟优先；否则按番茄数 × 默认专注时长，未估时不按零分钟计算",
+    "Minutes take precedence; otherwise rounds × default focus duration. Unknown estimates are not zero.",
+  ],
+  organize: ["整理", "Organize"],
+  awaitingTriage: ["待整理", "Needs organizing"],
+  planToday: ["填入所选日期", "Use selected date"],
+  triageHint: [
+    "选择领域或项目完成归类；日期可留空。修改截止日需你明确填写。",
+    "Choose an area or project to organize; scheduling is optional. Deadlines change only when you edit them.",
+  ],
+  inboxHelp: [
+    "先整理归属，再决定是否安排日期。已归类但未安排的事项在下方保留。",
+    "Organize first, then decide when. Organized tasks without dates remain available below.",
+  ],
+  organizedUnscheduled: ["已归类 · 未安排", "Organized · Unscheduled"],
+  plannedTodos: ["计划待办", "Planned tasks"],
+  carryBacklog: ["延续待办 · 待挑选", "Carried tasks · Choose for today"],
+  carryHint: [
+    "以前未完成的事项会留在这里。加入今日计划只影响这一天的选择，不改原安排日或截止日。",
+    "Unfinished tasks remain here. Choosing one for this day preserves its original start and deadline.",
+  ],
+  pickForDay: ["加入当日计划", "Add to this day's plan"],
+  unpickForDay: ["移回延续待选", "Return to carried tasks"],
+  makePriority: ["设为当日重点", "Make a priority for this day"],
+  clearPriority: ["取消重点", "Remove priority"],
+  priorityHint: [
+    "最多三件。取消重点不会改动安排日和截止日。",
+    "Up to three. Removing priority preserves dates and deadlines.",
+  ],
   workspaceActions: ["工作台操作", "Workspace actions"],
   versionUpdate: ["版本与更新", "Version & updates"],
   currentVersion: ["当前版本", "Current version"],
@@ -97,10 +165,7 @@ export const copy = {
     "This snapshot will replace the current workspace, including tasks, habits and focus records, and end any timer. Exporting a backup first is recommended. Continue?",
   ],
   snapshotRestored: ["已恢复升级前快照", "Pre-upgrade snapshot restored"],
-  openPluginManagerAgain: [
-    "再次打开插件管理",
-    "Open Plugin Manager again",
-  ],
+  openPluginManagerAgain: ["再次打开插件管理", "Open Plugin Manager again"],
   feedFallbackNote: [
     "GitHub 接口受限，已通过项目发布订阅读取版本；安装附件未在此核对，请在插件管理器中校验来源。",
     "The GitHub API was rate-limited, so the version came from the project release feed. Assets were not verified here; validate the source in Plugin Manager.",
@@ -362,10 +427,7 @@ export const copy = {
     "Capture a task, begin a habit, or create a project.",
   ],
   priorities: ["今日重点", "Today’s priorities"],
-  priorityHint: [
-    "最多三件，给重要的事情留出位置。",
-    "Up to three things that matter today.",
-  ],
+
   schedule: ["定时安排", "Schedule"],
   todos: ["当天待办", "Tasks for the day"],
   overdue: ["之前未完成", "Previously unfinished"],
@@ -376,7 +438,7 @@ export const copy = {
   all: ["全部", "All"],
   list: ["清单", "List"],
   board: ["看板", "Board"],
-  noProject: ["不属于项目", "No project"],
+
   work: ["工作", "Work"],
   lifeArea: ["生活", "Life"],
   inboxArea: ["稍后整理", "Inbox"],

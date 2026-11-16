@@ -34825,6 +34825,121 @@ function habitProgress(state, habit, date5) {
   };
 }
 
+// src/today-view.js
+var unfinished = (x) => !["done", "skipped", "cancelled"].includes(x.status);
+var singleOutstanding = (x) => !x.repeat || ["none", "completion"].includes(x.repeat.kind);
+var occurrenceKey = (x) => x.id + "@" + (x.originalDate || x.date || "");
+function outstandingView(state, task) {
+  if (!task.date) return task;
+  const record2 = state.occurrences.find(
+    (x) => x.taskId === task.id && !x.deletedAt && (task.repeat?.kind !== "completion" || x.originalDate === task.date)
+  );
+  const effectiveDate = record2?.date || task.date;
+  return occurrences({ ...state, tasks: [task] }, effectiveDate, effectiveDate).find(
+    (x) => x.originalDate === (record2?.originalDate || task.date)
+  ) || task;
+}
+function todayTasks(state, items, date5) {
+  const tasks = state.tasks.filter((x) => !x.deletedAt);
+  const current = items.filter((x) => !x.deletedAt && x.date === date5);
+  const singles = new Map(
+    tasks.filter(singleOutstanding).map((x) => [x.id, outstandingView(state, x)])
+  );
+  const carried = [...singles.values()].filter((x) => x.date && x.date < date5 && !x.event && unfinished(x)).map((x) => ({ ...x, carriedFrom: x.date })).sort(
+    (a, b) => (a.date + (a.time || "99:99")).localeCompare(
+      b.date + (b.time || "99:99")
+    )
+  );
+  const active = current.filter(unfinished);
+  const priority = tasks.filter((x) => x.priorityDate === date5).map(
+    (x) => current.find((c) => c.id === x.id) || carried.find((c) => c.id === x.id) || singles.get(x.id) || x
+  ).filter(unfinished);
+  const ids = new Set(priority.map((x) => x.id));
+  const priorityKeys = new Set(priority.map(occurrenceKey));
+  const completed = [
+    ...new Map(
+      [...items, ...singles.values()].filter(
+        (x) => !x.deletedAt && x.status === "done" && (x.date === date5 || x.completedAt && today(state.settings.timeZone, Date.parse(x.completedAt)) === date5)
+      ).map((x) => [occurrenceKey(x), x])
+    ).values()
+  ];
+  return {
+    priority,
+    schedule: active.filter((x) => x.time || x.event),
+    todos: [
+      ...carried.filter((x) => !ids.has(x.id)),
+      ...active.filter((x) => !x.time && !x.event && !ids.has(x.id))
+    ],
+    completed,
+    previousRecurring: items.filter(
+      (x) => x.date < date5 && !x.deletedAt && !x.event && !singleOutstanding(x) && unfinished(x) && !priorityKeys.has(occurrenceKey(x))
+    ),
+    due: tasks.filter(
+      (x) => x.deadline && x.deadline <= shift(date5, 7) && unfinished(singles.get(x.id) || x) && !x.event
+    ).sort((a, b) => a.deadline.localeCompare(b.deadline))
+  };
+}
+
+// src/planning.js
+var planKey = (x) => x.id + "@" + (x.originalDate || x.date || "");
+var inboxTasks = (state) => state.tasks.filter(
+  (x) => !x.deletedAt && x.status !== "done" && !x.date && !x.projectId && x.area === "inbox"
+);
+function estimateTask(task, focusMinutes) {
+  if (task.minutes > 0) return { minutes: task.minutes, basis: "minutes" };
+  if (!task.event && task.pomodoros > 0)
+    return { minutes: task.pomodoros * focusMinutes, basis: "pomodoros" };
+  return { minutes: null, basis: "unknown" };
+}
+function dailyPlan(state, date5, items = occurrences(state, shift(date5, -365), shift(date5, 366))) {
+  const groups = todayTasks(state, items, date5);
+  const saved = (state.dayPlans || []).find((p) => p.date === date5);
+  const selected = new Set(
+    (saved?.selected || []).map((x) => x.taskId + "@" + (x.originalDate || ""))
+  );
+  const plannedCarry = groups.todos.filter(
+    (x) => x.carriedFrom && selected.has(planKey(x))
+  );
+  const backlog = groups.todos.filter(
+    (x) => x.carriedFrom && !selected.has(planKey(x))
+  );
+  const todos = groups.todos.filter((x) => !x.carriedFrom);
+  const plan = [
+    ...new Map(
+      [...groups.priority, ...groups.schedule, ...todos, ...plannedCarry].map(
+        (x) => [planKey(x), x]
+      )
+    ).values()
+  ];
+  const estimates = plan.map((task) => ({
+    task,
+    ...estimateTask(task, state.settings.focusMinutes)
+  }));
+  const knownMinutes = estimates.reduce((sum, x) => sum + (x.minutes ?? 0), 0);
+  const availableMinutes = saved?.availableMinutes ?? null;
+  return {
+    date: date5,
+    priority: groups.priority,
+    schedule: groups.schedule,
+    todos: [...todos, ...plannedCarry],
+    backlog,
+    completed: groups.completed,
+    previousRecurring: groups.previousRecurring,
+    due: groups.due,
+    load: {
+      knownMinutes,
+      unknownCount: estimates.filter((x) => x.minutes === null).length,
+      pomodoroCount: estimates.filter((x) => x.basis === "pomodoros").length,
+      availableMinutes,
+      overMinutes: availableMinutes === null ? null : Math.max(0, knownMinutes - availableMinutes),
+      taskCount: plan.length,
+      recordedFocusMinutes: Math.round(
+        state.focusLogs.filter((x) => !x.deletedAt && x.date === date5).reduce((sum, x) => sum + x.seconds, 0) / 60
+      )
+    }
+  };
+}
+
 // src/schema.js
 var day = external_exports.string().refine(validDate, "\u65E5\u671F\u5E94\u4E3A YYYY-MM-DD");
 var optionalDay = external_exports.union([day, external_exports.literal("")]).default("");
@@ -34925,11 +35040,17 @@ var Settings = external_exports.object({
   sound: external_exports.boolean().default(false),
   notifications: external_exports.boolean().default(false)
 });
+var DayPlan = external_exports.object({
+  date: day,
+  availableMinutes: external_exports.number().int().min(0).max(1440).nullable().default(null),
+  selected: external_exports.array(external_exports.object({ taskId: external_exports.string().min(1), originalDate: optionalDay })).max(1e3).default([])
+});
 var State = external_exports.object({
   schemaVersion: external_exports.literal(1),
   revision: external_exports.number().int().min(0),
   deviceId: external_exports.string(),
   settings: Settings,
+  dayPlans: external_exports.array(DayPlan).max(5e3).default([]),
   projects: external_exports.array(ProjectInput.extend(meta3)),
   tasks: external_exports.array(TaskInput.extend(meta3)),
   habits: external_exports.array(HabitInput.extend(meta3)),
@@ -35058,7 +35179,38 @@ function applyAction(current, a, now = Date.now()) {
   if (a.requestId && s.receipts.some((r) => r.key === a.requestId)) return s;
   if (a.revision !== s.revision) fail("\u6570\u636E\u5DF2\u66F4\u65B0\uFF0C\u8BF7\u5237\u65B0\u540E\u91CD\u65B0\u64CD\u4F5C");
   const collection = a.collection;
-  if (a.action === "save") {
+  if (a.action === "plan") {
+    const date5 = day.parse(a.date);
+    const index = s.dayPlans.findIndex((p) => p.date === date5);
+    const plan = index < 0 ? { date: date5, availableMinutes: null, selected: [] } : s.dayPlans[index];
+    if (a.command === "capacity") {
+      if (!a.item || !Object.hasOwn(a.item, "availableMinutes"))
+        fail("\u8BF7\u660E\u786E\u63D0\u4F9B\u53EF\u7528\u5206\u949F\uFF0C\u6216 null \u6E05\u9664\u8BBE\u7F6E");
+      plan.availableMinutes = a.item.availableMinutes;
+    } else if (["pick", "unpick"].includes(a.command)) {
+      const task = live(s, "tasks", a.id);
+      const groups = dailyPlan(s, date5);
+      const candidates = [
+        ...groups.backlog,
+        ...groups.todos.filter((x) => x.carriedFrom)
+      ];
+      const instance = candidates.find(
+        (x) => x.id === task.id && (!a.originalDate || x.originalDate === a.originalDate)
+      );
+      if (!instance) fail("\u53EA\u80FD\u9009\u62E9\u8BE5\u65E5\u53EF\u6267\u884C\u7684\u5EF6\u7EED\u5F85\u529E\uFF0C\u8BF7\u5237\u65B0\u540E\u91CD\u8BD5");
+      const key = planKey(instance);
+      plan.selected = plan.selected.filter(
+        (x) => x.taskId + "@" + x.originalDate !== key
+      );
+      if (a.command === "pick")
+        plan.selected.push({
+          taskId: task.id,
+          originalDate: instance.originalDate || instance.date || ""
+        });
+    } else fail("\u8BA1\u5212\u64CD\u4F5C\u65E0\u6548");
+    if (index < 0) s.dayPlans.push(plan);
+    else s.dayPlans[index] = plan;
+  } else if (a.action === "save") {
     if (!["projects", "tasks", "habits"].includes(collection))
       fail("\u4E0D\u652F\u6301\u7684\u8BB0\u5F55\u7C7B\u578B");
     const old = a.id ? live(s, collection, a.id) : null;
@@ -35362,6 +35514,8 @@ function applyAction(current, a, now = Date.now()) {
 }
 function validateState(input2) {
   const s = State.parse(input2);
+  if (new Set(s.dayPlans.map((p) => p.date)).size !== s.dayPlans.length)
+    fail("\u5907\u4EFD\u542B\u91CD\u590D\u7684\u6BCF\u65E5\u8BA1\u5212");
   const all = [
     "projects",
     "tasks",
@@ -35394,6 +35548,16 @@ async function createService(unit, clock = () => Date.now()) {
     async operate(a) {
       const run = queue.then(async () => {
         if (a.action === "read") return structuredClone(current);
+        if (a.action === "plan" && (!a.command || a.command === "read")) {
+          const date5 = day.parse(
+            a.date || today(current.settings.timeZone, clock())
+          );
+          return {
+            ...dailyPlan(current, date5),
+            inboxCount: inboxTasks(current).length,
+            revision: current.revision
+          };
+        }
         if (a.action === "preview") {
           const t = TaskInput.parse(a.item);
           validateTask(current, t);
@@ -35479,6 +35643,7 @@ var SPIRIT_PROMPT = `\u4F60\u662F\u201C\u65F6\u95F4\u7CBE\u7075\u201D\uFF0C\u662
 \u91D1\u989D\u3001\u8D26\u671F\u3001\u4E60\u60EF\u9891\u7387\u548C\u63D0\u9192\u65F6\u523B\u4E0D\u8981\u731C\u3002\u7528\u6237\u8BF4\u201C\u4E00\u5468\u4E09\u6B21\u201D\u662F weekly \u76EE\u6807 3\uFF1B\u201C\u8DF3\u7EF31000\u4E2A\u201D\u662F quantity target1000 unit\u4E2A\uFF0C\u4E0D\u8981\u628A\u6570\u91CF\u6DF7\u8FDB\u6807\u9898\u3002\u53EA\u6709\u590D\u76D8\u7C7B\u6253\u5361\u624D\u8BBE reviewLinked=true\uFF0C\u8FD0\u52A8\u9605\u8BFB\u7B49\u4FDD\u6301 false\u3002
 \u516C\u5386/\u519C\u5386\u89C4\u5219\u4F7F\u7528\u7A0B\u5E8F preview \u6838\u5BF9\uFF1B\u65F6\u533A\u4EE5 life_desk read \u7684 settings.timeZone \u4E3A\u51C6\uFF0C\u65E5\u671F\u542B\u4E49\u4E0D\u786E\u5B9A\u65F6\u8BE2\u95EE\u3002
 \u666E\u901A\u4EFB\u52A1\u4ECE\u5B89\u6392\u65E5\u5F00\u59CB\uFF0C\u672A\u5B8C\u6210\u5C31\u5C5E\u4E8E\u540E\u7EED\u65E5\u671F\u7684\u6267\u884C\u5F85\u529E\uFF0C\u622A\u6B62\u65E5\u53EA\u8868\u793A\u6700\u665A\u671F\u9650\uFF1B\u4E0D\u8981\u4E3A\u4E86\u8BA9\u65E7\u4EFB\u52A1\u663E\u793A\u5728\u4ECA\u5929\u800C\u64C5\u81EA\u4FEE\u6539\u5B89\u6392\u65E5\u6216\u622A\u6B62\u65E5\u3002\u660E\u786E\u6539\u671F\u5230\u672A\u6765\u7684\u4EFB\u52A1\u9075\u4ECE\u6539\u671F\uFF1B\u91CD\u590D\u4E8B\u9879\u6309\u53D1\u751F\u6B21\u5E8F\u72EC\u7ACB\u5904\u7406\uFF0C\u4E60\u60EF\u4E0D\u7D2F\u79EF\u6628\u5929\u7684\u6B21\u6570\u3002
+\u67E5\u770B\u4ECA\u65E5\u8BA1\u5212\u4F18\u5148\u4F7F\u7528 life_desk action=plan command=read\uFF0C\u5EF6\u7EED\u5F85\u529E\u9700\u8981\u7528\u6237\u6311\u9009\u624D\u8BA1\u5165\u8BA1\u5212\u8D1F\u8377\uFF1B\u7528 pick/unpick \u9009\u62E9\u6216\u53D6\u6D88\u5EF6\u7EED\u4EFB\u52A1\uFF0C\u4E0D\u6539\u539F\u65E5\u671F\u3002\u53EF\u7528\u65F6\u95F4\u672A\u8BBE\u7F6E\u5C31\u8BF4\u660E\u672A\u8BBE\u7F6E\uFF0C\u672A\u4F30\u65F6\u4E8B\u9879\u4E0D\u80FD\u5F53\u4F5C\u96F6\u65F6\u957F\u3002\u6574\u7406\u6536\u4EF6\u7BB1\u3001\u6279\u91CF\u5B89\u6392\u548C\u4ECA\u65E5\u8BA1\u5212\u5EFA\u8BAE\u5148\u5217\u51FA\u53D7\u5F71\u54CD\u4E8B\u9879\u4E0E\u65E5\u671F\uFF0C\u7B49\u7528\u6237\u660E\u786E\u540C\u610F\u518D\u9010\u9879\u6267\u884C\uFF0C\u53D6\u6D88\u91CD\u70B9\u53EA\u6E05 priorityDate\uFF0C\u4E0D\u6539\u5B89\u6392\u65E5\u548C\u622A\u6B62\u65E5\u3002
 \u672C\u8F6E\u53D6\u6D88\u4E0D\u4F1A\u56DE\u6EDA\u5DF2\u7ECF\u5B8C\u6210\u7684\u4FEE\u6539\uFF1B\u7528\u6237\u60F3\u6062\u590D\u65F6\u5148\u8BFB\u5F53\u524D\u72B6\u6001\uFF0C\u518D\u4F7F\u7528\u64A4\u9500\u6216\u76F8\u5E94\u53CD\u5411\u64CD\u4F5C\u3002
 \u5148\u5B8C\u6210\u5B9E\u9645\u64CD\u4F5C\uFF0C\u518D\u7B80\u660E\u8BF4\u6E05\u7ED3\u679C\u3002\u9664\u975E\u7528\u6237\u8981\u6C42\u65B9\u6848\uFF0C\u4E0D\u8981\u53EA\u7ED9\u5EFA\u8BAE\u800C\u4E0D\u6267\u884C\u5DF2\u660E\u786E\u6388\u6743\u7684\u4E8B\u9879\u3002`;
 var textContent = (message) => (message?.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n");
@@ -36211,120 +36376,107 @@ function createUpdateService({
 }
 
 // src/upgrade.js
+import { randomUUID as randomUUID3 } from "node:crypto";
 var MAX_SNAPSHOTS = 3;
 var MAX_STATE_CHARS = 2 * 1024 * 1024;
-var DEFAULT2 = { pending: null, snapshots: [] };
-function summary(snapshot) {
-  return {
-    id: snapshot.id,
-    fromVersion: snapshot.fromVersion,
-    targetVersion: snapshot.targetVersion,
-    createdAt: snapshot.createdAt,
-    bytes: snapshot.bytes,
-    counts: snapshot.counts
-  };
+function summary(x) {
+  const { id, fromVersion, targetVersion, createdAt, bytes, counts } = x;
+  return { id, fromVersion, targetVersion, createdAt, bytes, counts };
 }
 function createUpgradeService({
   unit,
   readState,
   restoreState,
+  currentVersion = null,
+  isBusy = async () => false,
   clock = () => Date.now()
 }) {
-  let global = { ...DEFAULT2 };
+  let global = { pending: null, snapshots: [] };
   let queue = Promise.resolve();
-  const snapshot = () => ({
+  const view = () => structuredClone({
     pending: global.pending,
     snapshots: global.snapshots.map(summary),
-    currentVersion: global.currentVersion || null
+    currentVersion
   });
-  async function persist() {
-    await unit.setGlobal(structuredClone(global));
-  }
-  function ensureRoom(state) {
-    const encoded = JSON.stringify(state);
-    if (encoded.length > MAX_STATE_CHARS)
-      throw Error("\u5DE5\u4F5C\u53F0\u6570\u636E\u8FC7\u5927\uFF0C\u65E0\u6CD5\u521B\u5EFA\u5347\u7EA7\u524D\u5FEB\u7167");
-    return encoded.length;
+  async function commit(next) {
+    await unit.setGlobal(structuredClone(next));
+    global = next;
   }
   return {
     async init() {
       const stored = (await unit.loadAll())?.global;
-      if (stored && typeof stored === "object") {
+      if (stored && typeof stored === "object")
         global = {
           pending: stored.pending && typeof stored.pending === "object" ? stored.pending : null,
           snapshots: Array.isArray(stored.snapshots) ? stored.snapshots.filter((x) => x && typeof x.id === "string" && x.state).slice(-MAX_SNAPSHOTS) : []
         };
-      }
-      return snapshot();
+      return view();
     },
     operate(a) {
       const run = queue.then(async () => {
-        const command = a.command;
-        if (command === "preflight") {
+        if (a.command === "preflight" || a.command === "prepare") {
           const state = await readState();
-          const timer = state.timer;
           const blockers = [];
-          if (timer)
+          if (state.timer)
             blockers.push({
               code: "timer",
-              phase: timer.phase,
-              status: timer.status
+              phase: state.timer.phase,
+              status: state.timer.status
             });
-          return {
-            ok: blockers.length === 0,
-            blockers,
-            timer: timer ? { phase: timer.phase, status: timer.status } : null
-          };
-        }
-        if (command === "prepare") {
-          const state = await readState();
-          if (state.timer) throw Error("\u8BF7\u5148\u7ED3\u675F\u5F53\u524D\u8BA1\u65F6\uFF0C\u518D\u51C6\u5907\u5347\u7EA7");
-          const from = a.fromVersion || "unknown";
-          const target = a.targetVersion;
+          if (await isBusy()) blockers.push({ code: "assistant" });
+          if (a.command === "preflight")
+            return {
+              ok: !blockers.length,
+              blockers,
+              revision: state.revision,
+              timer: state.timer ? { phase: state.timer.phase, status: state.timer.status } : null
+            };
+          if (blockers.some((x) => x.code === "timer"))
+            throw Error("\u8BF7\u5148\u7ED3\u675F\u5F53\u524D\u8BA1\u65F6\uFF0C\u518D\u51C6\u5907\u5347\u7EA7");
+          if (blockers.length) throw Error("\u65F6\u95F4\u7CBE\u7075\u6B63\u5728\u5904\u7406\u8BF7\u6C42\uFF0C\u8BF7\u7A0D\u540E\u518D\u8BD5");
+          if (a.revision !== void 0 && a.revision !== state.revision)
+            throw Error("\u6570\u636E\u5DF2\u66F4\u65B0\uFF0C\u8BF7\u5237\u65B0\u540E\u91CD\u65B0\u51C6\u5907\u5347\u7EA7");
+          const from = currentVersion || a.fromVersion || "unknown", target = a.targetVersion;
           if (!parseVersion(target)) throw Error("\u76EE\u6807\u7248\u672C\u53F7\u65E0\u6548");
           if (parseVersion(from) && compareVersions(target, from) <= 0)
             throw Error("\u76EE\u6807\u7248\u672C\u5FC5\u987B\u9AD8\u4E8E\u5F53\u524D\u7248\u672C");
           for (const key of ["projects", "tasks", "habits", "focusLogs"])
             if (!Array.isArray(state[key]))
-              throw Error(
-                "\u5FEB\u7167\u6570\u636E\u7F3A\u5C11 " + key + "\uFF1Akeys=" + Object.keys(state || {}).join(",") + " type=" + Object.prototype.toString.call(state)
-              );
-          const bytes = ensureRoom(state);
+              throw Error("\u5FEB\u7167\u6570\u636E\u7F3A\u5C11 " + key + "\uFF0C\u8BF7\u5237\u65B0\u540E\u91CD\u8BD5");
+          const bytes = Buffer.byteLength(JSON.stringify(state), "utf8");
+          if (bytes > MAX_STATE_CHARS)
+            throw Error("\u5DE5\u4F5C\u53F0\u6570\u636E\u8FC7\u5927\uFF0C\u65E0\u6CD5\u521B\u5EFA\u5347\u7EA7\u524D\u5FEB\u7167");
           const record2 = {
-            id: "snapshot-" + clock() + "-" + global.snapshots.length,
+            id: "snapshot-" + randomUUID3(),
             fromVersion: from,
             targetVersion: target,
             createdAt: clock(),
             bytes,
-            counts: {
-              projects: state.projects.length,
-              tasks: state.tasks.length,
-              habits: state.habits.length,
-              focusLogs: state.focusLogs.length
-            },
+            counts: Object.fromEntries(
+              ["projects", "tasks", "habits", "focusLogs"].map((k) => [
+                k,
+                state[k].filter((x) => !x.deletedAt).length
+              ])
+            ),
             state
           };
-          global.snapshots = [...global.snapshots, record2].slice(
-            -MAX_SNAPSHOTS
-          );
-          global.pending = {
-            targetVersion: target,
-            fromVersion: from,
-            preparedAt: record2.createdAt,
-            snapshotId: record2.id
-          };
-          global.currentVersion = from;
-          await persist();
-          return { ok: true, prepared: summary(record2), ...snapshot() };
+          await commit({
+            ...global,
+            snapshots: [...global.snapshots, record2].slice(-MAX_SNAPSHOTS),
+            pending: {
+              targetVersion: target,
+              fromVersion: from,
+              preparedAt: record2.createdAt,
+              snapshotId: record2.id
+            }
+          });
+          return { ok: true, prepared: summary(record2), ...view() };
         }
-        if (command === "snapshots") return snapshot();
-        if (command === "clearPending") {
-          global.pending = null;
-          await persist();
-          return snapshot();
-        }
-        if (command === "restoreSnapshot") {
+        if (a.command === "clearPending")
+          await commit({ ...global, pending: null });
+        if (a.command === "restoreSnapshot") {
           if (a.confirm !== true) throw Error("\u6062\u590D\u9700\u8981\u786E\u8BA4");
+          if (await isBusy()) throw Error("\u65F6\u95F4\u7CBE\u7075\u6B63\u5728\u5904\u7406\u8BF7\u6C42\uFF0C\u8BF7\u7A0D\u540E\u518D\u6062\u590D");
           const record2 = global.snapshots.find((x) => x.id === a.id);
           if (!record2) throw Error("\u5FEB\u7167\u4E0D\u5B58\u5728");
           await restoreState({
@@ -36336,17 +36488,22 @@ function createUpgradeService({
             revision: a.revision,
             confirm: true
           });
-          global.pending = null;
-          await persist();
-          return { ok: true, restored: summary(record2), ...snapshot() };
+          let warning = null;
+          try {
+            await commit({ ...global, pending: null });
+          } catch {
+            warning = "\u6570\u636E\u5DF2\u6062\u590D\uFF0C\u4F46\u5347\u7EA7\u63D0\u793A\u672A\u80FD\u6E05\u9664\uFF0C\u8BF7\u5237\u65B0\u540E\u6838\u5BF9";
+          }
+          return { ok: true, restored: summary(record2), warning, ...view() };
         }
-        return snapshot();
+        return view();
       });
       queue = run.catch(() => {
       });
       return run;
     },
     async close() {
+      await queue;
       await unit.close();
     }
   };
@@ -36369,6 +36526,7 @@ var guide = {
   backup: "\u8FD4\u56DE\u5907\u4EFD\uFF1BrestoreBackup \u9700\u8981 backup\u3001confirm=true \u548C\u6700\u65B0 revision\uFF0C\u5148\u5F97\u5230\u7528\u6237\u660E\u786E\u540C\u610F\u3002restorePrevious \u6062\u590D\u5BFC\u5165\u524D\u7684\u6301\u4E45\u5907\u4EFD\u3002",
   rules: "\u516C\u5386 weekly.days:0=\u5468\u65E5\u81F36=\u5468\u516D\u3002lunar.month/day \u662F\u519C\u5386\uFF0Cdate \u4ECD\u4E3A\u9996\u6B21\u751F\u6548\u516C\u5386\u65E5\u3002leap=regular/only/both\uFF0Cmissing=last/skip\u3002preview \u53EF\u68C0\u67E5\u672A\u6765\u4E09\u6B21\u65E5\u671F\u3002\u65E5\u671F\u4F7F\u7528 settings.timeZone\u3002\u666E\u901A\u672A\u5B8C\u6210\u4EFB\u52A1\u4ECE\u5B89\u6392\u65E5\u5F00\u59CB\u5728\u540E\u7EED\u65E5\u671F\u6301\u7EED\u5F85\u529E\uFF0C\u622A\u6B62\u65E5\u662F\u6700\u665A\u671F\u9650\uFF1B\u65E0\u9700\u4E3A\u4ECA\u65E5\u663E\u793A\u800C\u6539\u671F\u3002range \u662F\u65E5\u5386\u53D1\u751F\u65E5\u67E5\u8BE2\uFF0C\u4E0D\u7B49\u4E8E\u5305\u542B\u5EF6\u7EED\u4EFB\u52A1\u7684\u4ECA\u65E5\u6267\u884C\u6E05\u5355\u3002",
   authority: "\u660E\u786E\u65B0\u589E/\u6253\u5361\u53EF\u76F4\u63A5\u6267\u884C\uFF1B\u6279\u91CF\u6539\u671F\u3001\u5220\u9664\u9879\u76EE\u3001\u6574\u7EC4\u91CD\u590D\u8C03\u6574\u548C\u5907\u4EFD\u8986\u76D6\u524D\u5148\u5C55\u793A\u5F71\u54CD\u8303\u56F4\u5E76\u5F81\u5F97\u7528\u6237\u540C\u610F\u3002\u52FF\u63A8\u6D4B\u91D1\u989D\u3001\u8D26\u671F\u3001\u4E60\u60EF\u9891\u7387\uFF1B\u4EC5\u4F7F\u7528\u7528\u6237\u63D0\u4F9B\u7684\u4FE1\u606F\u3002\u8BF7\u6C42\u91CD\u8BD5\u590D\u7528 requestId\u3002",
+  plan: "action=plan\uFF0Cdate=\u76EE\u6807\u65E5\uFF1Bcommand=read \u8FD4\u56DE\u5B8C\u6574\u7684\u5F53\u65E5\u91CD\u70B9\u3001\u5B89\u6392\u3001\u8BA1\u5212\u5F85\u529E\u3001\u5EF6\u7EED\u5F85\u9009\u3001\u8D1F\u8377\u548C\u672A\u4F30\u65F6\u6570\uFF0C\u4F18\u5148\u7528\u5B83\u67E5\u770B\u4ECA\u65E5\u800C\u975E range\u3002command=capacity\uFF0Citem.availableMinutes=0\u20131440 \u6216 null \u6E05\u9664\uFF1Bpick/unpick \u7528 id \u4E0E originalDate \u9009\u62E9/\u53D6\u6D88\u5EF6\u7EED\u5F85\u529E\uFF0C\u4E0D\u6539\u53D8\u539F\u65E5\u671F\u3002\u5199\u5165\u987B\u6700\u65B0 revision\u3002\u6279\u91CF\u5B89\u6392\u5148\u5C55\u793A\u65B9\u6848\u83B7\u786E\u8BA4\uFF0C\u4E0D\u731C\u53EF\u7528\u65F6\u95F4\u3002minutes \u4F18\u5148\u4E8E pomodoros\xD7\u9ED8\u8BA4 focusMinutes\uFF0C\u4E0D\u91CD\u590D\u8BA1\u65F6\uFF1B\u65E0\u4F30\u65F6\u4E0D\u7B97\u96F6\u65F6\u957F\u3002\u6536\u4EF6\u7BB1\u6574\u7406\u662F save \u5230\u9879\u76EE/\u9886\u57DF\u6216\u65E5\u671F\uFF0C\u52FF\u51ED\u7A7A\u79FB\u52A8\u622A\u6B62\u65E5\uFF1B\u53D6\u6D88\u91CD\u70B9\u53EA\u6E05 priorityDate\u3002",
   ai: "\u65F6\u95F4\u7CBE\u7075\u901A\u8FC7\u72EC\u7ACB DSH Agent \u4F1A\u8BDD\u4F7F\u7528\u540C\u4E00\u4E2A life_desk \u5DE5\u5177\uFF1B\u6240\u6709\u5199\u5165\u8FD4\u56DE\u771F\u5B9E\u7ED3\u679C\u540E\u518D\u5BA3\u79F0\u5B8C\u6210\u3002",
   assistant: "command=read/models \u67E5\u770B\u65F6\u95F4\u7CBE\u7075\u72B6\u6001\u6216 DSH \u6A21\u578B\u76EE\u5F55\uFF1Bcommand=selectModel\u3001item={provider,model} \u8BBE\u7F6E\u7CBE\u7075\u6A21\u578B\uFF0C\u7701\u7565 item \u8DDF\u968F DSH \u9ED8\u8BA4\u3002\u6B64\u5DE5\u5177\u4E0D\u80FD\u53D1\u9001\u6216\u4F2A\u9020\u7528\u6237\u6D88\u606F\u3002",
   update: "command=status/check \u67E5\u770B\u6216\u68C0\u67E5\u65B0\u7248\u672C\uFF1B\u53EA\u68C0\u67E5\u81EA\u5DF1\u7684 GitHub \u7A33\u5B9A\u53D1\u5E03\uFF0C\u4E0D\u4E0B\u8F7D\u3001\u4E0D\u5B89\u88C5\u3001\u4E0D\u4FEE\u6539\u63D2\u4EF6\u6587\u4EF6\u3002\u5B89\u88C5\u5347\u7EA7\u4ECD\u9700\u7528\u6237\u5728 DSH \u63D2\u4EF6\u7BA1\u7406\u5668\u786E\u8BA4\u3002"
@@ -36399,7 +36557,7 @@ async function apply(ctx) {
       hasGlobal: true,
       layout: "single"
     });
-    const currentVersion = true ? "0.6.0" : "0.0.0";
+    const currentVersion = true ? "0.7.0" : "0.0.0";
     updateService = createUpdateService({
       unit: updateUnit,
       currentVersion,
@@ -36423,6 +36581,8 @@ async function apply(ctx) {
     });
     upgradeService = createUpgradeService({
       unit: upgradeUnit,
+      currentVersion: true ? "0.7.0" : null,
+      isBusy: async () => !!(spiritService && (await spiritService.operate({ action: "read" })).busy),
       readState: () => service.operate({ action: "read" }),
       restoreState: (a) => service.operate({
         action: "restoreBackup",
@@ -36498,6 +36658,7 @@ async function apply(ctx) {
               "help",
               "assistant",
               "update",
+              "plan",
               "read",
               "save",
               "trash",

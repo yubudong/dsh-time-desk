@@ -9,7 +9,9 @@ import { createSpiritPanel } from "./SpiritPanel";
 import { SpiritIcon } from "./SpiritIcon";
 import { createTimerUI } from "./TimerUI";
 import { Tomatoes } from "./Tomatoes";
-import { taskFocus, todayTasks, todayHabits } from "./today-view.js";
+import { taskFocus, todayHabits } from "./today-view.js";
+import { dailyPlan, inboxTasks, planKey } from "./planning.js";
+import { createPlanningUI } from "./PlanningUI";
 import {
   today,
   shift,
@@ -27,7 +29,8 @@ import baseCss from "./style.css";
 import spiritCss from "./spirit.css";
 import todayCss from "./today.css";
 import focusCss from "./focus.css";
-const css = baseCss + spiritCss + todayCss + focusCss;
+import planningCss from "./planning.css";
+const css = baseCss + spiritCss + todayCss + focusCss + planningCss;
 const { useState, useEffect, useRef, useSyncExternalStore } = React;
 const NAV = ["today", "projects", "habits", "life", "calendar", "review"];
 const paths = {
@@ -191,6 +194,11 @@ export function apply(ctx: any) {
       </button>
     );
   }
+  const { QuickCapture, PlanPanel, InboxItem } = createPlanningUI({
+    t,
+    Btn,
+    Field,
+  });
   function useClock() {
     const [n, set] = useState(Date.now());
     useEffect(() => {
@@ -947,7 +955,19 @@ export function apply(ctx: any) {
     spiritBusy,
     saving,
     refresh,
-  }: any) {
+  }: {
+    update: any;
+    request: (command: string, extra?: any) => Promise<any>;
+    remember: (value: any) => void;
+    upgrade: any;
+    upgradeRequest: (command: string, extra?: any) => Promise<any>;
+    rememberUpgrade: (value: any) => void;
+    revision: number;
+    editorOpen: boolean;
+    spiritBusy: () => boolean;
+    saving: boolean;
+    refresh: () => Promise<void>;
+  }) {
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState("");
     const [showNotes, setShowNotes] = useState(false);
@@ -1025,14 +1045,23 @@ export function apply(ctx: any) {
       setPreparing(true);
       try {
         const pre = await upgradeRequest("preflight");
-        if (pre.timer) {
-          setBlockers([t("upgradeBlockTimer")]);
+        if (!pre.ok) {
+          setBlockers(
+            pre.blockers.map((x: any) =>
+              t(
+                x.code === "timer"
+                  ? "upgradeBlockTimer"
+                  : "upgradeBlockAssistant",
+              ),
+            ),
+          );
           return;
         }
         rememberUpgrade(
           await upgradeRequest("prepare", {
             targetVersion: target,
             fromVersion: current,
+            revision: pre.revision,
           }),
         );
         openUpgradeManager();
@@ -1055,14 +1084,15 @@ export function apply(ctx: any) {
         return;
       setUpgradeError("");
       try {
-        await upgradeRequest("restoreSnapshot", {
+        const result = await upgradeRequest("restoreSnapshot", {
           id: snap.id,
           confirm: true,
           revision,
         });
+        setRestored(t("snapshotRestored"));
+        if (result.warning) setUpgradeError(result.warning);
         await refresh();
         rememberUpgrade(await upgradeRequest("snapshots"));
-        setRestored(t("snapshotRestored"));
       } catch (e: any) {
         setUpgradeError(e?.message || t("updateCheckFailed"));
       }
@@ -1492,7 +1522,19 @@ export function apply(ctx: any) {
             </div>
           )}
         </section>
-        <UpdateSection update={update} request={request} remember={remember} />
+        <UpdateSection
+          update={update}
+          request={request}
+          remember={remember}
+          upgrade={upgrade}
+          upgradeRequest={upgradeRequest}
+          rememberUpgrade={rememberUpgrade}
+          revision={revision}
+          editorOpen={editorOpen}
+          spiritBusy={spiritBusy}
+          saving={busy}
+          refresh={refresh}
+        />
       </>
     );
   }
@@ -1508,6 +1550,9 @@ export function apply(ctx: any) {
       [message, setMessage] = useState(""),
       [ai, setAi] = useState(false),
       [lifeCategory, setLifeCategory] = useState("");
+    const [captureOpen, setCaptureOpen] = useState(false);
+    const [captureDirty, setCaptureDirty] = useState(false);
+    const captureButton = useRef<HTMLButtonElement>(null);
     const [updateView, setUpdateView] = useState<any>(null);
     const [upgradeView, setUpgradeView] = useState<any>(null);
     const [updateNotice, setUpdateNotice] = useState("");
@@ -1650,6 +1695,7 @@ export function apply(ctx: any) {
     const current = range.filter((x: any) => x.date === day);
     const tasks = live("tasks");
     const habits = live("habits");
+    const planForDay = dailyPlan(data, day, range);
     const viewEnv = {
       data,
       day,
@@ -1673,7 +1719,7 @@ export function apply(ctx: any) {
       upgradeRequest,
       rememberUpgrade: setUpgradeView,
       revision: data.revision,
-      editorOpen: !!editor,
+      editorOpen: !!editor || captureDirty,
       spiritBusy: () => spiritBusyRef.current,
       refresh,
     };
@@ -1768,6 +1814,84 @@ export function apply(ctx: any) {
                   ) : null}
                 </button>
                 <div className="ld-task-tools">
+                  {tab === "today" && !done && !x.event && (
+                    <>
+                      {x.carriedFrom && x.priorityDate !== day && (
+                        <button
+                          className="ld-icon-btn"
+                          disabled={busy}
+                          title={t(
+                            planForDay.backlog.some(
+                              (q: any) => planKey(q) === planKey(x),
+                            )
+                              ? "pickForDay"
+                              : "unpickForDay",
+                          )}
+                          aria-label={
+                            t(
+                              planForDay.backlog.some(
+                                (q: any) => planKey(q) === planKey(x),
+                              )
+                                ? "pickForDay"
+                                : "unpickForDay",
+                            ) +
+                            " " +
+                            x.title
+                          }
+                          onClick={() =>
+                            run({
+                              action: "plan",
+                              command: planForDay.backlog.some(
+                                (q: any) => planKey(q) === planKey(x),
+                              )
+                                ? "pick"
+                                : "unpick",
+                              date: day,
+                              id: x.id,
+                              originalDate: x.originalDate,
+                            })
+                          }
+                        >
+                          {planForDay.backlog.some(
+                            (q: any) => planKey(q) === planKey(x),
+                          )
+                            ? "+"
+                            : "−"}
+                        </button>
+                      )}
+                      <button
+                        className="ld-icon-btn"
+                        disabled={busy}
+                        title={t(
+                          x.priorityDate === day
+                            ? "clearPriority"
+                            : "makePriority",
+                        )}
+                        aria-pressed={x.priorityDate === day}
+                        aria-label={
+                          t(
+                            x.priorityDate === day
+                              ? "clearPriority"
+                              : "makePriority",
+                          ) +
+                          " " +
+                          x.title
+                        }
+                        onClick={() =>
+                          run({
+                            action: "save",
+                            collection: "tasks",
+                            id: x.id,
+                            item: {
+                              priorityDate: x.priorityDate === day ? "" : day,
+                            },
+                          })
+                        }
+                      >
+                        ✧
+                      </button>
+                    </>
+                  )}
                   {!done && !x.event && (
                     <button
                       className="ld-icon-btn"
@@ -1852,7 +1976,7 @@ export function apply(ctx: any) {
         );
       }
       if (tab === "today") {
-        const groups = todayTasks(data, range, day);
+        const groups = planForDay;
         const priority = groups.priority;
         return (
           <>
@@ -1871,6 +1995,8 @@ export function apply(ctx: any) {
                     </div>
                   </div>
                 )}
+                <PlanPanel plan={groups} date={day} act={act} busy={busy} />
+                <p className="ld-help">{t("priorityHint")}</p>
                 {section(
                   t("priorities"),
                   priority,
@@ -1901,7 +2027,14 @@ export function apply(ctx: any) {
                     ),
                   )}
                 </section>
-                {section(t("todos"), groups.todos)}
+                {section(t("plannedTodos"), groups.todos)}
+                <section className="ld-section">
+                  <h2>
+                    {t("carryBacklog")} · {groups.backlog.length}
+                  </h2>
+                  <p className="ld-help">{t("carryHint")}</p>
+                  {taskRows(groups.backlog)}
+                </section>
                 {groups.due.length > 0 && (
                   <section className="ld-section ld-deadlines">
                     <h2>{t("deadlineWatch")}</h2>
@@ -1945,15 +2078,9 @@ export function apply(ctx: any) {
                 )}
                 <details className="ld-details">
                   <summary>
-                    {t("inbox")} ·{" "}
-                    {
-                      tasks.filter((x: any) => !x.date && x.status !== "done")
-                        .length
-                    }
+                    {t("inbox")} · {inboxTasks(data).length}
                   </summary>
-                  {taskRows(
-                    tasks.filter((x: any) => !x.date && x.status !== "done"),
-                  )}
+                  {taskRows(inboxTasks(data))}
                 </details>
               </div>
               <aside className="ld-support">
@@ -2231,9 +2358,38 @@ export function apply(ctx: any) {
             )}
           </>
         );
-      return section(
-        t("inbox"),
-        tasks.filter((x: any) => !x.date && x.status !== "done"),
+      return (
+        <>
+          <p className="ld-help">{t("inboxHelp")}</p>
+          <section className="ld-section">
+            <h2>
+              {t("awaitingTriage")} · {inboxTasks(data).length}
+            </h2>
+            {inboxTasks(data).map((task: any) => (
+              <InboxItem
+                key={task.id}
+                task={task}
+                projects={projects.filter((p: any) => p.status !== "done")}
+                act={act}
+                busy={busy}
+                onEdit={openTask}
+                day={day}
+              />
+            ))}
+            {!inboxTasks(data).length && (
+              <p className="ld-help">{t("empty")}</p>
+            )}
+          </section>
+          {section(
+            t("organizedUnscheduled"),
+            tasks.filter(
+              (x: any) =>
+                !x.date &&
+                x.status !== "done" &&
+                !inboxTasks(data).some((q: any) => q.id === x.id),
+            ),
+          )}
+        </>
       );
     }
     const title =
@@ -2251,6 +2407,18 @@ export function apply(ctx: any) {
             (collapsed ? "ld-collapsed " : "") +
             (ai ? "ld-spirit-open" : "")
           }
+          tabIndex={-1}
+          onKeyDown={(e) => {
+            if (
+              (e.metaKey || e.ctrlKey) &&
+              e.shiftKey &&
+              e.key.toLowerCase() === "k" &&
+              !e.nativeEvent.isComposing
+            ) {
+              e.preventDefault();
+              setCaptureOpen(true);
+            }
+          }}
         >
           <nav className="ld-nav" aria-label={t("title")}>
             <div className="ld-brand">
@@ -2275,7 +2443,14 @@ export function apply(ctx: any) {
                   onClick={() => go(n)}
                 >
                   <Icon name={n} />
-                  {!collapsed && <span>{t(n)}</span>}
+                  {!collapsed && (
+                    <span>
+                      {t(n)}
+                      {n === "inbox" && inboxTasks(data).length > 0
+                        ? " · " + inboxTasks(data).length
+                        : ""}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
@@ -2316,54 +2491,85 @@ export function apply(ctx: any) {
             </div>
           </nav>
           <div className="ld-workspace">
-            <div
-              className="ld-page-top"
-              role="region"
-              aria-label={t("workspaceActions")}
-            >
-              <div className="ld-search">
-                <Icon name="search" size={17} />
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder={t("search")}
-                  aria-label={t("search")}
-                />
-              </div>
-              <div className="ld-actions">
-                <select
-                  className="ld-mood"
-                  aria-label={t("mood")}
-                  value={
-                    data.settings.moodUntil &&
-                    data.settings.moodUntil < today(timeZone)
-                      ? "daily"
-                      : data.settings.mood
-                  }
-                  onChange={(e) =>
-                    run({ action: "settings", item: { mood: e.target.value } })
-                  }
-                >
-                  {["daily", "bright", "focus", "calm"].map((m) => (
-                    <option key={m} value={m}>
-                      {t(
-                        m === "daily"
-                          ? "moodDaily"
-                          : m === "focus"
-                            ? "moodFocus"
-                            : m,
-                      )}
-                    </option>
-                  ))}
-                </select>
-                <Btn aria-pressed={ai} onClick={() => setAi(!ai)}>
-                  <SpiritIcon
-                    size={32}
-                    reducedMotion={data.settings.reduceMotion}
+            <div className="ld-toolbar-wrap">
+              <div
+                className="ld-page-top"
+                role="region"
+                aria-label={t("workspaceActions")}
+              >
+                <div className="ld-search">
+                  <Icon name="search" size={17} />
+                  <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder={t("search")}
+                    aria-label={t("search")}
                   />
-                  {t("spirit")}
-                </Btn>
+                </div>
+                <div className="ld-actions">
+                  <button
+                    ref={captureButton}
+                    className="ld-btn ld-primary"
+                    aria-expanded={captureOpen}
+                    aria-keyshortcuts="Control+Shift+K Meta+Shift+K"
+                    title={t("quickCapture") + " · ⌘/Ctrl+Shift+K"}
+                    onClick={() => setCaptureOpen(!captureOpen)}
+                  >
+                    {t("quickCapture")}
+                  </button>
+                  <select
+                    className="ld-mood"
+                    aria-label={t("mood")}
+                    value={
+                      data.settings.moodUntil &&
+                      data.settings.moodUntil < today(timeZone)
+                        ? "daily"
+                        : data.settings.mood
+                    }
+                    onChange={(e) =>
+                      run({
+                        action: "settings",
+                        item: { mood: e.target.value },
+                      })
+                    }
+                  >
+                    {["daily", "bright", "focus", "calm"].map((m) => (
+                      <option key={m} value={m}>
+                        {t(
+                          m === "daily"
+                            ? "moodDaily"
+                            : m === "focus"
+                              ? "moodFocus"
+                              : m,
+                        )}
+                      </option>
+                    ))}
+                  </select>
+                  <Btn aria-pressed={ai} onClick={() => setAi(!ai)}>
+                    <SpiritIcon
+                      size={32}
+                      reducedMotion={data.settings.reduceMotion}
+                    />
+                    {t("spirit")}
+                  </Btn>
+                </div>
               </div>
+              <QuickCapture
+                open={captureOpen}
+                onClose={() => {
+                  setCaptureOpen(false);
+                  captureButton.current?.focus();
+                }}
+                projects={projects.filter((p: any) => p.status !== "done")}
+                act={act}
+                busy={busy}
+                onSaved={() => setMessage(t("saved"))}
+                onDirty={(value: boolean) => {
+                  setCaptureDirty(value);
+                  if (value) reviewDrafts.set("quick-capture", "unsaved");
+                  else reviewDrafts.delete("quick-capture");
+                }}
+              />
             </div>
             <main
               className={

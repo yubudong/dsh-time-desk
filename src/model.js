@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { durationSeconds } from "./focus-state.js";
+import { dailyPlan, planKey, inboxTasks } from "./planning.js";
 import {
   State,
   blankState,
@@ -72,7 +73,43 @@ export function applyAction(current, a, now = Date.now()) {
   if (a.requestId && s.receipts.some((r) => r.key === a.requestId)) return s;
   if (a.revision !== s.revision) fail("数据已更新，请刷新后重新操作");
   const collection = a.collection;
-  if (a.action === "save") {
+  if (a.action === "plan") {
+    const date = day.parse(a.date);
+    const index = s.dayPlans.findIndex((p) => p.date === date);
+    const plan =
+      index < 0
+        ? { date, availableMinutes: null, selected: [] }
+        : s.dayPlans[index];
+    if (a.command === "capacity") {
+      if (!a.item || !Object.hasOwn(a.item, "availableMinutes"))
+        fail("请明确提供可用分钟，或 null 清除设置");
+      plan.availableMinutes = a.item.availableMinutes;
+    } else if (["pick", "unpick"].includes(a.command)) {
+      const task = live(s, "tasks", a.id);
+      const groups = dailyPlan(s, date);
+      const candidates = [
+        ...groups.backlog,
+        ...groups.todos.filter((x) => x.carriedFrom),
+      ];
+      const instance = candidates.find(
+        (x) =>
+          x.id === task.id &&
+          (!a.originalDate || x.originalDate === a.originalDate),
+      );
+      if (!instance) fail("只能选择该日可执行的延续待办，请刷新后重试");
+      const key = planKey(instance);
+      plan.selected = plan.selected.filter(
+        (x) => x.taskId + "@" + x.originalDate !== key,
+      );
+      if (a.command === "pick")
+        plan.selected.push({
+          taskId: task.id,
+          originalDate: instance.originalDate || instance.date || "",
+        });
+    } else fail("计划操作无效");
+    if (index < 0) s.dayPlans.push(plan);
+    else s.dayPlans[index] = plan;
+  } else if (a.action === "save") {
     if (!["projects", "tasks", "habits"].includes(collection))
       fail("不支持的记录类型");
     const old = a.id ? live(s, collection, a.id) : null;
@@ -421,6 +458,8 @@ export function applyAction(current, a, now = Date.now()) {
 }
 export function validateState(input) {
   const s = State.parse(input);
+  if (new Set(s.dayPlans.map((p) => p.date)).size !== s.dayPlans.length)
+    fail("备份含重复的每日计划");
   const all = [
     "projects",
     "tasks",
@@ -463,6 +502,16 @@ export async function createService(unit, clock = () => Date.now()) {
     async operate(a) {
       const run = queue.then(async () => {
         if (a.action === "read") return structuredClone(current);
+        if (a.action === "plan" && (!a.command || a.command === "read")) {
+          const date = day.parse(
+            a.date || today(current.settings.timeZone, clock()),
+          );
+          return {
+            ...dailyPlan(current, date),
+            inboxCount: inboxTasks(current).length,
+            revision: current.revision,
+          };
+        }
         if (a.action === "preview") {
           const t = TaskInput.parse(a.item);
           validateTask(current, t);

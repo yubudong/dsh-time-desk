@@ -158,19 +158,15 @@ try {
   ).json();
   assert.equal(upgradePreflight.ok, true);
   assert.equal(upgradePreflight.value.timer, null);
-  const readShape = (await (await request({ action: "read" })).json()).value;
-  console.log(
-    "READKEYS",
-    Object.keys(readShape).join(","),
-    "projects",
-    Array.isArray(readShape.projects),
-  );
+  const versionParts = status.value.currentVersion.split(".").map(Number);
+  const nextVersion = `${versionParts[0]}.${versionParts[1]}.${versionParts[2] + 1}`;
   const preparedUpgrade = await (
     await request({
       action: "upgrade",
       command: "prepare",
-      fromVersion: "0.6.0",
-      targetVersion: "0.6.1",
+      fromVersion: status.value.currentVersion,
+      targetVersion: nextVersion,
+      revision: upgradePreflight.value.revision,
     })
   ).json();
   assert.equal(preparedUpgrade.ok, true);
@@ -191,6 +187,29 @@ try {
   const afterRestore = (await (await request({ action: "read" })).json()).value;
   assert.equal(afterRestore.tasks[0].title, "Runtime test");
   console.log("upgrade snapshot: prepared and restored through the real route");
+  const planDate = "2026-11-16";
+  const planSaved = await tool.execute({
+    action: "plan",
+    command: "capacity",
+    date: planDate,
+    revision: afterRestore.revision,
+    item: { availableMinutes: 90 },
+  });
+  assert.equal(planSaved.ok, true);
+  const planRead = await (
+    await request({ action: "plan", command: "read", date: planDate })
+  ).json();
+  const agentPlan = await tool.execute({
+    action: "plan",
+    command: "read",
+    date: planDate,
+  });
+  assert.equal(planRead.value.load.availableMinutes, 90);
+  assert.deepEqual(planRead.value, agentPlan);
+  console.log(
+    "daily plan: UI route and Agent share the same persisted capacity and workload",
+  );
+
   for (const callback of disposers.splice(0).reverse())
     if (typeof callback === "function") await callback();
   const reopened = await backend.kv.open({

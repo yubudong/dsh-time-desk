@@ -1,48 +1,36 @@
-// Phase 2B: pre-upgrade snapshot and hand-off bookkeeping. This module never
-// installs anything; DSH Plugin Manager owns installation after user consent.
+// Stores local workspace snapshots; DSH owns installation and code rollback.
+import { randomUUID } from "node:crypto";
 import { compareVersions, parseVersion } from "./update-core.js";
-
 export const MAX_SNAPSHOTS = 3;
-export const MAX_STATE_CHARS = 2 * 1024 * 1024;
-const DEFAULT = { pending: null, snapshots: [] };
-
-function summary(snapshot) {
-  return {
-    id: snapshot.id,
-    fromVersion: snapshot.fromVersion,
-    targetVersion: snapshot.targetVersion,
-    createdAt: snapshot.createdAt,
-    bytes: snapshot.bytes,
-    counts: snapshot.counts,
-  };
+export const MAX_STATE_CHARS = 2 * 1024 * 1024; // Historical export; limit is UTF-8 bytes.
+function summary(x) {
+  const { id, fromVersion, targetVersion, createdAt, bytes, counts } = x;
+  return { id, fromVersion, targetVersion, createdAt, bytes, counts };
 }
-
 export function createUpgradeService({
   unit,
   readState,
   restoreState,
+  currentVersion = null,
+  isBusy = async () => false,
   clock = () => Date.now(),
 }) {
-  let global = { ...DEFAULT };
+  let global = { pending: null, snapshots: [] };
   let queue = Promise.resolve();
-  const snapshot = () => ({
-    pending: global.pending,
-    snapshots: global.snapshots.map(summary),
-    currentVersion: global.currentVersion || null,
-  });
-  async function persist() {
-    await unit.setGlobal(structuredClone(global));
-  }
-  function ensureRoom(state) {
-    const encoded = JSON.stringify(state);
-    if (encoded.length > MAX_STATE_CHARS)
-      throw Error("工作台数据过大，无法创建升级前快照");
-    return encoded.length;
+  const view = () =>
+    structuredClone({
+      pending: global.pending,
+      snapshots: global.snapshots.map(summary),
+      currentVersion,
+    });
+  async function commit(next) {
+    await unit.setGlobal(structuredClone(next));
+    global = next;
   }
   return {
     async init() {
       const stored = (await unit.loadAll())?.global;
-      if (stored && typeof stored === "object") {
+      if (stored && typeof stored === "object")
         global = {
           pending:
             stored.pending && typeof stored.pending === "object"
@@ -54,82 +42,76 @@ export function createUpgradeService({
                 .slice(-MAX_SNAPSHOTS)
             : [],
         };
-      }
-      return snapshot();
+      return view();
     },
     operate(a) {
       const run = queue.then(async () => {
-        const command = a.command;
-        if (command === "preflight") {
+        if (a.command === "preflight" || a.command === "prepare") {
           const state = await readState();
-          const timer = state.timer;
           const blockers = [];
-          if (timer)
+          if (state.timer)
             blockers.push({
               code: "timer",
-              phase: timer.phase,
-              status: timer.status,
+              phase: state.timer.phase,
+              status: state.timer.status,
             });
-          return {
-            ok: blockers.length === 0,
-            blockers,
-            timer: timer ? { phase: timer.phase, status: timer.status } : null,
-          };
-        }
-        if (command === "prepare") {
-          const state = await readState();
-          if (state.timer) throw Error("请先结束当前计时，再准备升级");
-          const from = a.fromVersion || "unknown";
-          const target = a.targetVersion;
+          if (await isBusy()) blockers.push({ code: "assistant" });
+          if (a.command === "preflight")
+            return {
+              ok: !blockers.length,
+              blockers,
+              revision: state.revision,
+              timer: state.timer
+                ? { phase: state.timer.phase, status: state.timer.status }
+                : null,
+            };
+          if (blockers.some((x) => x.code === "timer"))
+            throw Error("请先结束当前计时，再准备升级");
+          if (blockers.length) throw Error("时间精灵正在处理请求，请稍后再试");
+          if (a.revision !== undefined && a.revision !== state.revision)
+            throw Error("数据已更新，请刷新后重新准备升级");
+          const from = currentVersion || a.fromVersion || "unknown",
+            target = a.targetVersion;
           if (!parseVersion(target)) throw Error("目标版本号无效");
           if (parseVersion(from) && compareVersions(target, from) <= 0)
             throw Error("目标版本必须高于当前版本");
           for (const key of ["projects", "tasks", "habits", "focusLogs"])
             if (!Array.isArray(state[key]))
-              throw Error(
-                "快照数据缺少 " +
-                  key +
-                  "：keys=" +
-                  Object.keys(state || {}).join(",") +
-                  " type=" +
-                  Object.prototype.toString.call(state),
-              );
-          const bytes = ensureRoom(state);
+              throw Error("快照数据缺少 " + key + "，请刷新后重试");
+          const bytes = Buffer.byteLength(JSON.stringify(state), "utf8");
+          if (bytes > MAX_STATE_CHARS)
+            throw Error("工作台数据过大，无法创建升级前快照");
           const record = {
-            id: "snapshot-" + clock() + "-" + global.snapshots.length,
+            id: "snapshot-" + randomUUID(),
             fromVersion: from,
             targetVersion: target,
             createdAt: clock(),
             bytes,
-            counts: {
-              projects: state.projects.length,
-              tasks: state.tasks.length,
-              habits: state.habits.length,
-              focusLogs: state.focusLogs.length,
-            },
+            counts: Object.fromEntries(
+              ["projects", "tasks", "habits", "focusLogs"].map((k) => [
+                k,
+                state[k].filter((x) => !x.deletedAt).length,
+              ]),
+            ),
             state,
           };
-          global.snapshots = [...global.snapshots, record].slice(
-            -MAX_SNAPSHOTS,
-          );
-          global.pending = {
-            targetVersion: target,
-            fromVersion: from,
-            preparedAt: record.createdAt,
-            snapshotId: record.id,
-          };
-          global.currentVersion = from;
-          await persist();
-          return { ok: true, prepared: summary(record), ...snapshot() };
+          await commit({
+            ...global,
+            snapshots: [...global.snapshots, record].slice(-MAX_SNAPSHOTS),
+            pending: {
+              targetVersion: target,
+              fromVersion: from,
+              preparedAt: record.createdAt,
+              snapshotId: record.id,
+            },
+          });
+          return { ok: true, prepared: summary(record), ...view() };
         }
-        if (command === "snapshots") return snapshot();
-        if (command === "clearPending") {
-          global.pending = null;
-          await persist();
-          return snapshot();
-        }
-        if (command === "restoreSnapshot") {
+        if (a.command === "clearPending")
+          await commit({ ...global, pending: null });
+        if (a.command === "restoreSnapshot") {
           if (a.confirm !== true) throw Error("恢复需要确认");
+          if (await isBusy()) throw Error("时间精灵正在处理请求，请稍后再恢复");
           const record = global.snapshots.find((x) => x.id === a.id);
           if (!record) throw Error("快照不存在");
           await restoreState({
@@ -141,16 +123,23 @@ export function createUpgradeService({
             revision: a.revision,
             confirm: true,
           });
-          global.pending = null;
-          await persist();
-          return { ok: true, restored: summary(record), ...snapshot() };
+          // Workspace restore already committed. Metadata failure must not claim
+          // the restore failed or invite an accidental retry over newer data.
+          let warning = null;
+          try {
+            await commit({ ...global, pending: null });
+          } catch {
+            warning = "数据已恢复，但升级提示未能清除，请刷新后核对";
+          }
+          return { ok: true, restored: summary(record), warning, ...view() };
         }
-        return snapshot();
+        return view();
       });
       queue = run.catch(() => {});
       return run;
     },
     async close() {
+      await queue;
       await unit.close();
     },
   };

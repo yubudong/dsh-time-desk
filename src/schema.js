@@ -120,11 +120,20 @@ export const Settings = z.object({
   sound: z.boolean().default(false),
   notifications: z.boolean().default(false),
 });
+export const DayPlan = z.object({
+  date: day,
+  availableMinutes: z.number().int().min(0).max(1440).nullable().default(null),
+  selected: z
+    .array(z.object({ taskId: z.string().min(1), originalDate: optionalDay }))
+    .max(1000)
+    .default([]),
+});
 export const State = z.object({
   schemaVersion: z.literal(1),
   revision: z.number().int().min(0),
   deviceId: z.string(),
   settings: Settings,
+  dayPlans: z.array(DayPlan).max(5000).default([]),
   projects: z.array(ProjectInput.extend(meta)),
   tasks: z.array(TaskInput.extend(meta)),
   habits: z.array(HabitInput.extend(meta)),

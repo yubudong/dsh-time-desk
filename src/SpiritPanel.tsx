@@ -22,8 +22,8 @@ export function createSpiritPanel({ send, t, refresh }: any) {
       requestId = useRef(crypto.randomUUID()),
       lastTool = useRef("");
     useEffect(() => {
-      onBusyChange(pending);
-    }, [pending]);
+      onBusyChange(pending || !!view?.busy);
+    }, [pending, view?.busy]);
     const receive = (v: any) => {
       setView(v);
       const tool = v.messages
