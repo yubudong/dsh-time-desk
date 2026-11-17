@@ -1,4 +1,56 @@
 export const copy = {
+  completionLabel: ["怎样算完成", "How this counts as done"],
+  completionManual: ["手动打卡", "Check in manually"],
+  completionReview: [
+    "保存当天日复盘后自动完成",
+    "Done when that day's review is saved",
+  ],
+  completionDailyOnly: [
+    "只有每天一次的习惯可以关联日复盘；修改频率后再选择。",
+    "Only a once-a-day habit can link to the daily review.",
+  ],
+  templateHeading: [
+    "从模板开始，或自己设置",
+    "Start from a template, or set it up yourself",
+  ],
+  templateCustom: ["自定义习惯", "Custom habit"],
+  templateCustomHint: [
+    "自己决定名称和频率，适合没有列出的习惯。",
+    "Choose your own name and rhythm for anything not listed.",
+  ],
+  templateReading: ["阅读", "Reading"],
+  templateReadingNote: [
+    "按自己的节奏读书，读多久都算。",
+    "Read at your own pace; any length counts.",
+  ],
+  templateExercise: ["运动", "Exercise"],
+  templateExerciseNote: [
+    "记录每天的运动时长，0 表示不估算。",
+    "Track daily exercise minutes; 0 means no target.",
+  ],
+  templateSleep: ["早睡", "Sleep early"],
+  templateSleepNote: [
+    "比平时更早入睡，第二天打卡。",
+    "Go to bed earlier than usual and check in the next day.",
+  ],
+  templateDailyReview: ["每日复盘", "Daily review"],
+  templateDailyReviewNote: [
+    "优先当晚复盘；来不及时，第二天早晨选择昨天的日期补写。",
+    "Review in the evening when you can; otherwise write yesterday's review the next morning.",
+  ],
+  templateWeeklyReview: ["每周复盘", "Weekly review"],
+  templateWeeklyReviewNote: [
+    "每周一次，用来回顾这一周的进展。",
+    "Once a week to look back on how the week went.",
+  ],
+  templateWeeklyHint: [
+    "每周复盘目前需要手动打卡；保存周复盘不会自动完成它。",
+    "The weekly review is manual for now; saving a weekly note does not check it off.",
+  ],
+  templateSavedHint: [
+    "模板只填入表单，确认保存后才创建，也不会自动设置提醒。",
+    "A template only fills the form. Nothing is created until you save, and no reminder is set.",
+  ],
   quickCapture: ["快速记录", "Quick capture"],
   captureDetails: ["详细编辑", "Edit details"],
   quickPlaceholder: ["先记下一件事…", "Capture something…"],

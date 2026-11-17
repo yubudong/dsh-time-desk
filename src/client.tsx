@@ -12,6 +12,7 @@ import { Tomatoes } from "./Tomatoes";
 import { taskFocus, todayHabits } from "./today-view.js";
 import { dailyPlan, inboxTasks, planKey } from "./planning.js";
 import { createPlanningUI } from "./PlanningUI";
+import { HABIT_TEMPLATES, habitFromTemplate } from "./habit-templates.js";
 import {
   today,
   shift,
@@ -383,9 +384,6 @@ export function apply(ctx: any) {
             >
               <span className="ld-task-title">{h.title}</span>
               {(() => {
-                // Today groups already state the time of day; repeating the
-                // period under each habit adds noise. It stays on the full list,
-                // which has no group headings.
                 const meta = r?.paused
                   ? t("paused")
                   : p.missed
@@ -399,13 +397,8 @@ export function apply(ctx: any) {
                           : p.done
                             ? t("done")
                             : "";
-                return meta || full ? (
-                  <span className="ld-task-meta">
-                    {meta}
-                    {full ? (
-                      <small className="ld-habit-period">{t(h.period)}</small>
-                    ) : null}
-                  </span>
+                return meta ? (
+                  <span className="ld-task-meta">{meta}</span>
                 ) : null;
               })()}
             </button>
@@ -460,17 +453,11 @@ export function apply(ctx: any) {
           <div className="ld-habit-list">{list.map(renderHabit)}</div>
         ) : (
           <>
-            {["morning", "any", "evening"].map((period) => {
-              const items = groups.pending.filter(
-                (h: any) => h.period === period,
-              );
-              return items.length ? (
-                <div className="ld-habit-group" key={period}>
-                  <h3>{t(period)}</h3>
-                  {items.map(renderHabit)}
-                </div>
-              ) : null;
-            })}
+            {groups.pending.length > 0 && (
+              <div className="ld-habit-list">
+                {groups.pending.map(renderHabit)}
+              </div>
+            )}
             {!groups.pending.length && (
               <p className="ld-help">{t("noPendingHabits")}</p>
             )}
@@ -1563,6 +1550,7 @@ export function apply(ctx: any) {
       [lifeCategory, setLifeCategory] = useState("");
     const [captureOpen, setCaptureOpen] = useState(false);
     const [captureReset, setCaptureReset] = useState(0);
+    const [templateOpen, setTemplateOpen] = useState(false);
     const [captureDirty, setCaptureDirty] = useState(false);
     const captureButton = useRef<HTMLButtonElement>(null);
     const [updateView, setUpdateView] = useState<any>(null);
@@ -2003,7 +1991,9 @@ export function apply(ctx: any) {
                       <Btn primary onClick={() => openTask()}>
                         {t("addTask")}
                       </Btn>
-                      <Btn onClick={() => openHabit(null)}>{t("addHabit")}</Btn>
+                      <Btn onClick={() => setTemplateOpen(true)}>
+                        {t("addHabit")}
+                      </Btn>
                     </div>
                   </div>
                 )}
@@ -2255,7 +2245,7 @@ export function apply(ctx: any) {
         return (
           <>
             <div className="ld-actions">
-              <Btn primary icon="plus" onClick={() => openHabit(null)}>
+              <Btn primary icon="plus" onClick={() => setTemplateOpen(true)}>
                 {t("addHabit")}
               </Btn>
             </div>
@@ -2702,6 +2692,42 @@ export function apply(ctx: any) {
             }}
           />
         </div>
+        {templateOpen && (
+          <Modal title={t("addHabit")} onClose={() => setTemplateOpen(false)}>
+            <p className="ld-help">{t("templateHeading")}</p>
+            <div className="ld-template-list">
+              {HABIT_TEMPLATES.map((tpl: any) => (
+                <button
+                  key={tpl.id}
+                  className="ld-template"
+                  onClick={() => {
+                    setTemplateOpen(false);
+                    openHabit(habitFromTemplate(tpl, today(timeZone), t));
+                  }}
+                >
+                  <span className="ld-template-title">{t(tpl.titleKey)}</span>
+                  <span className="ld-template-note">{t(tpl.noteKey)}</span>
+                </button>
+              ))}
+            </div>
+            {HABIT_TEMPLATES.some((x: any) => x.mode === "weekly") && (
+              <p className="ld-help">{t("templateWeeklyHint")}</p>
+            )}
+            <p className="ld-help">{t("templateSavedHint")}</p>
+            <div className="ld-actions">
+              <Btn
+                onClick={() => {
+                  setTemplateOpen(false);
+                  openHabit(null);
+                }}
+              >
+                {t("templateCustom")}
+              </Btn>
+              <Btn onClick={() => setTemplateOpen(false)}>{t("cancel")}</Btn>
+            </div>
+            <p className="ld-help">{t("templateCustomHint")}</p>
+          </Modal>
+        )}
         {editor && (
           <Editor
             editor={editor}
@@ -3065,9 +3091,7 @@ export function apply(ctx: any) {
                       {weekdayButtons(rule.days, (v) => changeRule("days", v))}
                     </Field>
                   )}
-                  <Field label={t("period")}>
-                    {options("period", ["any", "morning", "evening"])}
-                  </Field>
+
                   <label className="ld-check-label">
                     <input
                       type="checkbox"
@@ -3076,22 +3100,33 @@ export function apply(ctx: any) {
                     />
                     {t("pause")}
                   </label>
-                  {rule.mode === "daily" && (
-                    <details className="ld-wide ld-review-link">
-                      <summary>{t("reviewLinkOptions")}</summary>
-                      <label className="ld-check-label">
-                        <input
-                          type="checkbox"
-                          checked={item.reviewLinked}
-                          onChange={(e) =>
-                            change("reviewLinked", e.target.checked)
-                          }
-                        />
-                        {t("reviewLinkLabel")}
-                      </label>
-                      <p className="ld-help">{t("reviewLinkHelp")}</p>
-                    </details>
-                  )}
+                  <fieldset className="ld-wide ld-completion">
+                    <legend>{t("completionLabel")}</legend>
+                    <label className="ld-check-label">
+                      <input
+                        type="radio"
+                        name="completion"
+                        checked={!item.reviewLinked}
+                        onChange={() => change("reviewLinked", false)}
+                      />
+                      {t("completionManual")}
+                    </label>
+                    <label className="ld-check-label">
+                      <input
+                        type="radio"
+                        name="completion"
+                        checked={!!item.reviewLinked}
+                        disabled={rule.mode !== "daily"}
+                        onChange={() => change("reviewLinked", true)}
+                      />
+                      {t("completionReview")}
+                    </label>
+                    <p className="ld-help">
+                      {rule.mode === "daily"
+                        ? t("reviewLinkHelp")
+                        : t("completionDailyOnly")}
+                    </p>
+                  </fieldset>
                   <p className="ld-help ld-wide">{t("habitHint")}</p>
                 </>
               )}
