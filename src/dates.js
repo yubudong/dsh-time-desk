@@ -205,19 +205,66 @@ export function habitDue(habit, date) {
     !!r && !r.paused && (r.mode === "weekly" || r.days.includes(weekday(date)))
   );
 }
-export function habitProgress(state, habit, date) {
+export function habitProgress(state, habit, date, now = Date.now()) {
   const r = habitRule(habit, date);
-  if (!r) return { value: 0, target: 1, done: false };
+  if (!r)
+    return {
+      value: 0,
+      target: 1,
+      done: false,
+      status: "unrecorded",
+      completedAt: null,
+    };
   const logs = state.habitLogs.filter(
     (l) => l.habitId === habit.id && !l.deletedAt && l.date === date,
   );
-  const value = logs.filter((l) => !l.skipped).reduce((s, l) => s + l.value, 0);
+  const entries = logs
+    .filter((l) => !l.skipped)
+    .sort((a, b) =>
+      (a.completedAt || a.createdAt).localeCompare(
+        b.completedAt || b.createdAt,
+      ),
+    );
+  const value = entries.reduce((s, l) => s + l.value, 0);
   const measured = r.mode === "quantity" || r.mode === "duration";
+  const target = measured ? r.target : 1;
+  let total = 0,
+    completedAt = null;
+  for (const l of entries) {
+    total += l.value;
+    if (total >= target) {
+      completedAt = l.completedAt || l.createdAt;
+      break;
+    }
+  }
+  const done = value >= target;
+  const skipped = logs.some((l) => l.skipped && !l.missed);
+  const missed = logs.some((l) => l.missed);
+  const lastDay = r.allowNextDay && r.mode !== "weekly" ? shift(date, 1) : date;
+  const onTime =
+    done &&
+    !!completedAt &&
+    today(state.settings.timeZone, Date.parse(completedAt)) <= lastDay;
+  const status = done
+    ? onTime
+      ? "onTime"
+      : "late"
+    : missed
+      ? "missed"
+      : skipped
+        ? "skipped"
+        : today(state.settings.timeZone, now) <= lastDay
+          ? "pending"
+          : "unrecorded";
   return {
     value,
-    target: measured ? r.target : 1,
-    done: value >= (measured ? r.target : 1),
-    skipped: logs.some((l) => l.skipped && !l.missed),
-    missed: logs.some((l) => l.missed),
+    target,
+    done,
+    skipped,
+    missed,
+    completedAt,
+    onTime,
+    status,
+    lastDay,
   };
 }

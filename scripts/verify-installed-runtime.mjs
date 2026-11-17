@@ -210,6 +210,81 @@ try {
     "daily plan: UI route and Agent share the same persisted capacity and workload",
   );
 
+  const revisionNow = async () =>
+    (await (await request({ action: "read" })).json()).value.revision;
+  const templateSaved = await (
+    await request({
+      action: "settings",
+      revision: await revisionNow(),
+      item: { reviewTemplate: "最有收获的是什么？\n下一步想调整什么？" },
+    })
+  ).json();
+  assert.equal(templateSaved.ok, true);
+  const reviewHabit = await tool.execute({
+    action: "save",
+    revision: await revisionNow(),
+    collection: "habits",
+    item: {
+      title: "Synthetic review",
+      reviewLinked: true,
+      rules: [{ effective: planDate, mode: "daily", allowNextDay: true }],
+    },
+  });
+  const emptyReview = await request({
+    action: "review",
+    kind: "day",
+    date: planDate,
+    text: "最有收获的是什么？\n下一步想调整什么？",
+    revision: await revisionNow(),
+    version: 0,
+  });
+  assert.equal(emptyReview.status, 400);
+  const reviewSaved = await (
+    await request({
+      action: "review",
+      kind: "day",
+      date: planDate,
+      id: reviewHabit.lastRecord.id,
+      text: "A synthetic review answer",
+      revision: await revisionNow(),
+      version: 0,
+    })
+  ).json();
+  assert.equal(reviewSaved.ok, true);
+  assert.equal(reviewSaved.value.habitLogs.length, 1);
+  assert.equal(reviewSaved.value.habitLogs[0].date, planDate);
+  assert.ok(reviewSaved.value.reviews[0].completedAt);
+  const firstCompletion = reviewSaved.value.reviews[0].completedAt;
+  const staleReview = await request({
+    action: "review",
+    kind: "day",
+    date: planDate,
+    text: "stale",
+    revision: await revisionNow(),
+    version: 0,
+  });
+  assert.equal(staleReview.status, 400);
+  const editedReview = await (
+    await request({
+      action: "review",
+      kind: "day",
+      date: planDate,
+      text: "Edited synthetic review",
+      revision: await revisionNow(),
+      version: 1,
+    })
+  ).json();
+  assert.equal(editedReview.value.reviews[0].completedAt, firstCompletion);
+  assert.equal(editedReview.value.habitLogs.length, 1);
+  const agentReview = await tool.execute({
+    action: "read",
+    collection: "reviews",
+  });
+  assert.equal(agentReview.reviews.items[0].text, "Edited synthetic review");
+  console.log(
+    "review: personal template, question-only rejection, shared content, one completion, version conflict and edit-time preservation passed",
+  );
+
   for (const callback of disposers.splice(0).reverse())
     if (typeof callback === "function") await callback();
   const reopened = await backend.kv.open({
@@ -224,6 +299,10 @@ try {
     (await reopened.loadAll()).global.tasks[0].title,
     "Runtime test",
   );
+  const storedReview = (await reopened.loadAll()).global;
+  assert.equal(storedReview.reviews[0].text, "Edited synthetic review");
+  assert.equal(storedReview.habitLogs.length, 1);
+  assert.ok(storedReview.settings.reviewTemplate.includes("收获"));
   await reopened.close();
   console.log(
     "PASS: real installed storage + real Connection route read/write + persistent reopen",

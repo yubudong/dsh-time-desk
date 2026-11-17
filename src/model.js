@@ -1,3 +1,4 @@
+import { hasReviewContent, normalizeTemplate } from "./review-template.js";
 import { randomUUID } from "node:crypto";
 import { durationSeconds } from "./focus-state.js";
 import { dailyPlan, planKey, inboxTasks } from "./planning.js";
@@ -310,6 +311,8 @@ export function applyAction(current, a, now = Date.now()) {
       l.deletedAt = iso;
       stamp(l, now);
     } else {
+      if (h.reviewLinked && habitRule(h, date)?.mode === "daily" && !a.skipped)
+        fail("此习惯需要保存日复盘内容后完成，请使用 review 操作");
       const value = Number(a.value ?? 1);
       const rule = habitRule(h, date);
       const measured = ["quantity", "duration"].includes(rule.mode);
@@ -358,16 +361,38 @@ export function applyAction(current, a, now = Date.now()) {
   } else if (a.action === "review") {
     const date = day.parse(a.date);
     if (!["day", "week"].includes(a.kind)) fail("复盘类型无效");
+    if (date > localDay) fail("不能提前完成未来的复盘");
     const text = String(a.text || "");
     if (text.length > 20000) fail("复盘最多 20000 字");
+    if (!hasReviewContent(text, s.settings.reviewTemplate))
+      fail("请写入复盘内容，空白或只有模板问题不能完成复盘");
     const old = s.reviews.find(
       (x) => x.date === date && x.kind === a.kind && !x.deletedAt,
     );
+    if (a.version !== undefined && a.version !== (old?.version || 0))
+      fail("该日复盘已被修改，草稿已保留，请重新读取后核对");
+    if (a.id) {
+      const h = live(s, "habits", a.id);
+      if (
+        !h.reviewLinked ||
+        !habitDue(h, date) ||
+        habitRule(h, date)?.mode !== "daily"
+      )
+        fail("该日习惯不关联日复盘");
+      const progress = habitProgress(s, h, date, now);
+      if (progress.skipped || progress.missed)
+        fail("该日已标记跳过或未达成，请先撤销该标记，再保存复盘");
+    }
+    let review = old;
     if (old) {
+      old.completedAt ||= old.text.trim() ? old.createdAt : iso;
       old.text = text;
       stamp(old, now);
-    } else s.reviews.push({ ...nowMeta(now), date, kind: a.kind, text });
-    if (a.kind === "day" && text.trim() && date <= localDay)
+    } else {
+      review = { ...nowMeta(now), date, kind: a.kind, text, completedAt: iso };
+      s.reviews.push(review);
+    }
+    if (a.kind === "day")
       for (const h of s.habits.filter(
         (h) =>
           !h.deletedAt &&
@@ -375,23 +400,28 @@ export function applyAction(current, a, now = Date.now()) {
           habitDue(h, date) &&
           habitRule(h, date)?.mode === "daily",
       )) {
-        if (
-          !habitProgress(s, h, date).done &&
-          !habitProgress(s, h, date).skipped &&
-          !habitProgress(s, h, date).missed
-        )
+        const progress = habitProgress(s, h, date, now);
+        if (!progress.done && !progress.skipped && !progress.missed)
           s.habitLogs.push({
             ...nowMeta(now),
             habitId: h.id,
             date,
-            value: habitRule(h, date).target,
+            value: 1,
             skipped: false,
+            missed: false,
             note: "关联复盘",
+            completedAt: review.completedAt,
+            sourceReviewId: review.id,
           });
       }
-  } else if (a.action === "settings")
-    s.settings = Settings.parse({ ...s.settings, ...a.item });
-  else if (a.action === "ack")
+  } else if (a.action === "settings") {
+    if (a.command === "reviewTemplate" && a.text !== s.settings.reviewTemplate)
+      fail("模板已在其他窗口更新，当前编辑内容保留，请先核对最新模板");
+    const patch = { ...a.item };
+    if (Object.hasOwn(patch, "reviewTemplate"))
+      patch.reviewTemplate = normalizeTemplate(patch.reviewTemplate);
+    s.settings = Settings.parse({ ...s.settings, ...patch });
+  } else if (a.action === "ack")
     s.noticeAcks = [...new Set([...s.noticeAcks, ...(a.keys || [])])].slice(
       -2000,
     );

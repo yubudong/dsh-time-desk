@@ -1155,3 +1155,14 @@
     transition: none;
   }
 }
+.ld-review-prompts {
+  margin: 8px 0 10px;
+  padding-left: 18px;
+  color: var(--ld-muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.ld-review-date {
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}

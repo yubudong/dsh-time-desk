@@ -3268,7 +3268,7 @@ __export(client_exports, {
   inject: () => inject
 });
 module.exports = __toCommonJS(client_exports);
-var React8 = __toESM(require("react"), 1);
+var React9 = __toESM(require("react"), 1);
 
 // node_modules/@fullcalendar/react/dist/index.js
 var import_react = __toESM(require("react"), 1);
@@ -16564,6 +16564,75 @@ var l77 = {
 
 // src/locales.ts
 var copy = {
+  reviewKeepDraft: ["\u6838\u5BF9\u540E\u4FDD\u7559\u6211\u7684\u8349\u7A3F", "Keep my draft after comparing"],
+  reviewLoadLatest: ["\u6539\u7528\u6700\u65B0\u5185\u5BB9", "Use latest content"],
+  reviewTemplateKeep: [
+    "\u6838\u5BF9\u540E\u4FDD\u7559\u672C\u6B21\u6A21\u677F\u7F16\u8F91",
+    "Keep these template edits after comparing"
+  ],
+  reviewLatestMissing: [
+    "\u6700\u65B0\u8BB0\u5F55\u5DF2\u5220\u9664\u6216\u4E0D\u5B58\u5728\u3002",
+    "The latest record has been removed or does not exist."
+  ],
+  reviewOtherActions: ["\u5176\u4ED6\u5904\u7406", "Other actions"],
+  reviewSkipDate: ["\u8DF3\u8FC7\u8BE5\u65E5", "Skip this date"],
+  reviewMissDate: ["\u6807\u8BB0\u8BE5\u65E5\u672A\u8FBE\u6210", "Mark this date as missed"],
+  reviewClearFlagHint: [
+    "\u8BE5\u65E5\u5DF2\u6807\u8BB0\u8DF3\u8FC7\u6216\u672A\u8FBE\u6210\uFF1B\u5148\u64A4\u9500\u6807\u8BB0\uFF0C\u518D\u4FDD\u5B58\u590D\u76D8\u4EE5\u5B8C\u6210\u4E60\u60EF\u3002",
+    "This date is marked skipped or missed. Undo the mark before saving to complete the habit."
+  ],
+  allowNextDay: ["\u5141\u8BB8\u6B21\u65E5\u5B8C\u6210", "Allow completion the next day"],
+  allowNextDayHint: [
+    "\u6B21\u65E5\u5168\u5929\u5B8C\u6210\u4ECD\u7B97\u6309\u65F6\uFF0C\u5F52\u5C5E\u539F\u65E5\u671F\uFF1B\u4E0D\u4F1A\u8BBE\u7F6E\u63D0\u9192\u3002",
+    "Completion by the end of the following day counts as on time for the original date. No reminder is set."
+  ],
+  habitOnTime: ["\u6309\u65F6\u5B8C\u6210", "Completed on time"],
+  habitLate: ["\u8865\u505A\u5B8C\u6210", "Completed later"],
+  habitUnrecorded: ["\u672A\u8BB0\u5F55", "Not recorded"],
+  yesterdayPending: ["\u6628\u5929\u5F85\u5B8C\u6210", "Yesterday \xB7 Still open"],
+  previousHabitHint: [
+    "\u6628\u5929\u5141\u8BB8\u6B21\u65E5\u5B8C\u6210\u7684\u4E60\u60EF\uFF0C\u4ECA\u5929\u4ECD\u53EF\u5B8C\u6210\uFF1B\u66F4\u65E9\u7684\u8BB0\u5F55\u8BF7\u5230\u4E60\u60EF\u9875\u67E5\u770B\u3002",
+    "These habits allow completion today for yesterday. Earlier records remain in Habits."
+  ],
+  reviewTemplateQuestions: [
+    "\u6A21\u677F\u95EE\u9898\uFF08\u4E0D\u542B\u5F53\u5929\u56DE\u7B54\uFF09",
+    "Template questions (without today's answers)"
+  ],
+  reviewFreeWrite: ["\u81EA\u7531\u4E66\u5199", "Write freely"],
+  reviewShowPrompts: ["\u663E\u793A\u6A21\u677F\u63D0\u793A", "Show template prompts"],
+  reviewContent: ["\u590D\u76D8\u5185\u5BB9", "Your review"],
+  reviewDraftRetention: [
+    "\u5207\u6362\u65E5\u671F\u6216\u5173\u95ED\u540E\uFF0C\u672A\u4FDD\u5B58\u8349\u7A3F\u4F1A\u5728\u672C\u6B21\u9875\u9762\u5185\u4FDD\u7559\u3002\u5237\u65B0\u524D\u8BF7\u5148\u4FDD\u5B58\u3002",
+    "Unsaved drafts are kept on this page when switching dates or closing. Save before refreshing."
+  ],
+  reviewConflictHint: [
+    "\u8FD9\u4E00\u5929\u7684\u590D\u76D8\u5DF2\u5728\u522B\u5904\u66F4\u65B0\u3002\u5F53\u524D\u8349\u7A3F\u4FDD\u7559\uFF0C\u4FDD\u5B58\u524D\u8BF7\u6838\u5BF9\u6700\u65B0\u5185\u5BB9\u3002",
+    "This review was updated elsewhere. Your draft is kept; compare the latest content before saving."
+  ],
+  reviewAI: ["\u8BF7\u65F6\u95F4\u7CBE\u7075\u5E2E\u6211\u590D\u76D8", "Review with Time Spirit"],
+  reviewAIHint: [
+    "\u7531 DSH \u9ED8\u8BA4\u6A21\u578B\u534F\u52A9\uFF0C\u4F7F\u7528\u6240\u9009\u65E5\u671F\u7684\u6A21\u677F\u3001\u8349\u7A3F\u548C\u8BB0\u5F55\uFF1B\u53EF\u80FD\u4EA7\u751F\u6A21\u578B\u7528\u91CF\u3002\u751F\u6210\u5185\u5BB9\u53EA\u8FDB\u5165\u8349\u7A3F\uFF0C\u786E\u8BA4\u4FDD\u5B58\u624D\u5B8C\u6210\u3002",
+    "Uses your DSH default model with this date's prompts, draft and records; model usage may apply. Generated text is a draft until you save."
+  ],
+  reviewAIStarted: [
+    "\u5DF2\u9009\u62E9\u8FD9\u4E00\u5929\u548C\u5F53\u524D\u6A21\u677F\uFF0C\u8BF7\u5148\u95EE\u6211\u4E00\u4E2A\u95EE\u9898\u3002",
+    "This date and template are selected. Ask me one question to begin."
+  ],
+  reviewAIError: ["\u8BF7\u6C42\u5931\u8D25", "Request failed"],
+  reviewYou: ["\u6211", "Me"],
+  reviewAnswer: ["\u4F60\u7684\u56DE\u7B54", "Your answer"],
+  reviewSend: ["\u53D1\u9001\u56DE\u7B54", "Send answer"],
+  reviewStop: ["\u505C\u6B62\u751F\u6210", "Stop generating"],
+  reviewCandidate: ["\u7CBE\u7075\u6574\u7406\u7684\u8349\u7A3F", "Draft from Time Spirit"],
+  reviewUseDraft: ["\u4F7F\u7528\u8FD9\u4EFD\u8349\u7A3F", "Use this draft"],
+  reviewCandidateHint: [
+    "\u4F7F\u7528\u540E\u4ECD\u53EF\u7F16\u8F91\uFF0C\u4E0D\u4F1A\u81EA\u52A8\u4FDD\u5B58\u6216\u6253\u5361\u3002",
+    "You can edit it before saving. Using it does not save or check in."
+  ],
+  reviewReplaceDraft: [
+    "\u7528\u7CBE\u7075\u8349\u7A3F\u66FF\u6362\u5F53\u524D\u7F16\u8F91\u5185\u5BB9\uFF1F\u539F\u5185\u5BB9\u5C1A\u672A\u4FDD\u5B58\u3002",
+    "Replace the text in the editor with this draft? The current text is not saved."
+  ],
   completionLabel: ["\u600E\u6837\u7B97\u5B8C\u6210", "How this counts as done"],
   completionManual: ["\u624B\u52A8\u6253\u5361", "Check in manually"],
   completionReview: [
@@ -16973,6 +17042,31 @@ var copy = {
   reviewLinkHelp: [
     "\u4EC5\u9002\u7528\u4E8E\u590D\u76D8\u7C7B\u4E60\u60EF\uFF1A\u4FDD\u5B58\u65E5\u590D\u76D8\u540E\uFF0C\u81EA\u52A8\u5B8C\u6210\u8BE5\u590D\u76D8\u65E5\u671F\u7684\u6253\u5361\u3002\u6B21\u65E5\u56DE\u987E\u524D\u4E00\u5929\u65F6\uFF0C\u8BF7\u9009\u62E9\u524D\u4E00\u5929\u7684\u65E5\u671F\u3002\u8FD0\u52A8\u3001\u51A5\u60F3\u548C\u9605\u8BFB\u8BF7\u4E0D\u8981\u5F00\u542F\u3002",
     "For review habits only: saving a daily review completes the check-in for its selected date. When reviewing the previous day, select that date. Leave off for exercise, meditation and reading."
+  ],
+  defaultReviewTemplate: [
+    "\u4ECA\u5929\u503C\u5F97\u8BB0\u4E0B\u7684\u4E8B\uFF1A\n\u4ECA\u5929\u7684\u611F\u53D7\u6216\u6536\u83B7\uFF1A\n\u63A5\u4E0B\u6765\u60F3\u4FDD\u6301\u6216\u8C03\u6574\u7684\u4E00\u4EF6\u4E8B\uFF1A",
+    "What is worth remembering today?\nHow did it feel, or what did you notice?\nWhat would you like to keep or adjust?"
+  ],
+  reviewPromptsHint: [
+    "\u6309\u81EA\u5DF1\u7684\u6A21\u677F\u60F3\u4E00\u60F3\uFF0C\u5199\u4E00\u53E5\u4E5F\u7B97\u3002",
+    "Use your own prompts; one honest sentence is enough."
+  ],
+  reviewTemplateButton: ["\u7F16\u8F91\u6211\u7684\u6A21\u677F", "Edit my template"],
+  reviewTemplateTitle: ["\u6211\u7684\u590D\u76D8\u6A21\u677F", "My review template"],
+  reviewTemplateHelp: [
+    "\u6BCF\u884C\u4E00\u4E2A\u95EE\u9898\uFF0C\u6700\u591A 8 \u884C\u3002\u4FEE\u6539\u6A21\u677F\u4E0D\u4F1A\u6539\u52A8\u5DF2\u4FDD\u5B58\u7684\u590D\u76D8\u3002",
+    "One question per line, up to eight. Editing the template never changes saved reviews."
+  ],
+  restoreDefaultTemplate: ["\u6062\u590D\u9ED8\u8BA4\u6A21\u677F", "Restore default"],
+  saveTemplate: ["\u4FDD\u5B58\u6A21\u677F", "Save template"],
+  reviewForDate: ["\u590D\u76D8\u65E5\u671F", "Review date"],
+  reviewYesterday: ["\u6628\u5929", "Yesterday"],
+  reviewToday: ["\u4ECA\u5929", "Today"],
+  saveReviewComplete: ["\u4FDD\u5B58\u590D\u76D8\u5E76\u5B8C\u6210", "Save review and complete"],
+  reviewSavedFor: ["\u5DF2\u4FDD\u5B58\u5E76\u5B8C\u6210\u8BE5\u65E5\u590D\u76D8", "Saved and completed for that day"],
+  reviewEmpty: [
+    "\u8FD8\u6CA1\u6709\u5199\u5185\u5BB9\uFF1B\u53EF\u4EE5\u5148\u5199\u4E00\u53E5\uFF0C\u518D\u4FDD\u5B58\u3002",
+    "Nothing written yet\u2014one sentence is enough to save."
   ],
   backendMissing: [
     "\u65F6\u95F4\u5DE5\u4F5C\u53F0\u540E\u7AEF\u672A\u542F\u52A8\uFF0C\u8BF7\u5728\u63D2\u4EF6\u9875\u67E5\u770B\u52A0\u8F7D\u72B6\u6001\uFF1B\u66F4\u65B0\u540E\u53EF\u80FD\u9700\u8981\u91CD\u542F DSH\u3002",
@@ -29577,20 +29671,51 @@ function habitDue(habit, date) {
   const r3 = habitRule(habit, date);
   return !!r3 && !r3.paused && (r3.mode === "weekly" || r3.days.includes(weekday(date)));
 }
-function habitProgress(state, habit, date) {
+function habitProgress(state, habit, date, now = Date.now()) {
   const r3 = habitRule(habit, date);
-  if (!r3) return { value: 0, target: 1, done: false };
+  if (!r3)
+    return {
+      value: 0,
+      target: 1,
+      done: false,
+      status: "unrecorded",
+      completedAt: null
+    };
   const logs = state.habitLogs.filter(
     (l3) => l3.habitId === habit.id && !l3.deletedAt && l3.date === date
   );
-  const value = logs.filter((l3) => !l3.skipped).reduce((s3, l3) => s3 + l3.value, 0);
+  const entries = logs.filter((l3) => !l3.skipped).sort(
+    (a3, b3) => (a3.completedAt || a3.createdAt).localeCompare(
+      b3.completedAt || b3.createdAt
+    )
+  );
+  const value = entries.reduce((s3, l3) => s3 + l3.value, 0);
   const measured = r3.mode === "quantity" || r3.mode === "duration";
+  const target = measured ? r3.target : 1;
+  let total = 0, completedAt = null;
+  for (const l3 of entries) {
+    total += l3.value;
+    if (total >= target) {
+      completedAt = l3.completedAt || l3.createdAt;
+      break;
+    }
+  }
+  const done = value >= target;
+  const skipped = logs.some((l3) => l3.skipped && !l3.missed);
+  const missed = logs.some((l3) => l3.missed);
+  const lastDay = r3.allowNextDay && r3.mode !== "weekly" ? shift(date, 1) : date;
+  const onTime = done && !!completedAt && today(state.settings.timeZone, Date.parse(completedAt)) <= lastDay;
+  const status = done ? onTime ? "onTime" : "late" : missed ? "missed" : skipped ? "skipped" : today(state.settings.timeZone, now) <= lastDay ? "pending" : "unrecorded";
   return {
     value,
-    target: measured ? r3.target : 1,
-    done: value >= (measured ? r3.target : 1),
-    skipped: logs.some((l3) => l3.skipped && !l3.missed),
-    missed: logs.some((l3) => l3.missed)
+    target,
+    done,
+    skipped,
+    missed,
+    completedAt,
+    onTime,
+    status,
+    lastDay
   };
 }
 
@@ -29658,6 +29783,15 @@ function todayTasks(state, items, date) {
       (x4) => x4.deadline && x4.deadline <= shift(date, 7) && unfinished(singles.get(x4.id) || x4) && !x4.event
     ).sort((a3, b3) => a3.deadline.localeCompare(b3.deadline))
   };
+}
+function pendingPreviousHabits(state, date, now = Date.now()) {
+  if (date !== today(state.settings.timeZone, now)) return [];
+  const previous = shift(date, -1);
+  return state.habits.filter((h3) => {
+    if (h3.deletedAt || !habitDue(h3, previous)) return false;
+    const r3 = habitRule(h3, previous), p3 = habitProgress(state, h3, previous, now);
+    return r3?.allowNextDay && r3.mode !== "weekly" && !p3.done && !p3.skipped && !p3.missed;
+  }).map((h3) => ({ habit: h3, date: previous }));
 }
 function todayHabits(state, date) {
   const eligible = state.habits.filter(
@@ -30353,7 +30487,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.7.8",
+        "data-reader-version": "0.8.0",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -30445,7 +30579,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.7.8")))
+      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.8.0")))
     );
   }
   return {
@@ -30838,14 +30972,461 @@ function habitFromTemplate(template, effective, t3) {
         days: [0, 1, 2, 3, 4, 5, 6],
         target: template.target,
         unit: template.unit,
-        paused: false
+        paused: false,
+        allowNextDay: template.id === "dailyReview"
       }
     ]
   };
 }
 
+// src/ReviewUI.tsx
+var React8 = __toESM(require("react"), 1);
+
+// src/review-template.js
+var MAX_REVIEW_PROMPTS = 8;
+var MAX_REVIEW_TEMPLATE = 2e3;
+var DEFAULT_REVIEW_TEMPLATE = "\u4ECA\u5929\u503C\u5F97\u8BB0\u4E0B\u7684\u4E8B\uFF1A\n\u4ECA\u5929\u7684\u611F\u53D7\u6216\u6536\u83B7\uFF1A\n\u63A5\u4E0B\u6765\u60F3\u4FDD\u6301\u6216\u8C03\u6574\u7684\u4E00\u4EF6\u4E8B\uFF1A";
+function reviewPrompts(template, fallback = DEFAULT_REVIEW_TEMPLATE) {
+  const source = typeof template === "string" && template.trim() ? template : fallback;
+  return [
+    ...new Set(
+      String(source).split(/\r?\n/).map((line) => line.trim()).filter(Boolean)
+    )
+  ].slice(0, MAX_REVIEW_PROMPTS);
+}
+function normalizeTemplate(text) {
+  const value = String(text || "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean).join("\n");
+  if (value.length > MAX_REVIEW_TEMPLATE) throw Error("\u6A21\u677F\u6700\u591A 2000 \u5B57");
+  if (value.split("\n").length > MAX_REVIEW_PROMPTS)
+    throw Error("\u6A21\u677F\u6700\u591A 8 \u4E2A\u95EE\u9898");
+  return value;
+}
+function hasReviewContent(text, template = "", fallback = DEFAULT_REVIEW_TEMPLATE) {
+  const content = String(text || "").trim();
+  if (!content) return false;
+  const clean = (s3) => s3.replace(/^\s*(?:[-*#]+|\d+[.)、])\s*/, "").replace(/[：:?？\s]+$/, "").trim();
+  const prompts = new Set(
+    [
+      ...reviewPrompts(template, fallback),
+      ...reviewPrompts("", fallback),
+      "What is worth remembering today?",
+      "How did it feel, or what did you notice?",
+      "What would you like to keep or adjust?"
+    ].map(clean)
+  );
+  return content.split(/\r?\n/).some((line) => clean(line) && !prompts.has(clean(line)));
+}
+
+// src/ReviewUI.tsx
+var { useState: useState4, useEffect: useEffect4, useRef: useRef4, useId: useId2 } = React8;
+function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
+  const versions = /* @__PURE__ */ new Map();
+  const request = createRequest(send, t3, "api/life-desk-review-spirit", 45e3);
+  function TemplateModal({ data, busy, close }) {
+    const [original, setOriginal] = useState4(
+      data.settings.reviewTemplate || ""
+    );
+    const [text, setText] = useState4(original || t3("defaultReviewTemplate"));
+    const [useDefault, setDefault] = useState4(!original);
+    const [error, setError] = useState4("");
+    useEffect4(() => {
+      if ((useDefault ? "" : text) !== original)
+        drafts.set("template:editor", "unsaved");
+      else drafts.delete("template:editor");
+    }, [text, useDefault, original]);
+    useEffect4(
+      () => () => {
+        drafts.delete("template:editor");
+      },
+      []
+    );
+    const closeSafely = () => {
+      if ((useDefault ? "" : text) !== original && !window.confirm(t3("dirty")))
+        return;
+      close();
+    };
+    const save = async () => {
+      setError("");
+      try {
+        await act({
+          action: "settings",
+          command: "reviewTemplate",
+          text: original,
+          item: { reviewTemplate: useDefault ? "" : normalizeTemplate(text) }
+        });
+        close();
+      } catch (e3) {
+        setError(e3.message);
+      }
+    };
+    return /* @__PURE__ */ React8.createElement(Modal, { title: t3("reviewTemplateTitle"), onClose: closeSafely }, /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("reviewTemplateHelp")), /* @__PURE__ */ React8.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React8.createElement("span", null, t3("reviewTemplateQuestions")), /* @__PURE__ */ React8.createElement(
+      "textarea",
+      {
+        className: "ld-review-text",
+        rows: 6,
+        maxLength: 2e3,
+        value: text,
+        disabled: busy,
+        onChange: (e3) => {
+          setText(e3.target.value);
+          setDefault(false);
+        }
+      }
+    )), (data.settings.reviewTemplate || "") !== original && /* @__PURE__ */ React8.createElement("div", { className: "ld-review-conflict" }, /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("reviewConflictHint")), /* @__PURE__ */ React8.createElement("pre", null, data.settings.reviewTemplate || t3("defaultReviewTemplate")), /* @__PURE__ */ React8.createElement(
+      Btn,
+      {
+        disabled: busy,
+        onClick: () => {
+          setOriginal(data.settings.reviewTemplate || "");
+          setError("");
+        }
+      },
+      t3("reviewTemplateKeep")
+    )), error && /* @__PURE__ */ React8.createElement("p", { className: "ld-error", role: "alert" }, error), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(Btn, { primary: true, disabled: busy, onClick: save }, t3("saveTemplate")), /* @__PURE__ */ React8.createElement(
+      Btn,
+      {
+        disabled: busy,
+        onClick: () => {
+          setText(t3("defaultReviewTemplate"));
+          setDefault(true);
+        }
+      },
+      t3("restoreDefaultTemplate")
+    ), /* @__PURE__ */ React8.createElement(Btn, { disabled: busy, onClick: closeSafely }, t3("cancel"))));
+  }
+  function ReviewAssistant({ date, text, version, onUse, close }) {
+    const initial = useRef4({
+      action: "startReview",
+      date,
+      text,
+      version,
+      requestId: crypto.randomUUID()
+    });
+    const [view, setView] = useState4(null), [answer, setAnswer] = useState4(""), [error, setError] = useState4(""), [pending, setPending] = useState4(false), [attempt, setAttempt] = useState4(0);
+    const answerId = useRef4(crypto.randomUUID());
+    useEffect4(() => {
+      const controller = new AbortController();
+      let alive = true;
+      (async () => {
+        try {
+          setError("");
+          let v3 = await request(initial.current, controller.signal);
+          if (alive) setView(v3);
+          while (alive && !controller.signal.aborted) {
+            v3 = await request(
+              { action: "watch", after: v3.version },
+              controller.signal
+            );
+            if (alive) setView(v3);
+          }
+        } catch (e3) {
+          if (alive) setError(e3.message);
+        }
+      })();
+      return () => {
+        alive = false;
+        controller.abort();
+      };
+    }, [attempt]);
+    const sendAnswer = async (e3) => {
+      e3.preventDefault();
+      if (pending || view?.busy || !answer.trim()) return;
+      setPending(true);
+      setError("");
+      try {
+        const v3 = await request({
+          action: "send",
+          text: answer,
+          requestId: answerId.current
+        });
+        setView(v3);
+        setAnswer("");
+        answerId.current = crypto.randomUUID();
+      } catch (e4) {
+        setError(e4.message);
+      } finally {
+        setPending(false);
+      }
+    };
+    const stop = async () => {
+      try {
+        setView(await request({ action: "cancel" }));
+      } catch (e3) {
+        setError(e3.message);
+      }
+    };
+    return /* @__PURE__ */ React8.createElement("section", { className: "ld-review-assistant", "aria-label": t3("reviewAI") }, /* @__PURE__ */ React8.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React8.createElement("h3", null, t3("reviewAI"), " \xB7 ", date), /* @__PURE__ */ React8.createElement(Btn, { onClick: close }, t3("close"))), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("reviewAIHint")), /* @__PURE__ */ React8.createElement("div", { className: "ld-review-chat", "aria-live": "polite" }, view?.messages?.filter(
+      (m3) => ["user", "assistant", "error"].includes(m3.role)
+    ).map((m3, i3) => /* @__PURE__ */ React8.createElement("div", { key: m3.id, className: "ld-review-chat-message" }, /* @__PURE__ */ React8.createElement("strong", null, m3.role === "assistant" ? t3("spirit") : m3.role === "error" ? t3("reviewAIError") : t3("reviewYou")), /* @__PURE__ */ React8.createElement("p", null, i3 === 0 && m3.role === "user" ? t3("reviewAIStarted") : m3.text))), view?.liveText && /* @__PURE__ */ React8.createElement("p", null, view.liveText)), error && /* @__PURE__ */ React8.createElement("p", { className: "ld-error", role: "alert" }, error, " ", /* @__PURE__ */ React8.createElement(Btn, { onClick: () => setAttempt((x4) => x4 + 1) }, t3("retry"))), /* @__PURE__ */ React8.createElement("form", { onSubmit: sendAnswer }, /* @__PURE__ */ React8.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React8.createElement("span", null, t3("reviewAnswer")), /* @__PURE__ */ React8.createElement(
+      "textarea",
+      {
+        value: answer,
+        rows: 2,
+        maxLength: 16e3,
+        onChange: (e3) => {
+          setAnswer(e3.target.value);
+          answerId.current = crypto.randomUUID();
+        },
+        disabled: pending
+      }
+    )), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
+      Btn,
+      {
+        type: "submit",
+        disabled: pending || !view || view.busy || !answer.trim()
+      },
+      t3("reviewSend")
+    ), view?.busy && /* @__PURE__ */ React8.createElement(Btn, { onClick: stop }, t3("reviewStop")))), view?.review?.draft && /* @__PURE__ */ React8.createElement("div", { className: "ld-review-candidate" }, /* @__PURE__ */ React8.createElement("h3", null, t3("reviewCandidate")), /* @__PURE__ */ React8.createElement("p", null, view.review.draft), /* @__PURE__ */ React8.createElement(
+      Btn,
+      {
+        primary: true,
+        disabled: pending || view.busy,
+        onClick: () => onUse(view.review.draft)
+      },
+      t3("reviewUseDraft")
+    ), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("reviewCandidateHint"))));
+  }
+  function ReviewEditor({
+    data,
+    date,
+    kind = "day",
+    habitId,
+    busy,
+    onSaved
+  }) {
+    const key = kind + ":" + date;
+    const record = data.reviews.find(
+      (r3) => !r3.deletedAt && r3.date === date && r3.kind === kind
+    );
+    const initialVersion = versions.get(key) ?? record?.version ?? 0;
+    const [text, setText] = useState4(drafts.get(key) ?? record?.text ?? "");
+    const [baseVersion, setBaseVersion] = useState4(initialVersion);
+    const requestId = useRef4(crypto.randomUUID());
+    const [error, setError] = useState4(""), [saved, setSaved] = useState4(false), [showPrompts, setPrompts] = useState4(true), [templateOpen, setTemplateOpen] = useState4(false), [assistantOpen, setAssistantOpen] = useState4(false);
+    const textareaId = useId2();
+    useEffect4(() => {
+      if (!drafts.has(key)) {
+        setText(record?.text || "");
+        setBaseVersion(record?.version || 0);
+      }
+    }, [record?.version]);
+    const change = (value) => {
+      setText(value);
+      setSaved(false);
+      requestId.current = crypto.randomUUID();
+      if (value === (record?.text || "")) {
+        drafts.delete(key);
+        versions.delete(key);
+        setBaseVersion(record?.version || 0);
+      } else {
+        drafts.set(key, value);
+        versions.set(key, baseVersion);
+      }
+    };
+    const save = async () => {
+      setError("");
+      try {
+        const result = await act({
+          action: "review",
+          date,
+          kind,
+          text,
+          id: habitId,
+          version: baseVersion,
+          requestId: requestId.current
+        });
+        drafts.delete(key);
+        versions.delete(key);
+        const stored = result.reviews?.find(
+          (r3) => !r3.deletedAt && r3.date === date && r3.kind === kind
+        );
+        setBaseVersion(stored?.version || baseVersion + 1);
+        setSaved(true);
+        setAssistantOpen(false);
+        onSaved?.(result);
+      } catch (e3) {
+        setError(e3.message);
+      }
+    };
+    const valid = hasReviewContent(
+      text,
+      data.settings.reviewTemplate,
+      t3("defaultReviewTemplate")
+    );
+    return /* @__PURE__ */ React8.createElement("div", { className: "ld-review-editor" }, kind === "day" && /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("div", { className: "ld-actions ld-review-options" }, /* @__PURE__ */ React8.createElement(Btn, { disabled: busy, onClick: () => setPrompts(!showPrompts) }, t3(showPrompts ? "reviewFreeWrite" : "reviewShowPrompts")), /* @__PURE__ */ React8.createElement(Btn, { disabled: busy, onClick: () => setTemplateOpen(true) }, t3("reviewTemplateButton"))), showPrompts && /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("reviewPromptsHint")), /* @__PURE__ */ React8.createElement("ul", { className: "ld-review-prompts" }, reviewPrompts(
+      data.settings.reviewTemplate,
+      t3("defaultReviewTemplate")
+    ).map((p3) => /* @__PURE__ */ React8.createElement("li", { key: p3 }, p3))))), /* @__PURE__ */ React8.createElement("label", { className: "ld-field", htmlFor: textareaId }, /* @__PURE__ */ React8.createElement("span", null, date, " \xB7 ", t3("reviewContent")), /* @__PURE__ */ React8.createElement(
+      "textarea",
+      {
+        id: textareaId,
+        className: "ld-review-text",
+        rows: 7,
+        value: text,
+        onChange: (e3) => change(e3.target.value),
+        maxLength: 2e4,
+        disabled: busy
+      }
+    )), (record?.version || 0) !== baseVersion && /* @__PURE__ */ React8.createElement("div", { className: "ld-review-conflict" }, /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("reviewConflictHint")), /* @__PURE__ */ React8.createElement("pre", null, record?.text || ""), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
+      Btn,
+      {
+        disabled: busy,
+        onClick: () => {
+          setBaseVersion(record?.version || 0);
+          versions.set(key, record?.version || 0);
+          requestId.current = crypto.randomUUID();
+          setError("");
+        }
+      },
+      t3("reviewKeepDraft")
+    ), /* @__PURE__ */ React8.createElement(
+      Btn,
+      {
+        disabled: busy,
+        onClick: () => {
+          if (!window.confirm(t3("dirty"))) return;
+          setText(record?.text || "");
+          setBaseVersion(record?.version || 0);
+          drafts.delete(key);
+          versions.delete(key);
+          setError("");
+        }
+      },
+      t3("reviewLoadLatest")
+    ))), error && /* @__PURE__ */ React8.createElement("p", { className: "ld-error", role: "alert" }, error), saved && /* @__PURE__ */ React8.createElement("p", { className: "ld-update-ok", role: "status" }, t3("reviewSavedFor"), " \xB7 ", date), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
+      Btn,
+      {
+        primary: true,
+        disabled: busy || !valid || date > today(data.settings.timeZone),
+        onClick: save
+      },
+      t3(habitId ? "saveReviewComplete" : "save")
+    ), kind === "day" && !assistantOpen && /* @__PURE__ */ React8.createElement(Btn, { disabled: busy, onClick: () => setAssistantOpen(true) }, t3("reviewAI"))), !valid && !!text.trim() && /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("reviewEmpty")), assistantOpen && /* @__PURE__ */ React8.createElement(
+      ReviewAssistant,
+      {
+        date,
+        text,
+        version: baseVersion,
+        close: () => setAssistantOpen(false),
+        onUse: (candidate) => {
+          if (text.trim() && !window.confirm(t3("reviewReplaceDraft")))
+            return;
+          change(candidate);
+          setAssistantOpen(false);
+        }
+      }
+    ), templateOpen && /* @__PURE__ */ React8.createElement(
+      TemplateModal,
+      {
+        data,
+        busy,
+        close: () => setTemplateOpen(false)
+      }
+    ));
+  }
+  function ReviewCheckIn({
+    habit,
+    base,
+    data,
+    busy,
+    close
+  }) {
+    const [date, setDate] = useState4(base);
+    const current = today(data.settings.timeZone), yesterday = shift(current, -1);
+    const currentHabit = data.habits.find((h3) => h3.id === habit.id && !h3.deletedAt) || habit;
+    const progress = habitProgress(data, currentHabit, date);
+    const [error, setError] = useState4("");
+    const flag = async (status) => {
+      try {
+        setError("");
+        await act({
+          action: "habitLog",
+          id: habit.id,
+          date,
+          status,
+          ...status === "missed" ? {} : { skipped: true }
+        });
+      } catch (e3) {
+        setError(e3.message);
+      }
+    };
+    const undoFlags = async () => {
+      try {
+        setError("");
+        for (const log of data.habitLogs.filter(
+          (l3) => !l3.deletedAt && l3.habitId === habit.id && l3.date === date && l3.skipped
+        ))
+          await act({
+            action: "habitLog",
+            id: habit.id,
+            date,
+            removeId: log.id
+          });
+      } catch (e3) {
+        setError(e3.message);
+      }
+    };
+    return /* @__PURE__ */ React8.createElement(Modal, { title: habit.title + " \xB7 " + date, onClose: close }, /* @__PURE__ */ React8.createElement("div", { className: "ld-actions ld-review-date" }, /* @__PURE__ */ React8.createElement(
+      Btn,
+      {
+        disabled: busy || !habitDue(currentHabit, yesterday),
+        "aria-pressed": date === yesterday,
+        onClick: () => setDate(yesterday)
+      },
+      t3("reviewYesterday"),
+      " \xB7 ",
+      yesterday
+    ), /* @__PURE__ */ React8.createElement(
+      Btn,
+      {
+        disabled: busy || !habitDue(currentHabit, current),
+        "aria-pressed": date === current,
+        onClick: () => setDate(current)
+      },
+      t3("reviewToday"),
+      " \xB7 ",
+      current
+    ), ![current, yesterday].includes(base) && /* @__PURE__ */ React8.createElement(
+      Btn,
+      {
+        disabled: busy,
+        "aria-pressed": date === base,
+        onClick: () => setDate(base)
+      },
+      base
+    )), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("reviewDraftRetention")), (progress.skipped || progress.missed) && /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("reviewClearFlagHint"), " ", /* @__PURE__ */ React8.createElement(Btn, { disabled: busy, onClick: undoFlags }, t3("undo"))), progress.done && /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3(progress.status === "late" ? "habitLate" : "habitOnTime"), " \xB7", " ", date, " \xB7 ", t3("completedAt"), " ", new Date(progress.completedAt).toLocaleString(void 0, {
+      timeZone: data.settings.timeZone
+    })), /* @__PURE__ */ React8.createElement(
+      ReviewEditor,
+      {
+        key: date,
+        data,
+        date,
+        habitId: habit.id,
+        busy,
+        onSaved: close
+      }
+    ), /* @__PURE__ */ React8.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React8.createElement("summary", null, t3("reviewOtherActions")), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
+      Btn,
+      {
+        disabled: busy || progress.done || date > current,
+        onClick: () => flag("skip")
+      },
+      t3("reviewSkipDate")
+    ), /* @__PURE__ */ React8.createElement(
+      Btn,
+      {
+        disabled: busy || progress.done || date > current,
+        onClick: () => flag("missed")
+      },
+      t3("reviewMissDate")
+    ))), error && /* @__PURE__ */ React8.createElement("p", { className: "ld-error", role: "alert" }, error));
+  }
+  return { ReviewEditor, ReviewCheckIn };
+}
+
 // src/style.css
-var style_default = '/* All surfaces inherit the active DSH theme. Mood accents derive from its semantic palette. */\n.ld-root {\n  --ld-accent: var(--dsw-alias-brand-primary);\n  --ld-ink: var(--dsw-alias-label-primary);\n  --ld-muted: var(--dsw-alias-label-secondary);\n  --ld-base: var(--dsw-alias-bg-base);\n  --ld-surface: var(--dsw-alias-bg-layer-1);\n  --ld-line: var(--dsw-alias-border-l1);\n  color: var(--ld-ink);\n  font:\n    14px/1.65 -apple-system,\n    BlinkMacSystemFont,\n    "Segoe UI",\n    "Microsoft YaHei",\n    sans-serif;\n  min-height: 0;\n}\n.ld-root.ld-bright {\n  --ld-accent: var(--dsw-alias-state-warn-primary);\n}\n.ld-root.ld-focus {\n  --ld-accent: var(--dsw-alias-brand-primary);\n}\n.ld-root.ld-calm {\n  --ld-accent: var(--dsw-alias-state-success-primary);\n}\n.ld-root * {\n  box-sizing: border-box;\n}\n.ld-shell {\n  display: grid;\n  grid-template-columns: 188px minmax(0, 1fr);\n  height: 100%;\n  min-height: 0;\n  background: var(--ld-base);\n}\n.ld-root:has(> .ld-shell) {\n  height: 100%;\n  overflow: hidden;\n  container: life-desk / inline-size;\n}\n.ld-shell.ld-collapsed {\n  grid-template-columns: 66px minmax(0, 1fr);\n}\n.ld-root button,\n.ld-root input,\n.ld-root select,\n.ld-root textarea {\n  font: inherit;\n  color: inherit;\n}\n.ld-root button {\n  cursor: pointer;\n}\n.ld-root button:disabled {\n  opacity: 0.45;\n  cursor: default;\n}\n.ld-root button {\n  border: 0;\n  background: transparent;\n}\n.ld-root input,\n.ld-root select,\n.ld-root textarea {\n  background: var(--ld-surface);\n  border: 1px solid var(--ld-line);\n  border-radius: 7px;\n  padding: 8px 10px;\n  min-width: 0;\n  max-width: 100%;\n}\n.ld-root textarea {\n  resize: vertical;\n  width: 100%;\n}\n.ld-root input[type="checkbox"] {\n  accent-color: var(--ld-accent);\n  width: 16px;\n  height: 16px;\n}\n.ld-root :focus-visible {\n  outline: 2px solid var(--ld-accent);\n  outline-offset: 3px;\n}\n.ld-root h1,\n.ld-root h2,\n.ld-root h3,\n.ld-root p {\n  margin: 0;\n}\n.ld-root h1 {\n  font-size: 30px;\n  line-height: 1.3;\n  font-weight: 650;\n  letter-spacing: -0.8px;\n}\n.ld-root h2 {\n  font-size: 15px;\n  font-weight: 600;\n  letter-spacing: 0.1px;\n}\n.ld-root h3 {\n  font-size: 14px;\n  font-weight: 600;\n}\n.ld-root p + p {\n  margin-top: 10px;\n}\n.ld-root svg {\n  flex-shrink: 0;\n  vertical-align: middle;\n}\n.ld-root strong {\n  font-weight: 600;\n}\n.ld-nav {\n  background: color-mix(\n    in srgb,\n    var(--dsw-alias-bg-layer-2) 60%,\n    var(--ld-base)\n  );\n  padding: 30px 14px 18px;\n  display: flex;\n  flex-direction: column;\n  gap: 5px;\n  overflow: auto;\n  border-right: 1px solid var(--ld-line);\n}\n.ld-brand {\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  font-size: 14px;\n  font-weight: 650;\n  padding: 3px 7px 26px;\n  white-space: nowrap;\n}\n.ld-nav button {\n  display: flex;\n  align-items: center;\n  gap: 11px;\n  width: 100%;\n  text-align: left;\n  min-height: 38px;\n  padding: 8px 10px;\n  border-radius: 7px;\n  color: var(--ld-muted);\n}\n.ld-nav button:hover,\n.ld-nav button.selected {\n  background: var(--dsw-alias-bg-layer-2);\n  color: var(--ld-ink);\n}\n.ld-nav button.selected svg {\n  color: var(--ld-accent);\n}\n.ld-nav .ld-nav-add {\n  color: var(--ld-ink);\n  border: 1px solid var(--ld-line);\n  background: var(--ld-surface);\n  margin-bottom: 18px;\n}\n.ld-nav-items {\n  display: grid;\n  gap: 3px;\n}\n.ld-nav .ld-nav-project {\n  padding-left: 13px;\n  font-size: 12px;\n  min-height: 31px;\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n}\n.ld-project-bullet {\n  height: 5px;\n  width: 5px;\n  flex: none;\n  border-radius: 50%;\n  background: var(--ld-muted);\n  margin: 0 7px;\n}\n.ld-nav-bottom {\n  margin-top: auto;\n  padding-top: 35px;\n}\n.ld-nav-bottom button {\n  font-size: 12px;\n}\n/* The toolbar is a separate grid row, outside the only page scroller. */\n.ld-workspace {\n  --ld-page-inline: clamp(22px, 3vw, 48px);\n  display: grid;\n  grid-template-rows: auto minmax(0, 1fr);\n  min-width: 0;\n  min-height: 0;\n  height: 100%;\n}\n.ld-content {\n  padding: 26px var(--ld-page-inline) 26px;\n  overflow: auto;\n  min-height: 0;\n}\n.ld-page-top {\n  display: flex;\n  justify-content: space-between;\n  gap: 18px;\n  align-items: center;\n  margin: 0;\n  min-width: 0;\n  padding: 20px var(--ld-page-inline) 16px;\n  background: var(--ld-base);\n  border-bottom: 1px solid var(--ld-line);\n  position: relative;\n  z-index: 20;\n}\n.ld-page-top,\n.ld-page-top * {\n  -webkit-app-region: no-drag;\n  app-region: no-drag;\n}\n.ld-page-top > .ld-actions {\n  margin-left: auto;\n  flex-shrink: 0;\n  max-width: 100%;\n}\n.ld-page-top .ld-btn {\n  flex-shrink: 0;\n  white-space: nowrap;\n}\n.ld-search {\n  flex: 1;\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  min-width: 100px;\n  color: var(--ld-muted);\n}\n.ld-search input {\n  border: 0;\n  background: transparent;\n  width: 230px;\n  font-size: 12px;\n  padding: 5px 0;\n}\n.ld-mood {\n  max-width: 112px;\n  font-size: 12px !important;\n  border-color: transparent !important;\n  background: transparent !important;\n}\n.ld-page-heading {\n  display: flex;\n  align-items: flex-end;\n  justify-content: space-between;\n  gap: 15px;\n  margin-bottom: 35px;\n  flex-wrap: wrap;\n}\n.ld-eyebrow {\n  font-size: 12px;\n  color: var(--ld-muted);\n  letter-spacing: 0.5px;\n  margin-bottom: 8px;\n}\n.ld-day-nav {\n  display: flex;\n  align-items: center;\n  gap: 3px;\n  font-size: 12px;\n}\n.ld-day-nav > button {\n  padding: 3px 7px;\n  font-size: 20px;\n  color: var(--ld-muted);\n}\n.ld-day-nav input {\n  padding: 3px 5px;\n  font-size: 11px;\n  background: transparent;\n  border-color: transparent;\n  width: 115px;\n}\n.ld-day-nav .ld-btn {\n  font-size: 12px;\n}\n.ld-today-grid {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) 248px;\n  gap: 40px;\n}\n.ld-main-col {\n  min-width: 0;\n}\n.ld-support {\n  min-width: 0;\n  border-left: 1px solid var(--ld-line);\n  padding-left: 28px;\n}\n.ld-section {\n  margin: 0 0 34px;\n}\n.ld-section-heading,\n.ld-section-title {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  margin-bottom: 14px;\n}\n.ld-section-title {\n  justify-content: flex-start;\n  font-size: 13px;\n  color: var(--ld-muted);\n}\n.ld-section > h2 {\n  margin-bottom: 16px;\n}\n.ld-help,\n.ld-muted {\n  color: var(--ld-muted);\n}\n.ld-help {\n  font-size: 11px;\n  line-height: 1.7;\n}\n.ld-empty {\n  padding: 18px 0;\n  color: var(--ld-muted);\n  font-size: 12px;\n}\n.ld-task {\n  display: flex;\n  align-items: flex-start;\n  gap: 11px;\n  min-height: 55px;\n  padding: 10px 0;\n}\n.ld-task + .ld-task {\n  border-top: 1px solid color-mix(in srgb, var(--ld-line) 55%, transparent);\n}\n.ld-check {\n  width: 18px;\n  height: 18px;\n  border: 1.3px solid var(--dsw-alias-border-l2) !important;\n  border-radius: 5px;\n  margin-top: 4px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  flex: none;\n}\n.ld-task-done .ld-check {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent) !important;\n}\n.ld-task-done .ld-task-title {\n  text-decoration: line-through;\n  color: var(--ld-muted);\n}\n.ld-task-body {\n  flex: 1;\n  min-width: 0;\n  text-align: left;\n  padding: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 3px;\n}\n.ld-task-title {\n  font-size: 14px;\n  overflow-wrap: anywhere;\n}\n.ld-task-meta {\n  font-size: 11px;\n  color: var(--ld-muted);\n  overflow-wrap: anywhere;\n}\n.ld-task-tools {\n  display: flex;\n  align-items: center;\n  flex: none;\n  opacity: 0.35;\n}\n.ld-task:hover .ld-task-tools,\n.ld-task:focus-within .ld-task-tools {\n  opacity: 1;\n}\n.ld-icon-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 28px;\n  height: 28px;\n  border-radius: 6px;\n  padding: 0;\n  color: var(--ld-muted) !important;\n}\n.ld-icon-btn:hover {\n  background: var(--dsw-alias-bg-layer-2);\n}\n.ld-star {\n  color: var(--ld-accent);\n}\n.ld-event-dot {\n  padding-top: 4px;\n  color: var(--ld-muted);\n}\n.ld-btn {\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  gap: 6px;\n  font-size: 12px !important;\n  padding: 7px 11px;\n  min-height: 32px;\n  border: 1px solid var(--ld-line) !important;\n  border-radius: 7px;\n  line-height: 1.4;\n  background: var(--ld-surface) !important;\n  text-decoration: none;\n  cursor: pointer;\n}\n.ld-btn:hover {\n  background: var(--dsw-alias-bg-layer-2) !important;\n}\n.ld-btn.ld-primary {\n  background: color-mix(\n    in srgb,\n    var(--ld-accent) 12%,\n    var(--ld-base)\n  ) !important;\n  border-color: color-mix(\n    in srgb,\n    var(--ld-accent) 35%,\n    var(--ld-line)\n  ) !important;\n  color: var(--ld-accent);\n}\n.ld-btn[aria-pressed="true"] {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent) !important;\n}\n.ld-actions {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n.ld-toolbar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  margin-bottom: 20px;\n}\n.ld-details {\n  border-top: 1px solid var(--ld-line);\n  padding: 14px 0;\n  color: var(--ld-muted);\n  font-size: 12px;\n}\n.ld-details summary {\n  cursor: pointer;\n}\n.ld-details .ld-task-list {\n  color: var(--ld-ink);\n  margin-top: 12px;\n}\n.ld-welcome {\n  padding: 5px 0 30px;\n}\n.ld-welcome > svg {\n  color: var(--ld-accent);\n  margin-bottom: 12px;\n}\n.ld-welcome h2 {\n  font-size: 19px;\n  margin-bottom: 9px;\n}\n.ld-welcome p {\n  color: var(--ld-muted);\n  font-size: 12px;\n  margin-bottom: 18px;\n}\n.ld-focus-card {\n  padding-bottom: 27px;\n  margin-bottom: 24px;\n  border-bottom: 1px solid var(--ld-line);\n}\n.ld-timer-title {\n  font-size: 12px;\n  color: var(--ld-muted);\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.ld-time {\n  font-size: 49px;\n  font-weight: 350;\n  letter-spacing: -2px;\n  line-height: 1.5;\n  font-variant-numeric: tabular-nums;\n  margin: 8px 0;\n}\n.ld-progress {\n  height: 3px;\n  background: var(--dsw-alias-bg-layer-2);\n  border-radius: 3px;\n  margin: 0 0 22px;\n  overflow: hidden;\n}\n.ld-progress i {\n  display: block;\n  height: 100%;\n  background: var(--ld-accent);\n}\n.ld-timer-end {\n  margin-top: 15px;\n}\n.ld-timer-end .ld-field {\n  margin: 10px 0;\n}\n.ld-habit {\n  padding: 9px 0;\n}\n.ld-habit + .ld-habit {\n  border-top: 1px solid var(--ld-line);\n}\n.ld-habit-main {\n  display: flex;\n  gap: 12px;\n  align-items: center;\n}\n.ld-habit-period {\n  margin-left: 6px;\n  font-size: 10px;\n  color: var(--ld-muted);\n}\n.ld-habit-check {\n  border: 1px solid var(--ld-line) !important;\n  width: 28px;\n  height: 28px;\n  border-radius: 50%;\n  color: var(--ld-muted) !important;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex: none;\n}\n.ld-habit-check.checked {\n  color: var(--ld-accent) !important;\n  background: color-mix(in srgb, var(--ld-accent) 10%, transparent);\n}\n.ld-week-dots {\n  display: flex;\n  gap: 8px;\n  align-items: center;\n  margin: 12px 0;\n  flex-wrap: wrap;\n}\n.ld-week-dots > button:not(.ld-btn) {\n  min-width: 28px;\n  height: 28px;\n  border-radius: 50%;\n  font-size: 11px;\n  background: var(--dsw-alias-bg-layer-2);\n}\n.ld-week-dots > button.checked {\n  color: var(--ld-accent);\n}\n.ld-upcoming {\n  display: flex;\n  flex-direction: column;\n  gap: 3px;\n  text-align: left;\n  width: 100%;\n  padding: 8px 0;\n}\n.ld-upcoming strong {\n  font-size: 12px;\n}\n.ld-upcoming span {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-project-row {\n  display: flex;\n  align-items: center;\n  gap: 13px;\n  width: 100%;\n  padding: 17px 0;\n  text-align: left;\n  border-bottom: 1px solid var(--ld-line) !important;\n}\n.ld-project-row > span:first-of-type {\n  display: flex;\n  flex: 1;\n  flex-direction: column;\n}\n.ld-project-row small {\n  font-size: 11px;\n  color: var(--ld-muted);\n  margin-top: 3px;\n}\n.ld-project-goal {\n  white-space: pre-wrap;\n  color: var(--ld-muted);\n  margin: 0 0 25px !important;\n}\n.ld-board {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  gap: 20px;\n  margin-top: 24px;\n  overflow: auto;\n}\n.ld-board > section {\n  min-width: 160px;\n  padding: 14px;\n  background: var(--dsw-alias-bg-layer-1);\n  border-radius: 8px;\n}\n.ld-board .ld-task {\n  flex-wrap: wrap;\n}\n.ld-board .ld-task-tools {\n  margin-left: auto;\n}\n.ld-review-stats {\n  display: flex;\n  gap: 35px;\n  padding: 30px 0;\n  flex-wrap: wrap;\n}\n.ld-review-stats > div {\n  display: flex;\n  flex-direction: column;\n}\n.ld-review-stats strong {\n  font-size: 30px;\n  font-weight: 450;\n}\n.ld-review-stats span {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-review-text {\n  min-height: 240px;\n  margin: 7px 0 15px;\n  line-height: 1.8;\n}\n.ld-log {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 15px;\n  padding: 12px 0;\n  border-bottom: 1px solid var(--ld-line);\n  font-size: 12px;\n}\n.ld-footer {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  font-size: 10px;\n  color: var(--ld-muted);\n  margin-top: 45px;\n}\n.ld-footer button {\n  font-size: 10px;\n  text-decoration: underline;\n}\n.ld-status {\n  font-size: 12px;\n  padding: 8px 10px;\n  background: var(--dsw-alias-bg-layer-1);\n  color: var(--dsw-alias-state-success-primary);\n  margin-bottom: 15px;\n  border-radius: 6px;\n  display: flex;\n  gap: 15px;\n  align-items: center;\n}\n.ld-status button {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-error {\n  color: var(--dsw-alias-state-error-primary);\n  font-size: 12px;\n  padding: 12px 0;\n}\n.ld-loading {\n  padding: 48px;\n}\n.ld-dialog {\n  padding: 24px;\n  border: 1px solid var(--ld-line);\n  border-radius: 14px;\n  background: var(--ld-base);\n  color: var(--ld-ink);\n  width: min(650px, calc(100% - 30px));\n  max-height: 85vh;\n  overflow: auto;\n  box-shadow: 0 15px 70px color-mix(in srgb, var(--ld-ink) 12%, transparent);\n}\n.ld-dialog::backdrop {\n  background: color-mix(\n    in srgb,\n    var(--dsw-alias-label-primary) 20%,\n    transparent\n  );\n}\n.ld-dialog > header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 22px;\n}\n.ld-dialog h2 {\n  font-size: 18px;\n}\n.ld-dialog h3 {\n  margin: 22px 0 10px;\n}\n.ld-dialog p {\n  margin: 10px 0;\n}\n.ld-form {\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 17px;\n}\n.ld-field {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n  font-size: 12px;\n}\n.ld-field > span {\n  color: var(--ld-muted);\n}\n.ld-field input,\n.ld-field select {\n  width: 100%;\n}\n.ld-wide {\n  grid-column: 1/-1;\n}\n.ld-check-label {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 12px;\n  min-height: 30px;\n}\n.ld-modal-footer {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 15px;\n  margin-top: 25px;\n  padding-top: 18px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-days {\n  display: flex;\n  gap: 8px;\n}\n.ld-days button {\n  width: 32px;\n  height: 32px;\n  border: 1px solid var(--ld-line);\n  border-radius: 50%;\n}\n.ld-days button[aria-pressed="true"] {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent);\n}\n.ld-scope {\n  padding: 12px;\n  background: var(--dsw-alias-bg-layer-1);\n  border-radius: 8px;\n  margin-bottom: 20px;\n}\n.ld-file {\n  position: relative;\n  overflow: hidden;\n}\n.ld-file input {\n  position: absolute;\n  inset: 0;\n  opacity: 0;\n  cursor: pointer;\n  width: 100%;\n}\n.ld-restore {\n  margin-top: 20px;\n  padding: 15px;\n  border: 1px solid var(--ld-line);\n  border-radius: 8px;\n}\n.ld-global-timer {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  font-size: 11px !important;\n  font-variant-numeric: tabular-nums;\n  color: var(--ld-accent) !important;\n  padding: 4px;\n}\n.ld-global-notice {\n  position: fixed;\n  right: 24px;\n  bottom: 24px;\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  max-width: min(440px, 90vw);\n  background: var(--ld-surface);\n  padding: 14px 18px;\n  border: 1px solid var(--ld-line);\n  border-radius: 10px;\n  box-shadow: 0 8px 30px color-mix(in srgb, var(--ld-ink) 10%, transparent);\n  font-size: 12px;\n  pointer-events: auto;\n  z-index: 1000;\n}\n.ld-root .fc {\n  --fc-border-color: var(--ld-line);\n  --fc-page-bg-color: var(--ld-base);\n  --fc-neutral-bg-color: var(--dsw-alias-bg-layer-1);\n  --fc-neutral-text-color: var(--ld-muted);\n  --fc-button-text-color: var(--ld-ink);\n  --fc-button-bg-color: var(--ld-surface);\n  --fc-button-border-color: var(--ld-line);\n  --fc-button-hover-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-button-hover-border-color: var(--ld-line);\n  --fc-button-active-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-button-active-border-color: var(--ld-accent);\n  --fc-event-bg-color: color-mix(in srgb, var(--ld-accent) 12%, var(--ld-base));\n  --fc-event-border-color: color-mix(\n    in srgb,\n    var(--ld-accent) 25%,\n    var(--ld-line)\n  );\n  --fc-event-text-color: var(--ld-ink);\n  --fc-today-bg-color: color-mix(in srgb, var(--ld-accent) 5%, transparent);\n  --fc-now-indicator-color: var(--ld-accent);\n  font-size: 12px;\n  margin-top: 18px;\n}\n.ld-root .fc .fc-toolbar-title {\n  font-size: 17px;\n  font-weight: 550;\n}\n.ld-root .fc .fc-button {\n  font-size: 12px;\n  border: 1px solid var(--ld-line);\n  padding: 5px 9px;\n}\n.ld-root .fc .fc-daygrid-day-number {\n  padding: 8px;\n}\n.ld-root .fc .fc-col-header-cell-cushion {\n  padding: 9px 0;\n  font-weight: 500;\n  color: var(--ld-muted);\n}\n.ld-root .fc-event {\n  border-radius: 4px;\n  padding: 2px 4px;\n}\n.ld-root .fc-event-done {\n  opacity: 0.5;\n  text-decoration: line-through;\n}\n.ld-root .ld-event-habit {\n  --fc-event-border-color: var(--ld-line);\n  --fc-event-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-event-text-color: var(--ld-muted);\n}\n@container life-desk (max-width:1050px) {\n  .ld-today-grid {\n    grid-template-columns: minmax(0, 1fr) 210px;\n    gap: 25px;\n  }\n  .ld-support {\n    padding-left: 22px;\n  }\n  .ld-shell {\n    grid-template-columns: 160px minmax(0, 1fr);\n  }\n  .ld-workspace {\n    --ld-page-inline: 25px;\n  }\n  .ld-search input {\n    width: 150px;\n  }\n}\n@container life-desk (max-width:820px) {\n  .ld-shell {\n    grid-template-columns: 60px minmax(0, 1fr);\n  }\n  .ld-nav {\n    padding-inline: 8px;\n  }\n  .ld-nav button > span,\n  .ld-brand > span,\n  .ld-nav-project,\n  .ld-nav-bottom button,\n  .ld-nav-add {\n    font-size: 0 !important;\n  }\n  .ld-nav button {\n    gap: 0;\n    justify-content: center;\n  }\n  .ld-nav .ld-nav-project {\n    display: none;\n  }\n  .ld-brand {\n    padding-inline: 8px;\n  }\n  .ld-nav-add svg,\n  .ld-nav-bottom svg {\n    width: 20px;\n  }\n  .ld-today-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n  .ld-support {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 25px;\n    border-left: 0;\n    border-top: 1px solid var(--ld-line);\n    padding: 25px 0 0;\n  }\n  .ld-support > .ld-section:last-child {\n    grid-column: 1/-1;\n  }\n  .ld-board {\n    grid-template-columns: 1fr;\n  }\n  .ld-day-nav {\n    width: 100%;\n  }\n}\n@container life-desk (max-width:530px) {\n  .ld-workspace {\n    --ld-page-inline: 16px;\n  }\n  .ld-content {\n    padding: 22px var(--ld-page-inline);\n  }\n  .ld-page-top {\n    padding-top: 16px;\n    padding-bottom: 12px;\n    flex-wrap: wrap;\n    gap: 10px;\n  }\n  .ld-page-top .ld-mood {\n    max-width: 88px;\n  }\n  .ld-search {\n    width: 100%;\n  }\n  .ld-search input {\n    width: 100%;\n  }\n  .ld-support {\n    grid-template-columns: 1fr;\n  }\n  .ld-root h1 {\n    font-size: 26px;\n  }\n  .ld-task-tools {\n    opacity: 1;\n  }\n  .ld-task-tools .ld-icon-btn:first-child {\n    display: none;\n  }\n}\n@media (max-width: 550px) {\n  .ld-form {\n    grid-template-columns: 1fr;\n  }\n  .ld-modal-footer {\n    align-items: flex-start;\n    flex-direction: column;\n  }\n  .ld-dialog {\n    padding: 18px;\n  }\n}\n@media (prefers-reduced-motion: reduce) {\n  .ld-root * {\n    animation: none !important;\n    transition: none !important;\n  }\n}\n\n/* Phase 2A: version visibility. Read-only discovery, never installs anything. */\n.ld-update {\n  margin-top: 34px;\n  padding-top: 24px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-update-meta {\n  display: grid;\n  grid-template-columns: max-content minmax(0, 1fr);\n  gap: 7px 20px;\n  font-size: 12px;\n}\n.ld-update-meta > span {\n  color: var(--ld-muted);\n}\n.ld-update-meta strong {\n  font-weight: 500;\n  overflow-wrap: anywhere;\n}\n.ld-update-ok {\n  margin-top: 12px;\n  font-size: 12px;\n  color: var(--dsw-alias-state-success-primary);\n}\n.ld-update-card {\n  margin-top: 14px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  padding: 14px;\n  background: var(--ld-surface);\n  display: grid;\n  gap: 9px;\n}\n.ld-update-card .ld-actions {\n  flex-wrap: wrap;\n}\n.ld-update-toggle {\n  justify-self: start;\n  font-size: 11px;\n  color: var(--ld-muted);\n  padding: 2px 0;\n}\n.ld-release-notes {\n  margin: 0;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  font: 11px/1.7 var(--dsh-font-family-code-default, ui-monospace, monospace);\n  background: var(--dsw-alias-bg-layer-2);\n  border-radius: 7px;\n  padding: 10px 12px;\n  max-height: 220px;\n  overflow: auto;\n  color: var(--ld-muted);\n}\n.ld-update-badge {\n  font-size: 10px;\n  color: var(--ld-accent);\n  text-decoration: none !important;\n  border: 1px solid color-mix(in srgb, var(--ld-accent) 40%, var(--ld-line));\n  border-radius: 20px;\n  padding: 1px 8px;\n}\n.ld-root a.ld-btn {\n  color: inherit;\n}\n.ld-snapshot-row {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  align-items: center;\n  gap: 2px 12px;\n  padding: 9px 0;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-snapshot-row:first-of-type {\n  border-top: 0;\n}\n.ld-snapshot-row > span {\n  font-size: 12px;\n  overflow-wrap: anywhere;\n}\n.ld-snapshot-row > small {\n  grid-column: 1;\n  color: var(--ld-muted);\n  font-size: 10px;\n}\n.ld-snapshot-row > .ld-btn {\n  grid-row: 1 / span 2;\n  grid-column: 2;\n}\n.ld-template-list {\n  display: grid;\n  gap: 0;\n  margin: 14px 0;\n}\n.ld-template {\n  display: grid;\n  gap: 4px;\n  text-align: left;\n  padding: 12px 0;\n  border-bottom: 1px solid var(--ld-line);\n}\n.ld-template-title {\n  font-size: 13px;\n}\n.ld-template-note {\n  font-size: 11px;\n  color: var(--ld-muted);\n  line-height: 1.6;\n}\n.ld-completion {\n  border: 0;\n  padding: 0;\n  margin: 4px 0 0;\n  display: grid;\n  gap: 7px;\n}\n.ld-completion legend {\n  font-size: 11px;\n  color: var(--ld-muted);\n  padding: 0;\n  margin-bottom: 4px;\n}\n.ld-fold-toggle {\n  display: inline-flex;\n  align-items: center;\n  gap: 7px;\n  font: inherit;\n  color: inherit;\n  font-weight: inherit;\n  padding: 0;\n  text-align: left;\n}\n.ld-fold-chevron {\n  display: inline-flex;\n  color: var(--ld-muted);\n  transition: transform 0.15s ease;\n}\n.ld-fold-toggle[aria-expanded="true"] .ld-fold-chevron {\n  transform: rotate(90deg);\n}\n.ld-fold-count {\n  margin-left: auto;\n  font-size: 11px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n@media (prefers-reduced-motion: reduce) {\n  .ld-fold-chevron {\n    transition: none;\n  }\n}\n';
+var style_default = '/* All surfaces inherit the active DSH theme. Mood accents derive from its semantic palette. */\n.ld-root {\n  --ld-accent: var(--dsw-alias-brand-primary);\n  --ld-ink: var(--dsw-alias-label-primary);\n  --ld-muted: var(--dsw-alias-label-secondary);\n  --ld-base: var(--dsw-alias-bg-base);\n  --ld-surface: var(--dsw-alias-bg-layer-1);\n  --ld-line: var(--dsw-alias-border-l1);\n  color: var(--ld-ink);\n  font:\n    14px/1.65 -apple-system,\n    BlinkMacSystemFont,\n    "Segoe UI",\n    "Microsoft YaHei",\n    sans-serif;\n  min-height: 0;\n}\n.ld-root.ld-bright {\n  --ld-accent: var(--dsw-alias-state-warn-primary);\n}\n.ld-root.ld-focus {\n  --ld-accent: var(--dsw-alias-brand-primary);\n}\n.ld-root.ld-calm {\n  --ld-accent: var(--dsw-alias-state-success-primary);\n}\n.ld-root * {\n  box-sizing: border-box;\n}\n.ld-shell {\n  display: grid;\n  grid-template-columns: 188px minmax(0, 1fr);\n  height: 100%;\n  min-height: 0;\n  background: var(--ld-base);\n}\n.ld-root:has(> .ld-shell) {\n  height: 100%;\n  overflow: hidden;\n  container: life-desk / inline-size;\n}\n.ld-shell.ld-collapsed {\n  grid-template-columns: 66px minmax(0, 1fr);\n}\n.ld-root button,\n.ld-root input,\n.ld-root select,\n.ld-root textarea {\n  font: inherit;\n  color: inherit;\n}\n.ld-root button {\n  cursor: pointer;\n}\n.ld-root button:disabled {\n  opacity: 0.45;\n  cursor: default;\n}\n.ld-root button {\n  border: 0;\n  background: transparent;\n}\n.ld-root input,\n.ld-root select,\n.ld-root textarea {\n  background: var(--ld-surface);\n  border: 1px solid var(--ld-line);\n  border-radius: 7px;\n  padding: 8px 10px;\n  min-width: 0;\n  max-width: 100%;\n}\n.ld-root textarea {\n  resize: vertical;\n  width: 100%;\n}\n.ld-root input[type="checkbox"] {\n  accent-color: var(--ld-accent);\n  width: 16px;\n  height: 16px;\n}\n.ld-root :focus-visible {\n  outline: 2px solid var(--ld-accent);\n  outline-offset: 3px;\n}\n.ld-root h1,\n.ld-root h2,\n.ld-root h3,\n.ld-root p {\n  margin: 0;\n}\n.ld-root h1 {\n  font-size: 30px;\n  line-height: 1.3;\n  font-weight: 650;\n  letter-spacing: -0.8px;\n}\n.ld-root h2 {\n  font-size: 15px;\n  font-weight: 600;\n  letter-spacing: 0.1px;\n}\n.ld-root h3 {\n  font-size: 14px;\n  font-weight: 600;\n}\n.ld-root p + p {\n  margin-top: 10px;\n}\n.ld-root svg {\n  flex-shrink: 0;\n  vertical-align: middle;\n}\n.ld-root strong {\n  font-weight: 600;\n}\n.ld-nav {\n  background: color-mix(\n    in srgb,\n    var(--dsw-alias-bg-layer-2) 60%,\n    var(--ld-base)\n  );\n  padding: 30px 14px 18px;\n  display: flex;\n  flex-direction: column;\n  gap: 5px;\n  overflow: auto;\n  border-right: 1px solid var(--ld-line);\n}\n.ld-brand {\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  font-size: 14px;\n  font-weight: 650;\n  padding: 3px 7px 26px;\n  white-space: nowrap;\n}\n.ld-nav button {\n  display: flex;\n  align-items: center;\n  gap: 11px;\n  width: 100%;\n  text-align: left;\n  min-height: 38px;\n  padding: 8px 10px;\n  border-radius: 7px;\n  color: var(--ld-muted);\n}\n.ld-nav button:hover,\n.ld-nav button.selected {\n  background: var(--dsw-alias-bg-layer-2);\n  color: var(--ld-ink);\n}\n.ld-nav button.selected svg {\n  color: var(--ld-accent);\n}\n.ld-nav .ld-nav-add {\n  color: var(--ld-ink);\n  border: 1px solid var(--ld-line);\n  background: var(--ld-surface);\n  margin-bottom: 18px;\n}\n.ld-nav-items {\n  display: grid;\n  gap: 3px;\n}\n.ld-nav .ld-nav-project {\n  padding-left: 13px;\n  font-size: 12px;\n  min-height: 31px;\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n}\n.ld-project-bullet {\n  height: 5px;\n  width: 5px;\n  flex: none;\n  border-radius: 50%;\n  background: var(--ld-muted);\n  margin: 0 7px;\n}\n.ld-nav-bottom {\n  margin-top: auto;\n  padding-top: 35px;\n}\n.ld-nav-bottom button {\n  font-size: 12px;\n}\n/* The toolbar is a separate grid row, outside the only page scroller. */\n.ld-workspace {\n  --ld-page-inline: clamp(22px, 3vw, 48px);\n  display: grid;\n  grid-template-rows: auto minmax(0, 1fr);\n  min-width: 0;\n  min-height: 0;\n  height: 100%;\n}\n.ld-content {\n  padding: 26px var(--ld-page-inline) 26px;\n  overflow: auto;\n  min-height: 0;\n}\n.ld-page-top {\n  display: flex;\n  justify-content: space-between;\n  gap: 18px;\n  align-items: center;\n  margin: 0;\n  min-width: 0;\n  padding: 20px var(--ld-page-inline) 16px;\n  background: var(--ld-base);\n  border-bottom: 1px solid var(--ld-line);\n  position: relative;\n  z-index: 20;\n}\n.ld-page-top,\n.ld-page-top * {\n  -webkit-app-region: no-drag;\n  app-region: no-drag;\n}\n.ld-page-top > .ld-actions {\n  margin-left: auto;\n  flex-shrink: 0;\n  max-width: 100%;\n}\n.ld-page-top .ld-btn {\n  flex-shrink: 0;\n  white-space: nowrap;\n}\n.ld-search {\n  flex: 1;\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  min-width: 100px;\n  color: var(--ld-muted);\n}\n.ld-search input {\n  border: 0;\n  background: transparent;\n  width: 230px;\n  font-size: 12px;\n  padding: 5px 0;\n}\n.ld-mood {\n  max-width: 112px;\n  font-size: 12px !important;\n  border-color: transparent !important;\n  background: transparent !important;\n}\n.ld-page-heading {\n  display: flex;\n  align-items: flex-end;\n  justify-content: space-between;\n  gap: 15px;\n  margin-bottom: 35px;\n  flex-wrap: wrap;\n}\n.ld-eyebrow {\n  font-size: 12px;\n  color: var(--ld-muted);\n  letter-spacing: 0.5px;\n  margin-bottom: 8px;\n}\n.ld-day-nav {\n  display: flex;\n  align-items: center;\n  gap: 3px;\n  font-size: 12px;\n}\n.ld-day-nav > button {\n  padding: 3px 7px;\n  font-size: 20px;\n  color: var(--ld-muted);\n}\n.ld-day-nav input {\n  padding: 3px 5px;\n  font-size: 11px;\n  background: transparent;\n  border-color: transparent;\n  width: 115px;\n}\n.ld-day-nav .ld-btn {\n  font-size: 12px;\n}\n.ld-today-grid {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) 248px;\n  gap: 40px;\n}\n.ld-main-col {\n  min-width: 0;\n}\n.ld-support {\n  min-width: 0;\n  border-left: 1px solid var(--ld-line);\n  padding-left: 28px;\n}\n.ld-section {\n  margin: 0 0 34px;\n}\n.ld-section-heading,\n.ld-section-title {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  margin-bottom: 14px;\n}\n.ld-section-title {\n  justify-content: flex-start;\n  font-size: 13px;\n  color: var(--ld-muted);\n}\n.ld-section > h2 {\n  margin-bottom: 16px;\n}\n.ld-help,\n.ld-muted {\n  color: var(--ld-muted);\n}\n.ld-help {\n  font-size: 11px;\n  line-height: 1.7;\n}\n.ld-empty {\n  padding: 18px 0;\n  color: var(--ld-muted);\n  font-size: 12px;\n}\n.ld-task {\n  display: flex;\n  align-items: flex-start;\n  gap: 11px;\n  min-height: 55px;\n  padding: 10px 0;\n}\n.ld-task + .ld-task {\n  border-top: 1px solid color-mix(in srgb, var(--ld-line) 55%, transparent);\n}\n.ld-check {\n  width: 18px;\n  height: 18px;\n  border: 1.3px solid var(--dsw-alias-border-l2) !important;\n  border-radius: 5px;\n  margin-top: 4px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  flex: none;\n}\n.ld-task-done .ld-check {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent) !important;\n}\n.ld-task-done .ld-task-title {\n  text-decoration: line-through;\n  color: var(--ld-muted);\n}\n.ld-task-body {\n  flex: 1;\n  min-width: 0;\n  text-align: left;\n  padding: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 3px;\n}\n.ld-task-title {\n  font-size: 14px;\n  overflow-wrap: anywhere;\n}\n.ld-task-meta {\n  font-size: 11px;\n  color: var(--ld-muted);\n  overflow-wrap: anywhere;\n}\n.ld-task-tools {\n  display: flex;\n  align-items: center;\n  flex: none;\n  opacity: 0.35;\n}\n.ld-task:hover .ld-task-tools,\n.ld-task:focus-within .ld-task-tools {\n  opacity: 1;\n}\n.ld-icon-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 28px;\n  height: 28px;\n  border-radius: 6px;\n  padding: 0;\n  color: var(--ld-muted) !important;\n}\n.ld-icon-btn:hover {\n  background: var(--dsw-alias-bg-layer-2);\n}\n.ld-star {\n  color: var(--ld-accent);\n}\n.ld-event-dot {\n  padding-top: 4px;\n  color: var(--ld-muted);\n}\n.ld-btn {\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  gap: 6px;\n  font-size: 12px !important;\n  padding: 7px 11px;\n  min-height: 32px;\n  border: 1px solid var(--ld-line) !important;\n  border-radius: 7px;\n  line-height: 1.4;\n  background: var(--ld-surface) !important;\n  text-decoration: none;\n  cursor: pointer;\n}\n.ld-btn:hover {\n  background: var(--dsw-alias-bg-layer-2) !important;\n}\n.ld-btn.ld-primary {\n  background: color-mix(\n    in srgb,\n    var(--ld-accent) 12%,\n    var(--ld-base)\n  ) !important;\n  border-color: color-mix(\n    in srgb,\n    var(--ld-accent) 35%,\n    var(--ld-line)\n  ) !important;\n  color: var(--ld-accent);\n}\n.ld-btn[aria-pressed="true"] {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent) !important;\n}\n.ld-actions {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n.ld-toolbar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  margin-bottom: 20px;\n}\n.ld-details {\n  border-top: 1px solid var(--ld-line);\n  padding: 14px 0;\n  color: var(--ld-muted);\n  font-size: 12px;\n}\n.ld-details summary {\n  cursor: pointer;\n}\n.ld-details .ld-task-list {\n  color: var(--ld-ink);\n  margin-top: 12px;\n}\n.ld-welcome {\n  padding: 5px 0 30px;\n}\n.ld-welcome > svg {\n  color: var(--ld-accent);\n  margin-bottom: 12px;\n}\n.ld-welcome h2 {\n  font-size: 19px;\n  margin-bottom: 9px;\n}\n.ld-welcome p {\n  color: var(--ld-muted);\n  font-size: 12px;\n  margin-bottom: 18px;\n}\n.ld-focus-card {\n  padding-bottom: 27px;\n  margin-bottom: 24px;\n  border-bottom: 1px solid var(--ld-line);\n}\n.ld-timer-title {\n  font-size: 12px;\n  color: var(--ld-muted);\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.ld-time {\n  font-size: 49px;\n  font-weight: 350;\n  letter-spacing: -2px;\n  line-height: 1.5;\n  font-variant-numeric: tabular-nums;\n  margin: 8px 0;\n}\n.ld-progress {\n  height: 3px;\n  background: var(--dsw-alias-bg-layer-2);\n  border-radius: 3px;\n  margin: 0 0 22px;\n  overflow: hidden;\n}\n.ld-progress i {\n  display: block;\n  height: 100%;\n  background: var(--ld-accent);\n}\n.ld-timer-end {\n  margin-top: 15px;\n}\n.ld-timer-end .ld-field {\n  margin: 10px 0;\n}\n.ld-habit {\n  padding: 9px 0;\n}\n.ld-habit + .ld-habit {\n  border-top: 1px solid var(--ld-line);\n}\n.ld-habit-main {\n  display: flex;\n  gap: 12px;\n  align-items: center;\n}\n.ld-habit-period {\n  margin-left: 6px;\n  font-size: 10px;\n  color: var(--ld-muted);\n}\n.ld-habit-check {\n  border: 1px solid var(--ld-line) !important;\n  width: 28px;\n  height: 28px;\n  border-radius: 50%;\n  color: var(--ld-muted) !important;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex: none;\n}\n.ld-habit-check.checked {\n  color: var(--ld-accent) !important;\n  background: color-mix(in srgb, var(--ld-accent) 10%, transparent);\n}\n.ld-week-dots {\n  display: flex;\n  gap: 8px;\n  align-items: center;\n  margin: 12px 0;\n  flex-wrap: wrap;\n}\n.ld-week-dots > button:not(.ld-btn) {\n  min-width: 28px;\n  height: 28px;\n  border-radius: 50%;\n  font-size: 11px;\n  background: var(--dsw-alias-bg-layer-2);\n}\n.ld-week-dots > button.checked {\n  color: var(--ld-accent);\n}\n.ld-upcoming {\n  display: flex;\n  flex-direction: column;\n  gap: 3px;\n  text-align: left;\n  width: 100%;\n  padding: 8px 0;\n}\n.ld-upcoming strong {\n  font-size: 12px;\n}\n.ld-upcoming span {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-project-row {\n  display: flex;\n  align-items: center;\n  gap: 13px;\n  width: 100%;\n  padding: 17px 0;\n  text-align: left;\n  border-bottom: 1px solid var(--ld-line) !important;\n}\n.ld-project-row > span:first-of-type {\n  display: flex;\n  flex: 1;\n  flex-direction: column;\n}\n.ld-project-row small {\n  font-size: 11px;\n  color: var(--ld-muted);\n  margin-top: 3px;\n}\n.ld-project-goal {\n  white-space: pre-wrap;\n  color: var(--ld-muted);\n  margin: 0 0 25px !important;\n}\n.ld-board {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  gap: 20px;\n  margin-top: 24px;\n  overflow: auto;\n}\n.ld-board > section {\n  min-width: 160px;\n  padding: 14px;\n  background: var(--dsw-alias-bg-layer-1);\n  border-radius: 8px;\n}\n.ld-board .ld-task {\n  flex-wrap: wrap;\n}\n.ld-board .ld-task-tools {\n  margin-left: auto;\n}\n.ld-review-stats {\n  display: flex;\n  gap: 35px;\n  padding: 30px 0;\n  flex-wrap: wrap;\n}\n.ld-review-stats > div {\n  display: flex;\n  flex-direction: column;\n}\n.ld-review-stats strong {\n  font-size: 30px;\n  font-weight: 450;\n}\n.ld-review-stats span {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-review-text {\n  min-height: 240px;\n  margin: 7px 0 15px;\n  line-height: 1.8;\n}\n.ld-log {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 15px;\n  padding: 12px 0;\n  border-bottom: 1px solid var(--ld-line);\n  font-size: 12px;\n}\n.ld-footer {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  font-size: 10px;\n  color: var(--ld-muted);\n  margin-top: 45px;\n}\n.ld-footer button {\n  font-size: 10px;\n  text-decoration: underline;\n}\n.ld-status {\n  font-size: 12px;\n  padding: 8px 10px;\n  background: var(--dsw-alias-bg-layer-1);\n  color: var(--dsw-alias-state-success-primary);\n  margin-bottom: 15px;\n  border-radius: 6px;\n  display: flex;\n  gap: 15px;\n  align-items: center;\n}\n.ld-status button {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-error {\n  color: var(--dsw-alias-state-error-primary);\n  font-size: 12px;\n  padding: 12px 0;\n}\n.ld-loading {\n  padding: 48px;\n}\n.ld-dialog {\n  padding: 24px;\n  border: 1px solid var(--ld-line);\n  border-radius: 14px;\n  background: var(--ld-base);\n  color: var(--ld-ink);\n  width: min(650px, calc(100% - 30px));\n  max-height: 85vh;\n  overflow: auto;\n  box-shadow: 0 15px 70px color-mix(in srgb, var(--ld-ink) 12%, transparent);\n}\n.ld-dialog::backdrop {\n  background: color-mix(\n    in srgb,\n    var(--dsw-alias-label-primary) 20%,\n    transparent\n  );\n}\n.ld-dialog > header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 22px;\n}\n.ld-dialog h2 {\n  font-size: 18px;\n}\n.ld-dialog h3 {\n  margin: 22px 0 10px;\n}\n.ld-dialog p {\n  margin: 10px 0;\n}\n.ld-form {\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 17px;\n}\n.ld-field {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n  font-size: 12px;\n}\n.ld-field > span {\n  color: var(--ld-muted);\n}\n.ld-field input,\n.ld-field select {\n  width: 100%;\n}\n.ld-wide {\n  grid-column: 1/-1;\n}\n.ld-check-label {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 12px;\n  min-height: 30px;\n}\n.ld-modal-footer {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 15px;\n  margin-top: 25px;\n  padding-top: 18px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-days {\n  display: flex;\n  gap: 8px;\n}\n.ld-days button {\n  width: 32px;\n  height: 32px;\n  border: 1px solid var(--ld-line);\n  border-radius: 50%;\n}\n.ld-days button[aria-pressed="true"] {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent);\n}\n.ld-scope {\n  padding: 12px;\n  background: var(--dsw-alias-bg-layer-1);\n  border-radius: 8px;\n  margin-bottom: 20px;\n}\n.ld-file {\n  position: relative;\n  overflow: hidden;\n}\n.ld-file input {\n  position: absolute;\n  inset: 0;\n  opacity: 0;\n  cursor: pointer;\n  width: 100%;\n}\n.ld-restore {\n  margin-top: 20px;\n  padding: 15px;\n  border: 1px solid var(--ld-line);\n  border-radius: 8px;\n}\n.ld-global-timer {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  font-size: 11px !important;\n  font-variant-numeric: tabular-nums;\n  color: var(--ld-accent) !important;\n  padding: 4px;\n}\n.ld-global-notice {\n  position: fixed;\n  right: 24px;\n  bottom: 24px;\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  max-width: min(440px, 90vw);\n  background: var(--ld-surface);\n  padding: 14px 18px;\n  border: 1px solid var(--ld-line);\n  border-radius: 10px;\n  box-shadow: 0 8px 30px color-mix(in srgb, var(--ld-ink) 10%, transparent);\n  font-size: 12px;\n  pointer-events: auto;\n  z-index: 1000;\n}\n.ld-root .fc {\n  --fc-border-color: var(--ld-line);\n  --fc-page-bg-color: var(--ld-base);\n  --fc-neutral-bg-color: var(--dsw-alias-bg-layer-1);\n  --fc-neutral-text-color: var(--ld-muted);\n  --fc-button-text-color: var(--ld-ink);\n  --fc-button-bg-color: var(--ld-surface);\n  --fc-button-border-color: var(--ld-line);\n  --fc-button-hover-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-button-hover-border-color: var(--ld-line);\n  --fc-button-active-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-button-active-border-color: var(--ld-accent);\n  --fc-event-bg-color: color-mix(in srgb, var(--ld-accent) 12%, var(--ld-base));\n  --fc-event-border-color: color-mix(\n    in srgb,\n    var(--ld-accent) 25%,\n    var(--ld-line)\n  );\n  --fc-event-text-color: var(--ld-ink);\n  --fc-today-bg-color: color-mix(in srgb, var(--ld-accent) 5%, transparent);\n  --fc-now-indicator-color: var(--ld-accent);\n  font-size: 12px;\n  margin-top: 18px;\n}\n.ld-root .fc .fc-toolbar-title {\n  font-size: 17px;\n  font-weight: 550;\n}\n.ld-root .fc .fc-button {\n  font-size: 12px;\n  border: 1px solid var(--ld-line);\n  padding: 5px 9px;\n}\n.ld-root .fc .fc-daygrid-day-number {\n  padding: 8px;\n}\n.ld-root .fc .fc-col-header-cell-cushion {\n  padding: 9px 0;\n  font-weight: 500;\n  color: var(--ld-muted);\n}\n.ld-root .fc-event {\n  border-radius: 4px;\n  padding: 2px 4px;\n}\n.ld-root .fc-event-done {\n  opacity: 0.5;\n  text-decoration: line-through;\n}\n.ld-root .ld-event-habit {\n  --fc-event-border-color: var(--ld-line);\n  --fc-event-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-event-text-color: var(--ld-muted);\n}\n@container life-desk (max-width:1050px) {\n  .ld-today-grid {\n    grid-template-columns: minmax(0, 1fr) 210px;\n    gap: 25px;\n  }\n  .ld-support {\n    padding-left: 22px;\n  }\n  .ld-shell {\n    grid-template-columns: 160px minmax(0, 1fr);\n  }\n  .ld-workspace {\n    --ld-page-inline: 25px;\n  }\n  .ld-search input {\n    width: 150px;\n  }\n}\n@container life-desk (max-width:820px) {\n  .ld-shell {\n    grid-template-columns: 60px minmax(0, 1fr);\n  }\n  .ld-nav {\n    padding-inline: 8px;\n  }\n  .ld-nav button > span,\n  .ld-brand > span,\n  .ld-nav-project,\n  .ld-nav-bottom button,\n  .ld-nav-add {\n    font-size: 0 !important;\n  }\n  .ld-nav button {\n    gap: 0;\n    justify-content: center;\n  }\n  .ld-nav .ld-nav-project {\n    display: none;\n  }\n  .ld-brand {\n    padding-inline: 8px;\n  }\n  .ld-nav-add svg,\n  .ld-nav-bottom svg {\n    width: 20px;\n  }\n  .ld-today-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n  .ld-support {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 25px;\n    border-left: 0;\n    border-top: 1px solid var(--ld-line);\n    padding: 25px 0 0;\n  }\n  .ld-support > .ld-section:last-child {\n    grid-column: 1/-1;\n  }\n  .ld-board {\n    grid-template-columns: 1fr;\n  }\n  .ld-day-nav {\n    width: 100%;\n  }\n}\n@container life-desk (max-width:530px) {\n  .ld-workspace {\n    --ld-page-inline: 16px;\n  }\n  .ld-content {\n    padding: 22px var(--ld-page-inline);\n  }\n  .ld-page-top {\n    padding-top: 16px;\n    padding-bottom: 12px;\n    flex-wrap: wrap;\n    gap: 10px;\n  }\n  .ld-page-top .ld-mood {\n    max-width: 88px;\n  }\n  .ld-search {\n    width: 100%;\n  }\n  .ld-search input {\n    width: 100%;\n  }\n  .ld-support {\n    grid-template-columns: 1fr;\n  }\n  .ld-root h1 {\n    font-size: 26px;\n  }\n  .ld-task-tools {\n    opacity: 1;\n  }\n  .ld-task-tools .ld-icon-btn:first-child {\n    display: none;\n  }\n}\n@media (max-width: 550px) {\n  .ld-form {\n    grid-template-columns: 1fr;\n  }\n  .ld-modal-footer {\n    align-items: flex-start;\n    flex-direction: column;\n  }\n  .ld-dialog {\n    padding: 18px;\n  }\n}\n@media (prefers-reduced-motion: reduce) {\n  .ld-root * {\n    animation: none !important;\n    transition: none !important;\n  }\n}\n\n/* Phase 2A: version visibility. Read-only discovery, never installs anything. */\n.ld-update {\n  margin-top: 34px;\n  padding-top: 24px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-update-meta {\n  display: grid;\n  grid-template-columns: max-content minmax(0, 1fr);\n  gap: 7px 20px;\n  font-size: 12px;\n}\n.ld-update-meta > span {\n  color: var(--ld-muted);\n}\n.ld-update-meta strong {\n  font-weight: 500;\n  overflow-wrap: anywhere;\n}\n.ld-update-ok {\n  margin-top: 12px;\n  font-size: 12px;\n  color: var(--dsw-alias-state-success-primary);\n}\n.ld-update-card {\n  margin-top: 14px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  padding: 14px;\n  background: var(--ld-surface);\n  display: grid;\n  gap: 9px;\n}\n.ld-update-card .ld-actions {\n  flex-wrap: wrap;\n}\n.ld-update-toggle {\n  justify-self: start;\n  font-size: 11px;\n  color: var(--ld-muted);\n  padding: 2px 0;\n}\n.ld-release-notes {\n  margin: 0;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  font: 11px/1.7 var(--dsh-font-family-code-default, ui-monospace, monospace);\n  background: var(--dsw-alias-bg-layer-2);\n  border-radius: 7px;\n  padding: 10px 12px;\n  max-height: 220px;\n  overflow: auto;\n  color: var(--ld-muted);\n}\n.ld-update-badge {\n  font-size: 10px;\n  color: var(--ld-accent);\n  text-decoration: none !important;\n  border: 1px solid color-mix(in srgb, var(--ld-accent) 40%, var(--ld-line));\n  border-radius: 20px;\n  padding: 1px 8px;\n}\n.ld-root a.ld-btn {\n  color: inherit;\n}\n.ld-snapshot-row {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  align-items: center;\n  gap: 2px 12px;\n  padding: 9px 0;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-snapshot-row:first-of-type {\n  border-top: 0;\n}\n.ld-snapshot-row > span {\n  font-size: 12px;\n  overflow-wrap: anywhere;\n}\n.ld-snapshot-row > small {\n  grid-column: 1;\n  color: var(--ld-muted);\n  font-size: 10px;\n}\n.ld-snapshot-row > .ld-btn {\n  grid-row: 1 / span 2;\n  grid-column: 2;\n}\n.ld-template-list {\n  display: grid;\n  gap: 0;\n  margin: 14px 0;\n}\n.ld-template {\n  display: grid;\n  gap: 4px;\n  text-align: left;\n  padding: 12px 0;\n  border-bottom: 1px solid var(--ld-line);\n}\n.ld-template-title {\n  font-size: 13px;\n}\n.ld-template-note {\n  font-size: 11px;\n  color: var(--ld-muted);\n  line-height: 1.6;\n}\n.ld-completion {\n  border: 0;\n  padding: 0;\n  margin: 4px 0 0;\n  display: grid;\n  gap: 7px;\n}\n.ld-completion legend {\n  font-size: 11px;\n  color: var(--ld-muted);\n  padding: 0;\n  margin-bottom: 4px;\n}\n.ld-fold-toggle {\n  display: inline-flex;\n  align-items: center;\n  gap: 7px;\n  font: inherit;\n  color: inherit;\n  font-weight: inherit;\n  padding: 0;\n  text-align: left;\n}\n.ld-fold-chevron {\n  display: inline-flex;\n  color: var(--ld-muted);\n  transition: transform 0.15s ease;\n}\n.ld-fold-toggle[aria-expanded="true"] .ld-fold-chevron {\n  transform: rotate(90deg);\n}\n.ld-fold-count {\n  margin-left: auto;\n  font-size: 11px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n@media (prefers-reduced-motion: reduce) {\n  .ld-fold-chevron {\n    transition: none;\n  }\n}\n.ld-review-prompts {\n  margin: 8px 0 10px;\n  padding-left: 18px;\n  color: var(--ld-muted);\n  font-size: 12px;\n  line-height: 1.8;\n}\n.ld-review-date {\n  margin-bottom: 12px;\n  flex-wrap: wrap;\n}\n';
 
 // src/spirit.css
 var spirit_default = '.ld-root:has(> .ld-shell) {\n  position: relative;\n}\n.ld-shell.ld-spirit-open {\n  grid-template-columns: 188px minmax(0, 1fr) 370px;\n}\n.ld-shell.ld-collapsed.ld-spirit-open {\n  grid-template-columns: 66px minmax(0, 1fr) 370px;\n}\n.ld-spirit-panel {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  min-height: 0;\n  height: 100%;\n  background: var(--ld-base);\n  border-left: 1px solid var(--ld-line);\n  padding: 24px 18px 18px;\n  overflow: hidden;\n}\n.ld-spirit-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  margin-bottom: 15px;\n  flex: none;\n}\n.ld-spirit-heading {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n}\n.ld-spirit-heading > svg {\n  color: var(--ld-accent);\n}\n.ld-spirit-heading strong {\n  font-size: 14px;\n}\n.ld-spirit-dot {\n  height: 6px;\n  width: 6px;\n  border-radius: 50%;\n  background: var(--dsw-alias-state-success-primary);\n  margin-left: 3px;\n}\n.ld-spirit-dot.working {\n  background: var(--ld-accent);\n}\n.ld-spirit-controls {\n  display: flex;\n  gap: 5px;\n}\n.ld-spirit-controls button {\n  width: 27px;\n  height: 27px;\n  font-size: 20px;\n  color: var(--ld-muted);\n  border-radius: 5px;\n}\n.ld-spirit-controls button:hover {\n  background: var(--dsw-alias-bg-layer-2);\n}\n.ld-spirit-model {\n  display: flex;\n  align-items: center;\n  gap: 7px;\n}\n.ld-spirit-model select {\n  flex: 1;\n  min-width: 0;\n  font-size: 11px;\n  padding: 7px;\n}\n.ld-spirit-model button {\n  width: 28px;\n  height: 28px;\n  color: var(--ld-muted);\n}\n.ld-spirit-model-caption {\n  font-size: 10px;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  color: var(--ld-muted);\n  margin: 7px 0 16px;\n}\n.ld-spirit-messages {\n  flex: 1;\n  min-height: 0;\n  overflow: auto;\n  padding: 8px 2px 15px;\n  scroll-behavior: smooth;\n  overflow-wrap: anywhere;\n}\n.ld-spirit-welcome {\n  padding: 30px 7px 20px;\n}\n.ld-spirit-welcome > .ld-spirit-art {\n  color: var(--ld-accent);\n  margin-bottom: 18px;\n}\n.ld-spirit-welcome h2 {\n  font-size: 21px;\n  line-height: 1.6;\n  font-weight: 500;\n  max-width: 250px;\n  margin-bottom: 12px;\n}\n.ld-spirit-welcome p {\n  font-size: 12px;\n  color: var(--ld-muted);\n  line-height: 1.9;\n}\n.ld-spirit-examples {\n  display: grid;\n  gap: 8px;\n  margin-top: 30px;\n}\n.ld-spirit-examples button {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 12px;\n  font-size: 11px;\n  line-height: 1.8;\n  text-align: left;\n  padding: 9px;\n  border: 1px solid var(--ld-line);\n  border-radius: 7px;\n}\n.ld-spirit-examples button span {\n  color: var(--ld-muted);\n  flex: none;\n}\n.ld-spirit-message {\n  font-size: 12px;\n  line-height: 1.9;\n  margin: 0 0 18px;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n}\n.ld-spirit-message small {\n  display: block;\n  font-size: 10px;\n  color: var(--ld-muted);\n  margin-bottom: 5px;\n}\n.ld-spirit-user {\n  background: var(--dsw-alias-bg-layer-2);\n  padding: 10px 12px;\n  border-radius: 10px 10px 3px 10px;\n  margin-left: 22px;\n}\n.ld-spirit-assistant {\n  padding: 3px 3px 3px 0;\n}\n.ld-spirit-operation {\n  font-size: 10px;\n  color: var(--ld-muted);\n  padding: 6px 0;\n  display: flex;\n  gap: 7px;\n  align-items: flex-start;\n  flex-wrap: wrap;\n}\n.ld-spirit-operation p {\n  width: 100%;\n  font-size: 10px;\n  max-height: 100px;\n  overflow: auto;\n}\n.ld-operation-state {\n  font-size: 12px;\n  min-width: 12px;\n}\n.ld-operation-state.done {\n  color: var(--dsw-alias-state-success-primary);\n}\n.ld-operation-state.error,\n.ld-spirit-error,\n.ld-spirit-message.ld-spirit-error {\n  color: var(--dsw-alias-state-error-primary);\n}\n.ld-spirit-thinking {\n  font-size: 11px;\n  color: var(--ld-muted);\n  padding: 5px 0 15px;\n}\n.ld-spirit-thinking span {\n  margin-left: 5px;\n}\n.ld-spirit-error {\n  font-size: 11px;\n  border-top: 1px solid var(--ld-line);\n  padding: 9px 0;\n  overflow-wrap: anywhere;\n}\n.ld-spirit-error button {\n  margin-left: 8px;\n  font-size: 11px;\n  text-decoration: underline;\n}\n.ld-spirit-provider-errors {\n  font-size: 10px;\n  color: var(--ld-muted);\n  padding: 7px 0;\n  max-height: 100px;\n  overflow: auto;\n}\n.ld-spirit-provider-errors summary {\n  cursor: pointer;\n}\n.ld-spirit-compose {\n  flex: none;\n  border: 1px solid var(--dsw-alias-border-l2);\n  border-radius: 12px;\n  padding: 10px 11px;\n  background: var(--ld-surface);\n  margin-top: 8px;\n}\n.ld-spirit-compose textarea {\n  border: 0;\n  background: transparent;\n  padding: 0;\n  width: 100%;\n  min-height: 58px;\n  max-height: 170px;\n  resize: vertical;\n  font-size: 12px;\n  line-height: 1.8;\n}\n.ld-spirit-compose textarea:focus-visible {\n  outline: none;\n}\n.ld-spirit-compose:focus-within {\n  border-color: var(--ld-accent);\n}\n.ld-spirit-compose-foot {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 8px;\n  padding-top: 6px;\n}\n.ld-spirit-compose-foot > span {\n  font-size: 9px;\n  color: var(--ld-muted);\n}\n.ld-life-template-help {\n  margin-bottom: 10px !important;\n}\n.ld-life-templates {\n  margin-bottom: 24px;\n}\n.ld-life-filters {\n  border-top: 1px solid var(--ld-line);\n  padding-top: 18px;\n  margin-bottom: 23px;\n}\n.ld-life-filters .ld-btn {\n  border-color: transparent !important;\n  background: transparent !important;\n}\n.ld-life-filters .ld-btn[aria-pressed="true"] {\n  background: var(--dsw-alias-bg-layer-2) !important;\n}\n.ld-review-link summary {\n  font-size: 12px;\n  color: var(--ld-muted);\n  cursor: pointer;\n}\n.ld-review-link .ld-check-label {\n  margin-top: 8px;\n}\n.ld-dialog .ld-form + .ld-actions {\n  margin-top: 18px;\n}\n@container life-desk (max-width:1250px) {\n  .ld-shell.ld-spirit-open {\n    grid-template-columns: 160px minmax(0, 1fr) 340px;\n  }\n  .ld-shell.ld-collapsed.ld-spirit-open {\n    grid-template-columns: 66px minmax(0, 1fr) 340px;\n  }\n  .ld-spirit-open .ld-today-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n  .ld-spirit-open .ld-support {\n    border-left: 0;\n    border-top: 1px solid var(--ld-line);\n    padding: 22px 0 0;\n  }\n  .ld-spirit-open .ld-page-top {\n    flex-wrap: wrap;\n  }\n}\n@container life-desk (max-width:950px) {\n  .ld-shell.ld-spirit-open,\n  .ld-shell.ld-collapsed.ld-spirit-open {\n    grid-template-columns: 60px minmax(0, 1fr);\n  }\n  .ld-spirit-panel {\n    position: absolute;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    width: min(370px, calc(100% - 60px));\n    z-index: 30;\n    box-shadow: -12px 0 35px color-mix(in srgb, var(--ld-ink) 6%, transparent);\n  }\n  .ld-spirit-open .ld-nav button > span,\n  .ld-spirit-open .ld-brand > span {\n    display: none;\n  }\n  .ld-spirit-open .ld-nav-project {\n    display: none;\n  }\n  .ld-spirit-open .ld-nav button {\n    font-size: 0;\n    justify-content: center;\n    gap: 0;\n  }\n  .ld-spirit-open .ld-nav {\n    padding-inline: 8px;\n  }\n  .ld-spirit-open .ld-brand {\n    padding-inline: 8px;\n  }\n}\n@media (prefers-reduced-motion: reduce) {\n  .ld-spirit-messages {\n    scroll-behavior: auto;\n  }\n}\n';
@@ -31580,9 +32161,12 @@ var focus_default = `/* Quiet timer controls inherit DSH tokens. The reader's ex
 // src/planning.css
 var planning_default = "/* Resident toolbar with a bounded capture sheet; the page remains the scroller. */\n.ld-toolbar-wrap {\n  position: relative;\n  min-width: 0;\n  z-index: 21;\n}\n.ld-toolbar-wrap .ld-page-top {\n  flex-wrap: wrap;\n}\n.ld-toolbar-wrap .ld-search {\n  min-width: 120px;\n}\n.ld-quick-panel {\n  position: absolute;\n  inset-inline: var(--ld-page-inline);\n  top: 100%;\n  z-index: 25;\n  padding: 20px;\n  border: 1px solid var(--ld-line);\n  border-radius: 12px;\n  background: var(--ld-base);\n  box-shadow: 0 12px 34px color-mix(in srgb, var(--ld-muted) 18%, transparent);\n  max-height: min(70vh, 480px);\n  overflow: auto;\n  -webkit-app-region: no-drag;\n}\n.ld-quick-panel fieldset {\n  border: 0;\n  padding: 0;\n  margin: 0;\n  min-width: 0;\n}\n.ld-capture-title {\n  display: flex;\n  gap: 8px;\n  align-items: center;\n}\n.ld-capture-title > input {\n  flex: 1;\n  min-width: 80px;\n  padding: 9px;\n  border: 1px solid var(--ld-line);\n  border-radius: 6px;\n  background: var(--ld-base);\n  color: var(--ld-ink);\n  font: inherit;\n}\n.ld-quick-panel summary {\n  font-size: 12px;\n  color: var(--ld-muted);\n  margin: 14px 0 8px;\n  cursor: pointer;\n}\n.ld-capture-fields {\n  margin: 12px 0;\n}\n.ld-plan-panel {\n  margin-bottom: 26px;\n  padding: 18px 20px;\n  border: 1px solid var(--ld-line);\n  border-radius: 12px;\n  background: color-mix(in srgb, var(--ld-accent) 4%, var(--ld-base));\n}\n.ld-plan-heading {\n  display: flex;\n  justify-content: space-between;\n  gap: 12px;\n  align-items: baseline;\n}\n.ld-plan-heading h2 {\n  margin: 0;\n}\n.ld-plan-heading > span {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-plan-stats {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  gap: 16px;\n  margin: 18px 0;\n}\n.ld-plan-stats > div {\n  display: flex;\n  flex-direction: column;\n  gap: 5px;\n}\n.ld-plan-stats strong {\n  font-size: 26px;\n  font-weight: 500;\n  font-variant-numeric: tabular-nums;\n}\n.ld-plan-stats span {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-plan-capacity {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: end;\n  gap: 10px;\n}\n.ld-plan-capacity label {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-size: 12px;\n}\n.ld-plan-capacity input {\n  width: 90px;\n  padding: 6px 8px;\n  border: 1px solid var(--ld-line);\n  border-radius: 6px;\n  background: var(--ld-base);\n  color: var(--ld-ink);\n}\n.ld-plan-over {\n  color: var(--ld-accent);\n  font-weight: 600;\n}\n.ld-inbox-item {\n  border-bottom: 1px solid var(--ld-line);\n  padding: 16px 0;\n}\n.ld-inbox-heading {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\n.ld-inbox-heading .ld-task-body {\n  flex: 1;\n  min-width: 0;\n}\n.ld-task-tools {\n  flex-wrap: wrap;\n}\n@media (max-width: 600px) {\n  .ld-quick-panel {\n    inset-inline: 8px;\n    padding: 14px;\n  }\n  .ld-capture-title {\n    flex-wrap: wrap;\n  }\n  .ld-capture-title > input {\n    flex-basis: 100%;\n  }\n  .ld-plan-panel {\n    padding: 15px;\n  }\n  .ld-plan-stats {\n    gap: 10px;\n  }\n  .ld-plan-stats strong {\n    font-size: 22px;\n  }\n}\n";
 
+// src/review.css
+var review_default = '/* Review content and templates remain separate; all text is rendered inertly. */\n.ld-review-editor {\n  min-width: 0;\n}\n.ld-review-options {\n  flex-wrap: wrap;\n  margin: 10px 0;\n}\n.ld-review-options .ld-btn {\n  font-size: 11px;\n}\n.ld-review-editor .ld-field {\n  margin: 12px 0;\n}\n.ld-review-text {\n  width: 100%;\n  box-sizing: border-box;\n}\n.ld-review-assistant {\n  margin: 20px 0 10px;\n  padding: 16px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  background: var(--dsw-alias-bg-layer-1);\n}\n.ld-review-assistant h3 {\n  margin: 0;\n  font-size: 13px;\n}\n.ld-review-chat {\n  max-height: 260px;\n  overflow: auto;\n  margin: 12px 0;\n}\n.ld-review-chat-message {\n  margin-bottom: 12px;\n  font-size: 12px;\n}\n.ld-review-chat-message strong {\n  font-size: 10px;\n  color: var(--ld-muted);\n  font-weight: 500;\n}\n.ld-review-chat-message p,\n.ld-review-chat > p,\n.ld-review-candidate > p {\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  line-height: 1.7;\n}\n.ld-review-candidate {\n  margin-top: 15px;\n  padding-top: 14px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-review-assistant textarea {\n  min-height: 65px;\n}\n.ld-previous-habits {\n  margin-bottom: 22px;\n  padding: 12px 14px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n}\n.ld-previous-habits h3 {\n  margin: 0 0 8px;\n}\n.ld-week-dots > .ld-habit-late {\n  outline: 1px dashed var(--ld-accent);\n  outline-offset: 2px;\n}\n.ld-root[data-reduce-motion="true"] .ld-fold-chevron {\n  transition: none;\n}\n@container life-desk (max-width: 530px) {\n  .ld-review-assistant {\n    padding: 12px;\n  }\n}\n';
+
 // src/client.tsx
-var css = style_default + spirit_default + today_default + focus_default + planning_default;
-var { useState: useState4, useEffect: useEffect4, useRef: useRef4, useSyncExternalStore: useSyncExternalStore2 } = React8;
+var css = style_default + spirit_default + today_default + focus_default + planning_default + review_default;
+var { useState: useState5, useEffect: useEffect5, useRef: useRef5, useSyncExternalStore: useSyncExternalStore2 } = React9;
 var NAV = ["today", "projects", "habits", "life", "calendar", "review"];
 var paths = {
   today: "M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4 M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0",
@@ -31604,7 +32188,7 @@ var paths = {
   ai: "m12 3 2.3 6.7L21 12l-6.7 2.3L12 21l-2.3-6.7L3 12l6.7-2.3Z"
 };
 function Icon({ name = "focus", size = 20 }) {
-  return /* @__PURE__ */ React8.createElement(
+  return /* @__PURE__ */ React9.createElement(
     "svg",
     {
       width: size,
@@ -31617,7 +32201,7 @@ function Icon({ name = "focus", size = 20 }) {
       strokeLinejoin: "round",
       "aria-hidden": "true"
     },
-    /* @__PURE__ */ React8.createElement("path", { d: paths[name] || paths.focus })
+    /* @__PURE__ */ React9.createElement("path", { d: paths[name] || paths.focus })
   );
 }
 function uid() {
@@ -31723,7 +32307,7 @@ function apply(ctx) {
     icon = "",
     ...props
   }) {
-    return /* @__PURE__ */ React8.createElement(
+    return /* @__PURE__ */ React9.createElement(
       "button",
       {
         type: "button",
@@ -31731,7 +32315,7 @@ function apply(ctx) {
         onClick,
         ...props
       },
-      icon && /* @__PURE__ */ React8.createElement(Icon, { name: icon, size: 17 }),
+      icon && /* @__PURE__ */ React9.createElement(Icon, { name: icon, size: 17 }),
       " ",
       children
     );
@@ -31742,8 +32326,8 @@ function apply(ctx) {
     Field
   });
   function useClock() {
-    const [n2, set] = useState4(Date.now());
-    useEffect4(() => {
+    const [n2, set] = useState5(Date.now());
+    useEffect5(() => {
       const id = setInterval(() => set(Date.now()), 1e3);
       return () => clearInterval(id);
     }, []);
@@ -31753,14 +32337,14 @@ function apply(ctx) {
     let mood = data?.settings?.mood || "daily";
     if (data?.settings?.moodUntil && data.settings.moodUntil < today(data.settings.timeZone))
       mood = "daily";
-    return /* @__PURE__ */ React8.createElement("div", { className: "ld-root ld-" + mood }, children);
+    return /* @__PURE__ */ React9.createElement("div", { className: "ld-root ld-" + mood }, children);
   }
   function Alerts() {
     const { data } = useStore();
     const now = useClock();
-    const [notices, setNotices] = useState4([]);
-    const sounded = useRef4(/* @__PURE__ */ new Set());
-    useEffect4(() => {
+    const [notices, setNotices] = useState5([]);
+    const sounded = useRef5(/* @__PURE__ */ new Set());
+    useEffect5(() => {
       if (!data) return;
       const day = today(data.settings.timeZone, now);
       const list = [];
@@ -31812,7 +32396,7 @@ function apply(ctx) {
         }
       }
     }, [data?.revision, Math.floor(now / 1e4)]);
-    return notices.length ? /* @__PURE__ */ React8.createElement("div", { className: "ld-global-notice", role: "status" }, /* @__PURE__ */ React8.createElement(Icon, { name: "today" }), /* @__PURE__ */ React8.createElement("span", null, notices[0].title, notices.length > 1 ? " +" + (notices.length - 1) : ""), /* @__PURE__ */ React8.createElement(
+    return notices.length ? /* @__PURE__ */ React9.createElement("div", { className: "ld-global-notice", role: "status" }, /* @__PURE__ */ React9.createElement(Icon, { name: "today" }), /* @__PURE__ */ React9.createElement("span", null, notices[0].title, notices.length > 1 ? " +" + (notices.length - 1) : ""), /* @__PURE__ */ React9.createElement(
       Btn,
       {
         onClick: () => {
@@ -31826,13 +32410,13 @@ function apply(ctx) {
     )) : null;
   }
   function Modal({ title, onClose, children }) {
-    const ref = useRef4(null);
-    useEffect4(() => {
+    const ref = useRef5(null);
+    useEffect5(() => {
       const before = document.activeElement;
       ref.current?.showModal();
       return () => before?.focus?.();
     }, []);
-    return /* @__PURE__ */ React8.createElement(
+    return /* @__PURE__ */ React9.createElement(
       "dialog",
       {
         ref,
@@ -31845,7 +32429,7 @@ function apply(ctx) {
           if (e3.target === e3.currentTarget) onClose();
         }
       },
-      /* @__PURE__ */ React8.createElement("header", null, /* @__PURE__ */ React8.createElement("h2", null, title), /* @__PURE__ */ React8.createElement(
+      /* @__PURE__ */ React9.createElement("header", null, /* @__PURE__ */ React9.createElement("h2", null, title), /* @__PURE__ */ React9.createElement(
         "button",
         {
           type: "button",
@@ -31858,16 +32442,55 @@ function apply(ctx) {
       children
     );
   }
+  const { ReviewEditor, ReviewCheckIn } = createReviewUI({
+    t: t3,
+    Btn,
+    Modal,
+    act,
+    send,
+    drafts: reviewDrafts
+  });
+  function FoldSection({ title, count, id, className = "", children }) {
+    const [open, setOpen] = useState5(true);
+    return /* @__PURE__ */ React9.createElement("section", { className: "ld-section ld-fold " + className }, /* @__PURE__ */ React9.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React9.createElement("h2", null, /* @__PURE__ */ React9.createElement(
+      "button",
+      {
+        type: "button",
+        className: "ld-fold-toggle",
+        "aria-expanded": open,
+        "aria-controls": id,
+        onClick: () => setOpen(!open)
+      },
+      /* @__PURE__ */ React9.createElement("span", { className: "ld-fold-chevron" }, /* @__PURE__ */ React9.createElement(Icon, { name: "chevron", size: 14 })),
+      title
+    )), /* @__PURE__ */ React9.createElement("span", { className: "ld-fold-count" }, count)), open && /* @__PURE__ */ React9.createElement("div", { id }, children));
+  }
   function Field({ label, children, wide = false }) {
-    return /* @__PURE__ */ React8.createElement("label", { className: "ld-field" + (wide ? " ld-wide" : "") }, /* @__PURE__ */ React8.createElement("span", null, label), children);
+    return /* @__PURE__ */ React9.createElement("label", { className: "ld-field" + (wide ? " ld-wide" : "") }, /* @__PURE__ */ React9.createElement("span", null, label), children);
   }
   function HabitCards({ full = false, env }) {
     const { data, day, timeZone, habits, busy, run, openHabit, setDay, live } = env;
     const list = habits.filter((h3) => full || habitDue(h3, day));
     const groups = todayHabits(data, day);
-    const [record, setRecord] = useState4(null);
-    const [amount, setAmount] = useState4("1");
-    const [note, setNote] = useState4("");
+    const [record, setRecord] = useState5(null);
+    const [review, setReview] = useState5(null);
+    const [amount, setAmount] = useState5("1");
+    const [note, setNote] = useState5("");
+    const [recordDate, setRecordDate] = useState5(day);
+    const previous = pendingPreviousHabits(data, day);
+    const openLog = (h3, date) => {
+      const r3 = habitRule(h3, date), p3 = habitProgress(data, h3, date);
+      if (h3.reviewLinked && r3?.mode === "daily") {
+        setReview({ habit: h3, date });
+        return;
+      }
+      setRecordDate(date);
+      setAmount(
+        ["quantity", "duration"].includes(r3?.mode) ? String(Math.max(1, r3.target - p3.value)) : "1"
+      );
+      setNote("");
+      setRecord(h3);
+    };
     const renderHabit = (h3) => {
       const r3 = habitRule(h3, day);
       const p3 = habitProgress(data, h3, day);
@@ -31878,70 +32501,65 @@ function apply(ctx) {
       const count = weekDays.filter(
         (d2) => habitProgress(data, h3, d2).done
       ).length;
-      return /* @__PURE__ */ React8.createElement("div", { key: h3.id, className: "ld-habit" }, /* @__PURE__ */ React8.createElement("div", { className: "ld-habit-main" }, /* @__PURE__ */ React8.createElement(
+      return /* @__PURE__ */ React9.createElement("div", { key: h3.id, className: "ld-habit" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-habit-main" }, /* @__PURE__ */ React9.createElement(
         "button",
         {
           className: "ld-task-body",
           onClick: () => {
             if (full) openHabit(h3);
-            else {
-              setAmount(
-                ["quantity", "duration"].includes(r3?.mode) ? String(Math.max(1, r3.target - p3.value)) : "1"
-              );
-              setNote("");
-              setRecord(h3);
-            }
+            else openLog(h3, day);
           }
         },
-        /* @__PURE__ */ React8.createElement("span", { className: "ld-task-title" }, h3.title),
+        /* @__PURE__ */ React9.createElement("span", { className: "ld-task-title" }, h3.title),
         (() => {
-          const meta = r3?.paused ? t3("paused") : p3.missed ? t3("missedHabit") : p3.skipped ? t3("skipped") : r3?.mode === "weekly" ? `${t3("weekly")} \xB7 ${count}/${r3.target}` : r3?.mode === "duration" ? `${p3.value}/${r3.target} ${t3("min")}` : r3?.mode === "quantity" ? `${p3.value}/${r3.target} ${r3.unit}` : p3.done ? t3("done") : "";
-          return meta ? /* @__PURE__ */ React8.createElement("span", { className: "ld-task-meta" }, meta) : null;
+          const meta = r3?.paused ? t3("paused") : p3.missed ? t3("missedHabit") : p3.skipped ? t3("skipped") : r3?.mode === "weekly" ? `${t3("weekly")} \xB7 ${count}/${r3.target}` : r3?.mode === "duration" ? `${p3.value}/${r3.target} ${t3("min")}` : r3?.mode === "quantity" ? `${p3.value}/${r3.target} ${r3.unit}` : p3.done ? t3(
+            p3.status === "late" ? "habitLate" : "habitOnTime"
+          ) : p3.status === "unrecorded" ? t3("habitUnrecorded") : "";
+          return meta ? /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, meta, p3.done && ["quantity", "duration"].includes(r3?.mode) ? " \xB7 " + t3(p3.status === "late" ? "habitLate" : "habitOnTime") : "") : null;
         })()
-      ), /* @__PURE__ */ React8.createElement(
+      ), /* @__PURE__ */ React9.createElement(
         "button",
         {
           className: "ld-habit-check " + (p3.done ? "checked" : ""),
           "aria-label": t3("log") + " " + h3.title,
           disabled: busy || !habitDue(h3, day) || day > today(timeZone),
-          onClick: () => {
-            setAmount(
-              ["quantity", "duration"].includes(r3?.mode) ? String(Math.max(1, r3.target - p3.value)) : "1"
-            );
-            setNote("");
-            setRecord(h3);
-          }
+          onClick: () => openLog(h3, day)
         },
-        /* @__PURE__ */ React8.createElement(Icon, { name: p3.done ? "check" : "plus", size: 17 })
-      )), full && /* @__PURE__ */ React8.createElement("div", { className: "ld-week-dots" }, weekDays.map((d2) => {
+        /* @__PURE__ */ React9.createElement(Icon, { name: p3.done ? "check" : "plus", size: 17 })
+      )), full && /* @__PURE__ */ React9.createElement("div", { className: "ld-week-dots" }, weekDays.map((d2) => {
         const q3 = habitProgress(data, h3, d2);
-        return /* @__PURE__ */ React8.createElement(
+        return /* @__PURE__ */ React9.createElement(
           "button",
           {
             key: d2,
-            className: q3.done ? "checked" : "",
+            className: (q3.done ? "checked" : "") + (q3.status === "late" ? " ld-habit-late" : ""),
             disabled: d2 > today(timeZone) || !habitDue(h3, d2),
-            title: d2,
-            onClick: () => {
-              setDay(d2);
-              setAmount("1");
-              setNote("");
-              setRecord(h3);
-            }
+            title: d2 + " \xB7 " + t3(
+              q3.status === "late" ? "habitLate" : q3.status === "onTime" ? "habitOnTime" : q3.status === "missed" ? "missedHabit" : q3.status === "skipped" ? "skipped" : q3.status === "unrecorded" ? "habitUnrecorded" : "todo"
+            ),
+            onClick: () => openLog(h3, d2)
           },
           d2.slice(8),
           q3.done ? " \xB7" : ""
         );
-      }), /* @__PURE__ */ React8.createElement(Btn, { onClick: () => openHabit(h3) }, t3("edit"))));
+      }), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => openHabit(h3) }, t3("edit"))));
     };
-    return /* @__PURE__ */ React8.createElement(React8.Fragment, null, full ? /* @__PURE__ */ React8.createElement("div", { className: "ld-habit-list" }, list.map(renderHabit)) : /* @__PURE__ */ React8.createElement(React8.Fragment, null, groups.pending.length > 0 && /* @__PURE__ */ React8.createElement("div", { className: "ld-habit-list" }, groups.pending.map(renderHabit)), !groups.pending.length && /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("noPendingHabits")), groups.done.length > 0 && /* @__PURE__ */ React8.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React8.createElement("summary", null, t3("doneHabits"), " \xB7 ", groups.done.length), groups.done.map(renderHabit)), groups.settled.length > 0 && /* @__PURE__ */ React8.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React8.createElement("summary", null, t3("settledHabits"), " \xB7 ", groups.settled.length), groups.settled.map(renderHabit)), groups.weekly.length > 0 && /* @__PURE__ */ React8.createElement("section", { className: "ld-weekly-goals" }, /* @__PURE__ */ React8.createElement("h3", null, t3("weeklyHabits")), groups.weekly.map((h3) => {
+    return /* @__PURE__ */ React9.createElement(React9.Fragment, null, full ? /* @__PURE__ */ React9.createElement("div", { className: "ld-habit-list" }, list.map(renderHabit)) : /* @__PURE__ */ React9.createElement(React9.Fragment, null, previous.length > 0 && /* @__PURE__ */ React9.createElement("section", { className: "ld-previous-habits" }, /* @__PURE__ */ React9.createElement("h3", null, t3("yesterdayPending"), " \xB7 ", previous.length), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("previousHabitHint")), previous.map(({ habit, date }) => /* @__PURE__ */ React9.createElement("div", { className: "ld-habit", key: habit.id + date }, /* @__PURE__ */ React9.createElement("div", { className: "ld-habit-main" }, /* @__PURE__ */ React9.createElement(
+      "button",
+      {
+        className: "ld-task-body",
+        onClick: () => openLog(habit, date)
+      },
+      /* @__PURE__ */ React9.createElement("span", { className: "ld-task-title" }, habit.title),
+      /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, date)
+    ), /* @__PURE__ */ React9.createElement(Btn, { disabled: busy, onClick: () => openLog(habit, date) }, t3("log")))))), groups.pending.length > 0 && /* @__PURE__ */ React9.createElement("div", { className: "ld-habit-list" }, groups.pending.map(renderHabit)), !groups.pending.length && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("noPendingHabits")), groups.done.length > 0 && /* @__PURE__ */ React9.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React9.createElement("summary", null, t3("doneHabits"), " \xB7 ", groups.done.length), groups.done.map(renderHabit)), groups.settled.length > 0 && /* @__PURE__ */ React9.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React9.createElement("summary", null, t3("settledHabits"), " \xB7 ", groups.settled.length), groups.settled.map(renderHabit)), groups.weekly.length > 0 && /* @__PURE__ */ React9.createElement("section", { className: "ld-weekly-goals" }, /* @__PURE__ */ React9.createElement("h3", null, t3("weeklyHabits")), groups.weekly.map((h3) => {
       const r3 = habitRule(h3, day);
       const count = Array.from(
         { length: 7 },
         (_3, i3) => shift(monday(day), i3)
       ).filter((d2) => habitProgress(data, h3, d2).done).length;
       const planned = h3.plannedDates?.includes(day);
-      return /* @__PURE__ */ React8.createElement("div", { className: "ld-weekly-row", key: h3.id }, /* @__PURE__ */ React8.createElement("span", null, h3.title, /* @__PURE__ */ React8.createElement("small", null, count, "/", r3.target, " ", t3("daysUnit"))), /* @__PURE__ */ React8.createElement(
+      return /* @__PURE__ */ React9.createElement("div", { className: "ld-weekly-row", key: h3.id }, /* @__PURE__ */ React9.createElement("span", null, h3.title, /* @__PURE__ */ React9.createElement("small", null, count, "/", r3.target, " ", t3("daysUnit"))), /* @__PURE__ */ React9.createElement(
         Btn,
         {
           disabled: busy || habitProgress(data, h3, day).done,
@@ -31954,35 +32572,44 @@ function apply(ctx) {
         },
         t3(planned ? "unplanHabit" : "planHabit")
       ));
-    }))), record && /* @__PURE__ */ React8.createElement(
+    }))), review && /* @__PURE__ */ React9.createElement(
+      ReviewCheckIn,
+      {
+        habit: review.habit,
+        base: review.date,
+        data,
+        busy,
+        close: () => setReview(null)
+      }
+    ), record && /* @__PURE__ */ React9.createElement(
       Modal,
       {
-        title: record.title + " \xB7 " + day,
+        title: record.title + " \xB7 " + recordDate,
         onClose: () => setRecord(null)
       },
-      /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, (() => {
-        const mode = habitRule(record, day)?.mode;
+      /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, (() => {
+        const mode = habitRule(record, recordDate)?.mode;
         return mode === "duration" ? t3("durationHint") : mode === "quantity" ? t3("quantityHint") : t3("checkInHint");
       })()),
-      /* @__PURE__ */ React8.createElement("div", { className: "ld-form" }, ["quantity", "duration"].includes(
-        habitRule(record, day)?.mode
-      ) && /* @__PURE__ */ React8.createElement(
+      /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, ["quantity", "duration"].includes(
+        habitRule(record, recordDate)?.mode
+      ) && /* @__PURE__ */ React9.createElement(
         Field,
         {
-          label: habitRule(record, day)?.mode === "duration" ? t3("addMinutes") : t3("addValue")
+          label: habitRule(record, recordDate)?.mode === "duration" ? t3("addMinutes") : t3("addValue")
         },
-        /* @__PURE__ */ React8.createElement(
+        /* @__PURE__ */ React9.createElement(
           "input",
           {
             type: "number",
             min: "1",
-            max: habitRule(record, day)?.mode === "duration" ? 1440 : 1e6,
+            max: habitRule(record, recordDate)?.mode === "duration" ? 1440 : 1e6,
             value: amount,
             onChange: (e3) => setAmount(e3.target.value)
           }
         )
-      ), /* @__PURE__ */ React8.createElement(Field, { label: t3("note") }, /* @__PURE__ */ React8.createElement("input", { value: note, onChange: (e3) => setNote(e3.target.value) }))),
-      /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
+      ), /* @__PURE__ */ React9.createElement(Field, { label: t3("note") }, /* @__PURE__ */ React9.createElement("input", { value: note, onChange: (e3) => setNote(e3.target.value) }))),
+      /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
         Btn,
         {
           primary: true,
@@ -31991,9 +32618,9 @@ function apply(ctx) {
             if (await run({
               action: "habitLog",
               id: record.id,
-              date: day,
+              date: recordDate,
               value: ["quantity", "duration"].includes(
-                habitRule(record, day)?.mode
+                habitRule(record, recordDate)?.mode
               ) ? Number(amount) : 1,
               note
             }))
@@ -32001,9 +32628,9 @@ function apply(ctx) {
           }
         },
         t3(
-          habitRule(record, day)?.mode === "duration" ? "recordMinutes" : habitRule(record, day)?.mode === "quantity" ? "recordQuantity" : "check"
+          habitRule(record, recordDate)?.mode === "duration" ? "recordMinutes" : habitRule(record, recordDate)?.mode === "quantity" ? "recordQuantity" : "check"
         )
-      ), /* @__PURE__ */ React8.createElement(
+      ), /* @__PURE__ */ React9.createElement(
         Btn,
         {
           disabled: busy,
@@ -32011,7 +32638,7 @@ function apply(ctx) {
             if (await run({
               action: "habitLog",
               id: record.id,
-              date: day,
+              date: recordDate,
               skipped: true,
               note
             }))
@@ -32019,15 +32646,15 @@ function apply(ctx) {
           }
         },
         t3("skip")
-      ), /* @__PURE__ */ React8.createElement(
+      ), /* @__PURE__ */ React9.createElement(
         Btn,
         {
-          disabled: busy || day > today(timeZone),
+          disabled: busy || recordDate > today(timeZone),
           onClick: async () => {
             if (await run({
               action: "habitLog",
               id: record.id,
-              date: day,
+              date: recordDate,
               status: "missed",
               note
             }))
@@ -32036,15 +32663,17 @@ function apply(ctx) {
         },
         t3("missedHabit")
       )),
-      /* @__PURE__ */ React8.createElement("h3", null, t3("history")),
-      live("habitLogs").filter((l3) => l3.habitId === record.id && l3.date === day).map((l3) => /* @__PURE__ */ React8.createElement("div", { className: "ld-log", key: l3.id }, /* @__PURE__ */ React8.createElement("span", null, l3.missed ? t3("missedHabit") : l3.skipped ? t3("skipped") : l3.value + " " + (habitRule(record, day)?.unit || ""), " ", l3.note), /* @__PURE__ */ React8.createElement(
+      /* @__PURE__ */ React9.createElement("h3", null, t3("history")),
+      live("habitLogs").filter(
+        (l3) => l3.habitId === record.id && l3.date === recordDate
+      ).map((l3) => /* @__PURE__ */ React9.createElement("div", { className: "ld-log", key: l3.id }, /* @__PURE__ */ React9.createElement("span", null, l3.missed ? t3("missedHabit") : l3.skipped ? t3("skipped") : l3.value + " " + (habitRule(record, recordDate)?.unit || ""), " ", l3.note), /* @__PURE__ */ React9.createElement(
         Btn,
         {
           disabled: busy,
           onClick: () => run({
             action: "habitLog",
             id: record.id,
-            date: day,
+            date: recordDate,
             removeId: l3.id
           })
         },
@@ -32054,33 +32683,9 @@ function apply(ctx) {
   }
   function Review({ env }) {
     const { data, day, timeZone, live, busy, run, tasks, projects } = env;
-    const [kind, setKind] = useState4("day");
+    const [kind, setKind] = useState5("day");
     const date = kind === "week" ? monday(day) : day;
-    const original = live("reviews").find((r3) => r3.date === date && r3.kind === kind)?.text || "";
-    const [text, setText] = useState4(
-      reviewDrafts.get(kind + ":" + date) ?? original
-    );
-    const textRef = useRef4(text);
-    textRef.current = text;
-    const originalRef = useRef4(original);
-    originalRef.current = original;
-    useEffect4(() => {
-      setText(reviewDrafts.get(kind + ":" + date) ?? original);
-    }, [date, kind]);
-    useEffect4(() => {
-      const f3 = (e3) => {
-        if (textRef.current !== originalRef.current) {
-          e3.preventDefault();
-          e3.returnValue = "";
-        }
-      };
-      window.addEventListener("beforeunload", f3);
-      return () => window.removeEventListener("beforeunload", f3);
-    }, []);
-    const switchKind = (k3) => {
-      if (text !== original && !window.confirm(t3("dirty"))) return;
-      setKind(k3);
-    };
+    const switchKind = (k3) => setKind(k3);
     const from = kind === "week" ? date : day, to = kind === "week" ? shift(date, 6) : day;
     const records = live("focusLogs").filter(
       (x4) => x4.date >= from && x4.date <= to
@@ -32092,49 +32697,36 @@ function apply(ctx) {
         (o2) => o2.taskId === x4.id && o2.status === "done"
       ) && today(timeZone, Date.parse(x4.updatedAt)) >= from && today(timeZone, Date.parse(x4.updatedAt)) <= to
     ).length;
-    return /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(Btn, { onClick: () => switchKind("day"), "aria-pressed": kind === "day" }, t3("reviewDay")), /* @__PURE__ */ React8.createElement(
+    return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { onClick: () => switchKind("day"), "aria-pressed": kind === "day" }, t3("reviewDay")), /* @__PURE__ */ React9.createElement(
       Btn,
       {
         onClick: () => switchKind("week"),
         "aria-pressed": kind === "week"
       },
       t3("reviewWeek")
-    )), /* @__PURE__ */ React8.createElement("div", { className: "ld-review-stats" }, /* @__PURE__ */ React8.createElement("div", null, /* @__PURE__ */ React8.createElement("strong", null, completed), /* @__PURE__ */ React8.createElement("span", null, t3("completed"))), /* @__PURE__ */ React8.createElement("div", null, /* @__PURE__ */ React8.createElement("strong", null, Math.floor(
+    )), /* @__PURE__ */ React9.createElement("div", { className: "ld-review-stats" }, /* @__PURE__ */ React9.createElement("div", null, /* @__PURE__ */ React9.createElement("strong", null, completed), /* @__PURE__ */ React9.createElement("span", null, t3("completed"))), /* @__PURE__ */ React9.createElement("div", null, /* @__PURE__ */ React9.createElement("strong", null, Math.floor(
       records.reduce((s3, x4) => s3 + x4.seconds, 0) / 60
-    )), /* @__PURE__ */ React8.createElement("span", null, t3("focused"), " \xB7 ", t3("min"))), /* @__PURE__ */ React8.createElement("div", null, /* @__PURE__ */ React8.createElement("strong", null, live("habitLogs").filter(
+    )), /* @__PURE__ */ React9.createElement("span", null, t3("focused"), " \xB7 ", t3("min"))), /* @__PURE__ */ React9.createElement("div", null, /* @__PURE__ */ React9.createElement("strong", null, live("habitLogs").filter(
       (l3) => l3.date >= from && l3.date <= to && !l3.skipped
-    ).length), /* @__PURE__ */ React8.createElement("span", null, t3("check")))), /* @__PURE__ */ React8.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React8.createElement("span", null, date, " \xB7 ", t3("reviewHint")), /* @__PURE__ */ React8.createElement(
-      "textarea",
+    ).length), /* @__PURE__ */ React9.createElement("span", null, t3("check")))), /* @__PURE__ */ React9.createElement(
+      ReviewEditor,
       {
-        className: "ld-review-text",
-        value: text,
-        onChange: (e3) => {
-          setText(e3.target.value);
-          reviewDrafts.set(kind + ":" + date, e3.target.value);
-        },
-        maxLength: 2e4
+        key: kind + ":" + date,
+        data,
+        date,
+        kind,
+        busy
       }
-    )), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
-      Btn,
-      {
-        primary: true,
-        disabled: busy,
-        onClick: async () => {
-          if (await run({ action: "review", kind, date, text }))
-            reviewDrafts.delete(kind + ":" + date);
-        }
-      },
-      t3("save")
-    )), /* @__PURE__ */ React8.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React8.createElement("h2", null, t3("savedLogs")), records.length ? records.map((r3) => /* @__PURE__ */ React8.createElement("div", { className: "ld-log", key: r3.id }, /* @__PURE__ */ React8.createElement("span", null, r3.date, " \xB7 ", r3.title || t3("directFocus")), /* @__PURE__ */ React8.createElement("span", null, Math.floor(r3.seconds / 60), " ", t3("min")))) : /* @__PURE__ */ React8.createElement("p", { className: "ld-muted" }, t3("noRecord"))), /* @__PURE__ */ React8.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React8.createElement("h2", null, t3("projects")), projects.map((p3) => /* @__PURE__ */ React8.createElement("div", { className: "ld-log", key: p3.id }, /* @__PURE__ */ React8.createElement("span", null, p3.title), /* @__PURE__ */ React8.createElement("span", null, tasks.filter(
+    ), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h2", null, t3("savedLogs")), records.length ? records.map((r3) => /* @__PURE__ */ React9.createElement("div", { className: "ld-log", key: r3.id }, /* @__PURE__ */ React9.createElement("span", null, r3.date, " \xB7 ", r3.title || t3("directFocus")), /* @__PURE__ */ React9.createElement("span", null, Math.floor(r3.seconds / 60), " ", t3("min")))) : /* @__PURE__ */ React9.createElement("p", { className: "ld-muted" }, t3("noRecord"))), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h2", null, t3("projects")), projects.map((p3) => /* @__PURE__ */ React9.createElement("div", { className: "ld-log", key: p3.id }, /* @__PURE__ */ React9.createElement("span", null, p3.title), /* @__PURE__ */ React9.createElement("span", null, tasks.filter(
       (x4) => x4.projectId === p3.id && x4.status === "done"
     ).length, "/", tasks.filter((x4) => x4.projectId === p3.id).length)))));
   }
   function Calendar2({ env }) {
     const { data, day, tasks, habits, setDay, setTab, openTask } = env;
-    const [view, setView] = useState4("dayGridMonth"), [filter, setFilter] = useState4("all");
-    const [bounds, setBounds] = useState4([shift(day, -40), shift(day, 40)]);
-    const ref = useRef4(null);
-    useEffect4(() => {
+    const [view, setView] = useState5("dayGridMonth"), [filter, setFilter] = useState5("all");
+    const [bounds, setBounds] = useState5([shift(day, -40), shift(day, 40)]);
+    const ref = useRef5(null);
+    useEffect5(() => {
       ref.current?.getApi().gotoDate(day);
     }, [day]);
     const range = occurrences(data, bounds[0], bounds[1]);
@@ -32169,11 +32761,11 @@ function apply(ctx) {
         }
       }
     const events = filter === "habits" ? habitEvents : [...ev, ...habitEvents];
-    return /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, [
+    return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, [
       ["dayGridMonth", "monthView"],
       ["timeGridWeek", "weekView"],
       ["timeGridDay", "dayView"]
-    ].map(([v3, label]) => /* @__PURE__ */ React8.createElement(
+    ].map(([v3, label]) => /* @__PURE__ */ React9.createElement(
       Btn,
       {
         key: v3,
@@ -32184,15 +32776,15 @@ function apply(ctx) {
         }
       },
       t3(label)
-    ))), /* @__PURE__ */ React8.createElement(
+    ))), /* @__PURE__ */ React9.createElement(
       "select",
       {
         "aria-label": t3("all"),
         value: filter,
         onChange: (e3) => setFilter(e3.target.value)
       },
-      ["all", "work", "life", "habits"].map((a3) => /* @__PURE__ */ React8.createElement("option", { key: a3, value: a3 }, t3(a3)))
-    )), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("calendarHint")), /* @__PURE__ */ React8.createElement(
+      ["all", "work", "life", "habits"].map((a3) => /* @__PURE__ */ React9.createElement("option", { key: a3, value: a3 }, t3(a3)))
+    )), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("calendarHint")), /* @__PURE__ */ React9.createElement(
       FullCalendar,
       {
         ref,
@@ -32264,11 +32856,11 @@ function apply(ctx) {
     saving,
     refresh: refresh2
   }) {
-    const [busy, setBusy] = useState4(false);
-    const [error, setError] = useState4("");
-    const [showNotes, setShowNotes] = useState4(false);
+    const [busy, setBusy] = useState5(false);
+    const [error, setError] = useState5("");
+    const [showNotes, setShowNotes] = useState5(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.7.8";
+    const current = v3.currentVersion || "0.8.0";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -32310,10 +32902,10 @@ function apply(ctx) {
     const pending = up.pending || null;
     const snapshots = up.snapshots || [];
     const upgraded = !!(pending && pending.targetVersion === current);
-    const [preparing, setPreparing] = useState4(false);
-    const [upgradeError, setUpgradeError] = useState4("");
-    const [blockers, setBlockers] = useState4([]);
-    const [restored, setRestored] = useState4("");
+    const [preparing, setPreparing] = useState5(false);
+    const [upgradeError, setUpgradeError] = useState5("");
+    const [blockers, setBlockers] = useState5([]);
+    const [restored, setRestored] = useState5("");
     const openUpgradeManager = () => {
       try {
         ctx.layout.selectPanel("plugins");
@@ -32387,8 +32979,8 @@ function apply(ctx) {
         setUpgradeError(e3?.message || t3("updateCheckFailed"));
       }
     };
-    const link = releaseUrl ? /* @__PURE__ */ React8.createElement("a", { className: "ld-btn", href: releaseUrl, target: "_blank", rel: "noreferrer" }, t3("viewRelease")) : null;
-    return /* @__PURE__ */ React8.createElement("section", { className: "ld-section ld-update", id: "ld-update" }, /* @__PURE__ */ React8.createElement("h2", null, t3("versionUpdate")), /* @__PURE__ */ React8.createElement("div", { className: "ld-update-meta" }, /* @__PURE__ */ React8.createElement("span", null, t3("currentVersion")), /* @__PURE__ */ React8.createElement("strong", null, "v", current), /* @__PURE__ */ React8.createElement("span", null, t3("installKindLabel")), /* @__PURE__ */ React8.createElement("strong", null, installText), /* @__PURE__ */ React8.createElement("span", null, t3("currentDsh")), /* @__PURE__ */ React8.createElement("strong", null, v3.dshVersion ? "v" + v3.dshVersion : t3("unknownValue")), /* @__PURE__ */ React8.createElement("span", null, t3("lastChecked")), /* @__PURE__ */ React8.createElement("strong", null, v3.lastCheck ? new Date(v3.lastCheck).toLocaleString() : t3("neverChecked"))), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions", style: { marginTop: 14 } }, /* @__PURE__ */ React8.createElement(Btn, { primary: true, disabled: busy, onClick: () => void check(true) }, busy ? t3("checkingUpdate") : t3("checkNow")), /* @__PURE__ */ React8.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React8.createElement(
+    const link = releaseUrl ? /* @__PURE__ */ React9.createElement("a", { className: "ld-btn", href: releaseUrl, target: "_blank", rel: "noreferrer" }, t3("viewRelease")) : null;
+    return /* @__PURE__ */ React9.createElement("section", { className: "ld-section ld-update", id: "ld-update" }, /* @__PURE__ */ React9.createElement("h2", null, t3("versionUpdate")), /* @__PURE__ */ React9.createElement("div", { className: "ld-update-meta" }, /* @__PURE__ */ React9.createElement("span", null, t3("currentVersion")), /* @__PURE__ */ React9.createElement("strong", null, "v", current), /* @__PURE__ */ React9.createElement("span", null, t3("installKindLabel")), /* @__PURE__ */ React9.createElement("strong", null, installText), /* @__PURE__ */ React9.createElement("span", null, t3("currentDsh")), /* @__PURE__ */ React9.createElement("strong", null, v3.dshVersion ? "v" + v3.dshVersion : t3("unknownValue")), /* @__PURE__ */ React9.createElement("span", null, t3("lastChecked")), /* @__PURE__ */ React9.createElement("strong", null, v3.lastCheck ? new Date(v3.lastCheck).toLocaleString() : t3("neverChecked"))), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions", style: { marginTop: 14 } }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, disabled: busy, onClick: () => void check(true) }, busy ? t3("checkingUpdate") : t3("checkNow")), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
       "input",
       {
         type: "checkbox",
@@ -32396,7 +32988,7 @@ function apply(ctx) {
         disabled: busy,
         onChange: (e3) => void setAuto(e3.target.checked)
       }
-    ), t3("autoCheckUpdate"))), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("autoCheckHint"), " ", t3("updateStableOnly")), v3.error && !error && /* @__PURE__ */ React8.createElement("p", { className: "ld-error", role: "alert" }, t3("updateCheckFailed"), "\uFF1A", v3.error.message), error && /* @__PURE__ */ React8.createElement("p", { className: "ld-error", role: "alert" }, error), v3.degraded === "feed" && /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("feedFallbackNote")), state.kind === "none" && /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("neverChecked")), state.kind === "latest" && /* @__PURE__ */ React8.createElement("p", { className: "ld-update-ok", role: "status" }, t3("upToDate"), " \xB7 v", state.version), (state.kind === "available" || state.kind === "unknown-compat") && /* @__PURE__ */ React8.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React8.createElement("strong", null, t3("updateFound"), " v", state.version), state.kind === "unknown-compat" && /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("updateUnknownCompat"), " ", state.dshRange ? t3("compatRange") + " " + state.dshRange + "\u3002" : "", " ", !v3.dshVersion && t3("compatUnknownNote")), cache?.notes && /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement(
+    ), t3("autoCheckUpdate"))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("autoCheckHint"), " ", t3("updateStableOnly")), v3.error && !error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, t3("updateCheckFailed"), "\uFF1A", v3.error.message), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error), v3.degraded === "feed" && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("feedFallbackNote")), state.kind === "none" && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("neverChecked")), state.kind === "latest" && /* @__PURE__ */ React9.createElement("p", { className: "ld-update-ok", role: "status" }, t3("upToDate"), " \xB7 v", state.version), (state.kind === "available" || state.kind === "unknown-compat") && /* @__PURE__ */ React9.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React9.createElement("strong", null, t3("updateFound"), " v", state.version), state.kind === "unknown-compat" && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("updateUnknownCompat"), " ", state.dshRange ? t3("compatRange") + " " + state.dshRange + "\u3002" : "", " ", !v3.dshVersion && t3("compatUnknownNote")), cache?.notes && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(
       "button",
       {
         type: "button",
@@ -32407,7 +32999,7 @@ function apply(ctx) {
       t3("releaseNotes"),
       " ",
       showNotes ? "\u2303" : "\u2304"
-    ), showNotes && /* @__PURE__ */ React8.createElement("pre", { className: "ld-release-notes" }, cache.notes)), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
+    ), showNotes && /* @__PURE__ */ React9.createElement("pre", { className: "ld-release-notes" }, cache.notes)), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
       Btn,
       {
         primary: true,
@@ -32415,7 +33007,7 @@ function apply(ctx) {
         onClick: () => void startUpgrade(state.version)
       },
       preparing ? t3("checkingUpdate") : t3("prepareUpgrade")
-    ), link, /* @__PURE__ */ React8.createElement(Btn, { onClick: openUpgradeManager }, t3("openPluginManager")), /* @__PURE__ */ React8.createElement(Btn, { onClick: () => void ignore(state.version) }, t3("ignoreVersion")))), state.kind === "incompatible" && /* @__PURE__ */ React8.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React8.createElement("strong", null, t3("updateIncompatible")), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("updateFound"), " v", state.version, " \xB7 ", t3("compatRange"), " ", state.dshRange, " \xB7 ", t3("currentDsh"), " v", state.dshVersion), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, link, /* @__PURE__ */ React8.createElement(Btn, { onClick: () => void ignore(state.version) }, t3("ignoreVersion")))), state.kind === "ignored" && /* @__PURE__ */ React8.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React8.createElement("strong", null, t3("updateIgnored"), " \xB7 v", state.version), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(Btn, { onClick: () => void ignore("") }, t3("restoreVersionAlert")))), blockers.length > 0 && /* @__PURE__ */ React8.createElement("div", { className: "ld-update-card", role: "alert" }, /* @__PURE__ */ React8.createElement("strong", null, t3("prepareUpgrade")), blockers.map((x4) => /* @__PURE__ */ React8.createElement("p", { className: "ld-help", key: x4 }, x4))), upgradeError && /* @__PURE__ */ React8.createElement("p", { className: "ld-error", role: "alert" }, upgradeError), restored && /* @__PURE__ */ React8.createElement("p", { className: "ld-update-ok", role: "status" }, restored), pending && /* @__PURE__ */ React8.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React8.createElement("strong", null, upgraded ? t3("upgradeDone") + " v" + current : t3("upgradePending") + " \xB7 v" + pending.targetVersion), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, upgraded ? t3("upgradeDone") + " v" + current + "\u3002" : t3("upgradePendingHint")), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, upgraded ? /* @__PURE__ */ React8.createElement(Btn, { onClick: () => void dismissPending() }, t3("upgradeClearPending")) : /* @__PURE__ */ React8.createElement(Btn, { onClick: openUpgradeManager }, t3("openPluginManagerAgain")))), snapshots.length > 0 && /* @__PURE__ */ React8.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React8.createElement("strong", null, t3("snapshotsTitle"), " \xB7 ", snapshots.length), snapshots.slice().reverse().map((snap) => /* @__PURE__ */ React8.createElement("div", { className: "ld-snapshot-row", key: snap.id }, /* @__PURE__ */ React8.createElement("span", null, "v", snap.fromVersion, " \u2192 v", snap.targetVersion), /* @__PURE__ */ React8.createElement("small", null, new Date(snap.createdAt).toLocaleString()), /* @__PURE__ */ React8.createElement(Btn, { onClick: () => void restore(snap) }, t3("snapshotRestore"))))), install === "development" && /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("updateDevHint")), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("updateNetworkNote")));
+    ), link, /* @__PURE__ */ React9.createElement(Btn, { onClick: openUpgradeManager }, t3("openPluginManager")), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => void ignore(state.version) }, t3("ignoreVersion")))), state.kind === "incompatible" && /* @__PURE__ */ React9.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React9.createElement("strong", null, t3("updateIncompatible")), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("updateFound"), " v", state.version, " \xB7 ", t3("compatRange"), " ", state.dshRange, " \xB7 ", t3("currentDsh"), " v", state.dshVersion), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, link, /* @__PURE__ */ React9.createElement(Btn, { onClick: () => void ignore(state.version) }, t3("ignoreVersion")))), state.kind === "ignored" && /* @__PURE__ */ React9.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React9.createElement("strong", null, t3("updateIgnored"), " \xB7 v", state.version), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { onClick: () => void ignore("") }, t3("restoreVersionAlert")))), blockers.length > 0 && /* @__PURE__ */ React9.createElement("div", { className: "ld-update-card", role: "alert" }, /* @__PURE__ */ React9.createElement("strong", null, t3("prepareUpgrade")), blockers.map((x4) => /* @__PURE__ */ React9.createElement("p", { className: "ld-help", key: x4 }, x4))), upgradeError && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, upgradeError), restored && /* @__PURE__ */ React9.createElement("p", { className: "ld-update-ok", role: "status" }, restored), pending && /* @__PURE__ */ React9.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React9.createElement("strong", null, upgraded ? t3("upgradeDone") + " v" + current : t3("upgradePending") + " \xB7 v" + pending.targetVersion), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, upgraded ? t3("upgradeDone") + " v" + current + "\u3002" : t3("upgradePendingHint")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, upgraded ? /* @__PURE__ */ React9.createElement(Btn, { onClick: () => void dismissPending() }, t3("upgradeClearPending")) : /* @__PURE__ */ React9.createElement(Btn, { onClick: openUpgradeManager }, t3("openPluginManagerAgain")))), snapshots.length > 0 && /* @__PURE__ */ React9.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React9.createElement("strong", null, t3("snapshotsTitle"), " \xB7 ", snapshots.length), snapshots.slice().reverse().map((snap) => /* @__PURE__ */ React9.createElement("div", { className: "ld-snapshot-row", key: snap.id }, /* @__PURE__ */ React9.createElement("span", null, "v", snap.fromVersion, " \u2192 v", snap.targetVersion), /* @__PURE__ */ React9.createElement("small", null, new Date(snap.createdAt).toLocaleString()), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => void restore(snap) }, t3("snapshotRestore"))))), install === "development" && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("updateDevHint")), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("updateNetworkNote")));
   }
   function SettingsView({ env }) {
     const {
@@ -32435,8 +33027,8 @@ function apply(ctx) {
       spiritBusy,
       refresh: refresh2
     } = env;
-    const [v3, setV] = useState4({ ...data.settings });
-    const [backup, setBackup] = useState4(null);
+    const [v3, setV] = useState5({ ...data.settings });
+    const [backup, setBackup] = useState5(null);
     const download = (obj) => {
       const url = URL.createObjectURL(
         new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" })
@@ -32447,19 +33039,19 @@ function apply(ctx) {
       a3.click();
       setTimeout(() => URL.revokeObjectURL(url), 1e3);
     };
-    return /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React8.createElement(Field, { label: t3("zone"), wide: true }, /* @__PURE__ */ React8.createElement(
+    return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("zone"), wide: true }, /* @__PURE__ */ React9.createElement(
       "input",
       {
         value: v3.timeZone,
         onChange: (e3) => setV({ ...v3, timeZone: e3.target.value })
       }
-    )), ["focusMinutes", "shortBreak", "longBreak"].map((k3, i3) => /* @__PURE__ */ React8.createElement(
+    )), ["focusMinutes", "shortBreak", "longBreak"].map((k3, i3) => /* @__PURE__ */ React9.createElement(
       Field,
       {
         key: k3,
         label: t3(["focusMinutes", "shortMinutes", "longMinutes"][i3])
       },
-      /* @__PURE__ */ React8.createElement(
+      /* @__PURE__ */ React9.createElement(
         "input",
         {
           type: "number",
@@ -32469,16 +33061,16 @@ function apply(ctx) {
           onChange: (e3) => setV({ ...v3, [k3]: Number(e3.target.value) })
         }
       )
-    )), /* @__PURE__ */ React8.createElement(Field, { label: t3("mood") }, /* @__PURE__ */ React8.createElement(
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("mood") }, /* @__PURE__ */ React9.createElement(
       "select",
       {
         value: v3.mood,
         onChange: (e3) => setV({ ...v3, mood: e3.target.value })
       },
-      ["daily", "bright", "focus", "calm"].map((m3) => /* @__PURE__ */ React8.createElement("option", { key: m3, value: m3 }, t3(
+      ["daily", "bright", "focus", "calm"].map((m3) => /* @__PURE__ */ React9.createElement("option", { key: m3, value: m3 }, t3(
         m3 === "daily" ? "moodDaily" : m3 === "focus" ? "moodFocus" : m3
       )))
-    )), /* @__PURE__ */ React8.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React8.createElement(
+    )), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
       "input",
       {
         type: "checkbox",
@@ -32488,21 +33080,21 @@ function apply(ctx) {
           moodUntil: e3.target.checked ? today(timeZone) : ""
         })
       }
-    ), t3("moodOnlyToday")), /* @__PURE__ */ React8.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React8.createElement(
+    ), t3("moodOnlyToday")), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
       "input",
       {
         type: "checkbox",
         checked: v3.sound,
         onChange: (e3) => setV({ ...v3, sound: e3.target.checked })
       }
-    ), t3("sound")), /* @__PURE__ */ React8.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React8.createElement(
+    ), t3("sound")), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
       "input",
       {
         type: "checkbox",
         checked: v3.notifications,
         onChange: (e3) => setV({ ...v3, notifications: e3.target.checked })
       }
-    ), t3("notifications"))), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("notifyHint"), " ", t3("soundsHelp")), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
+    ), t3("notifications"))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("notifyHint"), " ", t3("soundsHelp")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
       Btn,
       {
         primary: true,
@@ -32524,7 +33116,7 @@ function apply(ctx) {
         })
       },
       t3("save")
-    ), /* @__PURE__ */ React8.createElement(
+    ), /* @__PURE__ */ React9.createElement(
       Btn,
       {
         onClick: async () => {
@@ -32540,7 +33132,7 @@ function apply(ctx) {
         }
       },
       t3("permission")
-    )), /* @__PURE__ */ React8.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React8.createElement("h2", null, t3("export"), " / ", t3("import")), /* @__PURE__ */ React8.createElement("p", { className: "ld-muted" }, t3("beforeRestore")), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
+    )), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h2", null, t3("export"), " / ", t3("import")), /* @__PURE__ */ React9.createElement("p", { className: "ld-muted" }, t3("beforeRestore")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
       Btn,
       {
         onClick: async () => {
@@ -32549,7 +33141,7 @@ function apply(ctx) {
         }
       },
       t3("export")
-    ), /* @__PURE__ */ React8.createElement("label", { className: "ld-btn ld-file" }, t3("import"), /* @__PURE__ */ React8.createElement(
+    ), /* @__PURE__ */ React9.createElement("label", { className: "ld-btn ld-file" }, t3("import"), /* @__PURE__ */ React9.createElement(
       "input",
       {
         type: "file",
@@ -32567,7 +33159,7 @@ function apply(ctx) {
           e3.target.value = "";
         }
       }
-    )), /* @__PURE__ */ React8.createElement(
+    )), /* @__PURE__ */ React9.createElement(
       Btn,
       {
         onClick: () => {
@@ -32576,7 +33168,7 @@ function apply(ctx) {
         }
       },
       t3("restorePrevious")
-    )), backup && /* @__PURE__ */ React8.createElement("div", { className: "ld-restore" }, /* @__PURE__ */ React8.createElement("p", null, t3("confirmRestore"), " \xB7 ", backup.exportedAt), /* @__PURE__ */ React8.createElement(
+    )), backup && /* @__PURE__ */ React9.createElement("div", { className: "ld-restore" }, /* @__PURE__ */ React9.createElement("p", null, t3("confirmRestore"), " \xB7 ", backup.exportedAt), /* @__PURE__ */ React9.createElement(
       Btn,
       {
         primary: true,
@@ -32591,7 +33183,7 @@ function apply(ctx) {
         }
       },
       t3("confirm")
-    ), /* @__PURE__ */ React8.createElement(Btn, { onClick: () => setBackup(null) }, t3("cancel")))), /* @__PURE__ */ React8.createElement(
+    ), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => setBackup(null) }, t3("cancel")))), /* @__PURE__ */ React9.createElement(
       UpdateSection,
       {
         update,
@@ -32610,17 +33202,17 @@ function apply(ctx) {
   }
   function App() {
     const { data, error, busy } = useStore();
-    const [tab, setTab] = useState4("today"), [project, setProject] = useState4(""), [selectedDay, setDay] = useState4(""), [search, setSearch] = useState4(""), [collapsed, setCollapsed] = useState4(false), [board, setBoard] = useState4(false), [editor, setEditor] = useState4(null), [message, setMessage] = useState4(""), [ai, setAi] = useState4(false), [lifeCategory, setLifeCategory] = useState4("");
-    const [captureOpen, setCaptureOpen] = useState4(false);
-    const [captureReset, setCaptureReset] = useState4(0);
-    const [templateOpen, setTemplateOpen] = useState4(false);
-    const [captureDirty, setCaptureDirty] = useState4(false);
-    const captureButton = useRef4(null);
-    const [updateView, setUpdateView] = useState4(null);
-    const [upgradeView, setUpgradeView] = useState4(null);
-    const [updateNotice, setUpdateNotice] = useState4("");
-    const updateChecking = useRef4(false);
-    const spiritBusyRef = useRef4(false);
+    const [tab, setTab] = useState5("today"), [project, setProject] = useState5(""), [selectedDay, setDay] = useState5(""), [search, setSearch] = useState5(""), [collapsed, setCollapsed] = useState5(false), [board, setBoard] = useState5(false), [editor, setEditor] = useState5(null), [message, setMessage] = useState5(""), [ai, setAi] = useState5(false), [lifeCategory, setLifeCategory] = useState5("");
+    const [captureOpen, setCaptureOpen] = useState5(false);
+    const [captureReset, setCaptureReset] = useState5(0);
+    const [templateOpen, setTemplateOpen] = useState5(false);
+    const [captureDirty, setCaptureDirty] = useState5(false);
+    const captureButton = useRef5(null);
+    const [updateView, setUpdateView] = useState5(null);
+    const [upgradeView, setUpgradeView] = useState5(null);
+    const [updateNotice, setUpdateNotice] = useState5("");
+    const updateChecking = useRef5(false);
+    const spiritBusyRef = useRef5(false);
     const timeZone = data?.settings?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
     const day = selectedDay || today(timeZone);
     const run = async (a3) => {
@@ -32694,12 +33286,12 @@ function apply(ctx) {
       setProject("");
       setSearch("");
     }
-    useEffect4(() => {
+    useEffect5(() => {
       if (!data) return;
       if (!selectedDay) setDay(today(timeZone));
     }, [data?.settings?.timeZone]);
     const rememberUpdate = (next) => setUpdateView(next);
-    useEffect4(() => {
+    useEffect5(() => {
       let alive = true;
       updateRequest("status").then((v3) => {
         if (alive) rememberUpdate(v3);
@@ -32713,7 +33305,7 @@ function apply(ctx) {
         alive = false;
       };
     }, []);
-    useEffect4(() => {
+    useEffect5(() => {
       const v3 = updateView;
       if (!v3?.prefs?.autoCheck || updateChecking.current) return;
       const interval = v3.autoInterval || 24 * 60 * 60 * 1e3;
@@ -32730,7 +33322,7 @@ function apply(ctx) {
       });
     }, [updateView?.prefs?.autoCheck, updateView?.lastCheck]);
     if (!data)
-      return /* @__PURE__ */ React8.createElement("div", { className: "ld-root" }, /* @__PURE__ */ React8.createElement("style", null, css), /* @__PURE__ */ React8.createElement("div", { className: "ld-loading" }, error || t3("loading"), " ", /* @__PURE__ */ React8.createElement(Btn, { onClick: () => void refresh() }, t3("retry"))));
+      return /* @__PURE__ */ React9.createElement("div", { className: "ld-root" }, /* @__PURE__ */ React9.createElement("style", null, css), /* @__PURE__ */ React9.createElement("div", { className: "ld-loading" }, error || t3("loading"), " ", /* @__PURE__ */ React9.createElement(Btn, { onClick: () => void refresh() }, t3("retry"))));
     const live = (c3) => data[c3].filter((x4) => !x4.deletedAt);
     const projects = live("projects");
     const query = search.trim().toLocaleLowerCase();
@@ -32768,7 +33360,7 @@ function apply(ctx) {
       refresh
     };
     function taskRows(items, empty = true) {
-      return items.length ? /* @__PURE__ */ React8.createElement("div", { className: "ld-task-list" }, items.map((x4) => {
+      return items.length ? /* @__PURE__ */ React9.createElement("div", { className: "ld-task-list" }, items.map((x4) => {
         const isOccurrence = !!x4.originalDate;
         const done = x4.status === "done";
         const p3 = projects.find((p4) => p4.id === x4.projectId);
@@ -32791,13 +33383,13 @@ function apply(ctx) {
             item: { status: done ? "todo" : "done" }
           });
         };
-        return /* @__PURE__ */ React8.createElement(
+        return /* @__PURE__ */ React9.createElement(
           "div",
           {
             className: "ld-task " + (done ? "ld-task-done" : ""),
             key: x4.id + "@" + (x4.originalDate || "")
           },
-          x4.event ? /* @__PURE__ */ React8.createElement("span", { className: "ld-event-dot" }, /* @__PURE__ */ React8.createElement(Icon, { name: "calendar", size: 17 })) : /* @__PURE__ */ React8.createElement(
+          x4.event ? /* @__PURE__ */ React9.createElement("span", { className: "ld-event-dot" }, /* @__PURE__ */ React9.createElement(Icon, { name: "calendar", size: 17 })) : /* @__PURE__ */ React9.createElement(
             "button",
             {
               className: "ld-check",
@@ -32807,9 +33399,9 @@ function apply(ctx) {
               disabled: busy,
               onClick: complete
             },
-            done && /* @__PURE__ */ React8.createElement(Icon, { name: "check", size: 14 })
+            done && /* @__PURE__ */ React9.createElement(Icon, { name: "check", size: 14 })
           ),
-          /* @__PURE__ */ React8.createElement(
+          /* @__PURE__ */ React9.createElement(
             "button",
             {
               className: "ld-task-body",
@@ -32818,8 +33410,8 @@ function apply(ctx) {
                 isOccurrence ? { occurrence: x4 } : {}
               )
             },
-            /* @__PURE__ */ React8.createElement("span", { className: "ld-task-title" }, x4.priorityDate === day && /* @__PURE__ */ React8.createElement("span", { className: "ld-star" }, "\u2727 "), x4.title),
-            /* @__PURE__ */ React8.createElement("span", { className: "ld-task-meta" }, [
+            /* @__PURE__ */ React9.createElement("span", { className: "ld-task-title" }, x4.priorityDate === day && /* @__PURE__ */ React9.createElement("span", { className: "ld-star" }, "\u2727 "), x4.title),
+            /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, [
               p3?.title,
               x4.carriedFrom ? t3("carriedFrom") + " " + x4.carriedFrom + (x4.time ? " " + x4.time : "") : x4.date,
               x4.carriedFrom ? "" : x4.time,
@@ -32829,7 +33421,7 @@ function apply(ctx) {
               x4.repeat.kind === "lunar" && x4.date ? lunarLabel(x4.date) : "",
               x4.tag
             ].filter(Boolean).join(" \xB7 ")),
-            !x4.event && (x4.pomodoros || taskFocus(data, x4).completed) ? /* @__PURE__ */ React8.createElement(
+            !x4.event && (x4.pomodoros || taskFocus(data, x4).completed) ? /* @__PURE__ */ React9.createElement(
               Tomatoes,
               {
                 ...taskFocus(data, x4),
@@ -32837,7 +33429,7 @@ function apply(ctx) {
               }
             ) : null
           ),
-          /* @__PURE__ */ React8.createElement("div", { className: "ld-task-tools" }, tab === "today" && !done && !x4.event && /* @__PURE__ */ React8.createElement(React8.Fragment, null, x4.carriedFrom && x4.priorityDate !== day && /* @__PURE__ */ React8.createElement(
+          /* @__PURE__ */ React9.createElement("div", { className: "ld-task-tools" }, tab === "today" && !done && !x4.event && /* @__PURE__ */ React9.createElement(React9.Fragment, null, x4.carriedFrom && x4.priorityDate !== day && /* @__PURE__ */ React9.createElement(
             "button",
             {
               className: "ld-icon-btn",
@@ -32865,7 +33457,7 @@ function apply(ctx) {
             planForDay.backlog.some(
               (q3) => planKey(q3) === planKey(x4)
             ) ? "+" : "\u2212"
-          ), /* @__PURE__ */ React8.createElement(
+          ), /* @__PURE__ */ React9.createElement(
             "button",
             {
               className: "ld-icon-btn",
@@ -32885,7 +33477,7 @@ function apply(ctx) {
               })
             },
             "\u2727"
-          )), !done && !x4.event && /* @__PURE__ */ React8.createElement(
+          )), !done && !x4.event && /* @__PURE__ */ React9.createElement(
             "button",
             {
               className: "ld-icon-btn",
@@ -32899,8 +33491,8 @@ function apply(ctx) {
                 originalDate: x4.originalDate || x4.date
               })
             },
-            /* @__PURE__ */ React8.createElement(Icon, { name: "focus", size: 17 })
-          ), /* @__PURE__ */ React8.createElement(
+            /* @__PURE__ */ React9.createElement(Icon, { name: "focus", size: 17 })
+          ), /* @__PURE__ */ React9.createElement(
             "button",
             {
               className: "ld-icon-btn",
@@ -32911,37 +33503,22 @@ function apply(ctx) {
                 isOccurrence ? { occurrence: x4 } : {}
               )
             },
-            /* @__PURE__ */ React8.createElement(Icon, { name: "more", size: 18 })
+            /* @__PURE__ */ React9.createElement(Icon, { name: "more", size: 18 })
           ))
         );
-      })) : empty ? /* @__PURE__ */ React8.createElement("div", { className: "ld-empty" }, t3("empty")) : null;
-    }
-    function FoldSection({ title: title2, count, id, className = "", children }) {
-      const [open, setOpen] = useState4(true);
-      return /* @__PURE__ */ React8.createElement("section", { className: "ld-section ld-fold " + className }, /* @__PURE__ */ React8.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React8.createElement("h2", null, /* @__PURE__ */ React8.createElement(
-        "button",
-        {
-          type: "button",
-          className: "ld-fold-toggle",
-          "aria-expanded": open,
-          "aria-controls": id,
-          onClick: () => setOpen(!open)
-        },
-        /* @__PURE__ */ React8.createElement("span", { className: "ld-fold-chevron" }, /* @__PURE__ */ React8.createElement(Icon, { name: "chevron", size: 14 })),
-        title2
-      )), /* @__PURE__ */ React8.createElement("span", { className: "ld-fold-count" }, count)), open && /* @__PURE__ */ React8.createElement("div", { id }, children));
+      })) : empty ? /* @__PURE__ */ React9.createElement("div", { className: "ld-empty" }, t3("empty")) : null;
     }
     function section(title2, items, extra) {
-      return /* @__PURE__ */ React8.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React8.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React8.createElement("h2", null, title2), extra), taskRows(items));
+      return /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React9.createElement("h2", null, title2), extra), taskRows(items));
     }
     function Body() {
       if (query) {
         const filtered = tasks.filter(
           (x4) => (x4.title + " " + x4.note).toLocaleLowerCase().includes(query)
         );
-        return /* @__PURE__ */ React8.createElement(React8.Fragment, null, taskRows(filtered), /* @__PURE__ */ React8.createElement("section", { className: "ld-section" }, projects.filter(
+        return /* @__PURE__ */ React9.createElement(React9.Fragment, null, taskRows(filtered), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, projects.filter(
           (p3) => (p3.title + " " + p3.goal).toLocaleLowerCase().includes(query)
-        ).map((p3) => /* @__PURE__ */ React8.createElement(
+        ).map((p3) => /* @__PURE__ */ React9.createElement(
           "button",
           {
             key: p3.id,
@@ -32952,22 +33529,22 @@ function apply(ctx) {
               setProject(p3.id);
             }
           },
-          /* @__PURE__ */ React8.createElement(Icon, { name: "projects" }),
+          /* @__PURE__ */ React9.createElement(Icon, { name: "projects" }),
           p3.title
         ))));
       }
       if (tab === "today") {
         const groups = planForDay;
         const priority = groups.priority;
-        return /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("div", { className: "ld-today-grid" }, /* @__PURE__ */ React8.createElement("div", { className: "ld-main-col" }, !tasks.length && !habits.length && !projects.length && /* @__PURE__ */ React8.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React8.createElement(Icon, { name: "today", size: 30 }), /* @__PURE__ */ React8.createElement("h2", null, t3("startTitle")), /* @__PURE__ */ React8.createElement("p", null, t3("startText")), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(Btn, { primary: true, onClick: () => openTask() }, t3("addTask")), /* @__PURE__ */ React8.createElement(Btn, { onClick: () => setTemplateOpen(true) }, t3("addHabit")))), /* @__PURE__ */ React8.createElement(PlanPanel, { plan: groups, date: day, act, busy }), /* @__PURE__ */ React8.createElement(
+        return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-today-grid" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-main-col" }, !tasks.length && !habits.length && !projects.length && /* @__PURE__ */ React9.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React9.createElement(Icon, { name: "today", size: 30 }), /* @__PURE__ */ React9.createElement("h2", null, t3("startTitle")), /* @__PURE__ */ React9.createElement("p", null, t3("startText")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: () => openTask() }, t3("addTask")), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => setTemplateOpen(true) }, t3("addHabit")))), /* @__PURE__ */ React9.createElement(PlanPanel, { plan: groups, date: day, act, busy }), /* @__PURE__ */ React9.createElement(
           FoldSection,
           {
             title: t3("priorities"),
             count: priority.length + "/3",
             id: "ld-fold-priority"
           },
-          priority.length ? taskRows(priority) : /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("prioritiesEmpty"))
-        ), /* @__PURE__ */ React8.createElement(
+          priority.length ? taskRows(priority) : /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("prioritiesEmpty"))
+        ), /* @__PURE__ */ React9.createElement(
           FoldSection,
           {
             title: t3("schedule"),
@@ -32975,7 +33552,7 @@ function apply(ctx) {
             id: "ld-fold-schedule"
           },
           groups.schedule.map(
-            (x4) => priority.some((p3) => p3.id === x4.id) ? /* @__PURE__ */ React8.createElement(
+            (x4) => priority.some((p3) => p3.id === x4.id) ? /* @__PURE__ */ React9.createElement(
               "button",
               {
                 className: "ld-time-index",
@@ -32985,12 +33562,12 @@ function apply(ctx) {
                   { occurrence: x4 }
                 )
               },
-              /* @__PURE__ */ React8.createElement("span", null, x4.time || t3("noTime")),
-              /* @__PURE__ */ React8.createElement("span", null, x4.title),
-              /* @__PURE__ */ React8.createElement("small", null, t3("priorities"))
-            ) : /* @__PURE__ */ React8.createElement(React8.Fragment, { key: x4.id + x4.originalDate }, taskRows([x4], false))
+              /* @__PURE__ */ React9.createElement("span", null, x4.time || t3("noTime")),
+              /* @__PURE__ */ React9.createElement("span", null, x4.title),
+              /* @__PURE__ */ React9.createElement("small", null, t3("priorities"))
+            ) : /* @__PURE__ */ React9.createElement(React9.Fragment, { key: x4.id + x4.originalDate }, taskRows([x4], false))
           )
-        ), /* @__PURE__ */ React8.createElement(
+        ), /* @__PURE__ */ React9.createElement(
           FoldSection,
           {
             title: t3("plannedTodos"),
@@ -32998,16 +33575,16 @@ function apply(ctx) {
             id: "ld-fold-planned"
           },
           taskRows(groups.todos)
-        ), /* @__PURE__ */ React8.createElement(
+        ), /* @__PURE__ */ React9.createElement(
           FoldSection,
           {
             title: t3("carryBacklog"),
             count: groups.backlog.length,
             id: "ld-fold-carry"
           },
-          /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("carryHint")),
+          /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("carryHint")),
           taskRows(groups.backlog)
-        ), groups.due.length > 0 && /* @__PURE__ */ React8.createElement(
+        ), groups.due.length > 0 && /* @__PURE__ */ React9.createElement(
           FoldSection,
           {
             title: t3("deadlineWatch"),
@@ -33015,20 +33592,20 @@ function apply(ctx) {
             id: "ld-fold-due",
             className: "ld-deadlines"
           },
-          groups.due.map((x4) => /* @__PURE__ */ React8.createElement(
+          groups.due.map((x4) => /* @__PURE__ */ React9.createElement(
             "button",
             {
               className: "ld-time-index",
               key: x4.id,
               onClick: () => openTask(x4)
             },
-            /* @__PURE__ */ React8.createElement("span", null, x4.deadline === day ? t3("dueToday") : x4.deadline < day ? t3("pastDeadline") : x4.deadline),
-            /* @__PURE__ */ React8.createElement("span", null, x4.title),
-            /* @__PURE__ */ React8.createElement("small", null, x4.date ? t3("originalPlan") + " " + x4.date : t3("noneDate"))
+            /* @__PURE__ */ React9.createElement("span", null, x4.deadline === day ? t3("dueToday") : x4.deadline < day ? t3("pastDeadline") : x4.deadline),
+            /* @__PURE__ */ React9.createElement("span", null, x4.title),
+            /* @__PURE__ */ React9.createElement("small", null, x4.date ? t3("originalPlan") + " " + x4.date : t3("noneDate"))
           ))
-        ), /* @__PURE__ */ React8.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React8.createElement("summary", null, t3("done"), " \xB7 ", groups.completed.length), taskRows(groups.completed, false)), groups.previousRecurring.length > 0 && /* @__PURE__ */ React8.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React8.createElement("summary", null, t3("earlierRecurring"), " \xB7", " ", groups.previousRecurring.length), taskRows(groups.previousRecurring)), /* @__PURE__ */ React8.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React8.createElement("summary", null, t3("inbox"), " \xB7 ", inboxTasks(data).length), taskRows(inboxTasks(data)))), /* @__PURE__ */ React8.createElement("aside", { className: "ld-support" }, /* @__PURE__ */ React8.createElement("div", { className: "ld-side-timer" }, /* @__PURE__ */ React8.createElement(Timer, null)), /* @__PURE__ */ React8.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React8.createElement("h2", null, t3("todayHabits")), /* @__PURE__ */ React8.createElement(HabitCards, { env: viewEnv })), /* @__PURE__ */ React8.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React8.createElement("h2", null, t3("upcoming")), range.filter(
+        ), /* @__PURE__ */ React9.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React9.createElement("summary", null, t3("done"), " \xB7 ", groups.completed.length), taskRows(groups.completed, false)), groups.previousRecurring.length > 0 && /* @__PURE__ */ React9.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React9.createElement("summary", null, t3("earlierRecurring"), " \xB7", " ", groups.previousRecurring.length), taskRows(groups.previousRecurring)), /* @__PURE__ */ React9.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React9.createElement("summary", null, t3("inbox"), " \xB7 ", inboxTasks(data).length), taskRows(inboxTasks(data)))), /* @__PURE__ */ React9.createElement("aside", { className: "ld-support" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-side-timer" }, /* @__PURE__ */ React9.createElement(Timer, null)), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h2", null, t3("todayHabits")), /* @__PURE__ */ React9.createElement(HabitCards, { env: viewEnv })), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h2", null, t3("upcoming")), range.filter(
           (x4) => x4.date > day && x4.date <= shift(day, 14) && (x4.event || x4.reminderMinutes !== null || x4.deadline) && !["done", "cancelled", "skipped"].includes(x4.status)
-        ).slice(0, 5).map((x4) => /* @__PURE__ */ React8.createElement(
+        ).slice(0, 5).map((x4) => /* @__PURE__ */ React9.createElement(
           "button",
           {
             key: x4.id + x4.originalDate,
@@ -33038,13 +33615,13 @@ function apply(ctx) {
               { occurrence: x4 }
             )
           },
-          /* @__PURE__ */ React8.createElement("strong", null, x4.title),
-          /* @__PURE__ */ React8.createElement("span", null, x4.date, x4.repeat.kind === "lunar" ? " \xB7 " + lunarLabel(x4.date) : "")
+          /* @__PURE__ */ React9.createElement("strong", null, x4.title),
+          /* @__PURE__ */ React9.createElement("span", null, x4.date, x4.repeat.kind === "lunar" ? " \xB7 " + lunarLabel(x4.date) : "")
         ))))));
       }
       if (tab === "projects") {
         if (!project)
-          return /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
+          return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
             Btn,
             {
               primary: true,
@@ -33063,36 +33640,36 @@ function apply(ctx) {
             t3("addProject")
           )), projects.length ? Array.from(
             new Set(projects.map((p3) => p3.group || t3("projects")))
-          ).map((group) => /* @__PURE__ */ React8.createElement("section", { key: group, className: "ld-section" }, /* @__PURE__ */ React8.createElement("h2", null, group), projects.filter((p3) => (p3.group || t3("projects")) === group).map((p3) => {
+          ).map((group) => /* @__PURE__ */ React9.createElement("section", { key: group, className: "ld-section" }, /* @__PURE__ */ React9.createElement("h2", null, group), projects.filter((p3) => (p3.group || t3("projects")) === group).map((p3) => {
             const list2 = tasks.filter(
               (x4) => x4.projectId === p3.id
             );
-            return /* @__PURE__ */ React8.createElement(
+            return /* @__PURE__ */ React9.createElement(
               "button",
               {
                 key: p3.id,
                 className: "ld-project-row",
                 onClick: () => setProject(p3.id)
               },
-              /* @__PURE__ */ React8.createElement(Icon, { name: "projects" }),
-              /* @__PURE__ */ React8.createElement("span", null, /* @__PURE__ */ React8.createElement("strong", null, p3.title), /* @__PURE__ */ React8.createElement("small", null, t3(p3.status), p3.deadline ? " \xB7 " + p3.deadline : "")),
-              /* @__PURE__ */ React8.createElement("span", { className: "ld-muted" }, list2.filter((x4) => x4.status === "done").length, "/", list2.length),
-              /* @__PURE__ */ React8.createElement(Icon, { name: "chevron", size: 16 })
+              /* @__PURE__ */ React9.createElement(Icon, { name: "projects" }),
+              /* @__PURE__ */ React9.createElement("span", null, /* @__PURE__ */ React9.createElement("strong", null, p3.title), /* @__PURE__ */ React9.createElement("small", null, t3(p3.status), p3.deadline ? " \xB7 " + p3.deadline : "")),
+              /* @__PURE__ */ React9.createElement("span", { className: "ld-muted" }, list2.filter((x4) => x4.status === "done").length, "/", list2.length),
+              /* @__PURE__ */ React9.createElement(Icon, { name: "chevron", size: 16 })
             );
-          }))) : /* @__PURE__ */ React8.createElement("p", { className: "ld-empty" }, t3("empty")));
+          }))) : /* @__PURE__ */ React9.createElement("p", { className: "ld-empty" }, t3("empty")));
         const list = tasks.filter((x4) => x4.projectId === project);
-        return /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React8.createElement(Btn, { onClick: () => setProject("") }, "\u2190 ", t3("projects")), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(Btn, { "aria-pressed": !board, onClick: () => setBoard(false) }, t3("list")), /* @__PURE__ */ React8.createElement(Btn, { "aria-pressed": board, onClick: () => setBoard(true) }, t3("board")), /* @__PURE__ */ React8.createElement(
+        return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React9.createElement(Btn, { onClick: () => setProject("") }, "\u2190 ", t3("projects")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { "aria-pressed": !board, onClick: () => setBoard(false) }, t3("list")), /* @__PURE__ */ React9.createElement(Btn, { "aria-pressed": board, onClick: () => setBoard(true) }, t3("board")), /* @__PURE__ */ React9.createElement(
           Btn,
           {
             onClick: () => setEditor({ type: "project", item: projectItem })
           },
           t3("edit")
-        ))), /* @__PURE__ */ React8.createElement("p", { className: "ld-project-goal" }, projectItem?.goal), /* @__PURE__ */ React8.createElement(Btn, { primary: true, icon: "plus", onClick: () => openTask() }, t3("addTask")), board ? /* @__PURE__ */ React8.createElement("div", { className: "ld-board" }, ["todo", "doing", "done"].map((status) => /* @__PURE__ */ React8.createElement("section", { key: status }, /* @__PURE__ */ React8.createElement("h3", null, t3(status), " \xB7", " ", list.filter((x4) => x4.status === status).length), taskRows(list.filter((x4) => x4.status === status))))) : taskRows(list));
+        ))), /* @__PURE__ */ React9.createElement("p", { className: "ld-project-goal" }, projectItem?.goal), /* @__PURE__ */ React9.createElement(Btn, { primary: true, icon: "plus", onClick: () => openTask() }, t3("addTask")), board ? /* @__PURE__ */ React9.createElement("div", { className: "ld-board" }, ["todo", "doing", "done"].map((status) => /* @__PURE__ */ React9.createElement("section", { key: status }, /* @__PURE__ */ React9.createElement("h3", null, t3(status), " \xB7", " ", list.filter((x4) => x4.status === status).length), taskRows(list.filter((x4) => x4.status === status))))) : taskRows(list));
       }
       if (tab === "habits")
-        return /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(Btn, { primary: true, icon: "plus", onClick: () => setTemplateOpen(true) }, t3("addHabit"))), /* @__PURE__ */ React8.createElement(HabitCards, { full: true, env: viewEnv }));
+        return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, icon: "plus", onClick: () => setTemplateOpen(true) }, t3("addHabit"))), /* @__PURE__ */ React9.createElement(HabitCards, { full: true, env: viewEnv }));
       if (tab === "life")
-        return /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React8.createElement(
+        return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React9.createElement(
           Btn,
           {
             primary: true,
@@ -33100,8 +33677,8 @@ function apply(ctx) {
             onClick: () => openTask({ area: "life", tag: lifeCategory })
           },
           t3("addLife")
-        )), /* @__PURE__ */ React8.createElement("p", { className: "ld-help ld-life-template-help" }, t3("lifeTemplateHelp")), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions ld-life-templates" }, ["subscription", "payment", "shopping", "anniversary"].map(
-          (k3) => /* @__PURE__ */ React8.createElement(
+        )), /* @__PURE__ */ React9.createElement("p", { className: "ld-help ld-life-template-help" }, t3("lifeTemplateHelp")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions ld-life-templates" }, ["subscription", "payment", "shopping", "anniversary"].map(
+          (k3) => /* @__PURE__ */ React9.createElement(
             Btn,
             {
               key: k3,
@@ -33122,7 +33699,7 @@ function apply(ctx) {
             },
             t3(k3)
           )
-        )), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions ld-life-filters" }, /* @__PURE__ */ React8.createElement(
+        )), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions ld-life-filters" }, /* @__PURE__ */ React9.createElement(
           Btn,
           {
             "aria-pressed": !lifeCategory,
@@ -33133,7 +33710,7 @@ function apply(ctx) {
           ...new Set(
             tasks.filter((x4) => x4.area === "life" && x4.tag).map((x4) => x4.tag)
           )
-        ].map((tag) => /* @__PURE__ */ React8.createElement(
+        ].map((tag) => /* @__PURE__ */ React9.createElement(
           Btn,
           {
             key: tag,
@@ -33147,12 +33724,12 @@ function apply(ctx) {
             (x4) => x4.area === "life" && (!lifeCategory || x4.tag === lifeCategory)
           )
         ));
-      if (tab === "calendar") return /* @__PURE__ */ React8.createElement(Calendar2, { env: viewEnv });
-      if (tab === "review") return /* @__PURE__ */ React8.createElement(Review, { env: viewEnv });
-      if (tab === "settings") return /* @__PURE__ */ React8.createElement(SettingsView, { env: viewEnv });
+      if (tab === "calendar") return /* @__PURE__ */ React9.createElement(Calendar2, { env: viewEnv });
+      if (tab === "review") return /* @__PURE__ */ React9.createElement(Review, { env: viewEnv });
+      if (tab === "settings") return /* @__PURE__ */ React9.createElement(SettingsView, { env: viewEnv });
       if (tab === "trash")
-        return /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("p", { className: "ld-muted" }, t3("recover")), ["projects", "tasks", "habits", "reviews", "focusLogs"].flatMap(
-          (c3) => data[c3].filter((x4) => x4.deletedAt).map((x4) => /* @__PURE__ */ React8.createElement("div", { className: "ld-log", key: x4.id }, /* @__PURE__ */ React8.createElement("span", null, x4.title || x4.date, " \xB7 ", t3(c3 === "tasks" ? "todos" : c3)), /* @__PURE__ */ React8.createElement(
+        return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("p", { className: "ld-muted" }, t3("recover")), ["projects", "tasks", "habits", "reviews", "focusLogs"].flatMap(
+          (c3) => data[c3].filter((x4) => x4.deletedAt).map((x4) => /* @__PURE__ */ React9.createElement("div", { className: "ld-log", key: x4.id }, /* @__PURE__ */ React9.createElement("span", null, x4.title || x4.date, " \xB7 ", t3(c3 === "tasks" ? "todos" : c3)), /* @__PURE__ */ React9.createElement(
             Btn,
             {
               disabled: busy,
@@ -33161,7 +33738,7 @@ function apply(ctx) {
             t3("restore")
           )))
         ));
-      return /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("inboxHelp")), /* @__PURE__ */ React8.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React8.createElement("h2", null, t3("awaitingTriage"), " \xB7 ", inboxTasks(data).length), inboxTasks(data).map((task) => /* @__PURE__ */ React8.createElement(
+      return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("inboxHelp")), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h2", null, t3("awaitingTriage"), " \xB7 ", inboxTasks(data).length), inboxTasks(data).map((task) => /* @__PURE__ */ React9.createElement(
         InboxItem,
         {
           key: task.id,
@@ -33172,7 +33749,7 @@ function apply(ctx) {
           onEdit: openTask,
           day
         }
-      )), !inboxTasks(data).length && /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("empty"))), section(
+      )), !inboxTasks(data).length && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("empty"))), section(
         t3("organizedUnscheduled"),
         tasks.filter(
           (x4) => !x4.date && x4.status !== "done" && !inboxTasks(data).some((q3) => q3.id === x4.id)
@@ -33180,7 +33757,7 @@ function apply(ctx) {
       ));
     }
     const title = projectItem && tab === "projects" ? projectItem.title : tab === "today" && day !== today(timeZone) ? day : t3(tab);
-    return /* @__PURE__ */ React8.createElement(Ambient, { data }, /* @__PURE__ */ React8.createElement("style", null, css), /* @__PURE__ */ React8.createElement(
+    return /* @__PURE__ */ React9.createElement(Ambient, { data }, /* @__PURE__ */ React9.createElement("style", null, css), /* @__PURE__ */ React9.createElement(
       "div",
       {
         className: "ld-shell " + (collapsed ? "ld-collapsed " : "") + (ai ? "ld-spirit-open" : ""),
@@ -33192,7 +33769,7 @@ function apply(ctx) {
           }
         }
       },
-      /* @__PURE__ */ React8.createElement("nav", { className: "ld-nav", "aria-label": t3("title") }, /* @__PURE__ */ React8.createElement("div", { className: "ld-brand" }, /* @__PURE__ */ React8.createElement(Icon, { name: "review", size: 22 }), !collapsed && /* @__PURE__ */ React8.createElement("span", null, t3("title"))), /* @__PURE__ */ React8.createElement(
+      /* @__PURE__ */ React9.createElement("nav", { className: "ld-nav", "aria-label": t3("title") }, /* @__PURE__ */ React9.createElement("div", { className: "ld-brand" }, /* @__PURE__ */ React9.createElement(Icon, { name: "review", size: 22 }), !collapsed && /* @__PURE__ */ React9.createElement("span", null, t3("title"))), /* @__PURE__ */ React9.createElement(
         "button",
         {
           className: "ld-nav-add",
@@ -33204,9 +33781,9 @@ function apply(ctx) {
           title: t3("quickCapture") + " \xB7 \u2318/Ctrl+Shift+K",
           onClick: () => setCaptureOpen(!captureOpen)
         },
-        /* @__PURE__ */ React8.createElement(Icon, { name: "plus" }),
+        /* @__PURE__ */ React9.createElement(Icon, { name: "plus" }),
         !collapsed && t3("quickCapture")
-      ), /* @__PURE__ */ React8.createElement("div", { className: "ld-nav-items" }, [...NAV, "inbox"].map((n2) => /* @__PURE__ */ React8.createElement(
+      ), /* @__PURE__ */ React9.createElement("div", { className: "ld-nav-items" }, [...NAV, "inbox"].map((n2) => /* @__PURE__ */ React9.createElement(
         "button",
         {
           key: n2,
@@ -33215,11 +33792,11 @@ function apply(ctx) {
           "aria-current": tab === n2 ? "page" : void 0,
           onClick: () => go(n2)
         },
-        /* @__PURE__ */ React8.createElement(Icon, { name: n2 }),
-        !collapsed && /* @__PURE__ */ React8.createElement("span", null, t3(n2), n2 === "inbox" && inboxTasks(data).length > 0 ? " \xB7 " + inboxTasks(data).length : "")
+        /* @__PURE__ */ React9.createElement(Icon, { name: n2 }),
+        !collapsed && /* @__PURE__ */ React9.createElement("span", null, t3(n2), n2 === "inbox" && inboxTasks(data).length > 0 ? " \xB7 " + inboxTasks(data).length : "")
       ))), !collapsed && projects.filter(
         (p3) => p3.status !== "done" && p3.status !== "paused"
-      ).slice(0, 6).map((p3) => /* @__PURE__ */ React8.createElement(
+      ).slice(0, 6).map((p3) => /* @__PURE__ */ React9.createElement(
         "button",
         {
           key: p3.id,
@@ -33230,25 +33807,25 @@ function apply(ctx) {
             setSearch("");
           }
         },
-        /* @__PURE__ */ React8.createElement("span", { className: "ld-project-bullet" }),
+        /* @__PURE__ */ React9.createElement("span", { className: "ld-project-bullet" }),
         p3.title
-      )), /* @__PURE__ */ React8.createElement("div", { className: "ld-nav-bottom" }, ["settings", "trash"].map((n2) => /* @__PURE__ */ React8.createElement("button", { key: n2, title: t3(n2), onClick: () => go(n2) }, /* @__PURE__ */ React8.createElement(Icon, { name: n2 }), !collapsed && t3(n2))), /* @__PURE__ */ React8.createElement(
+      )), /* @__PURE__ */ React9.createElement("div", { className: "ld-nav-bottom" }, ["settings", "trash"].map((n2) => /* @__PURE__ */ React9.createElement("button", { key: n2, title: t3(n2), onClick: () => go(n2) }, /* @__PURE__ */ React9.createElement(Icon, { name: n2 }), !collapsed && t3(n2))), /* @__PURE__ */ React9.createElement(
         "button",
         {
           onClick: () => setCollapsed(!collapsed),
           title: t3(collapsed ? "expand" : "collapse")
         },
-        /* @__PURE__ */ React8.createElement(Icon, { name: "chevron", size: 18 }),
+        /* @__PURE__ */ React9.createElement(Icon, { name: "chevron", size: 18 }),
         !collapsed && t3("collapse")
       ))),
-      /* @__PURE__ */ React8.createElement("div", { className: "ld-workspace" }, /* @__PURE__ */ React8.createElement("div", { className: "ld-toolbar-wrap" }, /* @__PURE__ */ React8.createElement(
+      /* @__PURE__ */ React9.createElement("div", { className: "ld-workspace" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-toolbar-wrap" }, /* @__PURE__ */ React9.createElement(
         "div",
         {
           className: "ld-page-top",
           role: "region",
           "aria-label": t3("workspaceActions")
         },
-        /* @__PURE__ */ React8.createElement("div", { className: "ld-search" }, /* @__PURE__ */ React8.createElement(Icon, { name: "search", size: 17 }), /* @__PURE__ */ React8.createElement(
+        /* @__PURE__ */ React9.createElement("div", { className: "ld-search" }, /* @__PURE__ */ React9.createElement(Icon, { name: "search", size: 17 }), /* @__PURE__ */ React9.createElement(
           "input",
           {
             value: search,
@@ -33257,7 +33834,7 @@ function apply(ctx) {
             "aria-label": t3("search")
           }
         )),
-        /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
+        /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
           "select",
           {
             className: "ld-mood",
@@ -33268,17 +33845,17 @@ function apply(ctx) {
               item: { mood: e3.target.value }
             })
           },
-          ["daily", "bright", "focus", "calm"].map((m3) => /* @__PURE__ */ React8.createElement("option", { key: m3, value: m3 }, t3(
+          ["daily", "bright", "focus", "calm"].map((m3) => /* @__PURE__ */ React9.createElement("option", { key: m3, value: m3 }, t3(
             m3 === "daily" ? "moodDaily" : m3 === "focus" ? "moodFocus" : m3
           )))
-        ), /* @__PURE__ */ React8.createElement(Btn, { "aria-pressed": ai, onClick: () => setAi(!ai) }, /* @__PURE__ */ React8.createElement(
+        ), /* @__PURE__ */ React9.createElement(Btn, { "aria-pressed": ai, onClick: () => setAi(!ai) }, /* @__PURE__ */ React9.createElement(
           SpiritIcon,
           {
             size: 32,
             reducedMotion: data.settings.reduceMotion
           }
         ), t3("spirit")))
-      ), /* @__PURE__ */ React8.createElement(
+      ), /* @__PURE__ */ React9.createElement(
         QuickCapture,
         {
           open: captureOpen,
@@ -33301,13 +33878,13 @@ function apply(ctx) {
             else reviewDrafts.delete("quick-capture");
           }
         }
-      )), /* @__PURE__ */ React8.createElement(
+      )), /* @__PURE__ */ React9.createElement(
         "main",
         {
           className: "ld-content " + (tab !== "today" ? "ld-not-today" : "")
         },
-        /* @__PURE__ */ React8.createElement("div", { className: "ld-top-timer" }, /* @__PURE__ */ React8.createElement(Timer, { bar: true })),
-        /* @__PURE__ */ React8.createElement("header", { className: "ld-page-heading" }, /* @__PURE__ */ React8.createElement("div", null, /* @__PURE__ */ React8.createElement("div", { className: "ld-eyebrow" }, tab === "today" ? new Intl.DateTimeFormat(
+        /* @__PURE__ */ React9.createElement("div", { className: "ld-top-timer" }, /* @__PURE__ */ React9.createElement(Timer, { bar: true })),
+        /* @__PURE__ */ React9.createElement("header", { className: "ld-page-heading" }, /* @__PURE__ */ React9.createElement("div", null, /* @__PURE__ */ React9.createElement("div", { className: "ld-eyebrow" }, tab === "today" ? new Intl.DateTimeFormat(
           ctx.locale.getLocale().active.startsWith("zh") ? "zh-CN" : "en",
           {
             weekday: "long",
@@ -33315,14 +33892,14 @@ function apply(ctx) {
             day: "numeric",
             timeZone: "UTC"
           }
-        ).format(/* @__PURE__ */ new Date(day + "T12:00:00Z")) : t3("appSubtitle")), /* @__PURE__ */ React8.createElement("h1", null, title)), /* @__PURE__ */ React8.createElement("div", { className: "ld-day-nav" }, /* @__PURE__ */ React8.createElement(
+        ).format(/* @__PURE__ */ new Date(day + "T12:00:00Z")) : t3("appSubtitle")), /* @__PURE__ */ React9.createElement("h1", null, title)), /* @__PURE__ */ React9.createElement("div", { className: "ld-day-nav" }, /* @__PURE__ */ React9.createElement(
           "button",
           {
             "aria-label": "Previous day",
             onClick: () => setDay(shift(day, tab === "review" ? -7 : -1))
           },
           "\u2039"
-        ), /* @__PURE__ */ React8.createElement(
+        ), /* @__PURE__ */ React9.createElement(
           "input",
           {
             type: "date",
@@ -33332,24 +33909,24 @@ function apply(ctx) {
               if (e3.target.value) setDay(e3.target.value);
             }
           }
-        ), /* @__PURE__ */ React8.createElement(
+        ), /* @__PURE__ */ React9.createElement(
           "button",
           {
             "aria-label": "Next day",
             onClick: () => setDay(shift(day, tab === "review" ? 7 : 1))
           },
           "\u203A"
-        ), /* @__PURE__ */ React8.createElement(Btn, { onClick: () => setDay(today(timeZone)) }, t3("backToday")))),
-        error && /* @__PURE__ */ React8.createElement("div", { className: "ld-error", role: "alert" }, error, " ", /* @__PURE__ */ React8.createElement(Btn, { onClick: () => void refresh() }, t3("retry"))),
-        message && /* @__PURE__ */ React8.createElement("div", { className: "ld-status", role: "status" }, message, /* @__PURE__ */ React8.createElement(
+        ), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => setDay(today(timeZone)) }, t3("backToday")))),
+        error && /* @__PURE__ */ React9.createElement("div", { className: "ld-error", role: "alert" }, error, " ", /* @__PURE__ */ React9.createElement(Btn, { onClick: () => void refresh() }, t3("retry"))),
+        message && /* @__PURE__ */ React9.createElement("div", { className: "ld-status", role: "status" }, message, /* @__PURE__ */ React9.createElement(
           "button",
           {
             "aria-label": t3("close"),
             onClick: () => setMessage("")
           },
           "\xD7"
-        ), /* @__PURE__ */ React8.createElement("button", { onClick: () => run({ action: "undo" }) }, t3("undo"))),
-        updateNotice && /* @__PURE__ */ React8.createElement("div", { className: "ld-status", role: "status" }, updateNotice, /* @__PURE__ */ React8.createElement(
+        ), /* @__PURE__ */ React9.createElement("button", { onClick: () => run({ action: "undo" }) }, t3("undo"))),
+        updateNotice && /* @__PURE__ */ React9.createElement("div", { className: "ld-status", role: "status" }, updateNotice, /* @__PURE__ */ React9.createElement(
           "button",
           {
             "aria-label": t3("close"),
@@ -33358,7 +33935,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React8.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.7.8", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React8.createElement(
+        /* @__PURE__ */ React9.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.8.0", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React9.createElement(
           "button",
           {
             className: "ld-update-badge",
@@ -33374,9 +33951,9 @@ function apply(ctx) {
             }
           },
           t3("updateAvailable")
-        ), /* @__PURE__ */ React8.createElement("button", { onClick: () => void refresh() }, t3("retry")))
+        ), /* @__PURE__ */ React9.createElement("button", { onClick: () => void refresh() }, t3("retry")))
       )),
-      /* @__PURE__ */ React8.createElement(
+      /* @__PURE__ */ React9.createElement(
         SpiritPanel,
         {
           open: ai,
@@ -33387,7 +33964,7 @@ function apply(ctx) {
           }
         }
       )
-    ), templateOpen && /* @__PURE__ */ React8.createElement(Modal, { title: t3("addHabit"), onClose: () => setTemplateOpen(false) }, /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("templateHeading")), /* @__PURE__ */ React8.createElement("div", { className: "ld-template-list" }, HABIT_TEMPLATES.map((tpl) => /* @__PURE__ */ React8.createElement(
+    ), templateOpen && /* @__PURE__ */ React9.createElement(Modal, { title: t3("addHabit"), onClose: () => setTemplateOpen(false) }, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("templateHeading")), /* @__PURE__ */ React9.createElement("div", { className: "ld-template-list" }, HABIT_TEMPLATES.map((tpl) => /* @__PURE__ */ React9.createElement(
       "button",
       {
         key: tpl.id,
@@ -33397,9 +33974,9 @@ function apply(ctx) {
           openHabit(habitFromTemplate(tpl, today(timeZone), t3));
         }
       },
-      /* @__PURE__ */ React8.createElement("span", { className: "ld-template-title" }, t3(tpl.titleKey)),
-      /* @__PURE__ */ React8.createElement("span", { className: "ld-template-note" }, t3(tpl.noteKey))
-    ))), HABIT_TEMPLATES.some((x4) => x4.mode === "weekly") && /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("templateWeeklyHint")), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("templateSavedHint")), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
+      /* @__PURE__ */ React9.createElement("span", { className: "ld-template-title" }, t3(tpl.titleKey)),
+      /* @__PURE__ */ React9.createElement("span", { className: "ld-template-note" }, t3(tpl.noteKey))
+    ))), HABIT_TEMPLATES.some((x4) => x4.mode === "weekly") && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("templateWeeklyHint")), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("templateSavedHint")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
       Btn,
       {
         onClick: () => {
@@ -33408,7 +33985,7 @@ function apply(ctx) {
         }
       },
       t3("templateCustom")
-    ), /* @__PURE__ */ React8.createElement(Btn, { onClick: () => setTemplateOpen(false) }, t3("cancel"))), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("templateCustomHint"))), editor && /* @__PURE__ */ React8.createElement(
+    ), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => setTemplateOpen(false) }, t3("cancel"))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("templateCustomHint"))), editor && /* @__PURE__ */ React9.createElement(
       Editor,
       {
         editor,
@@ -33445,20 +34022,20 @@ function apply(ctx) {
     busy
   }) {
     const type = editor.type;
-    const [item, setItem] = useState4(structuredClone(editor.item));
-    const [scope, setScope] = useState4(editor.occurrence ? "single" : "series");
-    const [occ, setOcc] = useState4({ ...editor.occurrence });
-    const [preview, setPreview] = useState4([]);
-    const [localError, setLocalError] = useState4("");
-    const [steps, setSteps] = useState4(
+    const [item, setItem] = useState5(structuredClone(editor.item));
+    const [scope, setScope] = useState5(editor.occurrence ? "single" : "series");
+    const [occ, setOcc] = useState5({ ...editor.occurrence });
+    const [preview, setPreview] = useState5([]);
+    const [localError, setLocalError] = useState5("");
+    const [steps, setSteps] = useState5(
       item.steps?.map((x4) => x4.title).join("\n") || ""
     );
     const latestRule = item.rules?.at(-1);
-    const [rule, setRule] = useState4(
+    const [rule, setRule] = useState5(
       latestRule ? { ...latestRule, effective: item.id ? day : latestRule.effective } : null
     );
-    const dirty = useRef4(false);
-    const submissionId = useRef4(editor.requestId || uid());
+    const dirty = useRef5(false);
+    const submissionId = useRef5(editor.requestId || uid());
     const change = (k3, v3) => {
       submissionId.current = uid();
       dirty.current = true;
@@ -33472,7 +34049,7 @@ function apply(ctx) {
     const onClose = () => {
       if (!dirty.current || window.confirm(t3("dirty"))) close();
     };
-    const input = (k3, kind = "text", props = {}) => /* @__PURE__ */ React8.createElement(
+    const input = (k3, kind = "text", props = {}) => /* @__PURE__ */ React9.createElement(
       "input",
       {
         type: kind,
@@ -33481,17 +34058,17 @@ function apply(ctx) {
         ...props
       }
     );
-    const options = (k3, values, labels) => /* @__PURE__ */ React8.createElement("select", { value: item[k3], onChange: (e3) => change(k3, e3.target.value) }, values.map((v3, i3) => /* @__PURE__ */ React8.createElement("option", { key: v3, value: v3 }, t3(labels?.[i3] || v3))));
+    const options = (k3, values, labels) => /* @__PURE__ */ React9.createElement("select", { value: item[k3], onChange: (e3) => change(k3, e3.target.value) }, values.map((v3, i3) => /* @__PURE__ */ React9.createElement("option", { key: v3, value: v3 }, t3(labels?.[i3] || v3))));
     const repeat = item.repeat || { kind: "none" };
-    const repeatField = (k3, values, labels) => /* @__PURE__ */ React8.createElement(
+    const repeatField = (k3, values, labels) => /* @__PURE__ */ React9.createElement(
       "select",
       {
         value: repeat[k3],
         onChange: (e3) => changeRepeat(k3, e3.target.value)
       },
-      values.map((v3, i3) => /* @__PURE__ */ React8.createElement("option", { key: v3, value: v3 }, t3(labels?.[i3] || v3)))
+      values.map((v3, i3) => /* @__PURE__ */ React9.createElement("option", { key: v3, value: v3 }, t3(labels?.[i3] || v3)))
     );
-    const weekdayButtons = (days, onChange) => /* @__PURE__ */ React8.createElement("div", { className: "ld-days" }, [1, 2, 3, 4, 5, 6, 0].map((d2) => /* @__PURE__ */ React8.createElement(
+    const weekdayButtons = (days, onChange) => /* @__PURE__ */ React9.createElement("div", { className: "ld-days" }, [1, 2, 3, 4, 5, 6, 0].map((d2) => /* @__PURE__ */ React9.createElement(
       "button",
       {
         type: "button",
@@ -33579,7 +34156,7 @@ function apply(ctx) {
         setLocalError(e4.message);
       }
     }
-    return /* @__PURE__ */ React8.createElement(
+    return /* @__PURE__ */ React9.createElement(
       Modal,
       {
         title: t3(
@@ -33587,7 +34164,7 @@ function apply(ctx) {
         ),
         onClose
       },
-      /* @__PURE__ */ React8.createElement("form", { onSubmit: submit }, editor.occurrence && /* @__PURE__ */ React8.createElement("div", { className: "ld-scope" }, /* @__PURE__ */ React8.createElement(Field, { label: t3("editSeries") }, /* @__PURE__ */ React8.createElement(
+      /* @__PURE__ */ React9.createElement("form", { onSubmit: submit }, editor.occurrence && /* @__PURE__ */ React9.createElement("div", { className: "ld-scope" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("editSeries") }, /* @__PURE__ */ React9.createElement(
         "select",
         {
           value: scope,
@@ -33598,9 +34175,9 @@ function apply(ctx) {
             }
           }
         },
-        /* @__PURE__ */ React8.createElement("option", { value: "single" }, t3("single")),
-        item.repeat?.kind !== "none" && item.repeat?.kind !== "completion" && /* @__PURE__ */ React8.createElement("option", { value: "future" }, t3("future"))
-      )), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("originalDate"), " \xB7 ", editor.occurrence.originalDate)), editor.occurrence && scope === "single" ? /* @__PURE__ */ React8.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React8.createElement(Field, { label: t3("date") }, /* @__PURE__ */ React8.createElement(
+        /* @__PURE__ */ React9.createElement("option", { value: "single" }, t3("single")),
+        item.repeat?.kind !== "none" && item.repeat?.kind !== "completion" && /* @__PURE__ */ React9.createElement("option", { value: "future" }, t3("future"))
+      )), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("originalDate"), " \xB7 ", editor.occurrence.originalDate)), editor.occurrence && scope === "single" ? /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("date") }, /* @__PURE__ */ React9.createElement(
         "input",
         {
           type: "date",
@@ -33611,7 +34188,7 @@ function apply(ctx) {
             setOcc({ ...occ, date: e3.target.value });
           }
         }
-      )), /* @__PURE__ */ React8.createElement(Field, { label: t3("time") }, /* @__PURE__ */ React8.createElement(
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("time") }, /* @__PURE__ */ React9.createElement(
         "input",
         {
           type: "time",
@@ -33621,7 +34198,7 @@ function apply(ctx) {
             setOcc({ ...occ, time: e3.target.value });
           }
         }
-      )), /* @__PURE__ */ React8.createElement(Field, { label: t3("status") }, /* @__PURE__ */ React8.createElement(
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("status") }, /* @__PURE__ */ React9.createElement(
         "select",
         {
           value: occ.status,
@@ -33631,26 +34208,29 @@ function apply(ctx) {
           }
         },
         ["todo", "doing", "done", "skipped", "cancelled"].map(
-          (s3) => /* @__PURE__ */ React8.createElement("option", { key: s3, value: s3 }, t3(s3))
+          (s3) => /* @__PURE__ */ React9.createElement("option", { key: s3, value: s3 }, t3(s3))
         )
-      )), /* @__PURE__ */ React8.createElement(Field, { label: t3("name") }, /* @__PURE__ */ React8.createElement("input", { value: item.title, readOnly: true }))) : /* @__PURE__ */ React8.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React8.createElement(Field, { label: t3("name"), wide: true }, input("title", "text", {
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("name") }, /* @__PURE__ */ React9.createElement("input", { value: item.title, readOnly: true }))) : /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("name"), wide: true }, input("title", "text", {
         required: true,
         maxLength: 200,
         autoFocus: true
-      })), type === "project" && /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement(Field, { label: t3("group") }, input("group")), /* @__PURE__ */ React8.createElement(Field, { label: t3("deadline") }, input("deadline", "date")), /* @__PURE__ */ React8.createElement(Field, { label: t3("status") }, options("status", ["todo", "doing", "done", "paused"])), /* @__PURE__ */ React8.createElement(Field, { label: t3("goal"), wide: true }, /* @__PURE__ */ React8.createElement(
+      })), type === "project" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(Field, { label: t3("group") }, input("group")), /* @__PURE__ */ React9.createElement(Field, { label: t3("deadline") }, input("deadline", "date")), /* @__PURE__ */ React9.createElement(Field, { label: t3("status") }, options("status", ["todo", "doing", "done", "paused"])), /* @__PURE__ */ React9.createElement(Field, { label: t3("goal"), wide: true }, /* @__PURE__ */ React9.createElement(
         "textarea",
         {
           value: item.goal,
           onChange: (e3) => change("goal", e3.target.value),
           rows: 4
         }
-      ))), type === "habit" && /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement(Field, { label: t3("habitMode") }, /* @__PURE__ */ React8.createElement(
+      ))), type === "habit" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(Field, { label: t3("habitMode") }, /* @__PURE__ */ React9.createElement(
         "select",
         {
           value: rule.mode,
           onChange: (e3) => {
             const mode = e3.target.value;
             changeRule("mode", mode);
+            if (mode !== "daily") change("reviewLinked", false);
+            if (mode === "weekly")
+              changeRule("allowNextDay", false);
             if (mode === "duration") {
               if (rule.target > 1440 || rule.target < 1)
                 changeRule("target", 30);
@@ -33658,8 +34238,8 @@ function apply(ctx) {
             }
           }
         },
-        ["daily", "quantity", "duration", "weekly"].map((m3) => /* @__PURE__ */ React8.createElement("option", { key: m3, value: m3 }, t3(m3 === "duration" ? "durationMode" : m3)))
-      )), /* @__PURE__ */ React8.createElement(Field, { label: t3("effective") }, /* @__PURE__ */ React8.createElement(
+        ["daily", "quantity", "duration", "weekly"].map((m3) => /* @__PURE__ */ React9.createElement("option", { key: m3, value: m3 }, t3(m3 === "duration" ? "durationMode" : m3)))
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("effective") }, /* @__PURE__ */ React9.createElement(
         "input",
         {
           type: "date",
@@ -33668,12 +34248,12 @@ function apply(ctx) {
           min: item.id ? day : void 0,
           onChange: (e3) => changeRule("effective", e3.target.value)
         }
-      )), rule.mode !== "daily" && /* @__PURE__ */ React8.createElement(
+      )), rule.mode !== "daily" && /* @__PURE__ */ React9.createElement(
         Field,
         {
           label: rule.mode === "duration" ? t3("targetMinutes") : t3("target")
         },
-        /* @__PURE__ */ React8.createElement(
+        /* @__PURE__ */ React9.createElement(
           "input",
           {
             type: "number",
@@ -33684,20 +34264,20 @@ function apply(ctx) {
             onChange: (e3) => changeRule("target", Number(e3.target.value))
           }
         )
-      ), rule.mode === "quantity" && /* @__PURE__ */ React8.createElement(Field, { label: t3("unit") }, /* @__PURE__ */ React8.createElement(
+      ), rule.mode === "quantity" && /* @__PURE__ */ React9.createElement(Field, { label: t3("unit") }, /* @__PURE__ */ React9.createElement(
         "input",
         {
           value: rule.unit,
           onChange: (e3) => changeRule("unit", e3.target.value)
         }
-      )), rule.mode !== "weekly" && /* @__PURE__ */ React8.createElement(Field, { label: t3("days"), wide: true }, weekdayButtons(rule.days, (v3) => changeRule("days", v3))), /* @__PURE__ */ React8.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React8.createElement(
+      )), rule.mode !== "weekly" && /* @__PURE__ */ React9.createElement(Field, { label: t3("days"), wide: true }, weekdayButtons(rule.days, (v3) => changeRule("days", v3))), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
         "input",
         {
           type: "checkbox",
           checked: rule.paused,
           onChange: (e3) => changeRule("paused", e3.target.checked)
         }
-      ), t3("pause")), /* @__PURE__ */ React8.createElement("fieldset", { className: "ld-wide ld-completion" }, /* @__PURE__ */ React8.createElement("legend", null, t3("completionLabel")), /* @__PURE__ */ React8.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React8.createElement(
+      ), t3("pause")), /* @__PURE__ */ React9.createElement("fieldset", { className: "ld-wide ld-completion" }, /* @__PURE__ */ React9.createElement("legend", null, t3("completionLabel")), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
         "input",
         {
           type: "radio",
@@ -33705,7 +34285,7 @@ function apply(ctx) {
           checked: !item.reviewLinked,
           onChange: () => change("reviewLinked", false)
         }
-      ), t3("completionManual")), /* @__PURE__ */ React8.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React8.createElement(
+      ), t3("completionManual")), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
         "input",
         {
           type: "radio",
@@ -33714,14 +34294,21 @@ function apply(ctx) {
           disabled: rule.mode !== "daily",
           onChange: () => change("reviewLinked", true)
         }
-      ), t3("completionReview")), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, rule.mode === "daily" ? t3("reviewLinkHelp") : t3("completionDailyOnly"))), /* @__PURE__ */ React8.createElement("p", { className: "ld-help ld-wide" }, t3("habitHint"))), type === "task" && /* @__PURE__ */ React8.createElement(
+      ), t3("completionReview")), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, rule.mode === "daily" ? t3("reviewLinkHelp") : t3("completionDailyOnly"))), rule.mode !== "weekly" && /* @__PURE__ */ React9.createElement("div", { className: "ld-wide" }, /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "checkbox",
+          checked: !!rule.allowNextDay,
+          onChange: (e3) => changeRule("allowNextDay", e3.target.checked)
+        }
+      ), t3("allowNextDay")), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("allowNextDayHint"))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help ld-wide" }, t3("habitHint"))), type === "task" && /* @__PURE__ */ React9.createElement(
         "details",
         {
           className: "ld-wide ld-advanced",
           open: !!item.id || repeat.kind !== "none" || !!item.date || !!item.projectId || item.area === "life"
         },
-        /* @__PURE__ */ React8.createElement("summary", null, t3("advanced")),
-        /* @__PURE__ */ React8.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React8.createElement(Field, { label: t3("projects") }, /* @__PURE__ */ React8.createElement(
+        /* @__PURE__ */ React9.createElement("summary", null, t3("advanced")),
+        /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("projects") }, /* @__PURE__ */ React9.createElement(
           "select",
           {
             value: item.projectId,
@@ -33730,13 +34317,13 @@ function apply(ctx) {
               if (e3.target.value) change("area", "work");
             }
           },
-          /* @__PURE__ */ React8.createElement("option", { value: "" }, t3("noProject")),
-          data.projects.filter((x4) => !x4.deletedAt).map((p3) => /* @__PURE__ */ React8.createElement("option", { key: p3.id, value: p3.id }, p3.title))
-        )), /* @__PURE__ */ React8.createElement(Field, { label: t3("group") }, options(
+          /* @__PURE__ */ React9.createElement("option", { value: "" }, t3("noProject")),
+          data.projects.filter((x4) => !x4.deletedAt).map((p3) => /* @__PURE__ */ React9.createElement("option", { key: p3.id, value: p3.id }, p3.title))
+        )), /* @__PURE__ */ React9.createElement(Field, { label: t3("group") }, options(
           "area",
           ["inbox", "work", "life"],
           ["inboxArea", "work", "lifeArea"]
-        )), /* @__PURE__ */ React8.createElement(Field, { label: t3("date") }, input("date", "date")), /* @__PURE__ */ React8.createElement(Field, { label: t3("deadline") }, input("deadline", "date")), /* @__PURE__ */ React8.createElement(Field, { label: t3("time") }, input("time", "time")), /* @__PURE__ */ React8.createElement(Field, { label: t3("estimatedTomatoes") }, /* @__PURE__ */ React8.createElement(
+        )), /* @__PURE__ */ React9.createElement(Field, { label: t3("date") }, input("date", "date")), /* @__PURE__ */ React9.createElement(Field, { label: t3("deadline") }, input("deadline", "date")), /* @__PURE__ */ React9.createElement(Field, { label: t3("time") }, input("time", "time")), /* @__PURE__ */ React9.createElement(Field, { label: t3("estimatedTomatoes") }, /* @__PURE__ */ React9.createElement(
           "input",
           {
             type: "number",
@@ -33745,12 +34332,12 @@ function apply(ctx) {
             value: item.pomodoros || 0,
             onChange: (e3) => change("pomodoros", Number(e3.target.value))
           }
-        ), /* @__PURE__ */ React8.createElement("small", { className: "ld-help" }, t3("tomatoEstimateHint"))), /* @__PURE__ */ React8.createElement(Field, { label: t3("minutes") }, input("minutes", "number", { min: 0, max: 1440 })), /* @__PURE__ */ React8.createElement(Field, { label: t3("status") }, options("status", ["todo", "doing", "done"])), /* @__PURE__ */ React8.createElement(
+        ), /* @__PURE__ */ React9.createElement("small", { className: "ld-help" }, t3("tomatoEstimateHint"))), /* @__PURE__ */ React9.createElement(Field, { label: t3("minutes") }, input("minutes", "number", { min: 0, max: 1440 })), /* @__PURE__ */ React9.createElement(Field, { label: t3("status") }, options("status", ["todo", "doing", "done"])), /* @__PURE__ */ React9.createElement(
           Field,
           {
             label: t3(item.area === "life" ? "lifeCategory" : "tag")
           },
-          /* @__PURE__ */ React8.createElement(
+          /* @__PURE__ */ React9.createElement(
             "input",
             {
               value: item.tag,
@@ -33760,28 +34347,28 @@ function apply(ctx) {
               onChange: (e3) => change("tag", e3.target.value)
             }
           ),
-          /* @__PURE__ */ React8.createElement("datalist", { id: "ld-life-categories" }, [
+          /* @__PURE__ */ React9.createElement("datalist", { id: "ld-life-categories" }, [
             ...new Set(
               data.tasks.filter(
                 (x4) => !x4.deletedAt && x4.area === "life" && x4.tag
               ).map((x4) => x4.tag)
             )
-          ].map((tag) => /* @__PURE__ */ React8.createElement("option", { key: tag, value: tag })))
-        ), /* @__PURE__ */ React8.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React8.createElement(
+          ].map((tag) => /* @__PURE__ */ React9.createElement("option", { key: tag, value: tag })))
+        ), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
           "input",
           {
             type: "checkbox",
             checked: !!item.priorityDate,
             onChange: (e3) => change("priorityDate", e3.target.checked ? day : "")
           }
-        ), t3("priority")), /* @__PURE__ */ React8.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React8.createElement(
+        ), t3("priority")), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
           "input",
           {
             type: "checkbox",
             checked: item.event,
             onChange: (e3) => change("event", e3.target.checked)
           }
-        ), t3("event")), /* @__PURE__ */ React8.createElement(Field, { label: t3("steps"), wide: true }, /* @__PURE__ */ React8.createElement(
+        ), t3("event")), /* @__PURE__ */ React9.createElement(Field, { label: t3("steps"), wide: true }, /* @__PURE__ */ React9.createElement(
           "textarea",
           {
             rows: 3,
@@ -33791,7 +34378,7 @@ function apply(ctx) {
               setSteps(e3.target.value);
             }
           }
-        )), item.steps?.length > 0 && /* @__PURE__ */ React8.createElement("div", { className: "ld-wide" }, item.steps.map((step, i3) => /* @__PURE__ */ React8.createElement("label", { key: step.id, className: "ld-check-label" }, /* @__PURE__ */ React8.createElement(
+        )), item.steps?.length > 0 && /* @__PURE__ */ React9.createElement("div", { className: "ld-wide" }, item.steps.map((step, i3) => /* @__PURE__ */ React9.createElement("label", { key: step.id, className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
           "input",
           {
             type: "checkbox",
@@ -33803,7 +34390,7 @@ function apply(ctx) {
               )
             )
           }
-        ), step.title))), /* @__PURE__ */ React8.createElement(Field, { label: t3("repeats") }, /* @__PURE__ */ React8.createElement(
+        ), step.title))), /* @__PURE__ */ React9.createElement(Field, { label: t3("repeats") }, /* @__PURE__ */ React9.createElement(
           "select",
           {
             value: repeat.kind,
@@ -33817,10 +34404,10 @@ function apply(ctx) {
             "yearly",
             "lunar",
             "completion"
-          ].map((k3) => /* @__PURE__ */ React8.createElement("option", { key: k3, value: k3 }, t3(
+          ].map((k3) => /* @__PURE__ */ React9.createElement("option", { key: k3, value: k3 }, t3(
             k3 === "daily" ? "repeatDaily" : k3 === "weekly" ? "repeatWeekly" : k3
           )))
-        )), repeat.kind !== "none" && /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement(Field, { label: t3("interval") }, /* @__PURE__ */ React8.createElement(
+        )), repeat.kind !== "none" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(Field, { label: t3("interval") }, /* @__PURE__ */ React9.createElement(
           "input",
           {
             type: "number",
@@ -33829,25 +34416,25 @@ function apply(ctx) {
             value: repeat.interval || 1,
             onChange: (e3) => changeRepeat("interval", Number(e3.target.value))
           }
-        )), /* @__PURE__ */ React8.createElement(Field, { label: t3("until") }, /* @__PURE__ */ React8.createElement(
+        )), /* @__PURE__ */ React9.createElement(Field, { label: t3("until") }, /* @__PURE__ */ React9.createElement(
           "input",
           {
             type: "date",
             value: repeat.until || "",
             onChange: (e3) => changeRepeat("until", e3.target.value)
           }
-        )), repeat.kind === "weekly" && /* @__PURE__ */ React8.createElement(Field, { label: t3("days"), wide: true }, weekdayButtons(
+        )), repeat.kind === "weekly" && /* @__PURE__ */ React9.createElement(Field, { label: t3("days"), wide: true }, weekdayButtons(
           repeat.days || [1],
           (v3) => changeRepeat("days", v3)
-        )), repeat.kind === "monthly" && /* @__PURE__ */ React8.createElement(Field, { label: t3("monthMode") }, repeatField(
+        )), repeat.kind === "monthly" && /* @__PURE__ */ React9.createElement(Field, { label: t3("monthMode") }, repeatField(
           "monthMode",
           ["date", "lastWeekday"],
           ["monthDate", "lastWeekday"]
-        )), repeat.kind === "completion" && /* @__PURE__ */ React8.createElement(Field, { label: t3("unit") }, repeatField(
+        )), repeat.kind === "completion" && /* @__PURE__ */ React9.createElement(Field, { label: t3("unit") }, repeatField(
           "unit",
           ["days", "months", "years"],
           ["daysUnit", "monthsUnit", "yearsUnit"]
-        )), repeat.kind === "lunar" && /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement(Field, { label: t3("month") }, /* @__PURE__ */ React8.createElement(
+        )), repeat.kind === "lunar" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(Field, { label: t3("month") }, /* @__PURE__ */ React9.createElement(
           "input",
           {
             type: "number",
@@ -33856,7 +34443,7 @@ function apply(ctx) {
             value: repeat.month || 1,
             onChange: (e3) => changeRepeat("month", Number(e3.target.value))
           }
-        )), /* @__PURE__ */ React8.createElement(Field, { label: t3("day") }, /* @__PURE__ */ React8.createElement(
+        )), /* @__PURE__ */ React9.createElement(Field, { label: t3("day") }, /* @__PURE__ */ React9.createElement(
           "input",
           {
             type: "number",
@@ -33865,17 +34452,17 @@ function apply(ctx) {
             value: repeat.day || 1,
             onChange: (e3) => changeRepeat("day", Number(e3.target.value))
           }
-        )), /* @__PURE__ */ React8.createElement(Field, { label: t3("leap") }, repeatField("leap", ["regular", "only", "both"])), repeat.leap === "only" && /* @__PURE__ */ React8.createElement(Field, { label: t3("leapFallback") }, repeatField(
+        )), /* @__PURE__ */ React9.createElement(Field, { label: t3("leap") }, repeatField("leap", ["regular", "only", "both"])), repeat.leap === "only" && /* @__PURE__ */ React9.createElement(Field, { label: t3("leapFallback") }, repeatField(
           "leapFallback",
           ["regular", "skip"],
           ["fallbackRegular", "skipYear"]
         ))), ["monthly", "yearly", "lunar"].includes(
           repeat.kind
-        ) && /* @__PURE__ */ React8.createElement(Field, { label: t3("missing") }, repeatField(
+        ) && /* @__PURE__ */ React9.createElement(Field, { label: t3("missing") }, repeatField(
           "missing",
           ["last", "skip"],
           ["last", "skipYear"]
-        )), /* @__PURE__ */ React8.createElement("div", { className: "ld-wide" }, /* @__PURE__ */ React8.createElement(
+        )), /* @__PURE__ */ React9.createElement("div", { className: "ld-wide" }, /* @__PURE__ */ React9.createElement(
           Btn,
           {
             onClick: async () => {
@@ -33893,7 +34480,7 @@ function apply(ctx) {
             }
           },
           t3("preview")
-        ), preview.length > 0 && /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("previewDates"), " \xB7 ", preview.join(" \xB7 ")), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("repeatHint")))), /* @__PURE__ */ React8.createElement(Field, { label: t3("reminder") }, /* @__PURE__ */ React8.createElement(
+        ), preview.length > 0 && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("previewDates"), " \xB7 ", preview.join(" \xB7 ")), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("repeatHint")))), /* @__PURE__ */ React9.createElement(Field, { label: t3("reminder") }, /* @__PURE__ */ React9.createElement(
           "input",
           {
             type: "number",
@@ -33905,8 +34492,8 @@ function apply(ctx) {
               e3.target.value === "" ? null : Number(e3.target.value)
             )
           }
-        )), /* @__PURE__ */ React8.createElement(Field, { label: t3("reminderTime") }, input("reminderTime", "time")), /* @__PURE__ */ React8.createElement("p", { className: "ld-help ld-wide" }, t3("notifyHint")))
-      ), type !== "project" && /* @__PURE__ */ React8.createElement(Field, { label: t3("note"), wide: true }, /* @__PURE__ */ React8.createElement(
+        )), /* @__PURE__ */ React9.createElement(Field, { label: t3("reminderTime") }, input("reminderTime", "time")), /* @__PURE__ */ React9.createElement("p", { className: "ld-help ld-wide" }, t3("notifyHint")))
+      ), type !== "project" && /* @__PURE__ */ React9.createElement(Field, { label: t3("note"), wide: true }, /* @__PURE__ */ React9.createElement(
         "textarea",
         {
           value: item.note,
@@ -33914,7 +34501,7 @@ function apply(ctx) {
           maxLength: 1e4,
           onChange: (e3) => change("note", e3.target.value)
         }
-      ))), (localError || snapshot.error) && /* @__PURE__ */ React8.createElement("p", { className: "ld-error", role: "alert" }, localError || snapshot.error), /* @__PURE__ */ React8.createElement("div", { className: "ld-modal-footer" }, /* @__PURE__ */ React8.createElement("div", null, item.id && /* @__PURE__ */ React8.createElement(
+      ))), (localError || snapshot.error) && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, localError || snapshot.error), /* @__PURE__ */ React9.createElement("div", { className: "ld-modal-footer" }, /* @__PURE__ */ React9.createElement("div", null, item.id && /* @__PURE__ */ React9.createElement(
         Btn,
         {
           disabled: busy,
@@ -33931,7 +34518,7 @@ function apply(ctx) {
           }
         },
         t3("remove")
-      )), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(Btn, { onClick: onClose }, t3("cancel")), /* @__PURE__ */ React8.createElement(
+      )), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { onClick: onClose }, t3("cancel")), /* @__PURE__ */ React9.createElement(
         "button",
         {
           type: "submit",
@@ -33951,7 +34538,7 @@ function apply(ctx) {
         order: 7,
         label: () => t3("title")
       },
-      ({ size }) => /* @__PURE__ */ React8.createElement(Icon, { name: "review", size })
+      ({ size }) => /* @__PURE__ */ React9.createElement(Icon, { name: "review", size })
     )
   );
   ctx.slots.inject(
@@ -33969,7 +34556,7 @@ function apply(ctx) {
       },
       () => {
         const { data } = useStore();
-        return /* @__PURE__ */ React8.createElement(Ambient, { data }, /* @__PURE__ */ React8.createElement("style", null, css), /* @__PURE__ */ React8.createElement(Timer, { compact: true }));
+        return /* @__PURE__ */ React9.createElement(Ambient, { data }, /* @__PURE__ */ React9.createElement("style", null, css), /* @__PURE__ */ React9.createElement(Timer, { compact: true }));
       }
     )
   );
@@ -33979,7 +34566,7 @@ function apply(ctx) {
       { name: "shell.overlay", id: "life-desk-reminders", order: 20 },
       () => {
         const { data } = useStore();
-        return /* @__PURE__ */ React8.createElement(Ambient, { data }, /* @__PURE__ */ React8.createElement("style", null, css), /* @__PURE__ */ React8.createElement(Alerts, null), /* @__PURE__ */ React8.createElement(Fullscreen, null));
+        return /* @__PURE__ */ React9.createElement(Ambient, { data }, /* @__PURE__ */ React9.createElement("style", null, css), /* @__PURE__ */ React9.createElement(Alerts, null), /* @__PURE__ */ React9.createElement(Fullscreen, null));
       }
     )
   );

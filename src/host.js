@@ -22,7 +22,8 @@ const guide = {
     "修改这次及以后：id、originalDate、item 为新任务字段，必须先展示范围并得到用户同意。",
   habitLog:
     "id=habitId、date、value=本次增加数量，duration 习惯则为本次分钟（1–1440 整数）、note 可选、skipped 可选。status=missed 标记未达成；status=planned/unplanned 安排或取消该日的每周次数习惯，不产生打卡。撤销打卡用 removeId=habitLogId。周次数按不同天计算。",
-  review: "date、kind=day/week、text。日复盘可完成 reviewLinked 习惯。",
+  review:
+    "date、kind=day/week、text（必须有回答内容，空白或只有模板问题不算完成），建议带复盘记录 version（新建为0）防止覆盖。复盘按归属日期记录，首次完成时间保留，编辑不重置；关联习惯只接受保存日复盘完成，不允许只打卡。HabitRule.allowNextDay 可选，默认false，开启后到次日全天结束仍按时；过窗未记录不自动判未达成。该规则按 effective 生效不追溯改过去。settings.reviewTemplate 一份个人默认日复盘问题，每行一个、最多8行2000字，不能从当日回答自动提取。",
   timer:
     "command=start/pause/resume/await/finish/discard；start 支持 phase=focus/short/long、taskId、originalDate，可通过 item.minutes 设置仅本轮专注时长（1–180 整数，不改变默认）。修改默认用 settings item.focusMinutes，不影响运行中计时；settings.timerFace 可为 digital/ring/flip/hourglass。其余计时操作需要 timerId。提前 finish 可传修正 seconds。",
   backup:
@@ -97,8 +98,10 @@ export async function apply(ctx) {
           : null,
       isBusy: async () =>
         !!(
-          spiritService &&
-          (await spiritService.operate({ action: "read" })).busy
+          (spiritService &&
+            (await spiritService.operate({ action: "read" })).busy) ||
+          (reviewSpiritService &&
+            (await reviewSpiritService.operate({ action: "read" })).busy)
         ),
       readState: () => service.operate({ action: "read" }),
       restoreState: (a) =>
@@ -116,6 +119,7 @@ export async function apply(ctx) {
     upgradeService = null;
   }
   let spiritService = null;
+  let reviewSpiritService = null;
   ctx.effect(() =>
     ctx.connection.fetch.register({
       path: "/api/life-desk",
@@ -358,6 +362,58 @@ export async function apply(ctx) {
           spiritService = null;
           await spirit.close();
         });
+        // A separate Agent session with a scoped draft-only tool. It cannot
+        // execute general workbench actions or save a review without UI consent.
+        const reviewUnit = await assistantCtx.storage.backend
+          .get("json")
+          .kv.open({
+            name: "life_desk_review_spirit",
+            version: 1,
+            tables: [],
+            hasGlobal: true,
+            layout: "single",
+          });
+        const reviewAssistant = await createSpirit(assistantCtx, reviewUnit, {
+          reviewOnly: true,
+          readState: () => service.operate({ action: "read" }),
+        });
+        reviewSpiritService = reviewAssistant;
+        assistantCtx.effect(() => async () => {
+          reviewSpiritService = null;
+          await reviewAssistant.close();
+        });
+        assistantCtx.effect(() =>
+          assistantCtx.connection.fetch.register({
+            path: "/api/life-desk-review-spirit",
+            methods: ["POST"],
+            requestBody: "buffered",
+            async fetch(req) {
+              try {
+                if (Number(req.headers.get("content-length") || 0) > 128 * 1024)
+                  throw Error("复盘请求过大");
+                const body = await req.json();
+                if (
+                  !["startReview", "send", "watch", "read", "cancel"].includes(
+                    body.action,
+                  )
+                )
+                  throw Error("不支持的复盘助手操作");
+                return Response.json(
+                  {
+                    ok: true,
+                    value: await reviewAssistant.operate(body, req.signal),
+                  },
+                  { headers: { "Cache-Control": "no-store" } },
+                );
+              } catch (error) {
+                return Response.json(
+                  { ok: false, error: error.message },
+                  { status: 400, headers: { "Cache-Control": "no-store" } },
+                );
+              }
+            },
+          }),
+        );
         assistantCtx.provide("lifeSpirit", {
           operate: (a, signal) => spirit.operate(a, signal),
         });

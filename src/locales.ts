@@ -1,4 +1,73 @@
 export const copy = {
+  reviewKeepDraft: ["核对后保留我的草稿", "Keep my draft after comparing"],
+  reviewLoadLatest: ["改用最新内容", "Use latest content"],
+  reviewTemplateKeep: [
+    "核对后保留本次模板编辑",
+    "Keep these template edits after comparing",
+  ],
+  reviewLatestMissing: [
+    "最新记录已删除或不存在。",
+    "The latest record has been removed or does not exist.",
+  ],
+  reviewOtherActions: ["其他处理", "Other actions"],
+  reviewSkipDate: ["跳过该日", "Skip this date"],
+  reviewMissDate: ["标记该日未达成", "Mark this date as missed"],
+  reviewClearFlagHint: [
+    "该日已标记跳过或未达成；先撤销标记，再保存复盘以完成习惯。",
+    "This date is marked skipped or missed. Undo the mark before saving to complete the habit.",
+  ],
+  allowNextDay: ["允许次日完成", "Allow completion the next day"],
+  allowNextDayHint: [
+    "次日全天完成仍算按时，归属原日期；不会设置提醒。",
+    "Completion by the end of the following day counts as on time for the original date. No reminder is set.",
+  ],
+  habitOnTime: ["按时完成", "Completed on time"],
+  habitLate: ["补做完成", "Completed later"],
+  habitUnrecorded: ["未记录", "Not recorded"],
+  yesterdayPending: ["昨天待完成", "Yesterday · Still open"],
+  previousHabitHint: [
+    "昨天允许次日完成的习惯，今天仍可完成；更早的记录请到习惯页查看。",
+    "These habits allow completion today for yesterday. Earlier records remain in Habits.",
+  ],
+  reviewTemplateQuestions: [
+    "模板问题（不含当天回答）",
+    "Template questions (without today's answers)",
+  ],
+  reviewFreeWrite: ["自由书写", "Write freely"],
+  reviewShowPrompts: ["显示模板提示", "Show template prompts"],
+  reviewContent: ["复盘内容", "Your review"],
+  reviewDraftRetention: [
+    "切换日期或关闭后，未保存草稿会在本次页面内保留。刷新前请先保存。",
+    "Unsaved drafts are kept on this page when switching dates or closing. Save before refreshing.",
+  ],
+  reviewConflictHint: [
+    "这一天的复盘已在别处更新。当前草稿保留，保存前请核对最新内容。",
+    "This review was updated elsewhere. Your draft is kept; compare the latest content before saving.",
+  ],
+  reviewAI: ["请时间精灵帮我复盘", "Review with Time Spirit"],
+  reviewAIHint: [
+    "由 DSH 默认模型协助，使用所选日期的模板、草稿和记录；可能产生模型用量。生成内容只进入草稿，确认保存才完成。",
+    "Uses your DSH default model with this date's prompts, draft and records; model usage may apply. Generated text is a draft until you save.",
+  ],
+  reviewAIStarted: [
+    "已选择这一天和当前模板，请先问我一个问题。",
+    "This date and template are selected. Ask me one question to begin.",
+  ],
+  reviewAIError: ["请求失败", "Request failed"],
+  reviewYou: ["我", "Me"],
+  reviewAnswer: ["你的回答", "Your answer"],
+  reviewSend: ["发送回答", "Send answer"],
+  reviewStop: ["停止生成", "Stop generating"],
+  reviewCandidate: ["精灵整理的草稿", "Draft from Time Spirit"],
+  reviewUseDraft: ["使用这份草稿", "Use this draft"],
+  reviewCandidateHint: [
+    "使用后仍可编辑，不会自动保存或打卡。",
+    "You can edit it before saving. Using it does not save or check in.",
+  ],
+  reviewReplaceDraft: [
+    "用精灵草稿替换当前编辑内容？原内容尚未保存。",
+    "Replace the text in the editor with this draft? The current text is not saved.",
+  ],
   completionLabel: ["怎样算完成", "How this counts as done"],
   completionManual: ["手动打卡", "Check in manually"],
   completionReview: [
@@ -410,6 +479,31 @@ export const copy = {
   reviewLinkHelp: [
     "仅适用于复盘类习惯：保存日复盘后，自动完成该复盘日期的打卡。次日回顾前一天时，请选择前一天的日期。运动、冥想和阅读请不要开启。",
     "For review habits only: saving a daily review completes the check-in for its selected date. When reviewing the previous day, select that date. Leave off for exercise, meditation and reading.",
+  ],
+  defaultReviewTemplate: [
+    "今天值得记下的事：\n今天的感受或收获：\n接下来想保持或调整的一件事：",
+    "What is worth remembering today?\nHow did it feel, or what did you notice?\nWhat would you like to keep or adjust?",
+  ],
+  reviewPromptsHint: [
+    "按自己的模板想一想，写一句也算。",
+    "Use your own prompts; one honest sentence is enough.",
+  ],
+  reviewTemplateButton: ["编辑我的模板", "Edit my template"],
+  reviewTemplateTitle: ["我的复盘模板", "My review template"],
+  reviewTemplateHelp: [
+    "每行一个问题，最多 8 行。修改模板不会改动已保存的复盘。",
+    "One question per line, up to eight. Editing the template never changes saved reviews.",
+  ],
+  restoreDefaultTemplate: ["恢复默认模板", "Restore default"],
+  saveTemplate: ["保存模板", "Save template"],
+  reviewForDate: ["复盘日期", "Review date"],
+  reviewYesterday: ["昨天", "Yesterday"],
+  reviewToday: ["今天", "Today"],
+  saveReviewComplete: ["保存复盘并完成", "Save review and complete"],
+  reviewSavedFor: ["已保存并完成该日复盘", "Saved and completed for that day"],
+  reviewEmpty: [
+    "还没有写内容；可以先写一句，再保存。",
+    "Nothing written yet—one sentence is enough to save.",
   ],
   backendMissing: [
     "时间工作台后端未启动，请在插件页查看加载状态；更新后可能需要重启 DSH。",

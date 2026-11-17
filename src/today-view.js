@@ -115,6 +115,24 @@ export function todayTasks(state, items, date) {
       .sort((a, b) => a.deadline.localeCompare(b.deadline)),
   };
 }
+export function pendingPreviousHabits(state, date, now = Date.now()) {
+  if (date !== today(state.settings.timeZone, now)) return [];
+  const previous = shift(date, -1);
+  return state.habits
+    .filter((h) => {
+      if (h.deletedAt || !habitDue(h, previous)) return false;
+      const r = habitRule(h, previous),
+        p = habitProgress(state, h, previous, now);
+      return (
+        r?.allowNextDay &&
+        r.mode !== "weekly" &&
+        !p.done &&
+        !p.skipped &&
+        !p.missed
+      );
+    })
+    .map((h) => ({ habit: h, date: previous }));
+}
 export function todayHabits(state, date) {
   const eligible = state.habits.filter(
     (h) => !h.deletedAt && habitDue(h, date),

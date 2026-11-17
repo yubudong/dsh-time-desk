@@ -87,6 +87,7 @@ export const HabitRule = z
     target: z.number().positive().max(1000000).default(1),
     unit: str(20).default("次"),
     paused: z.boolean().default(false),
+    allowNextDay: z.boolean().default(false),
   })
   .refine(
     (r) =>
@@ -124,6 +125,7 @@ export const Settings = z.object({
   longBreak: z.number().int().min(1).max(120).default(15),
   sound: z.boolean().default(false),
   notifications: z.boolean().default(false),
+  reviewTemplate: str(2000).default(""),
 });
 export const DayPlan = z.object({
   date: day,
@@ -164,6 +166,8 @@ export const State = z.object({
       skipped: z.boolean(),
       missed: z.boolean().default(false),
       note: str(3000),
+      completedAt: z.string().nullable().default(null),
+      sourceReviewId: z.string().default(""),
     }),
   ),
   reviews: z.array(
@@ -172,6 +176,7 @@ export const State = z.object({
       date: day,
       kind: z.enum(["day", "week"]),
       text: str(20000),
+      completedAt: z.string().nullable().default(null),
     }),
   ),
   focusLogs: z.array(

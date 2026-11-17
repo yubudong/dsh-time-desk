@@ -57,6 +57,7 @@ export function habitFromTemplate(template, effective, t) {
         target: template.target,
         unit: template.unit,
         paused: false,
+        allowNextDay: template.id === "dailyReview",
       },
     ],
   };

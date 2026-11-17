@@ -1,8 +1,10 @@
+import { blankState } from "../src/schema.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createSpirit, transcriptRow, SPIRIT_PROMPT } from "../src/spirit.js";
 
-function fixture() {
+function fixture({ reviewOnly = false } = {}) {
+  let scopedTool;
   let global = null,
     currentDefault = { provider: "mock", model: "one" },
     configCalls = [],
@@ -72,6 +74,10 @@ function fixture() {
         };
       },
       tools: {
+        register(definition) {
+          scopedTool = definition;
+          return () => {};
+        },
         restrict(value) {
           assert.deepEqual(value, { allow: ["life_desk"] });
           return () => {};
@@ -146,7 +152,8 @@ function fixture() {
         };
       },
       async rename(req) {
-        assert.equal(req.title, "时间精灵");
+        if (reviewOnly) assert.match(req.title, /^复盘精灵/);
+        else assert.equal(req.title, "时间精灵");
       },
     },
     llm: {
@@ -159,6 +166,9 @@ function fixture() {
   return {
     ctx,
     unit,
+    get scopedTool() {
+      return scopedTool;
+    },
     get active() {
       return active;
     },
@@ -337,4 +347,77 @@ test("prompt scope is restricted and error transcript stays explicit", () => {
     }).text,
     "Model unavailable",
   );
+});
+
+test("guided review uses a scoped draft-only tool and cannot write workspace records", async () => {
+  const f = fixture({ reviewOnly: true }),
+    state = blankState("synthetic");
+  state.settings.reviewTemplate = "我的收获？\n下一步？";
+  const service = await createSpirit(f.ctx, f.unit, {
+    reviewOnly: true,
+    readState: async () => state,
+  });
+  const started = await service.operate({
+    action: "startReview",
+    date: "2026-11-16",
+    text: "已有想法",
+    version: 0,
+    requestId: "guided-review-one",
+  });
+  assert.equal(started.review.date, "2026-11-16");
+  assert.equal(f.prompts, 1);
+  assert.equal(f.scopedTool.name, "life_desk");
+  assert.deepEqual(f.scopedTool.parameters.properties.action.enum, ["draft"]);
+  await assert.rejects(
+    f.scopedTool.execute({ action: "save", text: "invalid" }),
+    /会话/,
+  );
+  await f.scopedTool.execute({
+    action: "draft",
+    text: "我今天学到一件事。明天继续练习。",
+  });
+  const view = await service.operate({ action: "read" });
+  assert.match(view.review.draft, /学到/);
+  assert.equal(state.reviews.length, 0);
+  assert.equal(state.habitLogs.length, 0);
+  assert.equal(
+    (
+      await service.operate({
+        action: "startReview",
+        date: "2026-11-16",
+        requestId: "guided-review-one",
+      })
+    ).sessionId,
+    started.sessionId,
+  );
+  assert.equal(f.prompts, 1);
+  await service.close();
+});
+test("review assistant rejects stale source and unfinished template prompts", async () => {
+  const f = fixture({ reviewOnly: true }),
+    state = blankState("synthetic");
+  const service = await createSpirit(f.ctx, f.unit, {
+    reviewOnly: true,
+    readState: async () => state,
+  });
+  await assert.rejects(
+    service.operate({
+      action: "startReview",
+      date: "2026-11-16",
+      version: 1,
+      requestId: "guided-review-stale",
+    }),
+    /变化/,
+  );
+  await service.operate({
+    action: "startReview",
+    date: "2026-11-16",
+    version: 0,
+    requestId: "guided-review-valid",
+  });
+  await assert.rejects(
+    f.scopedTool.execute({ action: "draft", text: "今天值得记下的事：" }),
+    /内容/,
+  );
+  await service.close();
 });

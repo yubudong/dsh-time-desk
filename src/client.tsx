@@ -9,10 +9,11 @@ import { createSpiritPanel } from "./SpiritPanel";
 import { SpiritIcon } from "./SpiritIcon";
 import { createTimerUI } from "./TimerUI";
 import { Tomatoes } from "./Tomatoes";
-import { taskFocus, todayHabits } from "./today-view.js";
+import { taskFocus, todayHabits, pendingPreviousHabits } from "./today-view.js";
 import { dailyPlan, inboxTasks, planKey } from "./planning.js";
 import { createPlanningUI } from "./PlanningUI";
 import { HABIT_TEMPLATES, habitFromTemplate } from "./habit-templates.js";
+import { createReviewUI } from "./ReviewUI";
 import {
   today,
   shift,
@@ -31,7 +32,8 @@ import spiritCss from "./spirit.css";
 import todayCss from "./today.css";
 import focusCss from "./focus.css";
 import planningCss from "./planning.css";
-const css = baseCss + spiritCss + todayCss + focusCss + planningCss;
+import reviewCss from "./review.css";
+const css = baseCss + spiritCss + todayCss + focusCss + planningCss + reviewCss;
 const { useState, useEffect, useRef, useSyncExternalStore } = React;
 const NAV = ["today", "projects", "habits", "life", "calendar", "review"];
 const paths = {
@@ -339,6 +341,40 @@ export function apply(ctx: any) {
       </dialog>
     );
   }
+  const { ReviewEditor, ReviewCheckIn } = createReviewUI({
+    t,
+    Btn,
+    Modal,
+    act,
+    send,
+    drafts: reviewDrafts,
+  });
+  function FoldSection({ title, count, id, className = "", children }: any) {
+    const [open, setOpen] = useState(true);
+    return (
+      <section className={"ld-section ld-fold " + className}>
+        <div className="ld-section-heading">
+          <h2>
+            <button
+              type="button"
+              className="ld-fold-toggle"
+              aria-expanded={open}
+              aria-controls={id}
+              onClick={() => setOpen(!open)}
+            >
+              <span className="ld-fold-chevron">
+                <Icon name="chevron" size={14} />
+              </span>
+              {title}
+            </button>
+          </h2>
+          <span className="ld-fold-count">{count}</span>
+        </div>
+        {open && <div id={id}>{children}</div>}
+      </section>
+    );
+  }
+
   function Field({ label, children, wide = false }: any) {
     return (
       <label className={"ld-field" + (wide ? " ld-wide" : "")}>
@@ -353,8 +389,27 @@ export function apply(ctx: any) {
     const list = habits.filter((h: any) => full || habitDue(h, day));
     const groups = todayHabits(data, day);
     const [record, setRecord] = useState<any>(null);
+    const [review, setReview] = useState<any>(null);
     const [amount, setAmount] = useState("1");
     const [note, setNote] = useState("");
+    const [recordDate, setRecordDate] = useState(day);
+    const previous = pendingPreviousHabits(data, day);
+    const openLog = (h: any, date: string) => {
+      const r = habitRule(h, date),
+        p = habitProgress(data, h, date);
+      if (h.reviewLinked && r?.mode === "daily") {
+        setReview({ habit: h, date });
+        return;
+      }
+      setRecordDate(date);
+      setAmount(
+        ["quantity", "duration"].includes(r?.mode)
+          ? String(Math.max(1, r.target - p.value))
+          : "1",
+      );
+      setNote("");
+      setRecord(h);
+    };
     const renderHabit = (h: any) => {
       const r = habitRule(h, day);
       const p = habitProgress(data, h, day);
@@ -371,15 +426,7 @@ export function apply(ctx: any) {
               className="ld-task-body"
               onClick={() => {
                 if (full) openHabit(h);
-                else {
-                  setAmount(
-                    ["quantity", "duration"].includes(r?.mode)
-                      ? String(Math.max(1, r.target - p.value))
-                      : "1",
-                  );
-                  setNote("");
-                  setRecord(h);
-                }
+                else openLog(h, day);
               }}
             >
               <span className="ld-task-title">{h.title}</span>
@@ -397,10 +444,22 @@ export function apply(ctx: any) {
                           : r?.mode === "quantity"
                             ? `${p.value}/${r.target} ${r.unit}`
                             : p.done
-                              ? t("done")
-                              : "";
+                              ? t(
+                                  p.status === "late"
+                                    ? "habitLate"
+                                    : "habitOnTime",
+                                )
+                              : p.status === "unrecorded"
+                                ? t("habitUnrecorded")
+                                : "";
                 return meta ? (
-                  <span className="ld-task-meta">{meta}</span>
+                  <span className="ld-task-meta">
+                    {meta}
+                    {p.done && ["quantity", "duration"].includes(r?.mode)
+                      ? " · " +
+                        t(p.status === "late" ? "habitLate" : "habitOnTime")
+                      : ""}
+                  </span>
                 ) : null;
               })()}
             </button>
@@ -408,15 +467,7 @@ export function apply(ctx: any) {
               className={"ld-habit-check " + (p.done ? "checked" : "")}
               aria-label={t("log") + " " + h.title}
               disabled={busy || !habitDue(h, day) || day > today(timeZone)}
-              onClick={() => {
-                setAmount(
-                  ["quantity", "duration"].includes(r?.mode)
-                    ? String(Math.max(1, r.target - p.value))
-                    : "1",
-                );
-                setNote("");
-                setRecord(h);
-              }}
+              onClick={() => openLog(h, day)}
             >
               <Icon name={p.done ? "check" : "plus"} size={17} />
             </button>
@@ -428,15 +479,29 @@ export function apply(ctx: any) {
                 return (
                   <button
                     key={d}
-                    className={q.done ? "checked" : ""}
+                    className={
+                      (q.done ? "checked" : "") +
+                      (q.status === "late" ? " ld-habit-late" : "")
+                    }
                     disabled={d > today(timeZone) || !habitDue(h, d)}
-                    title={d}
-                    onClick={() => {
-                      setDay(d);
-                      setAmount("1");
-                      setNote("");
-                      setRecord(h);
-                    }}
+                    title={
+                      d +
+                      " · " +
+                      t(
+                        q.status === "late"
+                          ? "habitLate"
+                          : q.status === "onTime"
+                            ? "habitOnTime"
+                            : q.status === "missed"
+                              ? "missedHabit"
+                              : q.status === "skipped"
+                                ? "skipped"
+                                : q.status === "unrecorded"
+                                  ? "habitUnrecorded"
+                                  : "todo",
+                      )
+                    }
+                    onClick={() => openLog(h, d)}
                   >
                     {d.slice(8)}
                     {q.done ? " ·" : ""}
@@ -455,6 +520,30 @@ export function apply(ctx: any) {
           <div className="ld-habit-list">{list.map(renderHabit)}</div>
         ) : (
           <>
+            {previous.length > 0 && (
+              <section className="ld-previous-habits">
+                <h3>
+                  {t("yesterdayPending")} · {previous.length}
+                </h3>
+                <p className="ld-help">{t("previousHabitHint")}</p>
+                {previous.map(({ habit, date }: any) => (
+                  <div className="ld-habit" key={habit.id + date}>
+                    <div className="ld-habit-main">
+                      <button
+                        className="ld-task-body"
+                        onClick={() => openLog(habit, date)}
+                      >
+                        <span className="ld-task-title">{habit.title}</span>
+                        <span className="ld-task-meta">{date}</span>
+                      </button>
+                      <Btn disabled={busy} onClick={() => openLog(habit, date)}>
+                        {t("log")}
+                      </Btn>
+                    </div>
+                  </div>
+                ))}
+              </section>
+            )}
             {groups.pending.length > 0 && (
               <div className="ld-habit-list">
                 {groups.pending.map(renderHabit)}
@@ -516,14 +605,23 @@ export function apply(ctx: any) {
             )}
           </>
         )}
+        {review && (
+          <ReviewCheckIn
+            habit={review.habit}
+            base={review.date}
+            data={data}
+            busy={busy}
+            close={() => setReview(null)}
+          />
+        )}
         {record && (
           <Modal
-            title={record.title + " · " + day}
+            title={record.title + " · " + recordDate}
             onClose={() => setRecord(null)}
           >
             <p className="ld-help">
               {(() => {
-                const mode = habitRule(record, day)?.mode;
+                const mode = habitRule(record, recordDate)?.mode;
                 return mode === "duration"
                   ? t("durationHint")
                   : mode === "quantity"
@@ -533,11 +631,11 @@ export function apply(ctx: any) {
             </p>
             <div className="ld-form">
               {["quantity", "duration"].includes(
-                habitRule(record, day)?.mode,
+                habitRule(record, recordDate)?.mode,
               ) && (
                 <Field
                   label={
-                    habitRule(record, day)?.mode === "duration"
+                    habitRule(record, recordDate)?.mode === "duration"
                       ? t("addMinutes")
                       : t("addValue")
                   }
@@ -546,7 +644,7 @@ export function apply(ctx: any) {
                     type="number"
                     min="1"
                     max={
-                      habitRule(record, day)?.mode === "duration"
+                      habitRule(record, recordDate)?.mode === "duration"
                         ? 1440
                         : 1000000
                     }
@@ -568,9 +666,9 @@ export function apply(ctx: any) {
                     await run({
                       action: "habitLog",
                       id: record.id,
-                      date: day,
+                      date: recordDate,
                       value: ["quantity", "duration"].includes(
-                        habitRule(record, day)?.mode,
+                        habitRule(record, recordDate)?.mode,
                       )
                         ? Number(amount)
                         : 1,
@@ -581,9 +679,9 @@ export function apply(ctx: any) {
                 }}
               >
                 {t(
-                  habitRule(record, day)?.mode === "duration"
+                  habitRule(record, recordDate)?.mode === "duration"
                     ? "recordMinutes"
-                    : habitRule(record, day)?.mode === "quantity"
+                    : habitRule(record, recordDate)?.mode === "quantity"
                       ? "recordQuantity"
                       : "check",
                 )}
@@ -595,7 +693,7 @@ export function apply(ctx: any) {
                     await run({
                       action: "habitLog",
                       id: record.id,
-                      date: day,
+                      date: recordDate,
                       skipped: true,
                       note,
                     })
@@ -606,13 +704,13 @@ export function apply(ctx: any) {
                 {t("skip")}
               </Btn>
               <Btn
-                disabled={busy || day > today(timeZone)}
+                disabled={busy || recordDate > today(timeZone)}
                 onClick={async () => {
                   if (
                     await run({
                       action: "habitLog",
                       id: record.id,
-                      date: day,
+                      date: recordDate,
                       status: "missed",
                       note,
                     })
@@ -625,7 +723,9 @@ export function apply(ctx: any) {
             </div>
             <h3>{t("history")}</h3>
             {live("habitLogs")
-              .filter((l: any) => l.habitId === record.id && l.date === day)
+              .filter(
+                (l: any) => l.habitId === record.id && l.date === recordDate,
+              )
               .map((l: any) => (
                 <div className="ld-log" key={l.id}>
                   <span>
@@ -635,7 +735,7 @@ export function apply(ctx: any) {
                         ? t("skipped")
                         : l.value +
                           " " +
-                          (habitRule(record, day)?.unit || "")}{" "}
+                          (habitRule(record, recordDate)?.unit || "")}{" "}
                     {l.note}
                   </span>
                   <Btn
@@ -644,7 +744,7 @@ export function apply(ctx: any) {
                       run({
                         action: "habitLog",
                         id: record.id,
-                        date: day,
+                        date: recordDate,
                         removeId: l.id,
                       })
                     }
@@ -662,33 +762,7 @@ export function apply(ctx: any) {
     const { data, day, timeZone, live, busy, run, tasks, projects } = env;
     const [kind, setKind] = useState("day");
     const date = kind === "week" ? monday(day) : day;
-    const original =
-      live("reviews").find((r: any) => r.date === date && r.kind === kind)
-        ?.text || "";
-    const [text, setText] = useState(
-      reviewDrafts.get(kind + ":" + date) ?? original,
-    );
-    const textRef = useRef(text);
-    textRef.current = text;
-    const originalRef = useRef(original);
-    originalRef.current = original;
-    useEffect(() => {
-      setText(reviewDrafts.get(kind + ":" + date) ?? original);
-    }, [date, kind]);
-    useEffect(() => {
-      const f = (e: any) => {
-        if (textRef.current !== originalRef.current) {
-          e.preventDefault();
-          e.returnValue = "";
-        }
-      };
-      window.addEventListener("beforeunload", f);
-      return () => window.removeEventListener("beforeunload", f);
-    }, []);
-    const switchKind = (k: string) => {
-      if (text !== original && !window.confirm(t("dirty"))) return;
-      setKind(k);
-    };
+    const switchKind = (k: string) => setKind(k);
     const from = kind === "week" ? date : day,
       to = kind === "week" ? shift(date, 6) : day;
     const records = live("focusLogs").filter(
@@ -750,32 +824,13 @@ export function apply(ctx: any) {
             <span>{t("check")}</span>
           </div>
         </div>
-        <label className="ld-field">
-          <span>
-            {date} · {t("reviewHint")}
-          </span>
-          <textarea
-            className="ld-review-text"
-            value={text}
-            onChange={(e) => {
-              setText(e.target.value);
-              reviewDrafts.set(kind + ":" + date, e.target.value);
-            }}
-            maxLength={20000}
-          />
-        </label>
-        <div className="ld-actions">
-          <Btn
-            primary
-            disabled={busy}
-            onClick={async () => {
-              if (await run({ action: "review", kind, date, text }))
-                reviewDrafts.delete(kind + ":" + date);
-            }}
-          >
-            {t("save")}
-          </Btn>
-        </div>
+        <ReviewEditor
+          key={kind + ":" + date}
+          data={data}
+          date={date}
+          kind={kind}
+          busy={busy}
+        />
         <section className="ld-section">
           <h2>{t("savedLogs")}</h2>
           {records.length ? (
@@ -1953,32 +2008,6 @@ export function apply(ctx: any) {
         <div className="ld-empty">{t("empty")}</div>
       ) : null;
     }
-    function FoldSection({ title, count, id, className = "", children }: any) {
-      const [open, setOpen] = useState(true);
-      return (
-        <section className={"ld-section ld-fold " + className}>
-          <div className="ld-section-heading">
-            <h2>
-              <button
-                type="button"
-                className="ld-fold-toggle"
-                aria-expanded={open}
-                aria-controls={id}
-                onClick={() => setOpen(!open)}
-              >
-                <span className="ld-fold-chevron">
-                  <Icon name="chevron" size={14} />
-                </span>
-                {title}
-              </button>
-            </h2>
-            <span className="ld-fold-count">{count}</span>
-          </div>
-          {open && <div id={id}>{children}</div>}
-        </section>
-      );
-    }
-
     function section(title: string, items: any[], extra?: any) {
       return (
         <section className="ld-section">
@@ -3115,6 +3144,9 @@ export function apply(ctx: any) {
                       onChange={(e) => {
                         const mode = e.target.value;
                         changeRule("mode", mode);
+                        if (mode !== "daily") change("reviewLinked", false);
+                        if (mode === "weekly")
+                          changeRule("allowNextDay", false);
                         if (mode === "duration") {
                           if (rule.target > 1440 || rule.target < 1)
                             changeRule("target", 30);
@@ -3213,6 +3245,21 @@ export function apply(ctx: any) {
                         : t("completionDailyOnly")}
                     </p>
                   </fieldset>
+                  {rule.mode !== "weekly" && (
+                    <div className="ld-wide">
+                      <label className="ld-check-label">
+                        <input
+                          type="checkbox"
+                          checked={!!rule.allowNextDay}
+                          onChange={(e) =>
+                            changeRule("allowNextDay", e.target.checked)
+                          }
+                        />
+                        {t("allowNextDay")}
+                      </label>
+                      <p className="ld-help">{t("allowNextDayHint")}</p>
+                    </div>
+                  )}
                   <p className="ld-help ld-wide">{t("habitHint")}</p>
                 </>
               )}
