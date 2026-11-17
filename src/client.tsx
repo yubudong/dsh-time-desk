@@ -517,7 +517,9 @@ export function apply(ctx: any) {
     return (
       <>
         {full ? (
-          <div className="ld-habit-list">{list.map(renderHabit)}</div>
+          <div className="ld-habit-list ld-habit-list-full">
+            {list.map(renderHabit)}
+          </div>
         ) : (
           <>
             {previous.length > 0 && (

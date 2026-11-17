@@ -534,6 +534,27 @@
   gap: 12px;
   align-items: center;
 }
+/* Keep habit metadata beside the title, retaining its existing 11px type. */
+.ld-habit-main > .ld-task-body {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 10px;
+  row-gap: 2px;
+}
+.ld-habit-main > .ld-task-body > .ld-task-title,
+.ld-habit-main > .ld-task-body > .ld-task-meta {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+.ld-habit-list-full .ld-habit {
+  padding: 8px 0;
+}
+.ld-habit-list-full .ld-week-dots {
+  margin: 6px 0 0;
+  gap: 6px;
+}
 .ld-habit-period {
   margin-left: 6px;
   font-size: 10px;
