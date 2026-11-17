@@ -66,6 +66,8 @@ const NAV = [
   "review",
 ];
 const paths = {
+  timeDesk:
+    "M12 5.6c-3.15-1.6-6.75-1.6-9-.8v16c2.7-.8 6.3-.8 9 .8 2.7-1.6 6.3-1.6 9-.8v-16c-2.25-.8-5.85-.8-9 .8Zm0 0v16M5.7 10.4l1.62 1.44L10.2 8.8M5.7 16h3.6m5.4-6.4h3.6m-3.6 4h3.6m-3.6 4h2.7",
   today:
     "M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4 M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0",
   projects: "M3 7h7l2 2h9v10H3ZM3 7V5h7l2 2",
@@ -2778,7 +2780,7 @@ export function apply(ctx: any) {
         >
           <nav className="ld-nav" aria-label={t("title")}>
             <div className="ld-brand">
-              <Icon name="review" size={22} />
+              <Icon name="timeDesk" size={22} />
               {!collapsed && <span>{t("title")}</span>}
             </div>
             <button
@@ -4044,7 +4046,7 @@ export function apply(ctx: any) {
         order: 7,
         label: () => t("title"),
       },
-      ({ size }: any) => <Icon name="review" size={size} />,
+      ({ size }: any) => <Icon name="timeDesk" size={size} />,
     ),
   );
   ctx.slots.inject("main", () =>

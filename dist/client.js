@@ -30725,7 +30725,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.9.5",
+        "data-reader-version": "0.9.6",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -30817,7 +30817,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.9.5")))
+      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.9.6")))
     );
   }
   return {
@@ -33680,6 +33680,7 @@ var NAV = [
   "review"
 ];
 var paths = {
+  timeDesk: "M12 5.6c-3.15-1.6-6.75-1.6-9-.8v16c2.7-.8 6.3-.8 9 .8 2.7-1.6 6.3-1.6 9-.8v-16c-2.25-.8-5.85-.8-9 .8Zm0 0v16M5.7 10.4l1.62 1.44L10.2 8.8M5.7 16h3.6m5.4-6.4h3.6m-3.6 4h3.6m-3.6 4h2.7",
   today: "M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4 M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0",
   projects: "M3 7h7l2 2h9v10H3ZM3 7V5h7l2 2",
   habits: "M19 7a8 8 0 1 0 1 8M19 3v5h-5m-6 4 3 3 5-6",
@@ -34441,7 +34442,7 @@ function apply(ctx) {
     const [error, setError] = useState6("");
     const [showNotes, setShowNotes] = useState6(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.9.5";
+    const current = v3.currentVersion || "0.9.6";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -35470,7 +35471,7 @@ function apply(ctx) {
           }
         }
       },
-      /* @__PURE__ */ React10.createElement("nav", { className: "ld-nav", "aria-label": t3("title") }, /* @__PURE__ */ React10.createElement("div", { className: "ld-brand" }, /* @__PURE__ */ React10.createElement(Icon, { name: "review", size: 22 }), !collapsed && /* @__PURE__ */ React10.createElement("span", null, t3("title"))), /* @__PURE__ */ React10.createElement(
+      /* @__PURE__ */ React10.createElement("nav", { className: "ld-nav", "aria-label": t3("title") }, /* @__PURE__ */ React10.createElement("div", { className: "ld-brand" }, /* @__PURE__ */ React10.createElement(Icon, { name: "timeDesk", size: 22 }), !collapsed && /* @__PURE__ */ React10.createElement("span", null, t3("title"))), /* @__PURE__ */ React10.createElement(
         "button",
         {
           className: "ld-nav-add",
@@ -35636,7 +35637,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React10.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.9.5", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React10.createElement(
+        /* @__PURE__ */ React10.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.9.6", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React10.createElement(
           "button",
           {
             className: "ld-update-badge",
@@ -36356,7 +36357,7 @@ function apply(ctx) {
         order: 7,
         label: () => t3("title")
       },
-      ({ size }) => /* @__PURE__ */ React10.createElement(Icon, { name: "review", size })
+      ({ size }) => /* @__PURE__ */ React10.createElement(Icon, { name: "timeDesk", size })
     )
   );
   ctx.slots.inject(
