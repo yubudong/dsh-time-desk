@@ -76,17 +76,23 @@ export const TaskInput = z.object({
     .max(100)
     .default([]),
 });
-export const HabitRule = z.object({
-  effective: day,
-  mode: z.enum(["daily", "quantity", "weekly"]).default("daily"),
-  days: z
-    .array(z.number().int().min(0).max(6))
-    .min(1)
-    .default([0, 1, 2, 3, 4, 5, 6]),
-  target: z.number().positive().max(1000000).default(1),
-  unit: str(20).default("次"),
-  paused: z.boolean().default(false),
-});
+export const HabitRule = z
+  .object({
+    effective: day,
+    mode: z.enum(["daily", "quantity", "duration", "weekly"]).default("daily"),
+    days: z
+      .array(z.number().int().min(0).max(6))
+      .min(1)
+      .default([0, 1, 2, 3, 4, 5, 6]),
+    target: z.number().positive().max(1000000).default(1),
+    unit: str(20).default("次"),
+    paused: z.boolean().default(false),
+  })
+  .refine(
+    (r) =>
+      r.mode !== "duration" || (Number.isInteger(r.target) && r.target <= 1440),
+    "时间目标应为 1–1440 的整数分钟",
+  );
 export const HabitInput = z.object({
   title: str().min(1),
   note: str(3000).default(""),

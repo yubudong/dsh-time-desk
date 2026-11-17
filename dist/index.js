@@ -34816,10 +34816,11 @@ function habitProgress(state, habit, date5) {
     (l) => l.habitId === habit.id && !l.deletedAt && l.date === date5
   );
   const value = logs.filter((l) => !l.skipped).reduce((s, l) => s + l.value, 0);
+  const measured = r.mode === "quantity" || r.mode === "duration";
   return {
     value,
-    target: r.mode === "quantity" ? r.target : 1,
-    done: value >= (r.mode === "quantity" ? r.target : 1),
+    target: measured ? r.target : 1,
+    done: value >= (measured ? r.target : 1),
     skipped: logs.some((l) => l.skipped && !l.missed),
     missed: logs.some((l) => l.missed)
   };
@@ -35006,12 +35007,15 @@ var TaskInput = external_exports.object({
 });
 var HabitRule = external_exports.object({
   effective: day,
-  mode: external_exports.enum(["daily", "quantity", "weekly"]).default("daily"),
+  mode: external_exports.enum(["daily", "quantity", "duration", "weekly"]).default("daily"),
   days: external_exports.array(external_exports.number().int().min(0).max(6)).min(1).default([0, 1, 2, 3, 4, 5, 6]),
   target: external_exports.number().positive().max(1e6).default(1),
   unit: str(20).default("\u6B21"),
   paused: external_exports.boolean().default(false)
-});
+}).refine(
+  (r) => r.mode !== "duration" || Number.isInteger(r.target) && r.target <= 1440,
+  "\u65F6\u95F4\u76EE\u6807\u5E94\u4E3A 1\u20131440 \u7684\u6574\u6570\u5206\u949F"
+);
 var HabitInput = external_exports.object({
   title: str().min(1),
   note: str(3e3).default(""),
@@ -35382,13 +35386,16 @@ function applyAction(current, a, now = Date.now()) {
       stamp(l, now);
     } else {
       const value = Number(a.value ?? 1);
-      if (!Number.isFinite(value) || value < 0 || value > 1e6)
-        fail("\u6570\u91CF\u5E94\u4E3A 0\u20131000000");
       const rule = habitRule(h, date5);
+      const measured = ["quantity", "duration"].includes(rule.mode);
+      if (!Number.isFinite(value) || value < 0 || value > (rule.mode === "duration" ? 1440 : 1e6) || rule.mode === "duration" && !Number.isInteger(value))
+        fail(
+          rule.mode === "duration" ? "\u672C\u6B21\u5206\u949F\u5E94\u4E3A 1\u20131440 \u7684\u6574\u6570" : "\u6570\u91CF\u5E94\u4E3A 0\u20131000000"
+        );
       const logs = s.habitLogs.filter(
         (x) => !x.deletedAt && x.habitId === h.id && x.date === date5
       );
-      if (rule.mode !== "quantity" && !a.skipped && logs.some((x) => !x.skipped && x.value > 0))
+      if (!measured && !a.skipped && logs.some((x) => !x.skipped && x.value > 0))
         fail("\u5F53\u5929\u5DF2\u6253\u5361\uFF0C\u53EF\u5148\u64A4\u9500\u518D\u4FEE\u6539");
       if (logs.some((x) => x.skipped) && !a.skipped)
         for (const l of logs.filter((x) => x.skipped)) {
@@ -36523,7 +36530,7 @@ var guide = {
   save: "\u5148 read \u83B7\u53D6 revision\uFF1Bcollection=projects/tasks/habits\uFF0Citem \u9075\u5FAA schemas\uFF0C\u4FEE\u6539\u5E26 id\uFF0C\u672A\u63D0\u4F9B\u7684\u5B57\u6BB5\u4FDD\u7559\u3002tasks.pomodoros \u4E3A\u9884\u8BA1\u756A\u8304\u6570\u91CF\uFF0C0 \u8868\u793A\u4E0D\u4F30\u7B97\uFF1B\u5B8C\u6574\u4E13\u6CE8\u8F6E\u6570\u72EC\u7ACB\u8BB0\u5F55\u4E14\u4E0D\u81EA\u52A8\u5B8C\u6210\u4EFB\u52A1\u3002\u5220\u9664\u7528 trash\uFF0C\u6062\u590D\u7528 restore\u3002",
   occurrence: "\u91CD\u590D\u4E8B\u9879\u7684\u5355\u6B21\u72B6\u6001/\u6539\u671F\uFF1Aid=taskId\u3001originalDate=\u539F\u59CB\u53D1\u751F\u65E5\u3001date=\u6539\u540E\u65E5\u671F\u3001time=\u65F6\u523B\u3001status=todo/doing/done/skipped/cancelled\u3002\u65E0\u65E5\u671F\u4EFB\u52A1\u5148 save \u8BBE\u7F6E date\u3002",
   splitSeries: "\u4FEE\u6539\u8FD9\u6B21\u53CA\u4EE5\u540E\uFF1Aid\u3001originalDate\u3001item \u4E3A\u65B0\u4EFB\u52A1\u5B57\u6BB5\uFF0C\u5FC5\u987B\u5148\u5C55\u793A\u8303\u56F4\u5E76\u5F97\u5230\u7528\u6237\u540C\u610F\u3002",
-  habitLog: "id=habitId\u3001date\u3001value=\u672C\u6B21\u589E\u52A0\u6570\u91CF\u3001note \u53EF\u9009\u3001skipped \u53EF\u9009\u3002status=missed \u6807\u8BB0\u672A\u8FBE\u6210\uFF1Bstatus=planned/unplanned \u5B89\u6392\u6216\u53D6\u6D88\u8BE5\u65E5\u7684\u6BCF\u5468\u6B21\u6570\u4E60\u60EF\uFF0C\u4E0D\u4EA7\u751F\u6253\u5361\u3002\u64A4\u9500\u6253\u5361\u7528 removeId=habitLogId\u3002\u5468\u6B21\u6570\u6309\u4E0D\u540C\u5929\u8BA1\u7B97\u3002",
+  habitLog: "id=habitId\u3001date\u3001value=\u672C\u6B21\u589E\u52A0\u6570\u91CF\uFF0Cduration \u4E60\u60EF\u5219\u4E3A\u672C\u6B21\u5206\u949F\uFF081\u20131440 \u6574\u6570\uFF09\u3001note \u53EF\u9009\u3001skipped \u53EF\u9009\u3002status=missed \u6807\u8BB0\u672A\u8FBE\u6210\uFF1Bstatus=planned/unplanned \u5B89\u6392\u6216\u53D6\u6D88\u8BE5\u65E5\u7684\u6BCF\u5468\u6B21\u6570\u4E60\u60EF\uFF0C\u4E0D\u4EA7\u751F\u6253\u5361\u3002\u64A4\u9500\u6253\u5361\u7528 removeId=habitLogId\u3002\u5468\u6B21\u6570\u6309\u4E0D\u540C\u5929\u8BA1\u7B97\u3002",
   review: "date\u3001kind=day/week\u3001text\u3002\u65E5\u590D\u76D8\u53EF\u5B8C\u6210 reviewLinked \u4E60\u60EF\u3002",
   timer: "command=start/pause/resume/await/finish/discard\uFF1Bstart \u652F\u6301 phase=focus/short/long\u3001taskId\u3001originalDate\uFF0C\u53EF\u901A\u8FC7 item.minutes \u8BBE\u7F6E\u4EC5\u672C\u8F6E\u4E13\u6CE8\u65F6\u957F\uFF081\u2013180 \u6574\u6570\uFF0C\u4E0D\u6539\u53D8\u9ED8\u8BA4\uFF09\u3002\u4FEE\u6539\u9ED8\u8BA4\u7528 settings item.focusMinutes\uFF0C\u4E0D\u5F71\u54CD\u8FD0\u884C\u4E2D\u8BA1\u65F6\uFF1Bsettings.timerFace \u53EF\u4E3A digital/ring/flip/hourglass\u3002\u5176\u4F59\u8BA1\u65F6\u64CD\u4F5C\u9700\u8981 timerId\u3002\u63D0\u524D finish \u53EF\u4F20\u4FEE\u6B63 seconds\u3002",
   backup: "\u8FD4\u56DE\u5907\u4EFD\uFF1BrestoreBackup \u9700\u8981 backup\u3001confirm=true \u548C\u6700\u65B0 revision\uFF0C\u5148\u5F97\u5230\u7528\u6237\u660E\u786E\u540C\u610F\u3002restorePrevious \u6062\u590D\u5BFC\u5165\u524D\u7684\u6301\u4E45\u5907\u4EFD\u3002",
@@ -36560,7 +36567,7 @@ async function apply(ctx) {
       hasGlobal: true,
       layout: "single"
     });
-    const currentVersion = true ? "0.7.5" : "0.0.0";
+    const currentVersion = true ? "0.7.6" : "0.0.0";
     updateService = createUpdateService({
       unit: updateUnit,
       currentVersion,
@@ -36584,7 +36591,7 @@ async function apply(ctx) {
     });
     upgradeService = createUpgradeService({
       unit: upgradeUnit,
-      currentVersion: true ? "0.7.5" : null,
+      currentVersion: true ? "0.7.6" : null,
       isBusy: async () => !!(spiritService && (await spiritService.operate({ action: "read" })).busy),
       readState: () => service.operate({ action: "read" }),
       restoreState: (a) => service.operate({

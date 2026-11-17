@@ -21,7 +21,7 @@ const guide = {
   splitSeries:
     "修改这次及以后：id、originalDate、item 为新任务字段，必须先展示范围并得到用户同意。",
   habitLog:
-    "id=habitId、date、value=本次增加数量、note 可选、skipped 可选。status=missed 标记未达成；status=planned/unplanned 安排或取消该日的每周次数习惯，不产生打卡。撤销打卡用 removeId=habitLogId。周次数按不同天计算。",
+    "id=habitId、date、value=本次增加数量，duration 习惯则为本次分钟（1–1440 整数）、note 可选、skipped 可选。status=missed 标记未达成；status=planned/unplanned 安排或取消该日的每周次数习惯，不产生打卡。撤销打卡用 removeId=habitLogId。周次数按不同天计算。",
   review: "date、kind=day/week、text。日复盘可完成 reviewLinked 习惯。",
   timer:
     "command=start/pause/resume/await/finish/discard；start 支持 phase=focus/short/long、taskId、originalDate，可通过 item.minutes 设置仅本轮专注时长（1–180 整数，不改变默认）。修改默认用 settings item.focusMinutes，不影响运行中计时；settings.timerFace 可为 digital/ring/flip/hourglass。其余计时操作需要 timerId。提前 finish 可传修正 seconds。",

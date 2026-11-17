@@ -5,9 +5,9 @@ export const HABIT_TEMPLATES = [
     id: "reading",
     titleKey: "templateReading",
     noteKey: "templateReadingNote",
-    mode: "daily",
-    target: 1,
-    unit: "次",
+    mode: "duration",
+    target: 30,
+    unit: "分钟",
   },
   {
     id: "exercise",

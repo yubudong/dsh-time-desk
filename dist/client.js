@@ -17100,6 +17100,14 @@ var copy = {
   habitMode: ["\u8BB0\u5F55\u65B9\u5F0F", "Tracking"],
   daily: ["\u6253\u5361\u578B", "Check-in"],
   quantity: ["\u6570\u91CF\u76EE\u6807", "Quantity"],
+  durationMode: ["\u65F6\u95F4\u76EE\u6807", "Time goal"],
+  targetMinutes: ["\u6BCF\u65E5\u76EE\u6807\u5206\u949F", "Daily target minutes"],
+  addMinutes: ["\u589E\u52A0\u5206\u949F", "Add minutes"],
+  recordMinutes: ["\u8BB0\u5F55\u5206\u949F", "Record minutes"],
+  durationHint: [
+    "\u8F93\u5165\u672C\u6B21\u5B8C\u6210\u7684\u5206\u949F\uFF0C\u53EF\u5206\u591A\u6B21\u7D2F\u52A0\uFF1B\u8FBE\u5230\u5F53\u65E5\u76EE\u6807\u540E\u81EA\u52A8\u5B8C\u6210\u3002",
+    "Enter the minutes completed now. Partial entries add up to the daily target."
+  ],
   weekly: ["\u6BCF\u5468\u6B21\u6570", "Days per week"],
   target: ["\u76EE\u6807\u6570\u91CF\uFF0F\u6BCF\u5468\u5929\u6570", "Target amount / days per week"],
   unit: ["\u5355\u4F4D", "Unit"],
@@ -29576,10 +29584,11 @@ function habitProgress(state, habit, date) {
     (l3) => l3.habitId === habit.id && !l3.deletedAt && l3.date === date
   );
   const value = logs.filter((l3) => !l3.skipped).reduce((s3, l3) => s3 + l3.value, 0);
+  const measured = r3.mode === "quantity" || r3.mode === "duration";
   return {
     value,
-    target: r3.mode === "quantity" ? r3.target : 1,
-    done: value >= (r3.mode === "quantity" ? r3.target : 1),
+    target: measured ? r3.target : 1,
+    done: value >= (measured ? r3.target : 1),
     skipped: logs.some((l3) => l3.skipped && !l3.missed),
     missed: logs.some((l3) => l3.missed)
   };
@@ -30344,7 +30353,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.7.5",
+        "data-reader-version": "0.7.6",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -30436,7 +30445,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.7.5")))
+      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.7.6")))
     );
   }
   return {
@@ -30778,9 +30787,9 @@ var HABIT_TEMPLATES = [
     id: "reading",
     titleKey: "templateReading",
     noteKey: "templateReadingNote",
-    mode: "daily",
-    target: 1,
-    unit: "\u6B21"
+    mode: "duration",
+    target: 30,
+    unit: "\u5206\u949F"
   },
   {
     id: "exercise",
@@ -31877,7 +31886,7 @@ function apply(ctx) {
             if (full) openHabit(h3);
             else {
               setAmount(
-                r3?.mode === "quantity" ? String(Math.max(1, r3.target - p3.value)) : "1"
+                ["quantity", "duration"].includes(r3?.mode) ? String(Math.max(1, r3.target - p3.value)) : "1"
               );
               setNote("");
               setRecord(h3);
@@ -31886,7 +31895,7 @@ function apply(ctx) {
         },
         /* @__PURE__ */ React8.createElement("span", { className: "ld-task-title" }, h3.title),
         (() => {
-          const meta = r3?.paused ? t3("paused") : p3.missed ? t3("missedHabit") : p3.skipped ? t3("skipped") : r3?.mode === "weekly" ? `${t3("weekly")} \xB7 ${count}/${r3.target}` : r3?.mode === "quantity" ? `${p3.value}/${r3.target} ${r3.unit}` : p3.done ? t3("done") : "";
+          const meta = r3?.paused ? t3("paused") : p3.missed ? t3("missedHabit") : p3.skipped ? t3("skipped") : r3?.mode === "weekly" ? `${t3("weekly")} \xB7 ${count}/${r3.target}` : r3?.mode === "duration" ? `${p3.value}/${r3.target} ${t3("min")}` : r3?.mode === "quantity" ? `${p3.value}/${r3.target} ${r3.unit}` : p3.done ? t3("done") : "";
           return meta ? /* @__PURE__ */ React8.createElement("span", { className: "ld-task-meta" }, meta) : null;
         })()
       ), /* @__PURE__ */ React8.createElement(
@@ -31897,7 +31906,7 @@ function apply(ctx) {
           disabled: busy || !habitDue(h3, day) || day > today(timeZone),
           onClick: () => {
             setAmount(
-              r3?.mode === "quantity" ? String(Math.max(1, r3.target - p3.value)) : "1"
+              ["quantity", "duration"].includes(r3?.mode) ? String(Math.max(1, r3.target - p3.value)) : "1"
             );
             setNote("");
             setRecord(h3);
@@ -31951,19 +31960,28 @@ function apply(ctx) {
         title: record.title + " \xB7 " + day,
         onClose: () => setRecord(null)
       },
-      /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3(
-        habitRule(record, day)?.mode === "quantity" ? "quantityHint" : "checkInHint"
-      )),
-      /* @__PURE__ */ React8.createElement("div", { className: "ld-form" }, habitRule(record, day)?.mode === "quantity" && /* @__PURE__ */ React8.createElement(Field, { label: t3("addValue") }, /* @__PURE__ */ React8.createElement(
-        "input",
+      /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, (() => {
+        const mode = habitRule(record, day)?.mode;
+        return mode === "duration" ? t3("durationHint") : mode === "quantity" ? t3("quantityHint") : t3("checkInHint");
+      })()),
+      /* @__PURE__ */ React8.createElement("div", { className: "ld-form" }, ["quantity", "duration"].includes(
+        habitRule(record, day)?.mode
+      ) && /* @__PURE__ */ React8.createElement(
+        Field,
         {
-          type: "number",
-          min: "1",
-          max: "1000000",
-          value: amount,
-          onChange: (e3) => setAmount(e3.target.value)
-        }
-      )), /* @__PURE__ */ React8.createElement(Field, { label: t3("note") }, /* @__PURE__ */ React8.createElement("input", { value: note, onChange: (e3) => setNote(e3.target.value) }))),
+          label: habitRule(record, day)?.mode === "duration" ? t3("addMinutes") : t3("addValue")
+        },
+        /* @__PURE__ */ React8.createElement(
+          "input",
+          {
+            type: "number",
+            min: "1",
+            max: habitRule(record, day)?.mode === "duration" ? 1440 : 1e6,
+            value: amount,
+            onChange: (e3) => setAmount(e3.target.value)
+          }
+        )
+      ), /* @__PURE__ */ React8.createElement(Field, { label: t3("note") }, /* @__PURE__ */ React8.createElement("input", { value: note, onChange: (e3) => setNote(e3.target.value) }))),
       /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
         Btn,
         {
@@ -31974,14 +31992,16 @@ function apply(ctx) {
               action: "habitLog",
               id: record.id,
               date: day,
-              value: habitRule(record, day)?.mode === "quantity" ? Number(amount) : 1,
+              value: ["quantity", "duration"].includes(
+                habitRule(record, day)?.mode
+              ) ? Number(amount) : 1,
               note
             }))
               setRecord(null);
           }
         },
         t3(
-          habitRule(record, day)?.mode === "quantity" ? "recordQuantity" : "check"
+          habitRule(record, day)?.mode === "duration" ? "recordMinutes" : habitRule(record, day)?.mode === "quantity" ? "recordQuantity" : "check"
         )
       ), /* @__PURE__ */ React8.createElement(
         Btn,
@@ -32248,7 +32268,7 @@ function apply(ctx) {
     const [error, setError] = useState4("");
     const [showNotes, setShowNotes] = useState4(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.7.5";
+    const current = v3.currentVersion || "0.7.6";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -33338,7 +33358,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React8.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.7.5", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React8.createElement(
+        /* @__PURE__ */ React8.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.7.6", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React8.createElement(
           "button",
           {
             className: "ld-update-badge",
@@ -33628,9 +33648,17 @@ function apply(ctx) {
         "select",
         {
           value: rule.mode,
-          onChange: (e3) => changeRule("mode", e3.target.value)
+          onChange: (e3) => {
+            const mode = e3.target.value;
+            changeRule("mode", mode);
+            if (mode === "duration") {
+              if (rule.target > 1440 || rule.target < 1)
+                changeRule("target", 30);
+              changeRule("unit", "\u5206\u949F");
+            }
+          }
         },
-        ["daily", "quantity", "weekly"].map((m3) => /* @__PURE__ */ React8.createElement("option", { key: m3, value: m3 }, t3(m3)))
+        ["daily", "quantity", "duration", "weekly"].map((m3) => /* @__PURE__ */ React8.createElement("option", { key: m3, value: m3 }, t3(m3 === "duration" ? "durationMode" : m3)))
       )), /* @__PURE__ */ React8.createElement(Field, { label: t3("effective") }, /* @__PURE__ */ React8.createElement(
         "input",
         {
@@ -33640,17 +33668,23 @@ function apply(ctx) {
           min: item.id ? day : void 0,
           onChange: (e3) => changeRule("effective", e3.target.value)
         }
-      )), rule.mode !== "daily" && /* @__PURE__ */ React8.createElement(Field, { label: t3("target") }, /* @__PURE__ */ React8.createElement(
-        "input",
+      )), rule.mode !== "daily" && /* @__PURE__ */ React8.createElement(
+        Field,
         {
-          type: "number",
-          required: true,
-          min: "1",
-          max: rule.mode === "weekly" ? 7 : 1e6,
-          value: rule.target,
-          onChange: (e3) => changeRule("target", Number(e3.target.value))
-        }
-      )), rule.mode === "quantity" && /* @__PURE__ */ React8.createElement(Field, { label: t3("unit") }, /* @__PURE__ */ React8.createElement(
+          label: rule.mode === "duration" ? t3("targetMinutes") : t3("target")
+        },
+        /* @__PURE__ */ React8.createElement(
+          "input",
+          {
+            type: "number",
+            required: true,
+            min: "1",
+            max: rule.mode === "weekly" ? 7 : rule.mode === "duration" ? 1440 : 1e6,
+            value: rule.target,
+            onChange: (e3) => changeRule("target", Number(e3.target.value))
+          }
+        )
+      ), rule.mode === "quantity" && /* @__PURE__ */ React8.createElement(Field, { label: t3("unit") }, /* @__PURE__ */ React8.createElement(
         "input",
         {
           value: rule.unit,

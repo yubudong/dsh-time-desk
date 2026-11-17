@@ -373,7 +373,7 @@ export function apply(ctx: any) {
                 if (full) openHabit(h);
                 else {
                   setAmount(
-                    r?.mode === "quantity"
+                    ["quantity", "duration"].includes(r?.mode)
                       ? String(Math.max(1, r.target - p.value))
                       : "1",
                   );
@@ -392,11 +392,13 @@ export function apply(ctx: any) {
                       ? t("skipped")
                       : r?.mode === "weekly"
                         ? `${t("weekly")} · ${count}/${r.target}`
-                        : r?.mode === "quantity"
-                          ? `${p.value}/${r.target} ${r.unit}`
-                          : p.done
-                            ? t("done")
-                            : "";
+                        : r?.mode === "duration"
+                          ? `${p.value}/${r.target} ${t("min")}`
+                          : r?.mode === "quantity"
+                            ? `${p.value}/${r.target} ${r.unit}`
+                            : p.done
+                              ? t("done")
+                              : "";
                 return meta ? (
                   <span className="ld-task-meta">{meta}</span>
                 ) : null;
@@ -408,7 +410,7 @@ export function apply(ctx: any) {
               disabled={busy || !habitDue(h, day) || day > today(timeZone)}
               onClick={() => {
                 setAmount(
-                  r?.mode === "quantity"
+                  ["quantity", "duration"].includes(r?.mode)
                     ? String(Math.max(1, r.target - p.value))
                     : "1",
                 );
@@ -520,19 +522,34 @@ export function apply(ctx: any) {
             onClose={() => setRecord(null)}
           >
             <p className="ld-help">
-              {t(
-                habitRule(record, day)?.mode === "quantity"
-                  ? "quantityHint"
-                  : "checkInHint",
-              )}
+              {(() => {
+                const mode = habitRule(record, day)?.mode;
+                return mode === "duration"
+                  ? t("durationHint")
+                  : mode === "quantity"
+                    ? t("quantityHint")
+                    : t("checkInHint");
+              })()}
             </p>
             <div className="ld-form">
-              {habitRule(record, day)?.mode === "quantity" && (
-                <Field label={t("addValue")}>
+              {["quantity", "duration"].includes(
+                habitRule(record, day)?.mode,
+              ) && (
+                <Field
+                  label={
+                    habitRule(record, day)?.mode === "duration"
+                      ? t("addMinutes")
+                      : t("addValue")
+                  }
+                >
                   <input
                     type="number"
                     min="1"
-                    max="1000000"
+                    max={
+                      habitRule(record, day)?.mode === "duration"
+                        ? 1440
+                        : 1000000
+                    }
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                   />
@@ -552,10 +569,11 @@ export function apply(ctx: any) {
                       action: "habitLog",
                       id: record.id,
                       date: day,
-                      value:
-                        habitRule(record, day)?.mode === "quantity"
-                          ? Number(amount)
-                          : 1,
+                      value: ["quantity", "duration"].includes(
+                        habitRule(record, day)?.mode,
+                      )
+                        ? Number(amount)
+                        : 1,
                       note,
                     })
                   )
@@ -563,9 +581,11 @@ export function apply(ctx: any) {
                 }}
               >
                 {t(
-                  habitRule(record, day)?.mode === "quantity"
-                    ? "recordQuantity"
-                    : "check",
+                  habitRule(record, day)?.mode === "duration"
+                    ? "recordMinutes"
+                    : habitRule(record, day)?.mode === "quantity"
+                      ? "recordQuantity"
+                      : "check",
                 )}
               </Btn>
               <Btn
@@ -3092,11 +3112,19 @@ export function apply(ctx: any) {
                   <Field label={t("habitMode")}>
                     <select
                       value={rule.mode}
-                      onChange={(e) => changeRule("mode", e.target.value)}
+                      onChange={(e) => {
+                        const mode = e.target.value;
+                        changeRule("mode", mode);
+                        if (mode === "duration") {
+                          if (rule.target > 1440 || rule.target < 1)
+                            changeRule("target", 30);
+                          changeRule("unit", "分钟");
+                        }
+                      }}
                     >
-                      {["daily", "quantity", "weekly"].map((m) => (
+                      {["daily", "quantity", "duration", "weekly"].map((m) => (
                         <option key={m} value={m}>
-                          {t(m)}
+                          {t(m === "duration" ? "durationMode" : m)}
                         </option>
                       ))}
                     </select>
@@ -3111,12 +3139,24 @@ export function apply(ctx: any) {
                     />
                   </Field>
                   {rule.mode !== "daily" && (
-                    <Field label={t("target")}>
+                    <Field
+                      label={
+                        rule.mode === "duration"
+                          ? t("targetMinutes")
+                          : t("target")
+                      }
+                    >
                       <input
                         type="number"
                         required
                         min="1"
-                        max={rule.mode === "weekly" ? 7 : 1000000}
+                        max={
+                          rule.mode === "weekly"
+                            ? 7
+                            : rule.mode === "duration"
+                              ? 1440
+                              : 1000000
+                        }
                         value={rule.target}
                         onChange={(e) =>
                           changeRule("target", Number(e.target.value))

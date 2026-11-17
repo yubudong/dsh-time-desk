@@ -311,14 +311,24 @@ export function applyAction(current, a, now = Date.now()) {
       stamp(l, now);
     } else {
       const value = Number(a.value ?? 1);
-      if (!Number.isFinite(value) || value < 0 || value > 1000000)
-        fail("数量应为 0–1000000");
       const rule = habitRule(h, date);
+      const measured = ["quantity", "duration"].includes(rule.mode);
+      if (
+        !Number.isFinite(value) ||
+        value < 0 ||
+        value > (rule.mode === "duration" ? 1440 : 1000000) ||
+        (rule.mode === "duration" && !Number.isInteger(value))
+      )
+        fail(
+          rule.mode === "duration"
+            ? "本次分钟应为 1–1440 的整数"
+            : "数量应为 0–1000000",
+        );
       const logs = s.habitLogs.filter(
         (x) => !x.deletedAt && x.habitId === h.id && x.date === date,
       );
       if (
-        rule.mode !== "quantity" &&
+        !measured &&
         !a.skipped &&
         logs.some((x) => !x.skipped && x.value > 0)
       )

@@ -212,10 +212,11 @@ export function habitProgress(state, habit, date) {
     (l) => l.habitId === habit.id && !l.deletedAt && l.date === date,
   );
   const value = logs.filter((l) => !l.skipped).reduce((s, l) => s + l.value, 0);
+  const measured = r.mode === "quantity" || r.mode === "duration";
   return {
     value,
-    target: r.mode === "quantity" ? r.target : 1,
-    done: value >= (r.mode === "quantity" ? r.target : 1),
+    target: measured ? r.target : 1,
+    done: value >= (measured ? r.target : 1),
     skipped: logs.some((l) => l.skipped && !l.missed),
     missed: logs.some((l) => l.missed),
   };
