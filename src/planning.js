@@ -1,4 +1,5 @@
 import { occurrences, shift } from "./dates.js";
+import { lessonOccurrences } from "./lessons.js";
 import { todayTasks } from "./today-view.js";
 export const planKey = (x) => x.id + "@" + (x.originalDate || x.date || "");
 export const inboxTasks = (state) =>
@@ -72,4 +73,47 @@ export function dailyPlan(
       ),
     },
   };
+}
+
+export function deadlineDays(task, date) {
+  return Math.round(
+    (Date.parse(task.deadline + "T00:00:00Z") -
+      Date.parse(date + "T00:00:00Z")) /
+      86400000,
+  );
+}
+/** Next days' timed appointments: tasks with a time/event and lessons. */
+export function upcomingPlans(state, date, days = 7) {
+  const from = shift(date, 1),
+    to = shift(date, days);
+  const tasks = occurrences(state, from, to)
+    .filter(
+      (x) =>
+        !x.deletedAt &&
+        (x.time || x.event) &&
+        !["done", "cancelled", "skipped"].includes(x.status),
+    )
+    .map((x) => ({
+      kind: "task",
+      date: x.date,
+      time: x.time || "",
+      title: x.title,
+      participant: "",
+      task: x,
+    }));
+  const lessons = state.lessons
+    .filter((l) => !l.deletedAt)
+    .flatMap((l) => lessonOccurrences(state, l, from, to))
+    .filter((x) => x.status === "scheduled")
+    .map((x) => ({
+      kind: "lesson",
+      date: x.date,
+      time: x.time || "",
+      title: x.title,
+      participant: x.participant || "",
+      lesson: x,
+    }));
+  return [...tasks, ...lessons].sort((a, b) =>
+    (a.date + (a.time || "99:99")).localeCompare(b.date + (b.time || "99:99")),
+  );
 }

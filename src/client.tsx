@@ -10,7 +10,13 @@ import { SpiritIcon } from "./SpiritIcon";
 import { createTimerUI } from "./TimerUI";
 import { Tomatoes } from "./Tomatoes";
 import { taskFocus, todayHabits, pendingPreviousHabits } from "./today-view.js";
-import { dailyPlan, inboxTasks, planKey } from "./planning.js";
+import {
+  dailyPlan,
+  deadlineDays,
+  inboxTasks,
+  planKey,
+  upcomingPlans,
+} from "./planning.js";
 import { createPlanningUI } from "./PlanningUI";
 import { HABIT_TEMPLATES, habitFromTemplate } from "./habit-templates.js";
 import { createReviewUI } from "./ReviewUI";
@@ -1076,7 +1082,10 @@ export function apply(ctx: any) {
             const p = info.event.extendedProps;
             if (p.lesson) {
               setDay(p.lesson.date);
-              env.openLesson({ type: "detail", lessonId: p.lesson.lessonId });
+              env.openLesson({
+                type: "detail",
+                lessonId: p.lesson.lessonId,
+              });
             } else if (p.habit) {
               setDay(p.date);
               setTab("habits");
@@ -2364,48 +2373,55 @@ export function apply(ctx: any) {
             );
           if (id === "weekly")
             return <HabitCards weeklyOnly env={viewEnv} key={id} />;
-          if (id === "upcoming")
+          if (id === "upcoming") {
+            const plans = upcomingPlans(data, day, 7);
             return (
               <section className="ld-section" key={id}>
-                <h2>{t("upcoming")}</h2>
-                {range
-                  .filter(
-                    (x: any) =>
-                      x.date > day &&
-                      x.date <= shift(day, 14) &&
-                      (x.event || x.reminderMinutes !== null || x.deadline) &&
-                      !["done", "cancelled", "skipped"].includes(x.status),
-                  )
-                  .slice(0, 5)
-                  .map((x: any) => (
-                    <button
-                      key={x.id + x.originalDate}
-                      className="ld-upcoming"
-                      onClick={() =>
-                        openTask(
-                          tasks.find((q: any) => q.id === x.id),
-                          { occurrence: x },
-                        )
+                <div className="ld-section-heading">
+                  <h2>{t("upcoming")}</h2>
+                  {plans.length > 0 && (
+                    <Btn onClick={() => setTab("calendar")}>
+                      {t("viewCalendar")}
+                    </Btn>
+                  )}
+                </div>
+                {plans.slice(0, 5).map((p: any) => (
+                  <button
+                    key={p.kind + ":" + (p.task?.id || p.lesson?.key) + p.date}
+                    className="ld-upcoming"
+                    onClick={() => {
+                      if (p.kind === "lesson") {
+                        viewEnv.openLesson({
+                          type: "detail",
+                          lessonId: p.lesson.lessonId,
+                        });
+                        return;
                       }
-                    >
-                      <strong>{x.title}</strong>
-                      <span>
-                        {x.date}
-                        {x.repeat.kind === "lunar"
-                          ? " · " + lunarLabel(x.date)
-                          : ""}
-                      </span>
-                    </button>
-                  ))}
-                {!range.some(
-                  (x: any) =>
-                    x.date > day &&
-                    x.date <= shift(day, 14) &&
-                    (x.event || x.reminderMinutes !== null || x.deadline) &&
-                    !["done", "cancelled", "skipped"].includes(x.status),
-                ) && <p className="ld-help">{t("noUpcoming")}</p>}
+                      openTask(
+                        tasks.find((q: any) => q.id === p.task.id),
+                        { occurrence: p.task },
+                      );
+                    }}
+                  >
+                    <strong>
+                      {p.title}
+                      {p.participant ? " · " + p.participant : ""}
+                    </strong>
+                    <span>
+                      {p.date} {p.time || t("allDay")}
+                      {p.kind === "lesson" ? " · " + t("lessons") : ""}
+                    </span>
+                  </button>
+                ))}
+                {plans.length > 5 && (
+                  <p className="ld-help">
+                    {t("futureMore").replace("{n}", String(plans.length - 5))}
+                  </p>
+                )}
+                {!plans.length && <p className="ld-help">{t("noUpcoming")}</p>}
               </section>
             );
+          }
           return null;
         };
         return (

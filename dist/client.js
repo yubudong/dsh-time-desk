@@ -16757,7 +16757,10 @@ var copy = {
   delete: ["\u5220\u9664", "Delete"],
   noneDone: ["\u4ECA\u5929\u8FD8\u6CA1\u6709\u5B8C\u6210\u4E8B\u9879\u3002", "Nothing completed today."],
   inboxEmpty: ["\u6536\u4EF6\u7BB1\u5DF2\u6E05\u7A7A\u3002", "Inbox is empty."],
-  noWeeklyHabits: ["\u6CA1\u6709\u9700\u8981\u5B89\u6392\u672C\u5468\u76EE\u6807\u7684\u4E60\u60EF\u3002", "No weekly goals to plan."],
+  noWeeklyHabits: [
+    "\u672C\u5468\u6CA1\u6709\u9700\u8981\u5B89\u6392\u7684\u4E60\u60EF\u76EE\u6807\u3002",
+    "No weekly habit goals to plan."
+  ],
   weekdayShort0: ["\u5468\u65E5", "Sun"],
   weekdayShort1: ["\u5468\u4E00", "Mon"],
   weekdayShort2: ["\u5468\u4E8C", "Tue"],
@@ -17165,7 +17168,11 @@ var copy = {
     "\u6BCF\u5B8C\u6210\u4E00\u6574\u8F6E\u70B9\u4EAE\u4E00\u9897\uFF1B\u63D0\u524D\u7ED3\u675F\u53EA\u8BB0\u5F55\u65F6\u95F4\u3002\u9884\u8BA1\u6570\u91CF\u4E0D\u9650\u5236\u7EE7\u7EED\u4E13\u6CE8\u3002",
     "A full round fills one tomato. Partial rounds track time only. Estimates do not limit work."
   ],
-  deadlineWatch: ["\u622A\u6B62\u63D0\u9192", "Deadlines"],
+  deadlineWatch: ["\u5F85\u529E\u622A\u6B62", "Task deadlines"],
+  deadlineOverdue: ["\u5DF2\u903E\u671F {n} \u5929", "{n} days overdue"],
+  deadlineInDays: ["\u8FD8\u5269 {n} \u5929", "{n} days left"],
+  viewCalendar: ["\u67E5\u770B\u65E5\u5386", "View calendar"],
+  futureMore: ["\u8FD8\u6709 {n} \u9879\uFF0C\u53EF\u5728\u65E5\u5386\u67E5\u770B\u3002", "{n} more in the calendar."],
   dueToday: ["\u4ECA\u5929\u622A\u6B62", "Due today"],
   pastDeadline: ["\u5DF2\u8FC7\u622A\u6B62\u65E5\u671F", "Past deadline"],
   noPendingHabits: [
@@ -17401,9 +17408,12 @@ var copy = {
   confirmFinish: ["\u786E\u8BA4\u7ED3\u675F", "End session"],
   nowFocus: ["\u5F53\u524D\u4E13\u6CE8", "Current focus"],
   todayHabits: ["\u4ECA\u65E5\u4E60\u60EF", "Today\u2019s habits"],
-  weeklyHabits: ["\u672C\u5468\u76EE\u6807", "Weekly goals"],
-  upcoming: ["\u8FD1\u671F\u63D0\u9192", "Coming up"],
-  noUpcoming: ["\u8FD1\u671F\u6CA1\u6709\u8BBE\u7F6E\u63D0\u9192\u7684\u4E8B\u9879\u3002", "No upcoming reminders."],
+  weeklyHabits: ["\u672C\u5468\u4E60\u60EF\u76EE\u6807", "Weekly habit goals"],
+  upcoming: ["\u672A\u6765\u5B89\u6392", "Coming up"],
+  noUpcoming: [
+    "\u672A\u6765\u4E03\u5929\u6CA1\u6709\u9700\u8981\u6309\u65F6\u95F4\u53C2\u52A0\u7684\u4E8B\u9879\u3002",
+    "Nothing scheduled in the next seven days."
+  ],
   noHabit: ["\u4ECE\u4E00\u4E2A\u5BB9\u6613\u505A\u5230\u7684\u4E60\u60EF\u5F00\u59CB\u3002", "Start with one easy habit."],
   check: ["\u6253\u5361", "Check in"],
   addValue: ["\u589E\u52A0\u6570\u91CF", "Add amount"],
@@ -30707,7 +30717,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.9.3",
+        "data-reader-version": "0.9.4",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -30799,7 +30809,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.9.3")))
+      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.9.4")))
     );
   }
   return {
@@ -30823,6 +30833,202 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
       listeners.clear();
     }
   };
+}
+
+// src/lessons.js
+var live = (rows) => (rows || []).filter((x4) => !x4.deletedAt);
+var minutesOf = (time) => {
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time || ""))
+    return time ? Number.NaN : 0;
+  const [h3, m3] = time.split(":").map(Number);
+  return h3 * 60 + m3;
+};
+var lessonTerms = (state, lessonId) => live(state.lessonTerms).filter((x4) => x4.lessonId === lessonId);
+function lessonBounds(lesson, terms) {
+  const own = live(terms).filter((x4) => x4.lessonId === lesson.id);
+  if (lesson.mode === "term" && own.length)
+    return own.map((x4) => ({
+      start: x4.start > lesson.effective ? x4.start : lesson.effective,
+      end: x4.end
+    }));
+  return [{ start: lesson.effective, end: lesson.until || "" }];
+}
+var inBounds = (bounds, date) => bounds.some((b3) => date >= b3.start && (!b3.end || date <= b3.end));
+function occurrenceOf(state, lesson, originalDate, row) {
+  const base = {
+    lessonId: lesson.id,
+    title: lesson.title,
+    participant: lesson.participant,
+    originalDate,
+    date: row?.date || originalDate,
+    time: row?.time ?? lesson.time,
+    durationMinutes: lesson.durationMinutes,
+    place: row?.place ?? lesson.place,
+    status: row?.status || "scheduled",
+    note: row?.note || "",
+    deduction: row?.deduction ?? lesson.defaultDeduction,
+    completedAt: row?.completedAt ?? null,
+    extra: !!row?.extra,
+    movedFrom: row && row.date !== originalDate ? originalDate : "",
+    sessionId: row?.id || "",
+    key: lesson.id + "@" + (originalDate || "extra:" + (row?.id || ""))
+  };
+  return base;
+}
+function lessonOccurrences(state, lesson, from, to) {
+  if (lesson.deletedAt) return [];
+  const rows = live(state.lessonSessions).filter(
+    (x4) => x4.lessonId === lesson.id
+  );
+  const byOriginal = /* @__PURE__ */ new Map();
+  for (const r3 of rows) if (r3.originalDate) byOriginal.set(r3.originalDate, r3);
+  const bounds = lessonBounds(lesson, state.lessonTerms);
+  const out = [];
+  const emitted = /* @__PURE__ */ new Set();
+  if (lesson.weekdays.length)
+    for (let d2 = from; d2 <= to; d2 = shift(d2, 1)) {
+      if (!lesson.weekdays.includes(weekday(d2)) || !inBounds(bounds, d2))
+        continue;
+      const row = byOriginal.get(d2);
+      const date = row?.date || d2;
+      emitted.add((row?.originalDate || d2) + ":" + date);
+      if (date >= from && date <= to)
+        out.push(occurrenceOf(state, lesson, d2, row));
+    }
+  for (const r3 of rows) {
+    if (!r3.date || r3.date < from || r3.date > to) continue;
+    if (emitted.has((r3.originalDate || "") + ":" + r3.date)) continue;
+    out.push(occurrenceOf(state, lesson, r3.originalDate || "", r3));
+  }
+  return out.sort(
+    (a3, b3) => (a3.date + (a3.time || "99:99")).localeCompare(b3.date + (b3.time || "99:99"))
+  );
+}
+function lessonDone(state, lesson, from, to) {
+  return lessonOccurrences(state, lesson, from, to).filter(
+    (x4) => x4.status === "done"
+  );
+}
+function lessonAccount(state, lesson) {
+  const rows = live(state.lessonCharges).filter(
+    (x4) => x4.lessonId === lesson.id
+  );
+  const sum = (f3) => rows.filter(f3).reduce((s3, x4) => s3 + x4.delta, 0);
+  return {
+    balance: rows.reduce((s3, x4) => s3 + x4.delta, 0),
+    purchased: sum((x4) => x4.kind === "purchase"),
+    gifted: sum((x4) => x4.kind === "gift"),
+    opening: sum((x4) => x4.kind === "opening"),
+    used: -sum((x4) => x4.kind === "use"),
+    refunded: sum((x4) => x4.kind === "refund"),
+    adjusted: sum((x4) => x4.kind === "adjust"),
+    entries: rows.sort(
+      (a3, b3) => b3.date.localeCompare(a3.date) || b3.createdAt.localeCompare(a3.createdAt)
+    )
+  };
+}
+function lessonSummary(state, lesson, date) {
+  const terms = lessonTerms(state, lesson.id);
+  const account = lesson.mode === "credit" ? lessonAccount(state, lesson) : null;
+  const currentTerm = lesson.mode === "term" ? terms.find((x4) => date >= x4.start && date <= x4.end) || terms.find((x4) => x4.start > date) || null : null;
+  const termBounds = currentTerm ? { start: currentTerm.start, end: currentTerm.end } : lesson.mode === "term" && terms.length ? { start: terms.at(-1).start, end: terms.at(-1).end } : null;
+  const stats = lesson.mode === "term" && termBounds ? lessonStats(state, lesson, termBounds.start, termBounds.end) : null;
+  const expired = lesson.mode === "term" && !!terms.length && !terms.some((x4) => x4.end >= date);
+  const endsIn = lesson.mode === "term" && currentTerm ? Math.round(
+    (Date.parse(currentTerm.end + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
+  ) : null;
+  return {
+    account,
+    currentTerm,
+    terms,
+    stats,
+    expired,
+    endsIn
+  };
+}
+function lessonStats(state, lesson, from, to) {
+  const done = lessonDone(state, lesson, from, to);
+  return {
+    sessions: done.length,
+    units: done.reduce((s3, x4) => s3 + (Number(x4.deduction) || 0), 0),
+    skipped: lessonOccurrences(state, lesson, from, to).filter(
+      (x4) => x4.status === "skipped"
+    ).length,
+    from,
+    to
+  };
+}
+function lessonExpiring(state, date, withinDays = 30) {
+  const limit = shift(date, withinDays);
+  const out = [];
+  for (const l3 of live(state.lessons)) {
+    if (l3.mode === "term") {
+      for (const term of lessonTerms(state, l3.id))
+        if (term.end >= date && term.end <= limit)
+          out.push({
+            kind: "term",
+            lessonId: l3.id,
+            title: l3.title,
+            date: term.end,
+            days: Math.round(
+              (Date.parse(term.end + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
+            )
+          });
+    }
+    if (l3.mode === "credit") {
+      for (const row of live(state.lessonCharges).filter(
+        (x4) => x4.lessonId === l3.id && x4.expiresOn && x4.delta > 0
+      ))
+        if (row.expiresOn >= date && row.expiresOn <= limit)
+          out.push({
+            kind: "credit-expiry",
+            lessonId: l3.id,
+            title: l3.title,
+            date: row.expiresOn,
+            amount: row.delta,
+            days: Math.round(
+              (Date.parse(row.expiresOn + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
+            )
+          });
+    }
+  }
+  return out.sort((a3, b3) => a3.date.localeCompare(b3.date));
+}
+function lessonReminders(state, now, zone) {
+  const date = today(zone, now);
+  const out = [];
+  for (const l3 of live(state.lessons)) {
+    if (l3.reminderMinutes === null || !l3.time) continue;
+    for (const x4 of lessonOccurrences(state, l3, shift(date, -1), date)) {
+      if (x4.status !== "scheduled") continue;
+      const stamp = zonedStamp(x4.date, x4.time, zone) - l3.reminderMinutes * 6e4;
+      if (stamp > now || now - stamp > 12 * 60 * 6e4) continue;
+      out.push({
+        key: "lesson:" + x4.key + ":" + x4.date + ":" + x4.time + ":" + stamp,
+        title: x4.title + " \xB7 " + x4.date + " " + lessonTimeLabel(l3),
+        at: stamp,
+        date: x4.date,
+        time: x4.time,
+        lessonId: l3.id
+      });
+    }
+  }
+  return out.sort((a3, b3) => a3.at - b3.at);
+}
+function lessonTimeLabel(lesson) {
+  if (!lesson.time) return "";
+  const start = minutesOf(lesson.time);
+  const end = start + (Number(lesson.durationMinutes) || 0);
+  if (!Number.isFinite(end)) return lesson.time;
+  return lesson.time + (lesson.durationMinutes ? "\u2013" + fmtTime(end) : "");
+}
+function fmtTime(minutes) {
+  const dayMinutes = (minutes % 1440 + 1440) % 1440;
+  return String(Math.floor(dayMinutes / 60)).padStart(2, "0") + ":" + String(dayMinutes % 60).padStart(2, "0");
+}
+function lessonScheduleLabel(lesson, t3) {
+  if (!lesson.weekdays.length) return t3("lessonOnce");
+  return lesson.weekdays.slice().sort((a3, b3) => (a3 + 6) % 7 - (b3 + 6) % 7).map((d2) => t3("weekdayShort" + d2)).join(" \xB7 ");
 }
 
 // src/planning.js
@@ -30883,6 +31089,30 @@ function dailyPlan(state, date, items = occurrences(state, shift(date, -365), sh
       )
     }
   };
+}
+function upcomingPlans(state, date, days = 7) {
+  const from = shift(date, 1), to = shift(date, days);
+  const tasks = occurrences(state, from, to).filter(
+    (x4) => !x4.deletedAt && (x4.time || x4.event) && !["done", "cancelled", "skipped"].includes(x4.status)
+  ).map((x4) => ({
+    kind: "task",
+    date: x4.date,
+    time: x4.time || "",
+    title: x4.title,
+    participant: "",
+    task: x4
+  }));
+  const lessons = state.lessons.filter((l3) => !l3.deletedAt).flatMap((l3) => lessonOccurrences(state, l3, from, to)).filter((x4) => x4.status === "scheduled").map((x4) => ({
+    kind: "lesson",
+    date: x4.date,
+    time: x4.time || "",
+    title: x4.title,
+    participant: x4.participant || "",
+    lesson: x4
+  }));
+  return [...tasks, ...lessons].sort(
+    (a3, b3) => (a3.date + (a3.time || "99:99")).localeCompare(b3.date + (b3.time || "99:99"))
+  );
 }
 
 // src/PlanningUI.tsx
@@ -31647,204 +31877,6 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
 
 // src/LessonsUI.tsx
 var React9 = __toESM(require("react"), 1);
-
-// src/lessons.js
-var live = (rows) => (rows || []).filter((x4) => !x4.deletedAt);
-var minutesOf = (time) => {
-  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time || ""))
-    return time ? Number.NaN : 0;
-  const [h3, m3] = time.split(":").map(Number);
-  return h3 * 60 + m3;
-};
-var lessonTerms = (state, lessonId) => live(state.lessonTerms).filter((x4) => x4.lessonId === lessonId);
-function lessonBounds(lesson, terms) {
-  const own = live(terms).filter((x4) => x4.lessonId === lesson.id);
-  if (lesson.mode === "term" && own.length)
-    return own.map((x4) => ({
-      start: x4.start > lesson.effective ? x4.start : lesson.effective,
-      end: x4.end
-    }));
-  return [{ start: lesson.effective, end: lesson.until || "" }];
-}
-var inBounds = (bounds, date) => bounds.some((b3) => date >= b3.start && (!b3.end || date <= b3.end));
-function occurrenceOf(state, lesson, originalDate, row) {
-  const base = {
-    lessonId: lesson.id,
-    title: lesson.title,
-    participant: lesson.participant,
-    originalDate,
-    date: row?.date || originalDate,
-    time: row?.time ?? lesson.time,
-    durationMinutes: lesson.durationMinutes,
-    place: row?.place ?? lesson.place,
-    status: row?.status || "scheduled",
-    note: row?.note || "",
-    deduction: row?.deduction ?? lesson.defaultDeduction,
-    completedAt: row?.completedAt ?? null,
-    extra: !!row?.extra,
-    movedFrom: row && row.date !== originalDate ? originalDate : "",
-    sessionId: row?.id || "",
-    key: lesson.id + "@" + (originalDate || "extra:" + (row?.id || ""))
-  };
-  return base;
-}
-function lessonOccurrences(state, lesson, from, to) {
-  if (lesson.deletedAt) return [];
-  const rows = live(state.lessonSessions).filter(
-    (x4) => x4.lessonId === lesson.id
-  );
-  const byOriginal = /* @__PURE__ */ new Map();
-  for (const r3 of rows) if (r3.originalDate) byOriginal.set(r3.originalDate, r3);
-  const bounds = lessonBounds(lesson, state.lessonTerms);
-  const out = [];
-  const emitted = /* @__PURE__ */ new Set();
-  if (lesson.weekdays.length)
-    for (let d2 = from; d2 <= to; d2 = shift(d2, 1)) {
-      if (!lesson.weekdays.includes(weekday(d2)) || !inBounds(bounds, d2))
-        continue;
-      const row = byOriginal.get(d2);
-      const date = row?.date || d2;
-      emitted.add((row?.originalDate || d2) + ":" + date);
-      if (date >= from && date <= to)
-        out.push(occurrenceOf(state, lesson, d2, row));
-    }
-  for (const r3 of rows) {
-    if (!r3.date || r3.date < from || r3.date > to) continue;
-    if (emitted.has((r3.originalDate || "") + ":" + r3.date)) continue;
-    out.push(occurrenceOf(state, lesson, r3.originalDate || "", r3));
-  }
-  return out.sort(
-    (a3, b3) => (a3.date + (a3.time || "99:99")).localeCompare(b3.date + (b3.time || "99:99"))
-  );
-}
-function lessonDone(state, lesson, from, to) {
-  return lessonOccurrences(state, lesson, from, to).filter(
-    (x4) => x4.status === "done"
-  );
-}
-function lessonAccount(state, lesson) {
-  const rows = live(state.lessonCharges).filter(
-    (x4) => x4.lessonId === lesson.id
-  );
-  const sum = (f3) => rows.filter(f3).reduce((s3, x4) => s3 + x4.delta, 0);
-  return {
-    balance: rows.reduce((s3, x4) => s3 + x4.delta, 0),
-    purchased: sum((x4) => x4.kind === "purchase"),
-    gifted: sum((x4) => x4.kind === "gift"),
-    opening: sum((x4) => x4.kind === "opening"),
-    used: -sum((x4) => x4.kind === "use"),
-    refunded: sum((x4) => x4.kind === "refund"),
-    adjusted: sum((x4) => x4.kind === "adjust"),
-    entries: rows.sort(
-      (a3, b3) => b3.date.localeCompare(a3.date) || b3.createdAt.localeCompare(a3.createdAt)
-    )
-  };
-}
-function lessonSummary(state, lesson, date) {
-  const terms = lessonTerms(state, lesson.id);
-  const account = lesson.mode === "credit" ? lessonAccount(state, lesson) : null;
-  const currentTerm = lesson.mode === "term" ? terms.find((x4) => date >= x4.start && date <= x4.end) || terms.find((x4) => x4.start > date) || null : null;
-  const termBounds = currentTerm ? { start: currentTerm.start, end: currentTerm.end } : lesson.mode === "term" && terms.length ? { start: terms.at(-1).start, end: terms.at(-1).end } : null;
-  const stats = lesson.mode === "term" && termBounds ? lessonStats(state, lesson, termBounds.start, termBounds.end) : null;
-  const expired = lesson.mode === "term" && !!terms.length && !terms.some((x4) => x4.end >= date);
-  const endsIn = lesson.mode === "term" && currentTerm ? Math.round(
-    (Date.parse(currentTerm.end + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
-  ) : null;
-  return {
-    account,
-    currentTerm,
-    terms,
-    stats,
-    expired,
-    endsIn
-  };
-}
-function lessonStats(state, lesson, from, to) {
-  const done = lessonDone(state, lesson, from, to);
-  return {
-    sessions: done.length,
-    units: done.reduce((s3, x4) => s3 + (Number(x4.deduction) || 0), 0),
-    skipped: lessonOccurrences(state, lesson, from, to).filter(
-      (x4) => x4.status === "skipped"
-    ).length,
-    from,
-    to
-  };
-}
-function lessonExpiring(state, date, withinDays = 30) {
-  const limit = shift(date, withinDays);
-  const out = [];
-  for (const l3 of live(state.lessons)) {
-    if (l3.mode === "term") {
-      for (const term of lessonTerms(state, l3.id))
-        if (term.end >= date && term.end <= limit)
-          out.push({
-            kind: "term",
-            lessonId: l3.id,
-            title: l3.title,
-            date: term.end,
-            days: Math.round(
-              (Date.parse(term.end + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
-            )
-          });
-    }
-    if (l3.mode === "credit") {
-      for (const row of live(state.lessonCharges).filter(
-        (x4) => x4.lessonId === l3.id && x4.expiresOn && x4.delta > 0
-      ))
-        if (row.expiresOn >= date && row.expiresOn <= limit)
-          out.push({
-            kind: "credit-expiry",
-            lessonId: l3.id,
-            title: l3.title,
-            date: row.expiresOn,
-            amount: row.delta,
-            days: Math.round(
-              (Date.parse(row.expiresOn + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
-            )
-          });
-    }
-  }
-  return out.sort((a3, b3) => a3.date.localeCompare(b3.date));
-}
-function lessonReminders(state, now, zone) {
-  const date = today(zone, now);
-  const out = [];
-  for (const l3 of live(state.lessons)) {
-    if (l3.reminderMinutes === null || !l3.time) continue;
-    for (const x4 of lessonOccurrences(state, l3, shift(date, -1), date)) {
-      if (x4.status !== "scheduled") continue;
-      const stamp = zonedStamp(x4.date, x4.time, zone) - l3.reminderMinutes * 6e4;
-      if (stamp > now || now - stamp > 12 * 60 * 6e4) continue;
-      out.push({
-        key: "lesson:" + x4.key + ":" + x4.date + ":" + x4.time + ":" + stamp,
-        title: x4.title + " \xB7 " + x4.date + " " + lessonTimeLabel(l3),
-        at: stamp,
-        date: x4.date,
-        time: x4.time,
-        lessonId: l3.id
-      });
-    }
-  }
-  return out.sort((a3, b3) => a3.at - b3.at);
-}
-function lessonTimeLabel(lesson) {
-  if (!lesson.time) return "";
-  const start = minutesOf(lesson.time);
-  const end = start + (Number(lesson.durationMinutes) || 0);
-  if (!Number.isFinite(end)) return lesson.time;
-  return lesson.time + (lesson.durationMinutes ? "\u2013" + fmtTime(end) : "");
-}
-function fmtTime(minutes) {
-  const dayMinutes = (minutes % 1440 + 1440) % 1440;
-  return String(Math.floor(dayMinutes / 60)).padStart(2, "0") + ":" + String(dayMinutes % 60).padStart(2, "0");
-}
-function lessonScheduleLabel(lesson, t3) {
-  if (!lesson.weekdays.length) return t3("lessonOnce");
-  return lesson.weekdays.slice().sort((a3, b3) => (a3 + 6) % 7 - (b3 + 6) % 7).map((d2) => t3("weekdayShort" + d2)).join(" \xB7 ");
-}
-
-// src/LessonsUI.tsx
 var { useState: useState5, useEffect: useEffect5 } = React9;
 function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
   const live2 = (data, key) => data[key].filter((x4) => !x4.deletedAt);
@@ -34277,7 +34309,10 @@ function apply(ctx) {
           const p3 = info.event.extendedProps;
           if (p3.lesson) {
             setDay(p3.lesson.date);
-            env.openLesson({ type: "detail", lessonId: p3.lesson.lessonId });
+            env.openLesson({
+              type: "detail",
+              lessonId: p3.lesson.lessonId
+            });
           } else if (p3.habit) {
             setDay(p3.date);
             setTab("habits");
@@ -34334,7 +34369,7 @@ function apply(ctx) {
     const [error, setError] = useState6("");
     const [showNotes, setShowNotes] = useState6(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.9.3";
+    const current = v3.currentVersion || "0.9.4";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -35169,24 +35204,31 @@ function apply(ctx) {
             return /* @__PURE__ */ React10.createElement("section", { className: "ld-section", key: id }, /* @__PURE__ */ React10.createElement("h2", null, t3("todayHabits")), /* @__PURE__ */ React10.createElement(HabitCards, { env: viewEnv, showWeekly: false }));
           if (id === "weekly")
             return /* @__PURE__ */ React10.createElement(HabitCards, { weeklyOnly: true, env: viewEnv, key: id });
-          if (id === "upcoming")
-            return /* @__PURE__ */ React10.createElement("section", { className: "ld-section", key: id }, /* @__PURE__ */ React10.createElement("h2", null, t3("upcoming")), range.filter(
-              (x4) => x4.date > day && x4.date <= shift(day, 14) && (x4.event || x4.reminderMinutes !== null || x4.deadline) && !["done", "cancelled", "skipped"].includes(x4.status)
-            ).slice(0, 5).map((x4) => /* @__PURE__ */ React10.createElement(
+          if (id === "upcoming") {
+            const plans = upcomingPlans(data, day, 7);
+            return /* @__PURE__ */ React10.createElement("section", { className: "ld-section", key: id }, /* @__PURE__ */ React10.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React10.createElement("h2", null, t3("upcoming")), plans.length > 0 && /* @__PURE__ */ React10.createElement(Btn, { onClick: () => setTab("calendar") }, t3("viewCalendar"))), plans.slice(0, 5).map((p3) => /* @__PURE__ */ React10.createElement(
               "button",
               {
-                key: x4.id + x4.originalDate,
+                key: p3.kind + ":" + (p3.task?.id || p3.lesson?.key) + p3.date,
                 className: "ld-upcoming",
-                onClick: () => openTask(
-                  tasks.find((q3) => q3.id === x4.id),
-                  { occurrence: x4 }
-                )
+                onClick: () => {
+                  if (p3.kind === "lesson") {
+                    viewEnv.openLesson({
+                      type: "detail",
+                      lessonId: p3.lesson.lessonId
+                    });
+                    return;
+                  }
+                  openTask(
+                    tasks.find((q3) => q3.id === p3.task.id),
+                    { occurrence: p3.task }
+                  );
+                }
               },
-              /* @__PURE__ */ React10.createElement("strong", null, x4.title),
-              /* @__PURE__ */ React10.createElement("span", null, x4.date, x4.repeat.kind === "lunar" ? " \xB7 " + lunarLabel(x4.date) : "")
-            )), !range.some(
-              (x4) => x4.date > day && x4.date <= shift(day, 14) && (x4.event || x4.reminderMinutes !== null || x4.deadline) && !["done", "cancelled", "skipped"].includes(x4.status)
-            ) && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("noUpcoming")));
+              /* @__PURE__ */ React10.createElement("strong", null, p3.title, p3.participant ? " \xB7 " + p3.participant : ""),
+              /* @__PURE__ */ React10.createElement("span", null, p3.date, " ", p3.time || t3("allDay"), p3.kind === "lesson" ? " \xB7 " + t3("lessons") : "")
+            )), plans.length > 5 && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("futureMore").replace("{n}", String(plans.length - 5))), !plans.length && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("noUpcoming")));
+          }
           return null;
         };
         return /* @__PURE__ */ React10.createElement(React10.Fragment, null, !tasks.length && !habits.length && !projects.length && /* @__PURE__ */ React10.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React10.createElement(Icon, { name: "today", size: 30 }), /* @__PURE__ */ React10.createElement("h2", null, t3("startTitle")), /* @__PURE__ */ React10.createElement("p", null, t3("startText")), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { primary: true, onClick: () => openTask() }, t3("addTask")), /* @__PURE__ */ React10.createElement(Btn, { onClick: () => setTemplateOpen(true) }, t3("addHabit")))), /* @__PURE__ */ React10.createElement(
@@ -35522,7 +35564,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React10.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.9.3", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React10.createElement(
+        /* @__PURE__ */ React10.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.9.4", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React10.createElement(
           "button",
           {
             className: "ld-update-badge",

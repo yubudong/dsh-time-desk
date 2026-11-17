@@ -34915,6 +34915,128 @@ function durationSeconds(settings, phase, minutes) {
   return settings[{ focus: "focusMinutes", short: "shortBreak", long: "longBreak" }[phase]] * 60;
 }
 
+// src/lessons.js
+var live = (rows) => (rows || []).filter((x) => !x.deletedAt);
+var minutesOf = (time3) => {
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time3 || ""))
+    return time3 ? Number.NaN : 0;
+  const [h, m] = time3.split(":").map(Number);
+  return h * 60 + m;
+};
+var lessonTerms = (state, lessonId) => live(state.lessonTerms).filter((x) => x.lessonId === lessonId);
+function lessonBounds(lesson, terms) {
+  const own2 = live(terms).filter((x) => x.lessonId === lesson.id);
+  if (lesson.mode === "term" && own2.length)
+    return own2.map((x) => ({
+      start: x.start > lesson.effective ? x.start : lesson.effective,
+      end: x.end
+    }));
+  return [{ start: lesson.effective, end: lesson.until || "" }];
+}
+var inBounds = (bounds, date5) => bounds.some((b) => date5 >= b.start && (!b.end || date5 <= b.end));
+function lessonTermAt(lesson, terms, date5) {
+  return live(terms).find(
+    (x) => x.lessonId === lesson.id && date5 >= x.start && date5 <= x.end
+  ) || null;
+}
+function occurrenceOf(state, lesson, originalDate, row) {
+  const base = {
+    lessonId: lesson.id,
+    title: lesson.title,
+    participant: lesson.participant,
+    originalDate,
+    date: row?.date || originalDate,
+    time: row?.time ?? lesson.time,
+    durationMinutes: lesson.durationMinutes,
+    place: row?.place ?? lesson.place,
+    status: row?.status || "scheduled",
+    note: row?.note || "",
+    deduction: row?.deduction ?? lesson.defaultDeduction,
+    completedAt: row?.completedAt ?? null,
+    extra: !!row?.extra,
+    movedFrom: row && row.date !== originalDate ? originalDate : "",
+    sessionId: row?.id || "",
+    key: lesson.id + "@" + (originalDate || "extra:" + (row?.id || ""))
+  };
+  return base;
+}
+function lessonOccurrences(state, lesson, from, to) {
+  if (lesson.deletedAt) return [];
+  const rows = live(state.lessonSessions).filter(
+    (x) => x.lessonId === lesson.id
+  );
+  const byOriginal = /* @__PURE__ */ new Map();
+  for (const r of rows) if (r.originalDate) byOriginal.set(r.originalDate, r);
+  const bounds = lessonBounds(lesson, state.lessonTerms);
+  const out = [];
+  const emitted = /* @__PURE__ */ new Set();
+  if (lesson.weekdays.length)
+    for (let d = from; d <= to; d = shift(d, 1)) {
+      if (!lesson.weekdays.includes(weekday(d)) || !inBounds(bounds, d))
+        continue;
+      const row = byOriginal.get(d);
+      const date5 = row?.date || d;
+      emitted.add((row?.originalDate || d) + ":" + date5);
+      if (date5 >= from && date5 <= to)
+        out.push(occurrenceOf(state, lesson, d, row));
+    }
+  for (const r of rows) {
+    if (!r.date || r.date < from || r.date > to) continue;
+    if (emitted.has((r.originalDate || "") + ":" + r.date)) continue;
+    out.push(occurrenceOf(state, lesson, r.originalDate || "", r));
+  }
+  return out.sort(
+    (a, b) => (a.date + (a.time || "99:99")).localeCompare(b.date + (b.time || "99:99"))
+  );
+}
+function lessonAccount(state, lesson) {
+  const rows = live(state.lessonCharges).filter(
+    (x) => x.lessonId === lesson.id
+  );
+  const sum = (f) => rows.filter(f).reduce((s, x) => s + x.delta, 0);
+  return {
+    balance: rows.reduce((s, x) => s + x.delta, 0),
+    purchased: sum((x) => x.kind === "purchase"),
+    gifted: sum((x) => x.kind === "gift"),
+    opening: sum((x) => x.kind === "opening"),
+    used: -sum((x) => x.kind === "use"),
+    refunded: sum((x) => x.kind === "refund"),
+    adjusted: sum((x) => x.kind === "adjust"),
+    entries: rows.sort(
+      (a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt)
+    )
+  };
+}
+function lessonConflict(state, lesson, date5, time3, durationMinutes, skipKey = "") {
+  if (!time3) return [];
+  const start = minutesOf(time3);
+  if (!Number.isFinite(start)) return [];
+  const end = start + Math.max(0, Number(durationMinutes) || 0);
+  const who = (lesson.participant || "").trim();
+  if (!who) return [];
+  const out = [];
+  for (const l of live(state.lessons)) {
+    if (l.id === lesson.id) continue;
+    if ((l.participant || "").trim() !== who) continue;
+    for (const x of lessonOccurrences(state, l, date5, date5)) {
+      if (x.date !== date5 || x.status === "skipped") continue;
+      if (skipKey && x.key === skipKey) continue;
+      const otherStart = minutesOf(x.time);
+      if (!Number.isFinite(otherStart)) continue;
+      const otherEnd = otherStart + Math.max(0, Number(x.durationMinutes) || 0);
+      if (start < otherEnd && otherStart < end)
+        out.push({
+          key: x.key,
+          lessonId: l.id,
+          title: l.title,
+          time: x.time,
+          date: x.date
+        });
+    }
+  }
+  return out;
+}
+
 // src/today-view.js
 var unfinished = (x) => !["done", "skipped", "cancelled"].includes(x.status);
 var singleOutstanding = (x) => !x.repeat || ["none", "completion"].includes(x.repeat.kind);
@@ -35308,128 +35430,6 @@ var blankState = (deviceId) => State.parse({
   receipts: [],
   noticeAcks: []
 });
-
-// src/lessons.js
-var live = (rows) => (rows || []).filter((x) => !x.deletedAt);
-var minutesOf = (time3) => {
-  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time3 || ""))
-    return time3 ? Number.NaN : 0;
-  const [h, m] = time3.split(":").map(Number);
-  return h * 60 + m;
-};
-var lessonTerms = (state, lessonId) => live(state.lessonTerms).filter((x) => x.lessonId === lessonId);
-function lessonBounds(lesson, terms) {
-  const own2 = live(terms).filter((x) => x.lessonId === lesson.id);
-  if (lesson.mode === "term" && own2.length)
-    return own2.map((x) => ({
-      start: x.start > lesson.effective ? x.start : lesson.effective,
-      end: x.end
-    }));
-  return [{ start: lesson.effective, end: lesson.until || "" }];
-}
-var inBounds = (bounds, date5) => bounds.some((b) => date5 >= b.start && (!b.end || date5 <= b.end));
-function lessonTermAt(lesson, terms, date5) {
-  return live(terms).find(
-    (x) => x.lessonId === lesson.id && date5 >= x.start && date5 <= x.end
-  ) || null;
-}
-function occurrenceOf(state, lesson, originalDate, row) {
-  const base = {
-    lessonId: lesson.id,
-    title: lesson.title,
-    participant: lesson.participant,
-    originalDate,
-    date: row?.date || originalDate,
-    time: row?.time ?? lesson.time,
-    durationMinutes: lesson.durationMinutes,
-    place: row?.place ?? lesson.place,
-    status: row?.status || "scheduled",
-    note: row?.note || "",
-    deduction: row?.deduction ?? lesson.defaultDeduction,
-    completedAt: row?.completedAt ?? null,
-    extra: !!row?.extra,
-    movedFrom: row && row.date !== originalDate ? originalDate : "",
-    sessionId: row?.id || "",
-    key: lesson.id + "@" + (originalDate || "extra:" + (row?.id || ""))
-  };
-  return base;
-}
-function lessonOccurrences(state, lesson, from, to) {
-  if (lesson.deletedAt) return [];
-  const rows = live(state.lessonSessions).filter(
-    (x) => x.lessonId === lesson.id
-  );
-  const byOriginal = /* @__PURE__ */ new Map();
-  for (const r of rows) if (r.originalDate) byOriginal.set(r.originalDate, r);
-  const bounds = lessonBounds(lesson, state.lessonTerms);
-  const out = [];
-  const emitted = /* @__PURE__ */ new Set();
-  if (lesson.weekdays.length)
-    for (let d = from; d <= to; d = shift(d, 1)) {
-      if (!lesson.weekdays.includes(weekday(d)) || !inBounds(bounds, d))
-        continue;
-      const row = byOriginal.get(d);
-      const date5 = row?.date || d;
-      emitted.add((row?.originalDate || d) + ":" + date5);
-      if (date5 >= from && date5 <= to)
-        out.push(occurrenceOf(state, lesson, d, row));
-    }
-  for (const r of rows) {
-    if (!r.date || r.date < from || r.date > to) continue;
-    if (emitted.has((r.originalDate || "") + ":" + r.date)) continue;
-    out.push(occurrenceOf(state, lesson, r.originalDate || "", r));
-  }
-  return out.sort(
-    (a, b) => (a.date + (a.time || "99:99")).localeCompare(b.date + (b.time || "99:99"))
-  );
-}
-function lessonAccount(state, lesson) {
-  const rows = live(state.lessonCharges).filter(
-    (x) => x.lessonId === lesson.id
-  );
-  const sum = (f) => rows.filter(f).reduce((s, x) => s + x.delta, 0);
-  return {
-    balance: rows.reduce((s, x) => s + x.delta, 0),
-    purchased: sum((x) => x.kind === "purchase"),
-    gifted: sum((x) => x.kind === "gift"),
-    opening: sum((x) => x.kind === "opening"),
-    used: -sum((x) => x.kind === "use"),
-    refunded: sum((x) => x.kind === "refund"),
-    adjusted: sum((x) => x.kind === "adjust"),
-    entries: rows.sort(
-      (a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt)
-    )
-  };
-}
-function lessonConflict(state, lesson, date5, time3, durationMinutes, skipKey = "") {
-  if (!time3) return [];
-  const start = minutesOf(time3);
-  if (!Number.isFinite(start)) return [];
-  const end = start + Math.max(0, Number(durationMinutes) || 0);
-  const who = (lesson.participant || "").trim();
-  if (!who) return [];
-  const out = [];
-  for (const l of live(state.lessons)) {
-    if (l.id === lesson.id) continue;
-    if ((l.participant || "").trim() !== who) continue;
-    for (const x of lessonOccurrences(state, l, date5, date5)) {
-      if (x.date !== date5 || x.status === "skipped") continue;
-      if (skipKey && x.key === skipKey) continue;
-      const otherStart = minutesOf(x.time);
-      if (!Number.isFinite(otherStart)) continue;
-      const otherEnd = otherStart + Math.max(0, Number(x.durationMinutes) || 0);
-      if (start < otherEnd && otherStart < end)
-        out.push({
-          key: x.key,
-          lessonId: l.id,
-          title: l.title,
-          time: x.time,
-          date: x.date
-        });
-    }
-  }
-  return out;
-}
 
 // src/model.js
 var fail = (m) => {
@@ -37342,7 +37342,7 @@ async function apply(ctx) {
       hasGlobal: true,
       layout: "single"
     });
-    const currentVersion = true ? "0.9.3" : "0.0.0";
+    const currentVersion = true ? "0.9.4" : "0.0.0";
     updateService = createUpdateService({
       unit: updateUnit,
       currentVersion,
@@ -37366,7 +37366,7 @@ async function apply(ctx) {
     });
     upgradeService = createUpgradeService({
       unit: upgradeUnit,
-      currentVersion: true ? "0.9.3" : null,
+      currentVersion: true ? "0.9.4" : null,
       isBusy: async () => !!(spiritService && (await spiritService.operate({ action: "read" })).busy || reviewSpiritService && (await reviewSpiritService.operate({ action: "read" })).busy),
       readState: () => service.operate({ action: "read" }),
       restoreState: (a) => service.operate({
