@@ -201,3 +201,14 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.ld-heading-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ld-heading-title .ld-btn {
+  font-size: 11px;
+  white-space: nowrap;
+}

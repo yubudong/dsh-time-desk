@@ -35033,10 +35033,10 @@ function dailyPlan(state, date5, items = occurrences(state, shift(date5, -365), 
 // src/home-modules.js
 var HOME_MODULES = [
   { id: "plan", region: "main", titleKey: "dailyPlan" },
-  { id: "lessons", region: "main", titleKey: "todayLessons" },
   { id: "priority", region: "main", titleKey: "priorities" },
   { id: "schedule", region: "main", titleKey: "schedule" },
   { id: "planned", region: "main", titleKey: "plannedTodos" },
+  { id: "lessons", region: "main", titleKey: "todayLessons" },
   { id: "carry", region: "main", titleKey: "carryBacklog" },
   { id: "due", region: "main", titleKey: "deadlineWatch" },
   { id: "previous", region: "main", titleKey: "earlierRecurring" },
@@ -37320,7 +37320,7 @@ async function apply(ctx) {
       hasGlobal: true,
       layout: "single"
     });
-    const currentVersion = true ? "0.9.0" : "0.0.0";
+    const currentVersion = true ? "0.9.1" : "0.0.0";
     updateService = createUpdateService({
       unit: updateUnit,
       currentVersion,
@@ -37344,7 +37344,7 @@ async function apply(ctx) {
     });
     upgradeService = createUpgradeService({
       unit: upgradeUnit,
-      currentVersion: true ? "0.9.0" : null,
+      currentVersion: true ? "0.9.1" : null,
       isBusy: async () => !!(spiritService && (await spiritService.operate({ action: "read" })).busy || reviewSpiritService && (await reviewSpiritService.operate({ action: "read" })).busy),
       readState: () => service.operate({ action: "read" }),
       restoreState: (a) => service.operate({

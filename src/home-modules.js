@@ -1,9 +1,9 @@
 export const HOME_MODULES = [
   { id: "plan", region: "main", titleKey: "dailyPlan" },
-  { id: "lessons", region: "main", titleKey: "todayLessons" },
   { id: "priority", region: "main", titleKey: "priorities" },
   { id: "schedule", region: "main", titleKey: "schedule" },
   { id: "planned", region: "main", titleKey: "plannedTodos" },
+  { id: "lessons", region: "main", titleKey: "todayLessons" },
   { id: "carry", region: "main", titleKey: "carryBacklog" },
   { id: "due", region: "main", titleKey: "deadlineWatch" },
   { id: "previous", region: "main", titleKey: "earlierRecurring" },
@@ -21,7 +21,9 @@ export function homeModules(settings, region) {
   const order = home.order || [];
   const rank = (id) => {
     const i = order.indexOf(id);
-    return i < 0 ? Number.MAX_SAFE_INTEGER : i;
+    if (i >= 0) return i;
+    const fallback = HOME_MODULES.findIndex((m) => m.id === id);
+    return 100 + (fallback < 0 ? HOME_MODULES.length : fallback);
   };
   return HOME_MODULES.filter(
     (x) => x.region === region && !hidden.has(x.id),

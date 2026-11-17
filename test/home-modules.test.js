@@ -15,6 +15,9 @@ test("default home shows every module in registry order", () => {
     homeModules(s.settings, "main").map((x) => x.id),
     HOME_MODULES.filter((x) => x.region === "main").map((x) => x.id),
   );
+  const mainIds = homeModules(s.settings, "main").map((x) => x.id);
+  assert.ok(mainIds.indexOf("lessons") > mainIds.indexOf("planned"));
+  assert.ok(mainIds.indexOf("lessons") < mainIds.indexOf("carry"));
   assert.deepEqual(
     homeModules(s.settings, "support").map((x) => x.id),
     HOME_MODULES.filter((x) => x.region === "support").map((x) => x.id),

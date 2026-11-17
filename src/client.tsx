@@ -52,10 +52,10 @@ const css =
 const { useState, useEffect, useRef, useSyncExternalStore } = React;
 const NAV = [
   "today",
-  "lessons",
   "projects",
   "habits",
   "life",
+  "lessons",
   "calendar",
   "review",
 ];
@@ -2194,7 +2194,20 @@ export function apply(ctx: any) {
         const renderMain = (id: string) => {
           if (id === "plan")
             return <PlanPanel plan={groups} date={day} act={act} busy={busy} />;
-          if (id === "lessons") return <TodayLessons env={viewEnv} />;
+          if (id === "lessons") {
+            const rows = live("lessons").flatMap((l: any) =>
+              lessonOccurrences(data, l, day, day),
+            );
+            return (
+              <FoldSection
+                title={t("todayLessons")}
+                count={rows.length}
+                {...foldProps("lessons")}
+              >
+                <TodayLessons env={viewEnv} />
+              </FoldSection>
+            );
+          }
           if (id === "priority")
             return (
               <FoldSection
@@ -2904,7 +2917,7 @@ export function apply(ctx: any) {
                 <Timer bar />
               </div>
               <header className="ld-page-heading">
-                <div>
+                <div className="ld-heading-left">
                   <div className="ld-eyebrow">
                     {tab === "today"
                       ? new Intl.DateTimeFormat(
@@ -2920,7 +2933,14 @@ export function apply(ctx: any) {
                         ).format(new Date(day + "T12:00:00Z"))
                       : t("appSubtitle")}
                   </div>
-                  <h1>{title}</h1>
+                  <div className="ld-heading-title">
+                    <h1>{title}</h1>
+                    {tab === "today" && (
+                      <Btn onClick={() => setHomeOpen(true)}>
+                        {t("homeCustomize")}
+                      </Btn>
+                    )}
+                  </div>
                 </div>
                 <div className="ld-day-nav">
                   <button
@@ -2945,11 +2965,6 @@ export function apply(ctx: any) {
                   >
                     ›
                   </button>
-                  {tab === "today" && (
-                    <Btn onClick={() => setHomeOpen(true)}>
-                      {t("homeCustomize")}
-                    </Btn>
-                  )}
                   <Btn onClick={() => setDay(today(timeZone))}>
                     {t("backToday")}
                   </Btn>

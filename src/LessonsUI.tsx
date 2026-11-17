@@ -1148,15 +1148,8 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
     const rows = lessons.flatMap((l: any) =>
       lessonOccurrences(data, l, day, day),
     );
-    const open = (v: any) =>
-      env.openLesson({ ...v, lessonId: v.lessonId || l0(v) });
-    const l0 = (v: any) => v.lessonId;
     return (
-      <section className="ld-section ld-today-lessons">
-        <div className="ld-section-heading">
-          <h2>{t("todayLessons")}</h2>
-          <span className="ld-fold-count">{rows.length}</span>
-        </div>
+      <>
         {rows.length ? (
           rows
             .sort((a: any, b: any) =>
@@ -1224,7 +1217,7 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
             {t("lessonAdd")}
           </Btn>
         </div>
-      </section>
+      </>
     );
   }
   function LessonsPage({ env }: any) {
