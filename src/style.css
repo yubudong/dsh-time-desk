@@ -789,17 +789,25 @@
 }
 .ld-days {
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
 }
 .ld-days button {
-  width: 32px;
+  width: auto;
+  min-width: 32px;
   height: 32px;
+  padding: 0 10px;
   border: 1px solid var(--ld-line);
-  border-radius: 50%;
+  border-radius: 16px;
+  white-space: nowrap;
+  line-height: 1;
+  font-size: 12px;
 }
 .ld-days button[aria-pressed="true"] {
   color: var(--ld-accent);
   border-color: var(--ld-accent);
+  background: color-mix(in srgb, var(--ld-accent) 10%, transparent);
 }
 .ld-scope {
   padding: 12px;

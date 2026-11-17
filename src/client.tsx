@@ -1729,6 +1729,8 @@ export function apply(ctx: any) {
       [ai, setAi] = useState(false),
       [lessonModal, setLessonModal] = useState<any>(null),
       [homeOpen, setHomeOpen] = useState(false),
+      [homeDrag, setHomeDrag] = useState(""),
+      [homeDrop, setHomeDrop] = useState(""),
       [lifeCategory, setLifeCategory] = useState("");
     const [captureOpen, setCaptureOpen] = useState(false);
     const [captureReset, setCaptureReset] = useState(0);
@@ -3037,10 +3039,15 @@ export function apply(ctx: any) {
         {homeOpen && (
           <Modal title={t("homeCustomize")} onClose={() => setHomeOpen(false)}>
             <p className="ld-help">{t("homeCustomizeHint")}</p>
+            <p className="ld-help">{t("homeDragHint")}</p>
             {["main", "support"].map((region) => {
               const rank = (id: string) => {
                 const i = data.settings.homeModules.order.indexOf(id);
-                return i < 0 ? 999 : i;
+                if (i >= 0) return i;
+                const fallback = HOME_MODULES.findIndex(
+                  (m: any) => m.id === id,
+                );
+                return 100 + (fallback < 0 ? HOME_MODULES.length : fallback);
               };
               const all = HOME_MODULES.filter(
                 (m: any) => m.region === region,
@@ -3066,8 +3073,58 @@ export function apply(ctx: any) {
                       [next[i], next[j]] = [next[j], next[i]];
                       setHomeModules({ order: next });
                     };
+                    const moveTo = (from: string, to: string) => {
+                      if (from === to) return;
+                      const next = all.map((x: any) => x.id);
+                      const f = next.indexOf(from),
+                        t = next.indexOf(to);
+                      if (f < 0 || t < 0) return;
+                      next.splice(f, 1);
+                      next.splice(t, 0, from);
+                      setHomeModules({ order: next });
+                    };
                     return (
-                      <div className="ld-home-module" key={m.id}>
+                      <div
+                        className={
+                          "ld-home-module" +
+                          (homeDrag === m.id ? " is-dragging" : "") +
+                          (homeDrop === m.id ? " is-drop" : "")
+                        }
+                        key={m.id}
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.dataTransfer.dropEffect = "move";
+                          if (homeDrop !== m.id) setHomeDrop(m.id);
+                        }}
+                        onDragLeave={() => {
+                          if (homeDrop === m.id) setHomeDrop("");
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          const from =
+                            e.dataTransfer.getData("text/plain") || homeDrag;
+                          if (from) moveTo(from, m.id);
+                          setHomeDrag("");
+                          setHomeDrop("");
+                        }}
+                      >
+                        <span
+                          className="ld-drag-handle"
+                          draggable={!busy}
+                          title={t("homeDragHint")}
+                          aria-label={t("homeDragHint")}
+                          onDragStart={(e) => {
+                            e.dataTransfer.setData("text/plain", m.id);
+                            e.dataTransfer.effectAllowed = "move";
+                            setHomeDrag(m.id);
+                          }}
+                          onDragEnd={() => {
+                            setHomeDrag("");
+                            setHomeDrop("");
+                          }}
+                        >
+                          ⠿
+                        </span>
                         <label className="ld-check-label">
                           <input
                             type="checkbox"

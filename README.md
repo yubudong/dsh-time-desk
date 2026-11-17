@@ -2,7 +2,7 @@
 
 DSH 原生个人时间工作台：在侧栏管理项目、待办、习惯、公历／农历重复安排、日历、番茄钟和复盘。内置「时间精灵 · Time Spirit」，通过自然语言操作同一份工作台数据。
 
-**包名：`dsh-time-desk` · 版本：0.9.1 · MIT**
+**包名：`dsh-time-desk` · 版本：0.9.2 · MIT**
 
 ![时间精灵](assets/time-spirit-a.gif)
 

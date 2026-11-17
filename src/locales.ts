@@ -192,6 +192,10 @@ export const copy = {
   weekdayShort5: ["周五", "Fri"],
   weekdayShort6: ["周六", "Sat"],
   homeCustomize: ["自定义首页", "Customize home"],
+  homeDragHint: [
+    "按住左侧 ⠿ 拖动可调整顺序；也可以用箭头按钮。",
+    "Drag the ⠿ handle to reorder; the arrow buttons also work.",
+  ],
   homeCustomizeHint: [
     "取消勾选会隐藏整个模块，包括标题和留白；数据不会删除。可以调整顺序、恢复默认。",
     "Unchecking hides the whole module, title and spacing included; nothing is deleted. Reorder or restore the default.",
