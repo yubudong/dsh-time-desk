@@ -1126,3 +1126,32 @@
   padding: 0;
   margin-bottom: 4px;
 }
+.ld-fold-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font: inherit;
+  color: inherit;
+  font-weight: inherit;
+  padding: 0;
+  text-align: left;
+}
+.ld-fold-chevron {
+  display: inline-flex;
+  color: var(--ld-muted);
+  transition: transform 0.15s ease;
+}
+.ld-fold-toggle[aria-expanded="true"] .ld-fold-chevron {
+  transform: rotate(90deg);
+}
+.ld-fold-count {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--ld-muted);
+  font-variant-numeric: tabular-nums;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ld-fold-chevron {
+    transition: none;
+  }
+}

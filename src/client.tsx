@@ -1931,6 +1931,32 @@ export function apply(ctx: any) {
         <div className="ld-empty">{t("empty")}</div>
       ) : null;
     }
+    function FoldSection({ title, count, id, className = "", children }: any) {
+      const [open, setOpen] = useState(true);
+      return (
+        <section className={"ld-section ld-fold " + className}>
+          <div className="ld-section-heading">
+            <h2>
+              <button
+                type="button"
+                className="ld-fold-toggle"
+                aria-expanded={open}
+                aria-controls={id}
+                onClick={() => setOpen(!open)}
+              >
+                <span className="ld-fold-chevron">
+                  <Icon name="chevron" size={14} />
+                </span>
+                {title}
+              </button>
+            </h2>
+            <span className="ld-fold-count">{count}</span>
+          </div>
+          {open && <div id={id}>{children}</div>}
+        </section>
+      );
+    }
+
     function section(title: string, items: any[], extra?: any) {
       return (
         <section className="ld-section">
@@ -1998,13 +2024,18 @@ export function apply(ctx: any) {
                 )}
                 <PlanPanel plan={groups} date={day} act={act} busy={busy} />
                 <p className="ld-help">{t("priorityHint")}</p>
-                {section(
-                  t("priorities"),
-                  priority,
-                  <span className="ld-help">{priority.length}/3</span>,
-                )}
-                <section className="ld-section">
-                  <h2>{t("schedule")}</h2>
+                <FoldSection
+                  title={t("priorities")}
+                  count={priority.length + "/3"}
+                  id="ld-fold-priority"
+                >
+                  {taskRows(priority)}
+                </FoldSection>
+                <FoldSection
+                  title={t("schedule")}
+                  count={groups.schedule.length}
+                  id="ld-fold-schedule"
+                >
                   {groups.schedule.map((x: any) =>
                     priority.some((p: any) => p.id === x.id) ? (
                       <button
@@ -2027,18 +2058,29 @@ export function apply(ctx: any) {
                       </React.Fragment>
                     ),
                   )}
-                </section>
-                {section(t("plannedTodos"), groups.todos)}
-                <section className="ld-section">
-                  <h2>
-                    {t("carryBacklog")} · {groups.backlog.length}
-                  </h2>
+                </FoldSection>
+                <FoldSection
+                  title={t("plannedTodos")}
+                  count={groups.todos.length}
+                  id="ld-fold-planned"
+                >
+                  {taskRows(groups.todos)}
+                </FoldSection>
+                <FoldSection
+                  title={t("carryBacklog")}
+                  count={groups.backlog.length}
+                  id="ld-fold-carry"
+                >
                   <p className="ld-help">{t("carryHint")}</p>
                   {taskRows(groups.backlog)}
-                </section>
+                </FoldSection>
                 {groups.due.length > 0 && (
-                  <section className="ld-section ld-deadlines">
-                    <h2>{t("deadlineWatch")}</h2>
+                  <FoldSection
+                    title={t("deadlineWatch")}
+                    count={groups.due.length}
+                    id="ld-fold-due"
+                    className="ld-deadlines"
+                  >
                     {groups.due.map((x: any) => (
                       <button
                         className="ld-time-index"
@@ -2060,7 +2102,7 @@ export function apply(ctx: any) {
                         </small>
                       </button>
                     ))}
-                  </section>
+                  </FoldSection>
                 )}
                 <details className="ld-details">
                   <summary>
