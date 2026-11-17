@@ -35825,6 +35825,28 @@ function applyAction(current, a, now = Date.now()) {
     if (a.term) upsertTerm(s, record2, a.term, now, iso);
     if (record2.mode === "term" && !lessonTerms(s, record2.id).length)
       fail("\u671F\u9650\u8BFE\u7A0B\u9700\u8981\u586B\u5199\u6709\u6548\u671F");
+    if (a.opening !== void 0 && a.opening !== null && a.opening !== "") {
+      if (record2.mode !== "credit") fail("\u53EA\u6709\u8BFE\u65F6\u5305\u8BFE\u7A0B\u53EF\u4EE5\u586B\u5199\u73B0\u6709\u4F59\u989D");
+      const amount = Number(a.opening);
+      if (!Number.isFinite(amount) || amount < 0 || amount > 1e5)
+        fail("\u73B0\u6709\u4F59\u989D\u5E94\u4E3A 0\u2013100000 \u7684\u8BFE\u65F6\u6570");
+      if (amount > 0 && s.lessonCharges.some(
+        (x) => !x.deletedAt && x.lessonId === record2.id && x.kind === "opening"
+      ))
+        fail("\u8FD9\u95E8\u8BFE\u7A0B\u5DF2\u7ECF\u6709\u9996\u6B21\u4F59\u989D\u8BB0\u5F55\uFF0C\u8BF7\u7528\u5145\u503C\u6D41\u6C34\u8C03\u6574");
+      if (amount > 0)
+        s.lessonCharges.push({
+          ...nowMeta(now),
+          lessonId: record2.id,
+          date: localDay,
+          delta: amount,
+          kind: "opening",
+          amount: null,
+          note: "\u73B0\u6709\u4F59\u989D",
+          sessionId: "",
+          expiresOn: ""
+        });
+    }
   } else if (a.action === "lessonTerm") {
     const lesson = live2(s, "lessons", a.id);
     if (lesson.mode !== "term") fail("\u53EA\u6709\u671F\u9650\u8BFE\u7A0B\u53EF\u4EE5\u8BBE\u7F6E\u6709\u6548\u671F");
@@ -37279,7 +37301,7 @@ var guide = {
   save: "\u5148 read \u83B7\u53D6 revision\uFF1Bcollection=projects/tasks/habits\uFF0Citem \u9075\u5FAA schemas\uFF0C\u4FEE\u6539\u5E26 id\uFF0C\u672A\u63D0\u4F9B\u7684\u5B57\u6BB5\u4FDD\u7559\u3002\u8BFE\u7A0B\u4F7F\u7528 lesson \u52A8\u4F5C\uFF0C\u4E0D\u8981\u585E\u8FDB save\u3002tasks.pomodoros \u4E3A\u9884\u8BA1\u756A\u8304\u6570\u91CF\uFF0C0 \u8868\u793A\u4E0D\u4F30\u7B97\uFF1B\u5B8C\u6574\u4E13\u6CE8\u8F6E\u6570\u72EC\u7ACB\u8BB0\u5F55\u4E14\u4E0D\u81EA\u52A8\u5B8C\u6210\u4EFB\u52A1\u3002\u5220\u9664\u7528 trash\uFF0C\u6062\u590D\u7528 restore\u3002",
   occurrence: "\u91CD\u590D\u4E8B\u9879\u7684\u5355\u6B21\u72B6\u6001/\u6539\u671F\uFF1Aid=taskId\u3001originalDate=\u539F\u59CB\u53D1\u751F\u65E5\u3001date=\u6539\u540E\u65E5\u671F\u3001time=\u65F6\u523B\u3001status=todo/doing/done/skipped/cancelled\u3002\u65E0\u65E5\u671F\u4EFB\u52A1\u5148 save \u8BBE\u7F6E date\u3002",
   splitSeries: "\u4FEE\u6539\u8FD9\u6B21\u53CA\u4EE5\u540E\uFF1Aid\u3001originalDate\u3001item \u4E3A\u65B0\u4EFB\u52A1\u5B57\u6BB5\uFF0C\u5FC5\u987B\u5148\u5C55\u793A\u8303\u56F4\u5E76\u5F97\u5230\u7528\u6237\u540C\u610F\u3002",
-  lesson: "\u8BFE\u7A0B\uFF1Aaction=lesson\uFF0Citem \u6309 lessons schema\uFF08title\u3001participant\u3001weekdays\u3001time\u3001durationMinutes\u3001effective\u3001mode=none/credit/term\u3001reminderMinutes\u3001defaultDeduction\u3001balanceWarnAt\uFF09\uFF0C\u5E26 id \u4FEE\u6539\u9700 version\u3002\u671F\u9650\u8BFE\u7A0B\u5FC5\u987B\u540C\u65F6\u63D0\u4F9B term={start,end,purchased,amount,note}\uFF1B\u5DF2\u6709 term \u7EE7\u7EED\u4FEE\u6539\u65F6\u5E26\u4E0A term.id\u3002\u5220\u9664\u7528 trash collection=lessons\u3002",
+  lesson: "\u8BFE\u7A0B\uFF1Aaction=lesson\uFF0Citem \u6309 lessons schema\uFF08title\u3001participant\u3001weekdays\u3001time\u3001durationMinutes\u3001effective\u3001mode=none/credit/term\u3001reminderMinutes\u3001defaultDeduction\u3001balanceWarnAt\uFF09\uFF0C\u5E26 id \u4FEE\u6539\u9700 version\uFF1B\u65B0\u5EFA\u8BFE\u65F6\u5305\u53EF\u4F20 opening=\u73B0\u6709\u5269\u4F59\u8BFE\u65F6\uFF0C\u81EA\u52A8\u751F\u6210\u9996\u6B21\u4F59\u989D\u6D41\u6C34\u3002\u671F\u9650\u8BFE\u7A0B\u5FC5\u987B\u540C\u65F6\u63D0\u4F9B term={start,end,purchased,amount,note}\uFF1B\u5DF2\u6709 term \u7EE7\u7EED\u4FEE\u6539\u65F6\u5E26\u4E0A term.id\u3002\u5220\u9664\u7528 trash collection=lessons\u3002",
   lessonTerm: "\u6709\u6548\u671F\uFF1Aid=lessonId\uFF0Ccommand=renew \u4ECE\u4E0A\u4E00\u5468\u671F\u7ED3\u675F\u6B21\u65E5\u8D77\u65B0\u589E\u5468\u671F\uFF0Citem={start,end,purchased,amount,note}\uFF1Bcommand=remove \u52A0 removeId \u4EC5\u5220\u9664\u65E0\u4E0A\u8BFE\u8BB0\u5F55\u7684\u5468\u671F\u3002\u6709\u6548\u671F\u4E0D\u80FD\u6392\u9664\u5DF2\u4E0A\u8BFE\u65E5\u671F\uFF0C\u4E0D\u80FD\u91CD\u53E0\u3002",
   lessonSession: "\u8BFE\u8868\u5355\u6B21\u64CD\u4F5C\uFF1Aid=lessonId\u3001originalDate=\u539F\u5B9A\u65E5\u3002command=save \u8C03\u8BFE\uFF08date/time/place\uFF0C\u4EC5\u8FD9\u4E00\u6B21\uFF1B\u5982\u91CD\u53E0\u9700 confirmConflict=true\uFF09\uFF0Crestore \u6062\u590D\u539F\u5B89\u6392\uFF0Cskip \u8BF7\u5047\u4E0D\u6263\u8BFE\u65F6\uFF0Ccomplete \u786E\u8BA4\u4E0A\u8BFE\uFF08deduction \u9ED8\u8BA4\u6309\u8BFE\u7A0B\uFF09\uFF0Cundo \u64A4\u9500\u4E0A\u8BFE\u5E76\u8FD4\u8FD8\u8BFE\u65F6\uFF0Cadd \u4F5C\u4E3A\u4E34\u65F6\u52A0\u8BFE\uFF08originalDate \u4E3A\u7A7A\uFF09\uFF0Cremove \u5220\u9664\u4E34\u65F6\u8BFE\u3002\u5DF2\u4E0A\u8BFE\u5148 undo \u624D\u80FD\u6539\u671F\u3002\u671F\u9650\u8BFE\u7A0B\u7684\u65B0\u65E5\u671F\u5FC5\u987B\u5728\u6709\u6548\u671F\u5185\u3002",
   lessonCharge: "\u8BFE\u65F6\u5305\u6D41\u6C34\uFF1Aid=lessonId\uFF0Citem={date,delta,kind=purchase/gift/opening/adjust,amount,expiresOn,note}\u3002delta \u4E3A\u5B9E\u9645\u589E\u51CF\uFF08\u5145\u503C\u4E3A\u6B63\uFF0Cadjust \u53EF\u4E3A\u8D1F\uFF09\uFF0C\u4E0A\u8BFE\u6263\u51CF\u53EA\u80FD\u7531 lessonSession complete \u4EA7\u751F\uFF1B\u5220\u9664\u8BEF\u5F55\u5145\u503C\u7528 command=remove + removeId\uFF0C\u4E0D\u80FD\u5220\u9664 use \u8BB0\u5F55\u3002\u4F59\u989D\u4E0D\u8DB3\u65F6 complete \u9700\u7528\u6237\u786E\u8BA4\u540E\u4F20 confirmShort=true\u3002",
@@ -37320,7 +37342,7 @@ async function apply(ctx) {
       hasGlobal: true,
       layout: "single"
     });
-    const currentVersion = true ? "0.9.2" : "0.0.0";
+    const currentVersion = true ? "0.9.3" : "0.0.0";
     updateService = createUpdateService({
       unit: updateUnit,
       currentVersion,
@@ -37344,7 +37366,7 @@ async function apply(ctx) {
     });
     upgradeService = createUpgradeService({
       unit: upgradeUnit,
-      currentVersion: true ? "0.9.2" : null,
+      currentVersion: true ? "0.9.3" : null,
       isBusy: async () => !!(spiritService && (await spiritService.operate({ action: "read" })).busy || reviewSpiritService && (await reviewSpiritService.operate({ action: "read" })).busy),
       readState: () => service.operate({ action: "read" }),
       restoreState: (a) => service.operate({
@@ -37478,6 +37500,7 @@ async function apply(ctx) {
           deduction: { type: "number" },
           confirmShort: { type: "boolean" },
           confirmConflict: { type: "boolean" },
+          opening: { type: "number" },
           offset: { type: "integer" },
           limit: { type: "integer" }
         },

@@ -1893,6 +1893,7 @@ export function apply(ctx: any) {
       habits,
       busy,
       run,
+      act,
       openHabit,
       setDay,
       live,
@@ -2192,7 +2193,7 @@ export function apply(ctx: any) {
             });
           },
         });
-        const weeklyVisible = support.some((m: any) => m.id === "weekly");
+
         const renderMain = (id: string) => {
           if (id === "plan")
             return <PlanPanel plan={groups} date={day} act={act} busy={busy} />;
@@ -2358,7 +2359,7 @@ export function apply(ctx: any) {
             return (
               <section className="ld-section" key={id}>
                 <h2>{t("todayHabits")}</h2>
-                <HabitCards env={viewEnv} showWeekly={!weeklyVisible} />
+                <HabitCards env={viewEnv} showWeekly={false} />
               </section>
             );
           if (id === "weekly")

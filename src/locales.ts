@@ -44,6 +44,15 @@ export const copy = {
   lessonReminderOff: ["关闭提醒", "No reminder"],
   lessonBefore: ["提前 {n} 分钟", "{n} minutes before"],
   lessonDefaultDeduction: ["每次默认扣除课时", "Default credits per lesson"],
+  lessonOpening: ["现有剩余课时（可选）", "Current credits (optional)"],
+  lessonOpeningHint: [
+    "首次使用可直接填写剩余课时；会生成一笔“现有余额”流水，不必补录以前的充值和上课记录。",
+    "For first use, enter the remaining credits. This records one opening balance instead of backfilling purchases and attendance.",
+  ],
+  lessonOpeningInvalid: [
+    "现有剩余课时应为 0 或正数",
+    "Current credits must be zero or a positive number",
+  ],
   lessonBalanceWarn: ["剩余课时提醒阈值", "Low-balance alert at"],
   lessonTermStart: ["有效期开始", "Valid from"],
   lessonTermEnd: ["有效期结束", "Valid until"],

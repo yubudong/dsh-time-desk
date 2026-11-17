@@ -19,9 +19,10 @@ function harness() {
       s = applyAction(s, { revision: s.revision, ...a }, now);
       return s;
     },
-    lesson(item = {}, term) {
+    lesson(item = {}, term, opening) {
       this.do({
         action: "lesson",
+        ...(opening === undefined ? {} : { opening }),
         item: {
           title: "钢琴",
           participant: "孩子",
@@ -99,6 +100,14 @@ test("credit lessons deduct on confirmed attendance, block duplicates and refund
     deduction: 1,
   });
   assert.equal(lessonAccount(h.state, l).balance, 7);
+});
+test("creating a credit lesson can record its current remaining credits atomically", () => {
+  const h = harness();
+  const l = h.lesson({ mode: "credit" }, undefined, 8);
+  assert.equal(lessonAccount(h.state, l).balance, 8);
+  assert.equal(h.state.lessonCharges[0].kind, "opening");
+  assert.equal(h.state.lessonCharges[0].date, "2026-11-17");
+  assert.throws(() => h.lesson({ mode: "none" }, undefined, 3), /课时包/);
 });
 test("insufficient credit needs explicit confirmation and may end negative", () => {
   const h = harness();

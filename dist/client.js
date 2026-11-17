@@ -16609,6 +16609,15 @@ var copy = {
   lessonReminderOff: ["\u5173\u95ED\u63D0\u9192", "No reminder"],
   lessonBefore: ["\u63D0\u524D {n} \u5206\u949F", "{n} minutes before"],
   lessonDefaultDeduction: ["\u6BCF\u6B21\u9ED8\u8BA4\u6263\u9664\u8BFE\u65F6", "Default credits per lesson"],
+  lessonOpening: ["\u73B0\u6709\u5269\u4F59\u8BFE\u65F6\uFF08\u53EF\u9009\uFF09", "Current credits (optional)"],
+  lessonOpeningHint: [
+    "\u9996\u6B21\u4F7F\u7528\u53EF\u76F4\u63A5\u586B\u5199\u5269\u4F59\u8BFE\u65F6\uFF1B\u4F1A\u751F\u6210\u4E00\u7B14\u201C\u73B0\u6709\u4F59\u989D\u201D\u6D41\u6C34\uFF0C\u4E0D\u5FC5\u8865\u5F55\u4EE5\u524D\u7684\u5145\u503C\u548C\u4E0A\u8BFE\u8BB0\u5F55\u3002",
+    "For first use, enter the remaining credits. This records one opening balance instead of backfilling purchases and attendance."
+  ],
+  lessonOpeningInvalid: [
+    "\u73B0\u6709\u5269\u4F59\u8BFE\u65F6\u5E94\u4E3A 0 \u6216\u6B63\u6570",
+    "Current credits must be zero or a positive number"
+  ],
   lessonBalanceWarn: ["\u5269\u4F59\u8BFE\u65F6\u63D0\u9192\u9608\u503C", "Low-balance alert at"],
   lessonTermStart: ["\u6709\u6548\u671F\u5F00\u59CB", "Valid from"],
   lessonTermEnd: ["\u6709\u6548\u671F\u7ED3\u675F", "Valid until"],
@@ -30698,7 +30707,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.9.2",
+        "data-reader-version": "0.9.3",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -30790,7 +30799,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.9.2")))
+      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.9.3")))
     );
   }
   return {
@@ -31888,6 +31897,7 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
       note: existingTerm?.note || ""
     });
     const [error, setError] = useState5("");
+    const [opening, setOpening] = useState5("");
     const change = (k3, v3) => setItem((x4) => ({ ...x4, [k3]: v3 }));
     const participants = [
       .../* @__PURE__ */ new Set([
@@ -31900,9 +31910,12 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
       if (!item.title.trim()) return setError(t3("lessonTitleRequired"));
       if (item.mode === "term" && !term.end)
         return setError(t3("lessonTermRequired"));
+      if (opening !== "" && (!Number.isFinite(Number(opening)) || Number(opening) < 0))
+        return setError(t3("lessonOpeningInvalid"));
       try {
         await env.act({
           action: "lesson",
+          ...item.mode === "credit" && opening !== "" ? { opening: Number(opening) } : {},
           id: item.id,
           version: item.version,
           item,
@@ -32002,7 +32015,18 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
       },
       /* @__PURE__ */ React9.createElement("option", { value: "off" }, t3("lessonReminderOff")),
       [0, 10, 15, 30, 60, 120, 1440].map((n2) => /* @__PURE__ */ React9.createElement("option", { key: n2, value: n2 }, t3("lessonBefore").replace("{n}", String(n2))))
-    )), item.mode === "credit" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDefaultDeduction") }, /* @__PURE__ */ React9.createElement(
+    )), item.mode === "credit" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, !(item.id && lessonAccount(env.data, lesson).entries.length > 0) && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonOpening") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "number",
+        min: 0,
+        max: 1e5,
+        step: 0.5,
+        value: opening,
+        placeholder: "0",
+        onChange: (e3) => setOpening(e3.target.value)
+      }
+    ), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonOpeningHint"))), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDefaultDeduction") }, /* @__PURE__ */ React9.createElement(
       "input",
       {
         type: "number",
@@ -34310,7 +34334,7 @@ function apply(ctx) {
     const [error, setError] = useState6("");
     const [showNotes, setShowNotes] = useState6(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.9.2";
+    const current = v3.currentVersion || "0.9.3";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -34795,6 +34819,7 @@ function apply(ctx) {
       habits,
       busy,
       run,
+      act,
       openHabit,
       setDay,
       live: live2,
@@ -35011,7 +35036,6 @@ function apply(ctx) {
             });
           }
         });
-        const weeklyVisible = support.some((m3) => m3.id === "weekly");
         const renderMain = (id) => {
           if (id === "plan")
             return /* @__PURE__ */ React10.createElement(PlanPanel, { plan: groups, date: day, act, busy });
@@ -35142,7 +35166,7 @@ function apply(ctx) {
           if (id === "timer")
             return /* @__PURE__ */ React10.createElement("div", { className: "ld-side-timer", key: id }, /* @__PURE__ */ React10.createElement(Timer, null));
           if (id === "habits")
-            return /* @__PURE__ */ React10.createElement("section", { className: "ld-section", key: id }, /* @__PURE__ */ React10.createElement("h2", null, t3("todayHabits")), /* @__PURE__ */ React10.createElement(HabitCards, { env: viewEnv, showWeekly: !weeklyVisible }));
+            return /* @__PURE__ */ React10.createElement("section", { className: "ld-section", key: id }, /* @__PURE__ */ React10.createElement("h2", null, t3("todayHabits")), /* @__PURE__ */ React10.createElement(HabitCards, { env: viewEnv, showWeekly: false }));
           if (id === "weekly")
             return /* @__PURE__ */ React10.createElement(HabitCards, { weeklyOnly: true, env: viewEnv, key: id });
           if (id === "upcoming")
@@ -35498,7 +35522,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React10.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.9.2", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React10.createElement(
+        /* @__PURE__ */ React10.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.9.3", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React10.createElement(
           "button",
           {
             className: "ld-update-badge",

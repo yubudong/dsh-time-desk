@@ -497,6 +497,32 @@ export function applyAction(current, a, now = Date.now()) {
     if (a.term) upsertTerm(s, record, a.term, now, iso);
     if (record.mode === "term" && !lessonTerms(s, record.id).length)
       fail("期限课程需要填写有效期");
+    if (a.opening !== undefined && a.opening !== null && a.opening !== "") {
+      if (record.mode !== "credit") fail("只有课时包课程可以填写现有余额");
+      const amount = Number(a.opening);
+      if (!Number.isFinite(amount) || amount < 0 || amount > 100000)
+        fail("现有余额应为 0–100000 的课时数");
+      if (
+        amount > 0 &&
+        s.lessonCharges.some(
+          (x) =>
+            !x.deletedAt && x.lessonId === record.id && x.kind === "opening",
+        )
+      )
+        fail("这门课程已经有首次余额记录，请用充值流水调整");
+      if (amount > 0)
+        s.lessonCharges.push({
+          ...nowMeta(now),
+          lessonId: record.id,
+          date: localDay,
+          delta: amount,
+          kind: "opening",
+          amount: null,
+          note: "现有余额",
+          sessionId: "",
+          expiresOn: "",
+        });
+    }
   } else if (a.action === "lessonTerm") {
     const lesson = live(s, "lessons", a.id);
     if (lesson.mode !== "term") fail("只有期限课程可以设置有效期");

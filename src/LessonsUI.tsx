@@ -87,6 +87,7 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
       note: existingTerm?.note || "",
     });
     const [error, setError] = useState("");
+    const [opening, setOpening] = useState<any>("");
     const change = (k: string, v: any) =>
       setItem((x: any) => ({ ...x, [k]: v }));
     const participants = [
@@ -102,9 +103,17 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
       if (!item.title.trim()) return setError(t("lessonTitleRequired"));
       if (item.mode === "term" && !term.end)
         return setError(t("lessonTermRequired"));
+      if (
+        opening !== "" &&
+        (!Number.isFinite(Number(opening)) || Number(opening) < 0)
+      )
+        return setError(t("lessonOpeningInvalid"));
       try {
         await env.act({
           action: "lesson",
+          ...(item.mode === "credit" && opening !== ""
+            ? { opening: Number(opening) }
+            : {}),
           id: item.id,
           version: item.version,
           item,
@@ -249,6 +258,22 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
           </Field>
           {item.mode === "credit" && (
             <>
+              {!(
+                item.id && lessonAccount(env.data, lesson).entries.length > 0
+              ) && (
+                <Field label={t("lessonOpening")}>
+                  <input
+                    type="number"
+                    min={0}
+                    max={100000}
+                    step={0.5}
+                    value={opening}
+                    placeholder="0"
+                    onChange={(e) => setOpening(e.target.value)}
+                  />
+                  <p className="ld-help">{t("lessonOpeningHint")}</p>
+                </Field>
+              )}
               <Field label={t("lessonDefaultDeduction")}>
                 <input
                   type="number"
