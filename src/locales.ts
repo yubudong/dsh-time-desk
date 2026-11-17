@@ -116,9 +116,13 @@ export const copy = {
   unpickForDay: ["移回延续待选", "Return to carried tasks"],
   makePriority: ["设为当日重点", "Make a priority for this day"],
   clearPriority: ["取消重点", "Remove priority"],
-  priorityHint: [
-    "最多三件。取消重点不会改动安排日和截止日。",
-    "Up to three. Removing priority preserves dates and deadlines.",
+  prioritiesEmpty: [
+    "选出今天最重要的三件事。",
+    "Choose the three things that matter most today.",
+  ],
+  clearPriorityHint: [
+    "只清除重点标记，不改变安排日和截止日。",
+    "Clears only the priority mark; dates and deadlines stay the same.",
   ],
   workspaceActions: ["工作台操作", "Workspace actions"],
   versionUpdate: ["版本与更新", "Version & updates"],

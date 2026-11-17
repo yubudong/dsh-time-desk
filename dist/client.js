@@ -16681,9 +16681,13 @@ var copy = {
   unpickForDay: ["\u79FB\u56DE\u5EF6\u7EED\u5F85\u9009", "Return to carried tasks"],
   makePriority: ["\u8BBE\u4E3A\u5F53\u65E5\u91CD\u70B9", "Make a priority for this day"],
   clearPriority: ["\u53D6\u6D88\u91CD\u70B9", "Remove priority"],
-  priorityHint: [
-    "\u6700\u591A\u4E09\u4EF6\u3002\u53D6\u6D88\u91CD\u70B9\u4E0D\u4F1A\u6539\u52A8\u5B89\u6392\u65E5\u548C\u622A\u6B62\u65E5\u3002",
-    "Up to three. Removing priority preserves dates and deadlines."
+  prioritiesEmpty: [
+    "\u9009\u51FA\u4ECA\u5929\u6700\u91CD\u8981\u7684\u4E09\u4EF6\u4E8B\u3002",
+    "Choose the three things that matter most today."
+  ],
+  clearPriorityHint: [
+    "\u53EA\u6E05\u9664\u91CD\u70B9\u6807\u8BB0\uFF0C\u4E0D\u6539\u53D8\u5B89\u6392\u65E5\u548C\u622A\u6B62\u65E5\u3002",
+    "Clears only the priority mark; dates and deadlines stay the same."
   ],
   workspaceActions: ["\u5DE5\u4F5C\u53F0\u64CD\u4F5C", "Workspace actions"],
   versionUpdate: ["\u7248\u672C\u4E0E\u66F4\u65B0", "Version & updates"],
@@ -30340,7 +30344,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.7.4",
+        "data-reader-version": "0.7.5",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -30432,7 +30436,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.7.4")))
+      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.7.5")))
     );
   }
   return {
@@ -32244,7 +32248,7 @@ function apply(ctx) {
     const [error, setError] = useState4("");
     const [showNotes, setShowNotes] = useState4(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.7.4";
+    const current = v3.currentVersion || "0.7.5";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -32846,9 +32850,7 @@ function apply(ctx) {
             {
               className: "ld-icon-btn",
               disabled: busy,
-              title: t3(
-                x4.priorityDate === day ? "clearPriority" : "makePriority"
-              ),
+              title: x4.priorityDate === day ? t3("clearPriority") + " \xB7 " + t3("clearPriorityHint") : t3("makePriority"),
               "aria-pressed": x4.priorityDate === day,
               "aria-label": t3(
                 x4.priorityDate === day ? "clearPriority" : "makePriority"
@@ -32937,14 +32939,14 @@ function apply(ctx) {
       if (tab === "today") {
         const groups = planForDay;
         const priority = groups.priority;
-        return /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("div", { className: "ld-today-grid" }, /* @__PURE__ */ React8.createElement("div", { className: "ld-main-col" }, !tasks.length && !habits.length && !projects.length && /* @__PURE__ */ React8.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React8.createElement(Icon, { name: "today", size: 30 }), /* @__PURE__ */ React8.createElement("h2", null, t3("startTitle")), /* @__PURE__ */ React8.createElement("p", null, t3("startText")), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(Btn, { primary: true, onClick: () => openTask() }, t3("addTask")), /* @__PURE__ */ React8.createElement(Btn, { onClick: () => setTemplateOpen(true) }, t3("addHabit")))), /* @__PURE__ */ React8.createElement(PlanPanel, { plan: groups, date: day, act, busy }), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("priorityHint")), /* @__PURE__ */ React8.createElement(
+        return /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("div", { className: "ld-today-grid" }, /* @__PURE__ */ React8.createElement("div", { className: "ld-main-col" }, !tasks.length && !habits.length && !projects.length && /* @__PURE__ */ React8.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React8.createElement(Icon, { name: "today", size: 30 }), /* @__PURE__ */ React8.createElement("h2", null, t3("startTitle")), /* @__PURE__ */ React8.createElement("p", null, t3("startText")), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(Btn, { primary: true, onClick: () => openTask() }, t3("addTask")), /* @__PURE__ */ React8.createElement(Btn, { onClick: () => setTemplateOpen(true) }, t3("addHabit")))), /* @__PURE__ */ React8.createElement(PlanPanel, { plan: groups, date: day, act, busy }), /* @__PURE__ */ React8.createElement(
           FoldSection,
           {
             title: t3("priorities"),
             count: priority.length + "/3",
             id: "ld-fold-priority"
           },
-          taskRows(priority)
+          priority.length ? taskRows(priority) : /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("prioritiesEmpty"))
         ), /* @__PURE__ */ React8.createElement(
           FoldSection,
           {
@@ -33336,7 +33338,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React8.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.7.4", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React8.createElement(
+        /* @__PURE__ */ React8.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.7.5", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React8.createElement(
           "button",
           {
             className: "ld-update-badge",

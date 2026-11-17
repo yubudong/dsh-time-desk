@@ -1861,11 +1861,13 @@ export function apply(ctx: any) {
                       <button
                         className="ld-icon-btn"
                         disabled={busy}
-                        title={t(
+                        title={
                           x.priorityDate === day
-                            ? "clearPriority"
-                            : "makePriority",
-                        )}
+                            ? t("clearPriority") +
+                              " · " +
+                              t("clearPriorityHint")
+                            : t("makePriority")
+                        }
                         aria-pressed={x.priorityDate === day}
                         aria-label={
                           t(
@@ -2023,13 +2025,16 @@ export function apply(ctx: any) {
                   </div>
                 )}
                 <PlanPanel plan={groups} date={day} act={act} busy={busy} />
-                <p className="ld-help">{t("priorityHint")}</p>
                 <FoldSection
                   title={t("priorities")}
                   count={priority.length + "/3"}
                   id="ld-fold-priority"
                 >
-                  {taskRows(priority)}
+                  {priority.length ? (
+                    taskRows(priority)
+                  ) : (
+                    <p className="ld-help">{t("prioritiesEmpty")}</p>
+                  )}
                 </FoldSection>
                 <FoldSection
                   title={t("schedule")}
