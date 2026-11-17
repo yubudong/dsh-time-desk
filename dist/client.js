@@ -16564,6 +16564,81 @@ var l77 = {
 
 // src/locales.ts
 var copy = {
+  lessonOnce: ["\u5355\u6B21\u8BFE\u7A0B", "One-off lesson"],
+  lessonDraftIntro: [
+    "\u5173\u95ED\u5F39\u7A97\u4F1A\u4FDD\u7559\u8349\u7A3F\uFF1B\u4FDD\u5B58\u540E\u624D\u5199\u5165\u8BFE\u7A0B\u548C\u8D26\u76EE\u3002",
+    "Closing keeps the draft; only saving changes courses and accounts."
+  ],
+  lessonDraftKept: [
+    "\u8349\u7A3F\u4FDD\u5B58\u5728\u672C\u673A\u6D4F\u89C8\u5668\uFF0C\u5173\u95ED\u6216\u5237\u65B0\u540E\u53EF\u7EE7\u7EED\uFF1B\u5DE5\u4F5C\u53F0\u5907\u4EFD\u4E0D\u5305\u542B\u8349\u7A3F\u3002",
+    "Draft kept in this browser for reopening or refresh; workbench backups exclude drafts."
+  ],
+  lessonDraftMemoryOnly: [
+    "\u6D4F\u89C8\u5668\u5B58\u50A8\u4E0D\u53EF\u7528\uFF0C\u8349\u7A3F\u4EC5\u4FDD\u7559\u5728\u5F53\u524D\u9875\u9762\uFF1B\u5237\u65B0\u524D\u8BF7\u5148\u4FDD\u5B58\u3002",
+    "Browser storage is unavailable; the draft stays on this page only. Save before refreshing."
+  ],
+  lessonConflictDraft: [
+    "\u8BB0\u5F55\u5DF2\u5728\u522B\u5904\u66F4\u65B0\uFF0C\u5F53\u524D\u8349\u7A3F\u4FDD\u7559\u3002\u8BF7\u5148\u6838\u5BF9\u6700\u65B0\u5185\u5BB9\uFF0C\u518D\u9009\u62E9\u4FDD\u7559\u8349\u7A3F\u6216\u653E\u5F03\u3002",
+    "The record changed elsewhere. Your draft is kept; compare the latest record before continuing or discarding."
+  ],
+  lessonDiscardDraft: ["\u653E\u5F03\u8FD9\u4EFD\u8349\u7A3F", "Discard this draft"],
+  lessonScheduleFrom: ["\u540E\u7EED\u6392\u8BFE\u751F\u6548\u65E5\u671F", "New schedule starts"],
+  lessonSchedulePreserve: [
+    "\u53EA\u6539\u53D8\u751F\u6548\u65E5\u53CA\u4EE5\u540E\u7684\u89C4\u5219\uFF1B\u5DF2\u8BB0\u5F55\u7684\u8C03\u8BFE\u3001\u8BF7\u5047\u4E0E\u4E0A\u8BFE\u5386\u53F2\u4FDD\u7559\u3002\u539F\u5B89\u6392\uFF1A",
+    "Changes rules from this date only; recorded moves, absences and attendance stay. Previous schedule:"
+  ],
+  lessonScheduleConfirm: [
+    "\u786E\u8BA4\u4ECE {date} \u8D77\u8C03\u6574\u540E\u7EED\u6392\u8BFE\uFF1F\u8FC7\u53BB\u5B89\u6392\u4E0E\u5DF2\u6709\u5355\u6B21\u8BB0\u5F55\u5C06\u4FDD\u7559\u3002",
+    "Change the schedule from {date}? Past rules and existing session records will be kept."
+  ],
+  lessonExpiryWarn: ["\u6709\u6548\u671F\u5230\u671F\u63D0\u793A", "Expiry alert"],
+  lessonExpiryBefore: ["\u63D0\u524D {n} \u5929\u63D0\u793A", "Show {n} days before expiry"],
+  lessonRecordedUnits: ["\u672C\u6B21\u7D2F\u8BA1\u8BFE\u65F6", "Credits attended this session"],
+  lessonChargeOnSkip: [
+    "\u673A\u6784\u89C4\u5B9A\u8BF7\u5047\u4ECD\u6263\u8BFE\u65F6",
+    "The provider charges for this absence"
+  ],
+  lessonSkippedCharge: ["\u672C\u6B21\u8BF7\u5047\u5DF2\u6263 {n} \u8BFE\u65F6", "Absence charged {n} credits"],
+  lessonAttendanceUnits: [
+    "\u672C\u6B21\u5B9E\u9645\u4E0A\u8BFE {n} \u8BFE\u65F6",
+    "Attended {n} credits this session"
+  ],
+  lessonAttendanceHistory: [
+    "\u4E0A\u8BFE\u5386\u53F2\u4E0E\u8865\u8BB0",
+    "Attendance history and backfill"
+  ],
+  lessonHistoryHint: [
+    "\u53EF\u5207\u6362\u65E5\u671F\u6216\u5E74\u5361\u5468\u671F\u67E5\u770B\u3002\u8FC7\u53BB\u5F85\u6838\u5BF9\u7684\u8BFE\u53EF\u8865\u8BB0\uFF1B\u672A\u6765\u8BFE\u7A0B\u4E0D\u80FD\u63D0\u524D\u786E\u8BA4\u4E0A\u8BFE\u3002",
+    "Filter by dates or term. Backfill past sessions; future attendance cannot be confirmed early."
+  ],
+  lessonHistoryRange: [
+    "\u8BF7\u9009\u62E9\u6709\u6548\u65E5\u671F\u8303\u56F4\uFF0C\u5355\u6B21\u67E5\u8BE2\u6700\u591A\u5341\u5E74\u3002",
+    "Choose a valid range of up to ten years."
+  ],
+  lessonHistoryFrom: ["\u4ECE", "From"],
+  lessonHistoryTo: ["\u81F3", "To"],
+  lessonHistoryStatus: ["\u8BB0\u5F55\u72B6\u6001", "Session status"],
+  lessonHistoryall: ["\u5168\u90E8\u5B89\u6392\u4E0E\u8BB0\u5F55", "All sessions"],
+  lessonHistorydone: ["\u5DF2\u4E0A\u8BFE", "Attended"],
+  lessonHistorypending: ["\u8FC7\u53BB\u5F85\u6838\u5BF9", "Past, unconfirmed"],
+  lessonHistoryskipped: ["\u5DF2\u8BF7\u5047", "Skipped"],
+  lessonSelectTerm: ["\u6309\u6709\u6548\u671F\u5468\u671F\u67E5\u770B", "Choose a term"],
+  lessonNoHistory: [
+    "\u8BE5\u8303\u56F4\u5185\u6CA1\u6709\u8BFE\u7A0B\u5B89\u6392\u6216\u8BB0\u5F55\u3002",
+    "No sessions or records in this range."
+  ],
+  lessonSessionCount: ["\u8282", "sessions"],
+  lessonPrevPage: ["\u4E0A\u4E00\u9875", "Previous"],
+  lessonNextPage: ["\u4E0B\u4E00\u9875", "Next"],
+  lessonScheduleVersions: ["\u6392\u671F\u53D8\u66F4", "Schedule history"],
+  lessonChangeHistory: ["\u8FD9\u8282\u8BFE\u7684\u53D8\u66F4\u8BB0\u5F55", "Session changes"],
+  lessonActionsave: ["\u8C03\u8BFE\u6216\u53D6\u6D88\u8BF7\u5047", "Moved or skip cancelled"],
+  lessonActionrestore: ["\u6062\u590D\u539F\u5B89\u6392", "Original schedule restored"],
+  lessonActioncomplete: ["\u786E\u8BA4\u4E0A\u8BFE", "Attendance confirmed"],
+  lessonActionskip: ["\u8BF7\u5047", "Absence recorded"],
+  lessonActionundo: ["\u64A4\u9500\u672C\u6B21\u8BB0\u5F55", "Record undone"],
+  lessonActionadd: ["\u4E34\u65F6\u52A0\u8BFE", "Extra session added"],
+  lessonTermNotStarted: ["\u672C\u671F\u5C1A\u672A\u5F00\u59CB", "Term has not started"],
   lessons: ["\u8BFE\u7A0B", "Lessons"],
   lessonAlerts: ["\u8BFE\u7A0B\u63D0\u9192", "Lesson alerts"],
   lessonLowBalance: [
@@ -28896,7 +28971,7 @@ var Lunar = class _Lunar {
         filter = true;
       }
     }
-    const today3 = wholeDay ? this._solar.toYmd() : this._solar.toYmdHms();
+    const today2 = wholeDay ? this._solar.toYmd() : this._solar.toYmdHms();
     const keys = Object.keys(this._jieQi);
     for (let i3 = 0, j4 = keys.length; i3 < j4; i3++) {
       const key = keys[i3];
@@ -28909,7 +28984,7 @@ var Lunar = class _Lunar {
       }
       const day = wholeDay ? solar.toYmd() : solar.toYmdHms();
       if (forward) {
-        if (day <= today3) {
+        if (day <= today2) {
           continue;
         }
         if (null == near) {
@@ -28923,7 +28998,7 @@ var Lunar = class _Lunar {
           }
         }
       } else {
-        if (day > today3) {
+        if (day > today2) {
           continue;
         }
         if (null == near) {
@@ -30725,7 +30800,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.9.6",
+        "data-reader-version": "0.10.0",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -30817,7 +30892,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.9.6")))
+      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.10.0")))
     );
   }
   return {
@@ -30851,7 +30926,7 @@ var minutesOf = (time) => {
   const [h3, m3] = time.split(":").map(Number);
   return h3 * 60 + m3;
 };
-var lessonTerms = (state, lessonId) => live(state.lessonTerms).filter((x4) => x4.lessonId === lessonId);
+var lessonTerms = (state, lessonId) => live(state.lessonTerms).filter((x4) => x4.lessonId === lessonId).sort((a3, b3) => a3.start.localeCompare(b3.start));
 function lessonBounds(lesson, terms) {
   const own = live(terms).filter((x4) => x4.lessonId === lesson.id);
   if (lesson.mode === "term" && own.length)
@@ -30862,61 +30937,87 @@ function lessonBounds(lesson, terms) {
   return [{ start: lesson.effective, end: lesson.until || "" }];
 }
 var inBounds = (bounds, date) => bounds.some((b3) => date >= b3.start && (!b3.end || date <= b3.end));
+function lessonScheduleAt(lesson, date) {
+  if (date < lesson.effective) return null;
+  const history = lesson.scheduleHistory || [];
+  return history.length ? [...history].reverse().find((x4) => x4.from <= date) || null : { ...lesson, from: lesson.effective };
+}
 function lessonTimeFor(lesson, date) {
-  const per = (lesson.weekdayTimes || []).find(
+  const rule = lessonScheduleAt(lesson, date);
+  const per = (rule?.weekdayTimes || []).find(
     (x4) => x4.weekday === weekday(date) && x4.time
   );
-  return per?.time || lesson.time;
+  return per?.time ?? rule?.time ?? "";
+}
+function lessonDue(lesson, date, terms) {
+  const r3 = lessonScheduleAt(lesson, date);
+  if (!r3 || r3.until && date > r3.until) return false;
+  if (!inBounds(lessonBounds(lesson, terms), date)) return false;
+  return r3.weekdays.length ? r3.weekdays.includes(weekday(date)) : date === r3.from;
 }
 function occurrenceOf(state, lesson, originalDate, row) {
-  const base = {
+  const date = row?.date || originalDate;
+  const rule = lessonScheduleAt(lesson, originalDate || date) || lesson;
+  return {
     lessonId: lesson.id,
     title: lesson.title,
     participant: lesson.participant,
     originalDate,
-    date: row?.date || originalDate,
-    time: row?.time ?? lessonTimeFor(lesson, originalDate),
-    durationMinutes: lesson.durationMinutes,
-    place: row?.place ?? lesson.place,
+    date,
+    time: row?.time ?? lessonTimeFor(lesson, originalDate || date),
+    durationMinutes: row?.durationMinutes ?? rule.durationMinutes,
+    place: row?.place ?? rule.place,
     status: row?.status || "scheduled",
     note: row?.note || "",
-    deduction: row?.deduction ?? lesson.defaultDeduction,
+    deduction: row?.deduction ?? rule.defaultDeduction,
     completedAt: row?.completedAt ?? null,
     extra: !!row?.extra,
-    movedFrom: row && row.date !== originalDate ? originalDate : "",
+    movedFrom: row && originalDate && row.date !== originalDate ? originalDate : "",
     sessionId: row?.id || "",
+    version: row?.version || 0,
+    changes: row?.changes || [],
+    charged: !!row && !!activeLessonUsage(state, row),
     key: lesson.id + "@" + (originalDate || "extra:" + (row?.id || ""))
   };
-  return base;
 }
 function lessonOccurrences(state, lesson, from, to) {
   if (lesson.deletedAt) return [];
   const rows = live(state.lessonSessions).filter(
     (x4) => x4.lessonId === lesson.id
   );
-  const byOriginal = /* @__PURE__ */ new Map();
-  for (const r3 of rows) if (r3.originalDate) byOriginal.set(r3.originalDate, r3);
-  const bounds = lessonBounds(lesson, state.lessonTerms);
-  const out = [];
-  const emitted = /* @__PURE__ */ new Set();
-  if (lesson.weekdays.length)
-    for (let d2 = from; d2 <= to; d2 = shift(d2, 1)) {
-      if (!lesson.weekdays.includes(weekday(d2)) || !inBounds(bounds, d2))
-        continue;
-      const row = byOriginal.get(d2);
-      const date = row?.date || d2;
-      emitted.add((row?.originalDate || d2) + ":" + date);
-      if (date >= from && date <= to)
-        out.push(occurrenceOf(state, lesson, d2, row));
-    }
-  for (const r3 of rows) {
-    if (!r3.date || r3.date < from || r3.date > to) continue;
-    if (emitted.has((r3.originalDate || "") + ":" + r3.date)) continue;
-    out.push(occurrenceOf(state, lesson, r3.originalDate || "", r3));
+  const byOriginal = new Map(
+    rows.filter((x4) => x4.originalDate).map((x4) => [x4.originalDate, x4])
+  );
+  const out = [], emitted = /* @__PURE__ */ new Set();
+  for (let d2 = from; d2 <= to; d2 = shift(d2, 1)) {
+    if (!lessonDue(lesson, d2, state.lessonTerms)) continue;
+    const row = byOriginal.get(d2), x4 = occurrenceOf(state, lesson, d2, row);
+    if (row) emitted.add(row.id);
+    if (x4.date >= from && x4.date <= to) out.push(x4);
+  }
+  for (const row of rows) {
+    if (row.date < from || row.date > to || emitted.has(row.id)) continue;
+    out.push(occurrenceOf(state, lesson, row.originalDate || "", row));
   }
   return out.sort(
-    (a3, b3) => (a3.date + (a3.time || "99:99")).localeCompare(b3.date + (b3.time || "99:99"))
+    (a3, b3) => (a3.date + (a3.time || "99:99")).localeCompare(
+      b3.date + (b3.time || "99:99")
+    ) || a3.key.localeCompare(b3.key)
   );
+}
+var sumCredits = (values) => values.reduce((s3, n2) => s3 + Math.round(n2 * 1e6), 0) / 1e6;
+function activeLessonUsage(state, session) {
+  const stack = [];
+  for (const row of live(state.lessonCharges).filter(
+    (x4) => x4.sessionId === session.id
+  )) {
+    if (row.kind === "use") stack.push(row);
+    if (row.kind === "refund") {
+      const i3 = row.reversesId ? stack.findIndex((x4) => x4.id === row.reversesId) : stack.length - 1;
+      if (i3 >= 0) stack.splice(i3, 1);
+    }
+  }
+  return stack.at(-1) || null;
 }
 function lessonDone(state, lesson, from, to) {
   return lessonOccurrences(state, lesson, from, to).filter(
@@ -30927,14 +31028,15 @@ function lessonAccount(state, lesson) {
   const rows = live(state.lessonCharges).filter(
     (x4) => x4.lessonId === lesson.id
   );
-  const sum = (f3) => rows.filter(f3).reduce((s3, x4) => s3 + x4.delta, 0);
+  const sum = (f3) => sumCredits(rows.filter(f3).map((x4) => x4.delta));
   return {
-    balance: rows.reduce((s3, x4) => s3 + x4.delta, 0),
+    balance: sumCredits(rows.map((x4) => x4.delta)),
     purchased: sum((x4) => x4.kind === "purchase"),
     gifted: sum((x4) => x4.kind === "gift"),
     opening: sum((x4) => x4.kind === "opening"),
     used: -sum((x4) => x4.kind === "use"),
     refunded: sum((x4) => x4.kind === "refund"),
+    netUsed: -sum((x4) => x4.kind === "use" || x4.kind === "refund"),
     adjusted: sum((x4) => x4.kind === "adjust"),
     entries: rows.sort(
       (a3, b3) => b3.date.localeCompare(a3.date) || b3.createdAt.localeCompare(a3.createdAt)
@@ -30957,14 +31059,15 @@ function lessonSummary(state, lesson, date) {
     terms,
     stats,
     expired,
-    endsIn
+    endsIn,
+    termStatus: currentTerm ? currentTerm.start > date ? "upcoming" : "active" : expired ? "expired" : "none"
   };
 }
 function lessonStats(state, lesson, from, to) {
   const done = lessonDone(state, lesson, from, to);
   return {
     sessions: done.length,
-    units: done.reduce((s3, x4) => s3 + (Number(x4.deduction) || 0), 0),
+    units: sumCredits(done.map((x4) => Number(x4.deduction) || 0)),
     skipped: lessonOccurrences(state, lesson, from, to).filter(
       (x4) => x4.status === "skipped"
     ).length,
@@ -30972,13 +31075,18 @@ function lessonStats(state, lesson, from, to) {
     to
   };
 }
-function lessonExpiring(state, date, withinDays = 30) {
-  const limit = shift(date, withinDays);
+function lessonExpiring(state, date, withinDays) {
   const out = [];
   for (const l3 of live(state.lessons)) {
+    if (l3.expiryWarnDays === null) continue;
+    const threshold = l3.expiryWarnDays ?? 30;
+    const effectiveLimit = shift(
+      date,
+      Math.min(withinDays ?? threshold, threshold)
+    );
     if (l3.mode === "term") {
       for (const term of lessonTerms(state, l3.id))
-        if (term.end >= date && term.end <= limit)
+        if (term.end >= date && term.end <= effectiveLimit)
           out.push({
             kind: "term",
             lessonId: l3.id,
@@ -30993,7 +31101,7 @@ function lessonExpiring(state, date, withinDays = 30) {
       for (const row of live(state.lessonCharges).filter(
         (x4) => x4.lessonId === l3.id && x4.expiresOn && x4.delta > 0
       ))
-        if (row.expiresOn >= date && row.expiresOn <= limit)
+        if (row.expiresOn >= date && row.expiresOn <= effectiveLimit)
           out.push({
             kind: "credit-expiry",
             lessonId: l3.id,
@@ -31009,22 +31117,30 @@ function lessonExpiring(state, date, withinDays = 30) {
   return out.sort((a3, b3) => a3.date.localeCompare(b3.date));
 }
 function lessonReminders(state, now, zone) {
-  const date = today(zone, now);
-  const out = [];
+  const date = today(zone, now), out = [];
   for (const l3 of live(state.lessons)) {
-    if (l3.reminderMinutes === null || !l3.time) continue;
-    for (const x4 of lessonOccurrences(state, l3, shift(date, -1), date)) {
-      if (x4.status !== "scheduled") continue;
-      const stamp = zonedStamp(x4.date, x4.time, zone) - l3.reminderMinutes * 6e4;
-      if (stamp > now || now - stamp > 12 * 60 * 6e4) continue;
-      out.push({
-        key: "lesson:" + x4.key + ":" + x4.date + ":" + x4.time + ":" + stamp,
-        title: x4.title + " \xB7 " + x4.date + " " + lessonTimeLabel(l3),
-        at: stamp,
-        date: x4.date,
-        time: x4.time,
-        lessonId: l3.id
-      });
+    if (l3.reminderMinutes == null) continue;
+    const lead = Math.ceil(l3.reminderMinutes / 1440) + 1;
+    for (const x4 of lessonOccurrences(
+      state,
+      l3,
+      shift(date, -1),
+      shift(date, lead)
+    )) {
+      if (x4.status !== "scheduled" || !x4.time) continue;
+      try {
+        const at = zonedStamp(x4.date, x4.time, zone) - l3.reminderMinutes * 6e4;
+        if (at > now || now - at > 12 * 60 * 6e4) continue;
+        out.push({
+          key: "lesson:" + x4.key + ":" + x4.date + ":" + x4.time + ":" + at,
+          title: x4.title + " \xB7 " + x4.date + " " + lessonTimeLabel(x4),
+          at,
+          date: x4.date,
+          time: x4.time,
+          lessonId: l3.id
+        });
+      } catch {
+      }
     }
   }
   return out.sort((a3, b3) => a3.at - b3.at);
@@ -31050,6 +31166,17 @@ function lessonWeeklyLabel(lesson, t3) {
     const time = per?.time || lesson.time;
     return t3("weekdayShort" + d2) + (time ? " " + time : "");
   }).join(" \xB7 ");
+}
+function lessonScheduleSignature(lesson) {
+  return JSON.stringify({
+    weekdays: [...lesson.weekdays || []].sort((a3, b3) => a3 - b3),
+    weekdayTimes: [...lesson.weekdayTimes || []].filter((x4) => x4.time).sort((a3, b3) => a3.weekday - b3.weekday),
+    time: lesson.time || "",
+    durationMinutes: lesson.durationMinutes,
+    place: lesson.place || "",
+    until: lesson.until || "",
+    defaultDeduction: lesson.defaultDeduction
+  });
 }
 
 // src/planning.js
@@ -31297,7 +31424,15 @@ function createPlanningUI({ t: t3, Btn, Field }) {
       )), /* @__PURE__ */ React7.createElement("p", { className: "ld-help" }, t3("captureHint")), error && /* @__PURE__ */ React7.createElement("p", { role: "alert", className: "ld-error" }, error))
     );
   }
-  function PlanPanel({ plan, date, act, busy }) {
+  function PlanPanel({
+    plan,
+    date,
+    act,
+    busy,
+    folded = false,
+    onFold = () => {
+    }
+  }) {
     const capacity = plan.load.availableMinutes;
     const [value, setValue] = useState3(
       capacity === null ? "" : String(capacity)
@@ -31321,7 +31456,18 @@ function createPlanningUI({ t: t3, Btn, Field }) {
       }
     }
     const load = plan.load;
-    return /* @__PURE__ */ React7.createElement("section", { className: "ld-plan-panel", "aria-label": t3("dailyPlan") }, /* @__PURE__ */ React7.createElement("div", { className: "ld-plan-heading" }, /* @__PURE__ */ React7.createElement("h2", null, t3("dailyPlan")), /* @__PURE__ */ React7.createElement("span", null, date)), /* @__PURE__ */ React7.createElement("div", { className: "ld-plan-stats" }, /* @__PURE__ */ React7.createElement("div", null, /* @__PURE__ */ React7.createElement("strong", null, load.knownMinutes), /* @__PURE__ */ React7.createElement("span", null, t3("estimatedMin"))), /* @__PURE__ */ React7.createElement("div", null, /* @__PURE__ */ React7.createElement("strong", null, load.unknownCount), /* @__PURE__ */ React7.createElement("span", null, t3("unestimatedTasks"))), /* @__PURE__ */ React7.createElement("div", null, /* @__PURE__ */ React7.createElement("strong", null, load.recordedFocusMinutes), /* @__PURE__ */ React7.createElement("span", null, t3("recordedFocus")))), /* @__PURE__ */ React7.createElement("form", { className: "ld-plan-capacity", onSubmit: save }, /* @__PURE__ */ React7.createElement("label", null, t3("availableToday"), /* @__PURE__ */ React7.createElement(
+    return /* @__PURE__ */ React7.createElement("section", { className: "ld-plan-panel", "aria-label": t3("dailyPlan") }, /* @__PURE__ */ React7.createElement("div", { className: "ld-plan-heading" }, /* @__PURE__ */ React7.createElement("h2", null, /* @__PURE__ */ React7.createElement(
+      "button",
+      {
+        type: "button",
+        className: "ld-fold-toggle",
+        "aria-expanded": !folded,
+        "aria-controls": "ld-plan-body",
+        onClick: onFold
+      },
+      /* @__PURE__ */ React7.createElement("span", { className: "ld-fold-chevron" }, "\u203A"),
+      t3("dailyPlan")
+    )), /* @__PURE__ */ React7.createElement("span", null, date)), /* @__PURE__ */ React7.createElement("div", { id: "ld-plan-body", hidden: folded }, /* @__PURE__ */ React7.createElement("div", { className: "ld-plan-stats" }, /* @__PURE__ */ React7.createElement("div", null, /* @__PURE__ */ React7.createElement("strong", null, load.knownMinutes), /* @__PURE__ */ React7.createElement("span", null, t3("estimatedMin"))), /* @__PURE__ */ React7.createElement("div", null, /* @__PURE__ */ React7.createElement("strong", null, load.unknownCount), /* @__PURE__ */ React7.createElement("span", null, t3("unestimatedTasks"))), /* @__PURE__ */ React7.createElement("div", null, /* @__PURE__ */ React7.createElement("strong", null, load.recordedFocusMinutes), /* @__PURE__ */ React7.createElement("span", null, t3("recordedFocus")))), /* @__PURE__ */ React7.createElement("form", { className: "ld-plan-capacity", onSubmit: save }, /* @__PURE__ */ React7.createElement("label", null, t3("availableToday"), /* @__PURE__ */ React7.createElement(
       "input",
       {
         type: "number",
@@ -31340,7 +31486,7 @@ function createPlanningUI({ t: t3, Btn, Field }) {
       capacity === null ? t3("capacityHint") : load.overMinutes > 0 ? t3("overCapacity") + " " + load.overMinutes + " " + t3("min") : t3("withinCapacity"),
       " \xB7 ",
       t3("estimateHint")
-    ), error && /* @__PURE__ */ React7.createElement("p", { className: "ld-error", role: "alert" }, error));
+    ), error && /* @__PURE__ */ React7.createElement("p", { className: "ld-error", role: "alert" }, error)));
   }
   function InboxItem({ task, projects, act, busy, onEdit, day }) {
     const [editing, setEditing] = useState3(false), [draft, setDraft] = useState3(null), [error, setError] = useState3("");
@@ -31898,8 +32044,204 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
 
 // src/LessonsUI.tsx
 var React9 = __toESM(require("react"), 1);
-var { useState: useState5, useEffect: useEffect5 } = React9;
-function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
+
+// src/lesson-drafts.js
+function createLessonDraftStore(storage) {
+  const memory = /* @__PURE__ */ new Map();
+  return {
+    read(key) {
+      if (memory.has(key)) return structuredClone(memory.get(key));
+      try {
+        const raw = storage?.getItem(key);
+        if (!raw) return null;
+        const record = JSON.parse(raw);
+        if (record?.format !== 1 || !record.values || typeof record.values !== "object" || Array.isArray(record.values) || !record.base)
+          return null;
+        memory.set(key, record);
+        return structuredClone(record);
+      } catch {
+        return null;
+      }
+    },
+    put(key, record) {
+      memory.set(key, structuredClone(record));
+      try {
+        if (!storage) return false;
+        storage.setItem(key, JSON.stringify(record));
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    remove(key) {
+      memory.delete(key);
+      try {
+        storage?.removeItem(key);
+      } catch {
+      }
+    }
+  };
+}
+
+// src/LessonsUI.tsx
+var { useState: useState5, useEffect: useEffect5, useRef: useRef5 } = React9;
+function createLessonsUI({
+  t: t3,
+  Btn,
+  Modal,
+  Field,
+  Icon: Icon2,
+  drafts = /* @__PURE__ */ new Map()
+}) {
+  let storage;
+  try {
+    storage = window.localStorage;
+  } catch {
+  }
+  const draftStore = createLessonDraftStore(storage);
+  function useFormDraft(modal, env, close) {
+    const lessonId = modal.lessonId || modal.lesson?.id || "new";
+    const key = "lifeDesk:lessonDraft:v1:" + env.data.deviceId + ":" + [
+      modal.type,
+      modal.mode || "",
+      lessonId,
+      modal.term?.id || modal.sessionId || modal.originalDate || modal.date || ""
+    ].join(":");
+    const termId = modal.term?.id || (modal.type === "editor" && modal.lesson?.mode === "term" ? (lessonSummary(env.data, modal.lesson, env.day).currentTerm || lessonTerms(env.data, lessonId).at(-1))?.id : "");
+    const currentBase = () => ({
+      epoch: env.data.dataEpoch || 0,
+      lesson: env.data.lessons.find((x4) => x4.id === lessonId && !x4.deletedAt)?.version || 0,
+      term: env.data.lessonTerms.find(
+        (x4) => x4.id === (ref.current?.values?.term?.id || termId) && !x4.deletedAt
+      )?.version || 0,
+      session: env.data.lessonSessions.find(
+        (x4) => !x4.deletedAt && x4.lessonId === lessonId && (modal.sessionId ? x4.id === modal.sessionId : modal.originalDate && x4.originalDate === modal.originalDate)
+      )?.version || 0
+    });
+    const ref = useRef5(null);
+    if (!ref.current)
+      ref.current = draftStore.read(key) || {
+        format: 1,
+        values: {},
+        base: currentBase(),
+        requestId: crypto.randomUUID(),
+        dirty: false
+      };
+    const [, tick] = useState5(0);
+    const pending = useRef5(false);
+    const durable = useRef5(!drafts.has(key));
+    const persist = () => {
+      durable.current = draftStore.put(key, ref.current);
+      if (ref.current.dirty) drafts.set(key, "unsaved");
+    };
+    useEffect5(() => {
+      if (ref.current.dirty) drafts.set(key, "unsaved");
+      return () => {
+        if (durable.current) drafts.delete(key);
+      };
+    }, [key]);
+    function useField(slot, initial) {
+      const [value, setValue] = useState5(() => {
+        if (!Object.hasOwn(ref.current.values, slot))
+          ref.current.values[slot] = structuredClone(initial);
+        return structuredClone(ref.current.values[slot]);
+      });
+      const set = (next) => {
+        if (env.busy || pending.current) return;
+        const v3 = typeof next === "function" ? next(ref.current.values[slot]) : next;
+        ref.current.values[slot] = v3;
+        ref.current.dirty = true;
+        ref.current.requestId = crypto.randomUUID();
+        persist();
+        setValue(v3);
+      };
+      return [value, set];
+    }
+    const clear = () => {
+      draftStore.remove(key);
+      drafts.delete(key);
+      ref.current.dirty = false;
+    };
+    const act = async (a3) => {
+      if (pending.current || env.busy) throw Error(t3("loading"));
+      pending.current = true;
+      const action = {
+        ...a3,
+        requestId: ref.current.requestId,
+        dataEpoch: ref.current.base.epoch || 0
+      };
+      if (a3.action === "lesson") {
+        action.version = ref.current.base.lesson;
+        const latestLesson = env.data.lessons.find(
+          (x4) => x4.id === a3.id && !x4.deletedAt
+        );
+        if (latestLesson)
+          action.item = {
+            ...a3.item,
+            scheduleHistory: latestLesson.scheduleHistory
+          };
+        if (a3.term?.id)
+          action.term = { ...a3.term, version: ref.current.base.term };
+      }
+      if (a3.action === "lessonSession" && a3.command !== "add")
+        action.version = ref.current.base.session;
+      if (a3.action === "lessonTerm" && a3.item?.id)
+        action.item = { ...a3.item, version: ref.current.base.term };
+      try {
+        const result = await env.act(action);
+        clear();
+        return result;
+      } catch (e3) {
+        void env.refresh?.();
+        throw e3;
+      } finally {
+        pending.current = false;
+      }
+    };
+    const latest = currentBase();
+    const relevant = modal.type === "editor" ? "lesson" : modal.type === "term" && modal.term ? "term" : modal.type === "session" ? "session" : null;
+    const conflict = latest.epoch !== (ref.current.base.epoch || 0) || !!relevant && latest[relevant] !== ref.current.base[relevant];
+    return {
+      useField,
+      act,
+      key,
+      dirty: ref.current.dirty,
+      durable: durable.current,
+      conflict,
+      close: () => {
+        if (!env.busy && !pending.current) close();
+      },
+      discard: () => {
+        if (!env.busy && !pending.current && window.confirm(t3("dirty"))) {
+          clear();
+          close();
+        }
+      },
+      rebase: () => {
+        if (env.busy || pending.current) return;
+        ref.current.base = latest;
+        ref.current.requestId = crypto.randomUUID();
+        persist();
+        tick((x4) => x4 + 1);
+      }
+    };
+  }
+  function DraftNotice({ form, modal, env }) {
+    const latest = env.data.lessons.find(
+      (x4) => x4.id === (modal.lessonId || modal.lesson?.id) && !x4.deletedAt
+    );
+    const latestSession = env.data.lessonSessions.find(
+      (x4) => !x4.deletedAt && x4.lessonId === (modal.lessonId || modal.lesson?.id) && (modal.sessionId ? x4.id === modal.sessionId : modal.originalDate && x4.originalDate === modal.originalDate)
+    );
+    const latestTerm = env.data.lessonTerms.find(
+      (x4) => x4.id === modal.term?.id && !x4.deletedAt
+    );
+    return /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-draft-info" }, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3(
+      form.dirty ? form.durable ? "lessonDraftKept" : "lessonDraftMemoryOnly" : "lessonDraftIntro"
+    )), form.conflict && /* @__PURE__ */ React9.createElement("div", { className: "ld-review-conflict" }, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonConflictDraft")), latest && /* @__PURE__ */ React9.createElement("p", null, latest.title, " \xB7 ", lessonWeeklyLabel(latest, t3), " \xB7 ", latest.place), latestSession && /* @__PURE__ */ React9.createElement("p", null, latestSession.date, " ", latestSession.time, " \xB7", " ", t3(
+      "lessonStatus" + (latestSession.status === "done" ? "Done" : latestSession.status === "skipped" ? "Skipped" : "Scheduled")
+    ), " ", "\xB7 ", latestSession.deduction, " ", t3("lessonUnit")), latestTerm && /* @__PURE__ */ React9.createElement("p", null, latestTerm.start, " \u2013 ", latestTerm.end, " \xB7 ", latestTerm.note), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { disabled: env.busy, onClick: form.rebase }, t3("reviewKeepDraft")), /* @__PURE__ */ React9.createElement(Btn, { disabled: env.busy, onClick: form.discard }, t3("lessonDiscardDraft")))), form.dirty && !form.conflict && /* @__PURE__ */ React9.createElement(Btn, { disabled: env.busy, onClick: form.discard }, t3("lessonDiscardDraft")));
+  }
   const live2 = (data, key) => data[key].filter((x4) => !x4.deletedAt);
   const lessonOf = (data, id) => live2(data, "lessons").find((x4) => x4.id === id);
   const statusText = (s3) => t3(
@@ -31917,15 +32259,18 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
       const s3 = lessonSummary(data, l3, date);
       if (!s3.terms.length) return t3("lessonNoTerm");
       if (s3.expired) return t3("lessonExpired");
+      if (s3.termStatus === "upcoming")
+        return t3("lessonTermNotStarted") + " \xB7 " + s3.currentTerm.start;
       const stat = s3.stats;
       return (s3.currentTerm ? t3("lessonEndsInDays").replace("{n}", String(s3.endsIn)) : t3("lessonExpired")) + " \xB7 " + t3("lessonTermUsed").replace("{n}", String(stat?.sessions || 0)).replace("{u}", String(stat?.units || 0));
     }
     return "";
   };
   function LessonEditor({ modal, env, close }) {
+    const draft = useFormDraft(modal, env, close);
     const lesson = modal.lesson;
-    const existingTerm = modal.term || (lesson?.mode === "term" ? lessonSummary(env.data, lesson, env.day).currentTerm : null);
-    const [item, setItem] = useState5({
+    const existingTerm = modal.term || (lesson?.mode === "term" ? lessonSummary(env.data, lesson, env.day).currentTerm || lessonTerms(env.data, lesson.id).at(-1) : null);
+    const [item, setItem] = draft.useField("item", {
       title: "",
       participant: "",
       place: "",
@@ -31940,10 +32285,12 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
       reminderMinutes: null,
       defaultDeduction: 1,
       balanceWarnAt: null,
+      expiryWarnDays: 30,
       ...lesson || {}
     });
-    const [term, setTerm] = useState5({
+    const [term, setTerm] = draft.useField("term", {
       id: existingTerm?.id || "",
+      version: existingTerm?.version,
       start: existingTerm?.start || lesson?.effective || env.day,
       end: existingTerm?.end || "",
       purchased: existingTerm?.purchased ?? 0,
@@ -31951,7 +32298,18 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
       note: existingTerm?.note || ""
     });
     const [error, setError] = useState5("");
-    const [opening, setOpening] = useState5("");
+    const [opening, setOpening] = draft.useField("opening", "");
+    const currentDay = today(env.data.settings.timeZone);
+    const [scheduleFrom, setScheduleFrom] = draft.useField(
+      "from",
+      [
+        currentDay,
+        env.day,
+        lesson?.effective || "",
+        lesson?.scheduleHistory?.at(-1)?.from || ""
+      ].sort().at(-1)
+    );
+    const scheduleChanged = !!lesson && lessonScheduleSignature(item) !== lessonScheduleSignature(lesson);
     const change = (k3, v3) => setItem((x4) => ({ ...x4, [k3]: v3 }));
     const toggleWeekday = (d2) => {
       setItem((x4) => {
@@ -31984,13 +32342,18 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
           (x4) => x4.time && item.weekdays.includes(x4.weekday)
         )
       };
+      if (scheduleChanged && !window.confirm(
+        t3("lessonScheduleConfirm").replace("{date}", scheduleFrom)
+      ))
+        return;
       try {
-        await env.act({
+        await draft.act({
           action: "lesson",
           ...item.mode === "credit" && opening !== "" ? { opening: Number(opening) } : {},
           id: item.id,
           version: item.version,
           item: payload,
+          ...lesson && scheduleChanged ? { from: scheduleFrom, confirm: true } : {},
           ...item.mode === "term" ? {
             term: {
               ...term,
@@ -32004,222 +32367,267 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
         setError(e3.message);
       }
     };
-    return /* @__PURE__ */ React9.createElement(Modal, { title: item.id ? t3("lessonEdit") : t3("lessonAdd"), onClose: close }, /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTitle") }, /* @__PURE__ */ React9.createElement(
-      "input",
+    return /* @__PURE__ */ React9.createElement(
+      Modal,
       {
-        value: item.title,
-        maxLength: 200,
-        autoFocus: true,
-        onChange: (e3) => change("title", e3.target.value)
-      }
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonParticipant") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        list: "ld-lesson-people",
-        value: item.participant,
-        maxLength: 40,
-        onChange: (e3) => change("participant", e3.target.value)
-      }
-    ), /* @__PURE__ */ React9.createElement("datalist", { id: "ld-lesson-people" }, participants.map((p3) => /* @__PURE__ */ React9.createElement("option", { key: p3, value: p3 })))), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonPlace") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        value: item.place,
-        maxLength: 200,
-        onChange: (e3) => change("place", e3.target.value)
-      }
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonMode") }, /* @__PURE__ */ React9.createElement(
-      "select",
-      {
-        value: item.mode,
-        onChange: (e3) => change("mode", e3.target.value)
+        title: item.id ? t3("lessonEdit") : t3("lessonAdd"),
+        onClose: draft.close
       },
-      ["none", "credit", "term"].map((m3) => /* @__PURE__ */ React9.createElement("option", { key: m3, value: m3 }, modeText(m3)))
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonWeekdays"), wide: true }, /* @__PURE__ */ React9.createElement("div", { className: "ld-days" }, [1, 2, 3, 4, 5, 6, 0].map((d2) => /* @__PURE__ */ React9.createElement(
-      "button",
-      {
-        type: "button",
-        key: d2,
-        "aria-pressed": item.weekdays.includes(d2),
-        onClick: () => toggleWeekday(d2)
-      },
-      t3("weekdayShort" + d2)
-    ))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, item.weekdays.length ? t3("lessonWeekdaysHint") : t3("lessonOnceHint"))), item.weekdays.length > 1 && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonWeekdayTimes"), wide: true }, /* @__PURE__ */ React9.createElement("div", { className: "ld-weekday-times" }, [1, 2, 3, 4, 5, 6, 0].filter((d2) => item.weekdays.includes(d2)).map((d2) => {
-      const current = (item.weekdayTimes || []).find(
-        (x4) => x4.weekday === d2
-      );
-      return /* @__PURE__ */ React9.createElement("label", { className: "ld-weekday-time", key: d2 }, /* @__PURE__ */ React9.createElement("span", null, t3("weekdayShort" + d2)), /* @__PURE__ */ React9.createElement(
+      /* @__PURE__ */ React9.createElement(DraftNotice, { form: draft, modal, env }),
+      /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTitle") }, /* @__PURE__ */ React9.createElement(
         "input",
         {
-          type: "time",
-          value: current?.time || "",
-          placeholder: item.time || "",
-          onChange: (e3) => {
-            const value = e3.target.value;
-            setItem((x4) => ({
-              ...x4,
-              weekdayTimes: [
-                ...(x4.weekdayTimes || []).filter(
-                  (v3) => v3.weekday !== d2
-                ),
-                { weekday: d2, time: value }
-              ]
-            }));
+          value: item.title,
+          maxLength: 200,
+          autoFocus: true,
+          onChange: (e3) => change("title", e3.target.value)
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonParticipant") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          list: "ld-lesson-people",
+          value: item.participant,
+          maxLength: 40,
+          onChange: (e3) => change("participant", e3.target.value)
+        }
+      ), /* @__PURE__ */ React9.createElement("datalist", { id: "ld-lesson-people" }, participants.map((p3) => /* @__PURE__ */ React9.createElement("option", { key: p3, value: p3 })))), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonPlace") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          value: item.place,
+          maxLength: 200,
+          onChange: (e3) => change("place", e3.target.value)
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonMode") }, /* @__PURE__ */ React9.createElement(
+        "select",
+        {
+          disabled: !!lesson && ["lessonCharges", "lessonSessions", "lessonTerms"].some(
+            (k3) => env.data[k3].some((x4) => x4.lessonId === lesson.id)
+          ),
+          value: item.mode,
+          onChange: (e3) => change("mode", e3.target.value)
+        },
+        ["none", "credit", "term"].map((m3) => /* @__PURE__ */ React9.createElement("option", { key: m3, value: m3 }, modeText(m3)))
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonWeekdays"), wide: true }, /* @__PURE__ */ React9.createElement("div", { className: "ld-days" }, [1, 2, 3, 4, 5, 6, 0].map((d2) => /* @__PURE__ */ React9.createElement(
+        "button",
+        {
+          type: "button",
+          key: d2,
+          "aria-pressed": item.weekdays.includes(d2),
+          onClick: () => toggleWeekday(d2)
+        },
+        t3("weekdayShort" + d2)
+      ))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, item.weekdays.length ? t3("lessonWeekdaysHint") : t3("lessonOnceHint"))), (item.weekdays.length > 1 || (item.weekdayTimes || []).some(
+        (x4) => x4.time && item.weekdays.includes(x4.weekday)
+      )) && /* @__PURE__ */ React9.createElement("div", { className: "ld-field ld-wide" }, /* @__PURE__ */ React9.createElement("span", null, t3("lessonWeekdayTimes")), /* @__PURE__ */ React9.createElement("div", { className: "ld-weekday-times" }, [1, 2, 3, 4, 5, 6, 0].filter((d2) => item.weekdays.includes(d2)).map((d2) => {
+        const current = (item.weekdayTimes || []).find(
+          (x4) => x4.weekday === d2
+        );
+        return /* @__PURE__ */ React9.createElement("label", { className: "ld-weekday-time", key: d2 }, /* @__PURE__ */ React9.createElement("span", null, t3("weekdayShort" + d2)), /* @__PURE__ */ React9.createElement(
+          "input",
+          {
+            type: "time",
+            value: current?.time || "",
+            placeholder: item.time || "",
+            onChange: (e3) => {
+              const value = e3.target.value;
+              setItem((x4) => ({
+                ...x4,
+                weekdayTimes: [
+                  ...(x4.weekdayTimes || []).filter(
+                    (v3) => v3.weekday !== d2
+                  ),
+                  { weekday: d2, time: value }
+                ]
+              }));
+            }
           }
-        }
-      ), /* @__PURE__ */ React9.createElement("small", null, item.time ? t3("lessonUseDefaultTime").replace(
-        "{n}",
-        item.time
-      ) : t3("lessonNoDefaultTime")));
-    })), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonWeekdayTimesHint"))), /* @__PURE__ */ React9.createElement(
-      Field,
-      {
-        label: t3(
-          item.weekdays.length > 1 ? "lessonDefaultTime" : "lessonTime"
+        ), /* @__PURE__ */ React9.createElement("small", null, item.time ? t3("lessonUseDefaultTime").replace(
+          "{n}",
+          item.time
+        ) : t3("lessonNoDefaultTime")));
+      })), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonWeekdayTimesHint"))), /* @__PURE__ */ React9.createElement(
+        Field,
+        {
+          label: t3(
+            item.weekdays.length > 1 || (item.weekdayTimes || []).some(
+              (x4) => x4.time && item.weekdays.includes(x4.weekday)
+            ) ? "lessonDefaultTime" : "lessonTime"
+          )
+        },
+        /* @__PURE__ */ React9.createElement(
+          "input",
+          {
+            type: "time",
+            value: item.time,
+            onChange: (e3) => change("time", e3.target.value)
+          }
         )
-      },
-      /* @__PURE__ */ React9.createElement(
+      ), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDuration") }, /* @__PURE__ */ React9.createElement(
         "input",
         {
-          type: "time",
-          value: item.time,
-          onChange: (e3) => change("time", e3.target.value)
+          type: "number",
+          min: 0,
+          max: 1440,
+          value: item.durationMinutes,
+          onChange: (e3) => change("durationMinutes", Number(e3.target.value))
         }
-      )
-    ), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDuration") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        type: "number",
-        min: 0,
-        max: 1440,
-        value: item.durationMinutes,
-        onChange: (e3) => change("durationMinutes", Number(e3.target.value))
-      }
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonEffective") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        type: "date",
-        value: item.effective,
-        onChange: (e3) => change("effective", e3.target.value)
-      }
-    )), item.mode !== "term" && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonUntil") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        type: "date",
-        value: item.until || "",
-        onChange: (e3) => change("until", e3.target.value)
-      }
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonReminder") }, /* @__PURE__ */ React9.createElement(
-      "select",
-      {
-        value: item.reminderMinutes ?? "off",
-        onChange: (e3) => change(
-          "reminderMinutes",
-          e3.target.value === "off" ? null : Number(e3.target.value)
-        )
-      },
-      /* @__PURE__ */ React9.createElement("option", { value: "off" }, t3("lessonReminderOff")),
-      [0, 10, 15, 30, 60, 120, 1440].map((n2) => /* @__PURE__ */ React9.createElement("option", { key: n2, value: n2 }, t3("lessonBefore").replace("{n}", String(n2))))
-    )), item.mode === "credit" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, !(item.id && lessonAccount(env.data, lesson).entries.length > 0) && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonOpening") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        type: "number",
-        min: 0,
-        max: 1e5,
-        step: 0.5,
-        value: opening,
-        placeholder: "0",
-        onChange: (e3) => setOpening(e3.target.value)
-      }
-    ), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonOpeningHint"))), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDefaultDeduction") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        type: "number",
-        min: 0.5,
-        step: 0.5,
-        max: 1e3,
-        value: item.defaultDeduction,
-        onChange: (e3) => change("defaultDeduction", Number(e3.target.value))
-      }
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonBalanceWarn") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        type: "number",
-        min: 0,
-        max: 1e3,
-        value: item.balanceWarnAt ?? "",
-        onChange: (e3) => change(
-          "balanceWarnAt",
-          e3.target.value === "" ? null : Number(e3.target.value)
-        )
-      }
-    ))), item.mode === "term" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermStart") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        type: "date",
-        value: term.start,
-        onChange: (e3) => setTerm({ ...term, start: e3.target.value })
-      }
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermEnd") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        type: "date",
-        value: term.end,
-        onChange: (e3) => setTerm({ ...term, end: e3.target.value })
-      }
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermPurchased") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        type: "number",
-        min: 0,
-        max: 1e5,
-        value: term.purchased,
-        onChange: (e3) => setTerm({ ...term, purchased: Number(e3.target.value) })
-      }
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermAmount") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        type: "number",
-        min: 0,
-        value: term.amount,
-        onChange: (e3) => setTerm({
-          ...term,
-          amount: e3.target.value === "" ? "" : Number(e3.target.value)
-        })
-      }
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermNote"), wide: true }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        value: term.note,
-        maxLength: 3e3,
-        onChange: (e3) => setTerm({ ...term, note: e3.target.value })
-      }
-    )), /* @__PURE__ */ React9.createElement("p", { className: "ld-help ld-wide" }, t3("lessonTermHint"))), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonNote"), wide: true }, /* @__PURE__ */ React9.createElement(
-      "textarea",
-      {
-        rows: 2,
-        maxLength: 3e3,
-        value: item.note,
-        onChange: (e3) => change("note", e3.target.value)
-      }
-    ))), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React9.createElement(Btn, { onClick: close }, t3("cancel"))));
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonEffective") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "date",
+          value: item.effective,
+          disabled: !!lesson,
+          onChange: (e3) => change("effective", e3.target.value)
+        }
+      )), lesson && scheduleChanged && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonScheduleFrom"), wide: true }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "date",
+          value: scheduleFrom,
+          min: currentDay > lesson.effective ? currentDay : lesson.effective,
+          onChange: (e3) => setScheduleFrom(e3.target.value)
+        }
+      ), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonSchedulePreserve"), " ", lessonWeeklyLabel(lesson, t3))), item.mode !== "none" && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonExpiryWarn") }, /* @__PURE__ */ React9.createElement(
+        "select",
+        {
+          value: item.expiryWarnDays ?? "off",
+          onChange: (e3) => change(
+            "expiryWarnDays",
+            e3.target.value === "off" ? null : Number(e3.target.value)
+          )
+        },
+        /* @__PURE__ */ React9.createElement("option", { value: "off" }, t3("lessonReminderOff")),
+        [0, 7, 14, 30, 60, 90].map((n2) => /* @__PURE__ */ React9.createElement("option", { key: n2, value: n2 }, t3("lessonExpiryBefore").replace("{n}", String(n2))))
+      )), item.mode !== "term" && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonUntil") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "date",
+          value: item.until || "",
+          onChange: (e3) => change("until", e3.target.value)
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonReminder") }, /* @__PURE__ */ React9.createElement(
+        "select",
+        {
+          value: item.reminderMinutes ?? "off",
+          onChange: (e3) => change(
+            "reminderMinutes",
+            e3.target.value === "off" ? null : Number(e3.target.value)
+          )
+        },
+        /* @__PURE__ */ React9.createElement("option", { value: "off" }, t3("lessonReminderOff")),
+        [0, 10, 15, 30, 60, 120, 1440].map((n2) => /* @__PURE__ */ React9.createElement("option", { key: n2, value: n2 }, t3("lessonBefore").replace("{n}", String(n2))))
+      )), item.mode === "credit" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, !(item.id && lessonAccount(env.data, lesson).entries.length > 0) && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonOpening") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "number",
+          min: 0,
+          max: 1e5,
+          step: 0.5,
+          value: opening,
+          placeholder: "0",
+          onChange: (e3) => setOpening(e3.target.value)
+        }
+      ), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonOpeningHint"))), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDefaultDeduction") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "number",
+          min: 0.5,
+          step: 0.5,
+          max: 1e3,
+          value: item.defaultDeduction,
+          onChange: (e3) => change("defaultDeduction", Number(e3.target.value))
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonBalanceWarn") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "number",
+          min: 0,
+          max: 1e3,
+          value: item.balanceWarnAt ?? "",
+          onChange: (e3) => change(
+            "balanceWarnAt",
+            e3.target.value === "" ? null : Number(e3.target.value)
+          )
+        }
+      ))), item.mode === "term" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermStart") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "date",
+          value: term.start,
+          onChange: (e3) => setTerm({ ...term, start: e3.target.value })
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermEnd") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "date",
+          value: term.end,
+          onChange: (e3) => setTerm({ ...term, end: e3.target.value })
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermPurchased") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "number",
+          min: 0,
+          max: 1e5,
+          value: term.purchased,
+          onChange: (e3) => setTerm({ ...term, purchased: Number(e3.target.value) })
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermAmount") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "number",
+          min: 0,
+          value: term.amount,
+          onChange: (e3) => setTerm({
+            ...term,
+            amount: e3.target.value === "" ? "" : Number(e3.target.value)
+          })
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermNote"), wide: true }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          value: term.note,
+          maxLength: 3e3,
+          onChange: (e3) => setTerm({ ...term, note: e3.target.value })
+        }
+      )), /* @__PURE__ */ React9.createElement("p", { className: "ld-help ld-wide" }, t3("lessonTermHint"))), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonNote"), wide: true }, /* @__PURE__ */ React9.createElement(
+        "textarea",
+        {
+          rows: 2,
+          maxLength: 3e3,
+          value: item.note,
+          onChange: (e3) => change("note", e3.target.value)
+        }
+      ))),
+      error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error),
+      /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React9.createElement(Btn, { onClick: draft.close }, t3("cancel")))
+    );
   }
   function SessionModal({ modal, env, close }) {
+    const draft = useFormDraft(modal, env, close);
     const lesson = lessonOf(env.data, modal.lessonId);
     const occ0 = modal.occurrence;
     const [mode] = useState5(modal.mode);
-    const [date, setDate] = useState5(modal.date || occ0?.date || "");
-    const [time, setTime] = useState5(
+    const [date, setDate] = draft.useField(
+      "date",
+      modal.date || occ0?.date || ""
+    );
+    const [time, setTime] = draft.useField(
+      "time",
       modal.time ?? occ0?.time ?? lesson?.time ?? ""
     );
-    const [place, setPlace] = useState5(
+    const [place, setPlace] = draft.useField(
+      "place",
       modal.place ?? occ0?.place ?? lesson?.place ?? ""
     );
-    const [note, setNote] = useState5(occ0?.note || "");
-    const [deduction, setDeduction] = useState5(
+    const [note, setNote] = draft.useField("note", occ0?.note || "");
+    const [deduction, setDeduction] = draft.useField(
+      "deduction",
       occ0?.deduction ?? lesson?.defaultDeduction ?? 1
     );
-    const [confirmShort, setShort] = useState5(false), [confirmConflict, setConflict] = useState5(false);
+    const [confirmShort, setShort] = draft.useField("confirmShort", false), [confirmConflict, setConflict] = draft.useField("confirmConflict", false);
     const [error, setError] = useState5("");
+    const [skipCharged, setSkipCharged] = draft.useField("skipCharged", false);
     const account = lesson?.mode === "credit" ? lessonAccount(env.data, lesson) : null;
     if (!lesson) return null;
     const submit = async () => {
@@ -32232,7 +32640,7 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
           sessionId: modal.sessionId || occ0?.sessionId || ""
         };
         if (mode === "complete")
-          await env.act({
+          await draft.act({
             ...common,
             command: "complete",
             date,
@@ -32241,7 +32649,7 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
             confirmShort
           });
         else if (mode === "move")
-          await env.act({
+          await draft.act({
             ...common,
             command: "save",
             date,
@@ -32251,7 +32659,7 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
             confirmConflict
           });
         else if (mode === "extra")
-          await env.act({
+          await draft.act({
             ...common,
             command: "add",
             date,
@@ -32261,17 +32669,24 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
             confirmConflict
           });
         else if (mode === "skip")
-          await env.act({ ...common, command: "skip", note });
-        else if (mode === "undo") await env.act({ ...common, command: "undo" });
+          await draft.act({
+            ...common,
+            command: "skip",
+            note,
+            deduction: skipCharged ? deduction : 0,
+            confirmShort
+          });
+        else if (mode === "undo")
+          await draft.act({ ...common, command: "undo" });
         else if (mode === "restore")
-          await env.act({ ...common, command: "restore" });
+          await draft.act({ ...common, command: "restore" });
         else if (mode === "unskip")
-          await env.act({
+          await draft.act({
             ...common,
             command: "save",
-            date: modal.originalDate || occ0?.date,
-            time: lesson.time,
-            place: lesson.place,
+            date: occ0?.date || modal.originalDate,
+            time: occ0?.time ?? lessonTimeFor(lesson, modal.originalDate || occ0?.date),
+            place: occ0?.place ?? lesson.place,
             note: ""
           });
         close();
@@ -32286,24 +32701,26 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
           title: t3(
             mode === "undo" ? "lessonUndoComplete" : mode === "unskip" ? "lessonUnskip" : "lessonRestore"
           ),
-          onClose: close
+          onClose: draft.close
         },
+        /* @__PURE__ */ React9.createElement(DraftNotice, { form: draft, modal, env }),
         /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3(
           mode === "undo" ? "lessonUndoHint" : mode === "unskip" ? "lessonUnskipHint" : "lessonRestoreHint"
         )),
         error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error),
         /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: submit }, t3(
           mode === "undo" ? "lessonUndoComplete" : mode === "unskip" ? "lessonUnskip" : "lessonRestore"
-        )), /* @__PURE__ */ React9.createElement(Btn, { onClick: close }, t3("cancel")))
+        )), /* @__PURE__ */ React9.createElement(Btn, { onClick: draft.close }, t3("cancel")))
       );
     return /* @__PURE__ */ React9.createElement(
       Modal,
       {
         title: lesson.title + " \xB7 " + (occ0?.date || date),
-        onClose: close
+        onClose: draft.close
       },
+      /* @__PURE__ */ React9.createElement(DraftNotice, { form: draft, modal, env }),
       /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3(
-        mode === "complete" ? "lessonCompleteHint" : mode === "skip" ? "lessonSkipHint" : mode === "extra" ? t3("lessonExtraHint") : t3("lessonRescheduleHint")
+        mode === "complete" ? "lessonCompleteHint" : mode === "skip" ? "lessonSkipHint" : mode === "extra" ? "lessonExtraHint" : "lessonRescheduleHint"
       )),
       (mode === "complete" || mode === "move" || mode === "extra") && /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, (mode === "move" || mode === "extra") && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDate") }, /* @__PURE__ */ React9.createElement(
         "input",
@@ -32326,17 +32743,25 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
           maxLength: 200,
           onChange: (e3) => setPlace(e3.target.value)
         }
-      )), mode === "complete" && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDeduction") }, /* @__PURE__ */ React9.createElement(
-        "input",
+      )), mode === "complete" && /* @__PURE__ */ React9.createElement(
+        Field,
         {
-          type: "number",
-          min: 0,
-          max: 1e3,
-          step: 0.5,
-          value: deduction,
-          onChange: (e3) => setDeduction(Number(e3.target.value))
-        }
-      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonNote"), wide: true }, /* @__PURE__ */ React9.createElement(
+          label: t3(
+            lesson.mode === "credit" ? "lessonDeduction" : "lessonRecordedUnits"
+          )
+        },
+        /* @__PURE__ */ React9.createElement(
+          "input",
+          {
+            type: "number",
+            min: 0,
+            max: 1e3,
+            step: 0.5,
+            value: deduction,
+            onChange: (e3) => setDeduction(Number(e3.target.value))
+          }
+        )
+      ), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonNote"), wide: true }, /* @__PURE__ */ React9.createElement(
         "textarea",
         {
           rows: 2,
@@ -32362,6 +32787,31 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
           onChange: (e3) => setConflict(e3.target.checked)
         }
       ), t3("lessonConflictConfirm")),
+      mode === "skip" && lesson.mode === "credit" && /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label ld-wide" }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "checkbox",
+          checked: skipCharged,
+          onChange: (e3) => setSkipCharged(e3.target.checked)
+        }
+      ), t3("lessonChargeOnSkip")), skipCharged && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDeduction") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "number",
+          min: 0,
+          max: 1e3,
+          step: 0.5,
+          value: deduction,
+          onChange: (e3) => setDeduction(Number(e3.target.value))
+        }
+      )), skipCharged && account && account.balance < deduction && /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label ld-wide" }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "checkbox",
+          checked: confirmShort,
+          onChange: (e3) => setShort(e3.target.checked)
+        }
+      ), t3("lessonShortConfirm"))),
       mode === "skip" && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonNote"), wide: true }, /* @__PURE__ */ React9.createElement(
         "textarea",
         {
@@ -32373,18 +32823,19 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
       )),
       error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error),
       /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: submit, disabled: env.busy }, t3(
-        mode === "complete" ? "lessonComplete" : mode === "skip" ? t3("lessonSkip") : t3("save")
-      )), /* @__PURE__ */ React9.createElement(Btn, { onClick: close }, t3("cancel")))
+        mode === "complete" ? "lessonComplete" : mode === "skip" ? "lessonSkip" : "save"
+      )), /* @__PURE__ */ React9.createElement(Btn, { onClick: draft.close }, t3("cancel")))
     );
   }
   function ChargeModal({ modal, env, close }) {
+    const draft = useFormDraft(modal, env, close);
     const lesson = lessonOf(env.data, modal.lessonId);
-    const [kind, setKind] = useState5(modal.kind || "purchase");
-    const [date, setDate] = useState5(env.day);
-    const [delta, setDelta] = useState5("");
-    const [amount, setAmount] = useState5("");
-    const [expiresOn, setExpiry] = useState5("");
-    const [note, setNote] = useState5("");
+    const [kind, setKind] = draft.useField("kind", modal.kind || "purchase");
+    const [date, setDate] = draft.useField("date", env.day);
+    const [delta, setDelta] = draft.useField("delta", "");
+    const [amount, setAmount] = draft.useField("amount", "");
+    const [expiresOn, setExpiry] = draft.useField("expiresOn", "");
+    const [note, setNote] = draft.useField("note", "");
     const [error, setError] = useState5("");
     if (!lesson) return null;
     const save = async () => {
@@ -32392,7 +32843,7 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
         setError("");
         const n2 = Number(delta);
         if (!n2) return setError(t3("lessonChargeDeltaRequired"));
-        await env.act({
+        await draft.act({
           action: "lessonCharge",
           id: lesson.id,
           item: {
@@ -32413,8 +32864,9 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
       Modal,
       {
         title: t3("lessonAddCharge") + " \xB7 " + lesson.title,
-        onClose: close
+        onClose: draft.close
       },
+      /* @__PURE__ */ React9.createElement(DraftNotice, { form: draft, modal, env }),
       /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonChargeKind") }, /* @__PURE__ */ React9.createElement("select", { value: kind, onChange: (e3) => setKind(e3.target.value) }, ["purchase", "gift", "opening", "adjust"].map((k3) => /* @__PURE__ */ React9.createElement("option", { key: k3, value: k3 }, t3("lessonCharge" + k3[0].toUpperCase() + k3.slice(1)))))), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDate") }, /* @__PURE__ */ React9.createElement(
         "input",
         {
@@ -32455,32 +32907,33 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
       ))),
       /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonChargeHint")),
       error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error),
-      /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React9.createElement(Btn, { onClick: close }, t3("cancel")))
+      /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React9.createElement(Btn, { onClick: draft.close }, t3("cancel")))
     );
   }
   function TermModal({ modal, env, close }) {
+    const draft = useFormDraft(modal, env, close);
     const lesson = lessonOf(env.data, modal.lessonId);
     const terms = lesson ? lessonTerms(env.data, lesson.id) : [];
     const last = terms.at(-1);
     const editing = modal.term;
-    const [start, setStart] = useState5(
+    const [start, setStart] = draft.useField(
+      "start",
       editing?.start || (last ? shift(last.end, 1) : env.day)
     );
-    const [end, setEnd] = useState5(editing?.end || "");
-    const [purchased, setPurchased] = useState5(
-      editing?.purchased ?? last?.purchased ?? 0
+    const [end, setEnd] = draft.useField("end", editing?.end || "");
+    const [purchased, setPurchased] = draft.useField(
+      "purchased",
+      editing?.purchased ?? 0
     );
-    const [amount, setAmount] = useState5(
-      editing?.amount ?? last?.amount ?? ""
-    );
-    const [note, setNote] = useState5(editing?.note || "");
+    const [amount, setAmount] = draft.useField("amount", editing?.amount ?? "");
+    const [note, setNote] = draft.useField("note", editing?.note || "");
     const [error, setError] = useState5("");
     if (!lesson) return null;
     const save = async () => {
       try {
         setError("");
         if (!end) return setError(t3("lessonTermRequired"));
-        await env.act({
+        await draft.act({
           action: "lessonTerm",
           id: lesson.id,
           command: editing ? "save" : "renew",
@@ -32498,48 +32951,69 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
         setError(e3.message);
       }
     };
-    return /* @__PURE__ */ React9.createElement(Modal, { title: t3("lessonRenew") + " \xB7 " + lesson.title, onClose: close }, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonRenewHint")), /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermStart") }, /* @__PURE__ */ React9.createElement(
-      "input",
+    return /* @__PURE__ */ React9.createElement(
+      Modal,
       {
-        type: "date",
-        value: start,
-        onChange: (e3) => setStart(e3.target.value)
-      }
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermEnd") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        type: "date",
-        value: end,
-        onChange: (e3) => setEnd(e3.target.value)
-      }
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermPurchased") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        type: "number",
-        min: 0,
-        value: purchased,
-        onChange: (e3) => setPurchased(Number(e3.target.value))
-      }
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermAmount") }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        type: "number",
-        min: 0,
-        value: amount,
-        onChange: (e3) => setAmount(e3.target.value)
-      }
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermNote"), wide: true }, /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        value: note,
-        maxLength: 3e3,
-        onChange: (e3) => setNote(e3.target.value)
-      }
-    ))), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React9.createElement(Btn, { onClick: close }, t3("cancel"))));
+        title: t3("lessonRenew") + " \xB7 " + lesson.title,
+        onClose: draft.close
+      },
+      /* @__PURE__ */ React9.createElement(DraftNotice, { form: draft, modal, env }),
+      /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonRenewHint")),
+      /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermStart") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "date",
+          value: start,
+          onChange: (e3) => setStart(e3.target.value)
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermEnd") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "date",
+          value: end,
+          onChange: (e3) => setEnd(e3.target.value)
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermPurchased") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "number",
+          min: 0,
+          value: purchased,
+          onChange: (e3) => setPurchased(Number(e3.target.value))
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermAmount") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "number",
+          min: 0,
+          value: amount,
+          onChange: (e3) => setAmount(e3.target.value)
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermNote"), wide: true }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          value: note,
+          maxLength: 3e3,
+          onChange: (e3) => setNote(e3.target.value)
+        }
+      ))),
+      error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error),
+      /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React9.createElement(Btn, { onClick: draft.close }, t3("cancel")))
+    );
   }
   function LessonDetail({ modal, env, close }) {
     const lesson = lessonOf(env.data, modal.lessonId);
     const [error, setError] = useState5("");
+    const period = lesson ? lessonSummary(env.data, lesson, env.day).currentTerm || lessonTerms(env.data, lesson.id).at(-1) : null;
+    const [historyFrom, setHistoryFrom] = useState5(
+      period && period.start <= env.day ? period.start : shift(env.day, -90)
+    );
+    const [historyTo, setHistoryTo] = useState5(
+      period && period.end < env.day ? period.end : env.day
+    );
+    const [historyStatus, setHistoryStatus] = useState5("all");
+    const [historyPage, setHistoryPage] = useState5(0);
+    useEffect5(() => setHistoryPage(0), [historyFrom, historyTo, historyStatus]);
     if (!lesson) return null;
     const summary = lessonSummary(env.data, lesson, env.day);
     const next = lessonOccurrences(
@@ -32589,26 +33063,10 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
         setError(e3.message);
       }
     };
-    return /* @__PURE__ */ React9.createElement(Modal, { title: lesson.title, onClose: close }, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, lesson.participant || t3("lessonNoParticipant"), lesson.place ? " \xB7 " + lesson.place : ""), /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-summary" }, /* @__PURE__ */ React9.createElement("span", null, modeText(lesson.mode)), /* @__PURE__ */ React9.createElement("span", null, lessonWeeklyLabel(lesson, t3))), lesson.mode === "credit" && account && /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-money" }, /* @__PURE__ */ React9.createElement("strong", null, account.balance), " ", t3("lessonUnit"), /* @__PURE__ */ React9.createElement("small", null, t3("lessonPurchased"), " ", account.purchased, " \xB7 ", t3("lessonGifted"), " ", account.gifted, " \xB7 ", t3("lessonUsed"), " ", account.used)), lesson.mode === "term" && /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-money" }, summary.currentTerm ? /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("strong", null, summary.endsIn), " ", t3("lessonDaysLeft"), /* @__PURE__ */ React9.createElement("small", null, summary.currentTerm.start, " \u2013 ", summary.currentTerm.end)) : /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("strong", null, t3("lessonExpired")), /* @__PURE__ */ React9.createElement("small", null, summary.terms.length ? summary.terms.at(-1).end : "")), summary.stats && /* @__PURE__ */ React9.createElement("small", null, t3("lessonTermUsed").replace("{n}", String(summary.stats.sessions)).replace("{u}", String(summary.stats.units)))), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+    const renderRows = (rows) => rows.map((x4) => /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-row", key: x4.key }, /* @__PURE__ */ React9.createElement("span", null, x4.date, " ", x4.time), /* @__PURE__ */ React9.createElement("span", null, statusText(x4.status), x4.movedFrom ? " \xB7 " + t3("lessonMovedFrom") + " " + x4.movedFrom : ""), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, (x4.status === "scheduled" || x4.status === "skipped") && /* @__PURE__ */ React9.createElement(
       Btn,
       {
-        onClick: () => open({ type: "session", mode: "complete", lessonId: lesson.id })
-      },
-      t3("lessonComplete")
-    ), /* @__PURE__ */ React9.createElement(
-      Btn,
-      {
-        onClick: () => open({
-          type: "session",
-          mode: "extra",
-          lessonId: lesson.id,
-          date: env.day
-        })
-      },
-      t3("lessonAddExtra")
-    ), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => open({ type: "editor", lesson }) }, t3("edit"))), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h3", null, t3("lessonSchedule")), next.length ? next.map((x4) => /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-row", key: x4.key }, /* @__PURE__ */ React9.createElement("span", null, x4.date, " ", x4.time), /* @__PURE__ */ React9.createElement("span", null, statusText(x4.status), x4.movedFrom ? " \xB7 " + t3("lessonMovedFrom") + " " + x4.movedFrom : ""), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, (x4.status === "scheduled" || x4.status === "skipped") && /* @__PURE__ */ React9.createElement(
-      Btn,
-      {
+        disabled: env.busy || x4.date > today(env.data.settings.timeZone) || x4.charged,
         onClick: () => open({
           type: "session",
           mode: "complete",
@@ -32649,7 +33107,7 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
         })
       },
       t3("lessonSkip")
-    ), x4.status === "skipped" && /* @__PURE__ */ React9.createElement(
+    ), x4.status === "skipped" && !x4.charged && /* @__PURE__ */ React9.createElement(
       Btn,
       {
         onClick: () => open({
@@ -32674,7 +33132,7 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
         })
       },
       t3("lessonRestore")
-    ), x4.extra && x4.status !== "done" && /* @__PURE__ */ React9.createElement(Btn, { onClick: () => removeExtra(x4.sessionId) }, t3("delete")), x4.status === "done" && /* @__PURE__ */ React9.createElement(
+    ), x4.extra && x4.status !== "done" && /* @__PURE__ */ React9.createElement(Btn, { onClick: () => removeExtra(x4.sessionId) }, t3("delete")), (x4.status === "done" || x4.charged) && /* @__PURE__ */ React9.createElement(
       Btn,
       {
         onClick: () => open({
@@ -32685,7 +33143,79 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
         })
       },
       t3("lessonUndoComplete")
-    )))) : /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonNoUpcoming"))), lesson.mode === "credit" && account && /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React9.createElement("h3", null, t3("lessonLedger")), /* @__PURE__ */ React9.createElement(
+    )), x4.status === "done" && /* @__PURE__ */ React9.createElement("small", null, t3("lessonAttendanceUnits").replace("{n}", String(x4.deduction))), x4.status === "skipped" && x4.charged && /* @__PURE__ */ React9.createElement("small", null, t3("lessonSkippedCharge").replace("{n}", String(x4.deduction))), !!x4.changes?.length && /* @__PURE__ */ React9.createElement("details", { className: "ld-lesson-changes" }, /* @__PURE__ */ React9.createElement("summary", null, t3("lessonChangeHistory"), " \xB7 ", x4.changes.length), x4.changes.map((event, i3) => /* @__PURE__ */ React9.createElement("p", { className: "ld-help", key: event.at + i3 }, event.at.slice(0, 10), " \xB7 ", t3("lessonAction" + event.action), " \xB7", " ", event.fromDate, " ", event.fromTime, " \u2192 ", event.date, " ", event.time, event.note ? " \xB7 " + event.note : "")))));
+    const span = (Date.parse(historyTo + "T00:00:00Z") - Date.parse(historyFrom + "T00:00:00Z")) / 864e5;
+    const validHistory = Number.isFinite(span) && span >= 0 && span <= 3660;
+    const historyRows = validHistory ? lessonOccurrences(env.data, lesson, historyFrom, historyTo).filter(
+      (x4) => historyStatus === "all" || historyStatus === "pending" ? historyStatus === "all" || x4.status === "scheduled" && x4.date <= today(env.data.settings.timeZone) : x4.status === historyStatus
+    ) : [];
+    return /* @__PURE__ */ React9.createElement(Modal, { title: lesson.title, onClose: close }, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, lesson.participant || t3("lessonNoParticipant"), lesson.place ? " \xB7 " + lesson.place : ""), /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-summary" }, /* @__PURE__ */ React9.createElement("span", null, modeText(lesson.mode)), /* @__PURE__ */ React9.createElement("span", null, lessonWeeklyLabel(lesson, t3))), lesson.mode === "credit" && account && /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-money" }, /* @__PURE__ */ React9.createElement("strong", null, account.balance), " ", t3("lessonUnit"), /* @__PURE__ */ React9.createElement("small", null, t3("lessonPurchased"), " ", account.purchased, " \xB7 ", t3("lessonGifted"), " ", account.gifted, " \xB7 ", t3("lessonUsed"), " ", account.netUsed)), lesson.mode === "term" && /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-money" }, summary.termStatus === "upcoming" ? /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("strong", null, t3("lessonTermNotStarted")), /* @__PURE__ */ React9.createElement("small", null, summary.currentTerm.start, " \u2013 ", summary.currentTerm.end)) : summary.currentTerm ? /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("strong", null, summary.endsIn), " ", t3("lessonDaysLeft"), /* @__PURE__ */ React9.createElement("small", null, summary.currentTerm.start, " \u2013 ", summary.currentTerm.end)) : /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("strong", null, t3("lessonExpired")), /* @__PURE__ */ React9.createElement("small", null, summary.terms.length ? summary.terms.at(-1).end : "")), summary.stats && /* @__PURE__ */ React9.createElement("small", null, t3("lessonTermUsed").replace("{n}", String(summary.stats.sessions)).replace("{u}", String(summary.stats.units)))), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+      Btn,
+      {
+        onClick: () => open({
+          type: "session",
+          mode: "extra",
+          lessonId: lesson.id,
+          date: env.day
+        })
+      },
+      t3("lessonAddExtra")
+    ), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => open({ type: "editor", lesson }) }, t3("edit"))), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h3", null, t3("lessonSchedule")), next.length ? renderRows(next) : /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonNoUpcoming"))), /* @__PURE__ */ React9.createElement("section", { className: "ld-section ld-lesson-history" }, /* @__PURE__ */ React9.createElement("h3", null, t3("lessonAttendanceHistory")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions ld-history-filters" }, /* @__PURE__ */ React9.createElement("label", null, t3("lessonHistoryFrom"), /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "date",
+        value: historyFrom,
+        onChange: (e3) => setHistoryFrom(e3.target.value)
+      }
+    )), /* @__PURE__ */ React9.createElement("label", null, t3("lessonHistoryTo"), /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "date",
+        value: historyTo,
+        onChange: (e3) => setHistoryTo(e3.target.value)
+      }
+    )), /* @__PURE__ */ React9.createElement(
+      "select",
+      {
+        "aria-label": t3("lessonHistoryStatus"),
+        value: historyStatus,
+        onChange: (e3) => setHistoryStatus(e3.target.value)
+      },
+      ["all", "done", "pending", "skipped"].map((k3) => /* @__PURE__ */ React9.createElement("option", { key: k3, value: k3 }, t3("lessonHistory" + k3)))
+    ), !!summary.terms.length && /* @__PURE__ */ React9.createElement(
+      "select",
+      {
+        "aria-label": t3("lessonTerms"),
+        value: "",
+        onChange: (e3) => {
+          const term = summary.terms.find(
+            (x4) => x4.id === e3.target.value
+          );
+          if (term) {
+            setHistoryFrom(term.start);
+            setHistoryTo(term.end);
+          }
+        }
+      },
+      /* @__PURE__ */ React9.createElement("option", { value: "" }, t3("lessonSelectTerm")),
+      summary.terms.map((term) => /* @__PURE__ */ React9.createElement("option", { key: term.id, value: term.id }, term.start, " \u2013 ", term.end))
+    )), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonHistoryHint")), !validHistory ? /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonHistoryRange")) : /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, historyRows.length, " ", t3("lessonSessionCount"), " \xB7", " ", lessonStats(env.data, lesson, historyFrom, historyTo).units, " ", t3("lessonUnit")), renderRows(
+      historyRows.slice(historyPage * 25, (historyPage + 1) * 25)
+    ), !historyRows.length && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonNoHistory")), historyRows.length > 25 && /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+      Btn,
+      {
+        disabled: historyPage === 0,
+        onClick: () => setHistoryPage((p3) => p3 - 1)
+      },
+      t3("lessonPrevPage")
+    ), /* @__PURE__ */ React9.createElement("span", null, historyPage + 1, "/", Math.ceil(historyRows.length / 25)), /* @__PURE__ */ React9.createElement(
+      Btn,
+      {
+        disabled: (historyPage + 1) * 25 >= historyRows.length,
+        onClick: () => setHistoryPage((p3) => p3 + 1)
+      },
+      t3("lessonNextPage")
+    )))), !!lesson.scheduleHistory?.length && /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h3", null, t3("lessonScheduleVersions")), lesson.scheduleHistory.map((rule) => /* @__PURE__ */ React9.createElement("p", { className: "ld-help", key: rule.from }, rule.from, " \xB7 ", lessonWeeklyLabel({ ...lesson, ...rule }, t3)))), lesson.mode === "credit" && account && /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React9.createElement("h3", null, t3("lessonLedger")), /* @__PURE__ */ React9.createElement(
       Btn,
       {
         onClick: () => open({ type: "charge", lessonId: lesson.id })
@@ -32713,17 +33243,26 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
   }
   function LessonHub({ modal, env, close }) {
     if (!modal) return null;
+    let body;
     if (modal.type === "editor")
-      return /* @__PURE__ */ React9.createElement(LessonEditor, { modal, env, close });
+      body = /* @__PURE__ */ React9.createElement(LessonEditor, { modal, env, close });
     if (modal.type === "session")
-      return /* @__PURE__ */ React9.createElement(SessionModal, { modal, env, close });
+      body = /* @__PURE__ */ React9.createElement(SessionModal, { modal, env, close });
     if (modal.type === "charge")
-      return /* @__PURE__ */ React9.createElement(ChargeModal, { modal, env, close });
+      body = /* @__PURE__ */ React9.createElement(ChargeModal, { modal, env, close });
     if (modal.type === "term")
-      return /* @__PURE__ */ React9.createElement(TermModal, { modal, env, close });
+      body = /* @__PURE__ */ React9.createElement(TermModal, { modal, env, close });
     if (modal.type === "detail")
-      return /* @__PURE__ */ React9.createElement(LessonDetail, { modal, env, close });
-    return null;
+      body = /* @__PURE__ */ React9.createElement(LessonDetail, { modal, env, close });
+    return /* @__PURE__ */ React9.createElement(
+      "fieldset",
+      {
+        className: "ld-lesson-form-lock",
+        disabled: env.busy,
+        "aria-busy": env.busy
+      },
+      body
+    );
   }
   function TodayLessons({ env }) {
     const data = env.data, day = env.day;
@@ -32923,6 +33462,20 @@ function homeModules(settings, region) {
 }
 function isFolded(settings, id) {
   return (settings?.homeModules?.folded || []).includes(id);
+}
+function reorderHomeRegion(settings, region, ids) {
+  const expected = HOME_MODULES.filter((x4) => x4.region === region).map(
+    (x4) => x4.id
+  );
+  if (ids.length !== expected.length || new Set(ids).size !== ids.length || ids.some((id) => !expected.includes(id)))
+    throw Error("\u6A21\u5757\u987A\u5E8F\u4E0D\u5C5E\u4E8E\u8BE5\u533A\u57DF");
+  const all = {
+    ...settings,
+    homeModules: { ...settings.homeModules, hidden: [] }
+  };
+  const other = region === "main" ? "support" : "main";
+  const preserved = homeModules(all, other).map((x4) => x4.id);
+  return region === "main" ? [...ids, ...preserved] : [...preserved, ...ids];
 }
 
 // src/style.css
@@ -33665,11 +34218,11 @@ var planning_default = "/* Resident toolbar with a bounded capture sheet; the pa
 var review_default = '/* Review content and templates remain separate; all text is rendered inertly. */\n.ld-review-editor {\n  min-width: 0;\n}\n.ld-review-options {\n  flex-wrap: wrap;\n  margin: 10px 0;\n}\n.ld-review-options .ld-btn {\n  font-size: 11px;\n}\n.ld-review-editor .ld-field {\n  margin: 12px 0;\n}\n.ld-review-text {\n  width: 100%;\n  box-sizing: border-box;\n}\n.ld-review-assistant {\n  margin: 20px 0 10px;\n  padding: 16px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  background: var(--dsw-alias-bg-layer-1);\n}\n.ld-review-assistant h3 {\n  margin: 0;\n  font-size: 13px;\n}\n.ld-review-chat {\n  max-height: 260px;\n  overflow: auto;\n  margin: 12px 0;\n}\n.ld-review-chat-message {\n  margin-bottom: 12px;\n  font-size: 12px;\n}\n.ld-review-chat-message strong {\n  font-size: 10px;\n  color: var(--ld-muted);\n  font-weight: 500;\n}\n.ld-review-chat-message p,\n.ld-review-chat > p,\n.ld-review-candidate > p {\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  line-height: 1.7;\n}\n.ld-review-candidate {\n  margin-top: 15px;\n  padding-top: 14px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-review-assistant textarea {\n  min-height: 65px;\n}\n.ld-previous-habits {\n  margin-bottom: 22px;\n  padding: 12px 14px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n}\n.ld-previous-habits h3 {\n  margin: 0 0 8px;\n}\n.ld-week-dots > .ld-habit-late {\n  outline: 1px dashed var(--ld-accent);\n  outline-offset: 2px;\n}\n.ld-root[data-reduce-motion="true"] .ld-fold-chevron {\n  transition: none;\n}\n@container life-desk (max-width: 530px) {\n  .ld-review-assistant {\n    padding: 12px;\n  }\n}\n';
 
 // src/lessons.css
-var lessons_default = '/* Courses stay compact: schedule, attendance and credit balance share a row. */\n.ld-today-grid.ld-single-col {\n  grid-template-columns: minmax(0, 1fr);\n}\n.ld-lessons-page {\n  min-width: 0;\n}\n.ld-lesson-today,\n.ld-lesson-card {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 9px 0;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-lesson-today:first-of-type,\n.ld-lesson-card:first-of-type {\n  border-top: 0;\n}\n.ld-lesson-today.is-done {\n  opacity: 0.72;\n}\n.ld-lesson-today > .ld-task-body {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  text-align: left;\n}\n.ld-lesson-today .ld-task-title,\n.ld-lesson-card .ld-task-title {\n  display: flex;\n  gap: 8px;\n  align-items: baseline;\n  flex-wrap: wrap;\n}\n.ld-lesson-time {\n  flex: none;\n  min-width: 42px;\n  font-size: 11px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-today > .ld-btn {\n  flex: none;\n  font-size: 11px;\n}\n.ld-lesson-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 10px;\n}\n.ld-lesson-card {\n  align-items: flex-start;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  padding: 12px;\n  background: var(--dsw-alias-bg-layer-1);\n}\n.ld-lesson-card .ld-actions {\n  flex-wrap: wrap;\n  margin-top: 6px;\n}\n.ld-week-grid {\n  display: grid;\n  grid-template-columns: repeat(7, minmax(0, 1fr));\n  gap: 6px;\n  margin-top: 10px;\n}\n.ld-week-cell {\n  min-width: 0;\n  padding: 8px 6px;\n  border: 1px solid var(--ld-line);\n  border-radius: 8px;\n  min-height: 74px;\n}\n.ld-week-cell h3 {\n  margin: 0 0 6px;\n  font-size: 11px;\n  font-weight: 500;\n  color: var(--ld-muted);\n  display: flex;\n  justify-content: space-between;\n  gap: 4px;\n}\n.ld-week-cell h3 small {\n  font-weight: 400;\n}\n.ld-week-lesson {\n  display: block;\n  width: 100%;\n  text-align: left;\n  padding: 5px 6px;\n  margin-bottom: 4px;\n  border-radius: 6px;\n  border: 1px solid var(--ld-line);\n  background: var(--dsw-alias-bg-layer-2);\n  font-size: 11px;\n  line-height: 1.45;\n  overflow-wrap: anywhere;\n}\n.ld-week-lesson span,\n.ld-week-lesson small {\n  display: block;\n  color: var(--ld-muted);\n  font-size: 10px;\n}\n.ld-week-lesson strong {\n  font-weight: 500;\n  color: var(--ld-fg);\n}\n.ld-week-lesson.is-done {\n  opacity: 0.62;\n}\n.ld-lesson-summary {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px 14px;\n  font-size: 12px;\n  color: var(--ld-muted);\n  margin-bottom: 10px;\n}\n.ld-lesson-money {\n  display: flex;\n  align-items: baseline;\n  gap: 8px;\n  flex-wrap: wrap;\n  margin: 8px 0 14px;\n  padding: 10px 12px;\n  border-radius: 8px;\n  background: color-mix(in srgb, var(--ld-accent) 7%, transparent);\n}\n.ld-lesson-money strong {\n  font-size: 24px;\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-money small {\n  color: var(--ld-muted);\n  font-size: 11px;\n  line-height: 1.6;\n}\n.ld-lesson-row {\n  display: flex;\n  align-items: center;\n  flex-wrap: wrap;\n  gap: 6px 12px;\n  padding: 7px 0;\n  border-top: 1px solid var(--ld-line);\n  font-size: 12px;\n}\n.ld-lesson-row:first-child {\n  border-top: 0;\n}\n.ld-lesson-row > span:first-child {\n  min-width: 116px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-row > strong {\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-row > .ld-btn {\n  margin-left: auto;\n  font-size: 11px;\n}\n.ld-home-module {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 10px;\n  padding: 7px 0;\n  border-top: 1px solid var(--ld-line);\n  border-radius: 8px;\n  transition:\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\n.ld-home-module.is-dragging {\n  opacity: 0.45;\n}\n.ld-home-module.is-drop {\n  background: color-mix(in srgb, var(--ld-accent) 8%, transparent);\n  box-shadow: inset 0 0 0 1px var(--ld-accent);\n}\n.ld-drag-handle {\n  flex: none;\n  cursor: grab;\n  color: var(--ld-muted);\n  font-size: 15px;\n  line-height: 1;\n  padding: 4px 2px;\n  user-select: none;\n}\n.ld-drag-handle:active {\n  cursor: grabbing;\n}\n.ld-home-module .ld-check-label {\n  flex: 1;\n  min-width: 0;\n}\n.ld-home-module:first-of-type {\n  border-top: 0;\n}\n.ld-home-module .ld-actions {\n  flex: none;\n}\n.ld-home-module .ld-btn {\n  min-width: 30px;\n  padding: 3px 8px;\n}\n.ld-event-lesson {\n  border-left: 3px solid var(--ld-accent) !important;\n}\n.ld-root[data-reduce-motion="true"] .ld-week-lesson {\n  transition: none;\n}\n@container life-desk (max-width: 760px) {\n  .ld-week-grid {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n}\n@container life-desk (max-width: 430px) {\n  .ld-week-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n  .ld-lesson-cards {\n    grid-template-columns: minmax(0, 1fr);\n  }\n}\n\n.ld-heading-title {\n  display: flex;\n  align-items: baseline;\n  gap: 12px;\n  flex-wrap: wrap;\n}\n.ld-heading-title .ld-btn {\n  font-size: 11px;\n  white-space: nowrap;\n}\n\n.ld-weekday-times {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));\n  gap: 8px 12px;\n}\n.ld-weekday-time {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  min-width: 0;\n}\n.ld-weekday-time > span {\n  flex: none;\n  min-width: 34px;\n  font-size: 12px;\n  color: var(--ld-muted);\n}\n.ld-weekday-time input {\n  flex: 1;\n  min-width: 0;\n}\n.ld-weekday-time small {\n  flex: none;\n  font-size: 10px;\n  color: var(--ld-muted);\n  white-space: nowrap;\n}\n';
+var lessons_default = '/* Courses stay compact: schedule, attendance and credit balance share a row. */\n.ld-today-grid.ld-single-col {\n  grid-template-columns: minmax(0, 1fr);\n}\n.ld-lessons-page {\n  min-width: 0;\n}\n.ld-lesson-today,\n.ld-lesson-card {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 9px 0;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-lesson-today:first-of-type,\n.ld-lesson-card:first-of-type {\n  border-top: 0;\n}\n.ld-lesson-today.is-done {\n  opacity: 0.72;\n}\n.ld-lesson-today > .ld-task-body {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  text-align: left;\n}\n.ld-lesson-today .ld-task-title,\n.ld-lesson-card .ld-task-title {\n  display: flex;\n  gap: 8px;\n  align-items: baseline;\n  flex-wrap: wrap;\n}\n.ld-lesson-time {\n  flex: none;\n  min-width: 42px;\n  font-size: 11px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-today > .ld-btn {\n  flex: none;\n  font-size: 11px;\n}\n.ld-lesson-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 10px;\n}\n.ld-lesson-card {\n  align-items: flex-start;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  padding: 12px;\n  background: var(--dsw-alias-bg-layer-1);\n}\n.ld-lesson-card .ld-actions {\n  flex-wrap: wrap;\n  margin-top: 6px;\n}\n.ld-week-grid {\n  display: grid;\n  grid-template-columns: repeat(7, minmax(0, 1fr));\n  gap: 6px;\n  margin-top: 10px;\n}\n.ld-week-cell {\n  min-width: 0;\n  padding: 8px 6px;\n  border: 1px solid var(--ld-line);\n  border-radius: 8px;\n  min-height: 74px;\n}\n.ld-week-cell h3 {\n  margin: 0 0 6px;\n  font-size: 11px;\n  font-weight: 500;\n  color: var(--ld-muted);\n  display: flex;\n  justify-content: space-between;\n  gap: 4px;\n}\n.ld-week-cell h3 small {\n  font-weight: 400;\n}\n.ld-week-lesson {\n  display: block;\n  width: 100%;\n  text-align: left;\n  padding: 5px 6px;\n  margin-bottom: 4px;\n  border-radius: 6px;\n  border: 1px solid var(--ld-line);\n  background: var(--dsw-alias-bg-layer-2);\n  font-size: 11px;\n  line-height: 1.45;\n  overflow-wrap: anywhere;\n}\n.ld-week-lesson span,\n.ld-week-lesson small {\n  display: block;\n  color: var(--ld-muted);\n  font-size: 10px;\n}\n.ld-week-lesson strong {\n  font-weight: 500;\n  color: var(--ld-fg);\n}\n.ld-week-lesson.is-done {\n  opacity: 0.62;\n}\n.ld-lesson-summary {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px 14px;\n  font-size: 12px;\n  color: var(--ld-muted);\n  margin-bottom: 10px;\n}\n.ld-lesson-money {\n  display: flex;\n  align-items: baseline;\n  gap: 8px;\n  flex-wrap: wrap;\n  margin: 8px 0 14px;\n  padding: 10px 12px;\n  border-radius: 8px;\n  background: color-mix(in srgb, var(--ld-accent) 7%, transparent);\n}\n.ld-lesson-money strong {\n  font-size: 24px;\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-money small {\n  color: var(--ld-muted);\n  font-size: 11px;\n  line-height: 1.6;\n}\n.ld-lesson-row {\n  display: flex;\n  align-items: center;\n  flex-wrap: wrap;\n  gap: 6px 12px;\n  padding: 7px 0;\n  border-top: 1px solid var(--ld-line);\n  font-size: 12px;\n}\n.ld-lesson-row:first-child {\n  border-top: 0;\n}\n.ld-lesson-row > span:first-child {\n  min-width: 116px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-row > strong {\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-row > .ld-btn {\n  margin-left: auto;\n  font-size: 11px;\n}\n.ld-home-module {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 10px;\n  padding: 7px 0;\n  border-top: 1px solid var(--ld-line);\n  border-radius: 8px;\n  transition:\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\n.ld-home-module.is-dragging {\n  opacity: 0.45;\n}\n.ld-home-module.is-drop {\n  background: color-mix(in srgb, var(--ld-accent) 8%, transparent);\n  box-shadow: inset 0 0 0 1px var(--ld-accent);\n}\n.ld-drag-handle {\n  flex: none;\n  cursor: grab;\n  color: var(--ld-muted);\n  font-size: 15px;\n  line-height: 1;\n  padding: 4px 2px;\n  user-select: none;\n}\n.ld-drag-handle:active {\n  cursor: grabbing;\n}\n.ld-home-module .ld-check-label {\n  flex: 1;\n  min-width: 0;\n}\n.ld-home-module:first-of-type {\n  border-top: 0;\n}\n.ld-home-module .ld-actions {\n  flex: none;\n}\n.ld-home-module .ld-btn {\n  min-width: 30px;\n  padding: 3px 8px;\n}\n.ld-event-lesson {\n  border-left: 3px solid var(--ld-accent) !important;\n}\n.ld-root[data-reduce-motion="true"] .ld-week-lesson {\n  transition: none;\n}\n@container life-desk (max-width: 760px) {\n  .ld-week-grid {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n}\n@container life-desk (max-width: 430px) {\n  .ld-week-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n  .ld-lesson-cards {\n    grid-template-columns: minmax(0, 1fr);\n  }\n}\n\n.ld-heading-title {\n  display: flex;\n  align-items: baseline;\n  gap: 12px;\n  flex-wrap: wrap;\n}\n.ld-heading-title .ld-btn {\n  font-size: 11px;\n  white-space: nowrap;\n}\n\n.ld-weekday-times {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));\n  gap: 8px 12px;\n}\n.ld-weekday-time {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  min-width: 0;\n}\n.ld-weekday-time > span {\n  flex: none;\n  min-width: 34px;\n  font-size: 12px;\n  color: var(--ld-muted);\n}\n.ld-weekday-time input {\n  flex: 1;\n  min-width: 0;\n}\n.ld-weekday-time small {\n  flex: none;\n  font-size: 10px;\n  color: var(--ld-muted);\n  white-space: nowrap;\n}\n\n.ld-lesson-form-lock {\n  border: 0;\n  margin: 0;\n  padding: 0;\n  min-width: 0;\n}\n.ld-lesson-draft-info {\n  margin-bottom: 10px;\n}\n.ld-lesson-draft-info > .ld-btn {\n  font-size: 11px;\n}\n.ld-history-filters {\n  align-items: flex-end;\n  flex-wrap: wrap;\n  margin: 10px 0;\n}\n.ld-history-filters > label {\n  display: grid;\n  gap: 4px;\n  min-width: 130px;\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-history-filters > select {\n  min-width: 130px;\n  max-width: 100%;\n}\n.ld-lesson-changes {\n  flex-basis: 100%;\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-lesson-row > small {\n  color: var(--ld-muted);\n}\n.ld-lesson-changes > summary {\n  cursor: pointer;\n}\n.ld-lesson-changes p {\n  overflow-wrap: anywhere;\n}\n.ld-lesson-history .ld-lesson-row {\n  gap: 6px 10px;\n}\n.ld-weekly-content {\n  margin: 0;\n}\n.ld-support .ld-fold-count:empty {\n  display: none;\n}\n';
 
 // src/client.tsx
 var css = style_default + spirit_default + today_default + focus_default + planning_default + review_default + lessons_default;
-var { useState: useState6, useEffect: useEffect6, useRef: useRef5, useSyncExternalStore: useSyncExternalStore2 } = React10;
+var { useState: useState6, useEffect: useEffect6, useRef: useRef6, useSyncExternalStore: useSyncExternalStore2 } = React10;
 var NAV = [
   "today",
   "projects",
@@ -33856,7 +34409,7 @@ function apply(ctx) {
     const { data } = useStore();
     const now = useClock();
     const [notices, setNotices] = useState6([]);
-    const sounded = useRef5(/* @__PURE__ */ new Set());
+    const sounded = useRef6(/* @__PURE__ */ new Set());
     useEffect6(() => {
       if (!data) return;
       const day = today(data.settings.timeZone, now);
@@ -33925,7 +34478,7 @@ function apply(ctx) {
     )) : null;
   }
   function Modal({ title, onClose, children }) {
-    const ref = useRef5(null);
+    const ref = useRef6(null);
     useEffect6(() => {
       const before = document.activeElement;
       ref.current?.showModal();
@@ -33962,7 +34515,8 @@ function apply(ctx) {
     Btn,
     Modal,
     Field,
-    Icon
+    Icon,
+    drafts: reviewDrafts
   });
   const { ReviewEditor, ReviewCheckIn } = createReviewUI({
     t: t3,
@@ -34002,6 +34556,7 @@ function apply(ctx) {
   function HabitCards({
     full = false,
     weeklyOnly = false,
+    heading = true,
     showWeekly = true,
     env
   }) {
@@ -34080,7 +34635,7 @@ function apply(ctx) {
         );
       }), /* @__PURE__ */ React10.createElement(Btn, { onClick: () => openHabit(h3) }, t3("edit"))));
     };
-    const weeklyBlock = groups.weekly.length > 0 ? /* @__PURE__ */ React10.createElement("section", { className: "ld-weekly-goals" }, /* @__PURE__ */ React10.createElement("h3", null, t3("weeklyHabits")), groups.weekly.map((h3) => {
+    const weeklyBlock = groups.weekly.length > 0 ? /* @__PURE__ */ React10.createElement("section", { className: heading ? "ld-weekly-goals" : "ld-weekly-content" }, heading && /* @__PURE__ */ React10.createElement("h3", null, t3("weeklyHabits")), groups.weekly.map((h3) => {
       const r3 = habitRule(h3, day);
       const count = Array.from(
         { length: 7 },
@@ -34264,7 +34819,7 @@ function apply(ctx) {
     const { data, day, tasks, habits, setDay, setTab, openTask } = env;
     const [view, setView] = useState6("dayGridMonth"), [filter, setFilter] = useState6("all");
     const [bounds, setBounds] = useState6([shift(day, -40), shift(day, 40)]);
-    const ref = useRef5(null);
+    const ref = useRef6(null);
     useEffect6(() => {
       ref.current?.getApi().gotoDate(day);
     }, [day]);
@@ -34442,7 +34997,7 @@ function apply(ctx) {
     const [error, setError] = useState6("");
     const [showNotes, setShowNotes] = useState6(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.9.6";
+    const current = v3.currentVersion || "0.10.0";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -34789,12 +35344,13 @@ function apply(ctx) {
     const [captureReset, setCaptureReset] = useState6(0);
     const [templateOpen, setTemplateOpen] = useState6(false);
     const [captureDirty, setCaptureDirty] = useState6(false);
-    const captureButton = useRef5(null);
+    const captureButton = useRef6(null);
+    const homeDragRef = useRef6("");
     const [updateView, setUpdateView] = useState6(null);
     const [upgradeView, setUpgradeView] = useState6(null);
     const [updateNotice, setUpdateNotice] = useState6("");
-    const updateChecking = useRef5(false);
-    const spiritBusyRef = useRef5(false);
+    const updateChecking = useRef6(false);
+    const spiritBusyRef = useRef6(false);
     const timeZone = data?.settings?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
     const day = selectedDay || today(timeZone);
     const run = async (a3) => {
@@ -34847,6 +35403,8 @@ function apply(ctx) {
     });
     const setHomeModules = (patch) => run({
       action: "settings",
+      command: "homeModules",
+      text: JSON.stringify(data.settings.homeModules),
       item: {
         homeModules: { ...data.settings.homeModules, ...patch }
       }
@@ -34944,7 +35502,9 @@ function apply(ctx) {
       upgradeRequest,
       rememberUpgrade: setUpgradeView,
       revision: data.revision,
-      editorOpen: !!editor || captureDirty,
+      editorOpen: !!editor || !!lessonModal || captureDirty || [...reviewDrafts.keys()].some(
+        (k3) => k3.startsWith("lifeDesk:lessonDraft:")
+      ),
       spiritBusy: () => spiritBusyRef.current,
       openLesson: (v3) => setLessonModal(v3),
       refresh
@@ -35130,6 +35690,8 @@ function apply(ctx) {
         const support = homeModules(data.settings, "support");
         const setHome = (patch) => run({
           action: "settings",
+          command: "homeModules",
+          text: JSON.stringify(data.settings.homeModules),
           item: {
             homeModules: { ...data.settings.homeModules, ...patch }
           }
@@ -35146,7 +35708,16 @@ function apply(ctx) {
         });
         const renderMain = (id) => {
           if (id === "plan")
-            return /* @__PURE__ */ React10.createElement(PlanPanel, { plan: groups, date: day, act, busy });
+            return /* @__PURE__ */ React10.createElement(
+              PlanPanel,
+              {
+                plan: groups,
+                date: day,
+                act,
+                busy,
+                ...foldProps("plan")
+              }
+            );
           if (id === "lessons") {
             const rows = live2("lessons").flatMap(
               (l3) => lessonOccurrences(data, l3, day, day)
@@ -35272,35 +35843,46 @@ function apply(ctx) {
         };
         const renderSupport = (id) => {
           if (id === "timer")
-            return /* @__PURE__ */ React10.createElement("div", { className: "ld-side-timer", key: id }, /* @__PURE__ */ React10.createElement(Timer, null));
+            return /* @__PURE__ */ React10.createElement(FoldSection, { title: t3("focus"), ...foldProps("timer") }, /* @__PURE__ */ React10.createElement("div", { className: "ld-side-timer" }, /* @__PURE__ */ React10.createElement(Timer, null)));
           if (id === "habits")
-            return /* @__PURE__ */ React10.createElement("section", { className: "ld-section", key: id }, /* @__PURE__ */ React10.createElement("h2", null, t3("todayHabits")), /* @__PURE__ */ React10.createElement(HabitCards, { env: viewEnv, showWeekly: false }));
+            return /* @__PURE__ */ React10.createElement(FoldSection, { title: t3("todayHabits"), ...foldProps("habits") }, /* @__PURE__ */ React10.createElement(HabitCards, { env: viewEnv, showWeekly: false }));
           if (id === "weekly")
-            return /* @__PURE__ */ React10.createElement(HabitCards, { weeklyOnly: true, env: viewEnv, key: id });
+            return /* @__PURE__ */ React10.createElement(FoldSection, { title: t3("weeklyHabits"), ...foldProps("weekly") }, /* @__PURE__ */ React10.createElement(HabitCards, { weeklyOnly: true, heading: false, env: viewEnv }));
           if (id === "upcoming") {
             const plans = upcomingPlans(data, day, 7);
-            return /* @__PURE__ */ React10.createElement("section", { className: "ld-section", key: id }, /* @__PURE__ */ React10.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React10.createElement("h2", null, t3("upcoming")), plans.length > 0 && /* @__PURE__ */ React10.createElement(Btn, { onClick: () => setTab("calendar") }, t3("viewCalendar"))), plans.slice(0, 5).map((p3) => /* @__PURE__ */ React10.createElement(
-              "button",
+            return /* @__PURE__ */ React10.createElement(
+              FoldSection,
               {
-                key: p3.kind + ":" + (p3.task?.id || p3.lesson?.key) + p3.date,
-                className: "ld-upcoming",
-                onClick: () => {
-                  if (p3.kind === "lesson") {
-                    viewEnv.openLesson({
-                      type: "detail",
-                      lessonId: p3.lesson.lessonId
-                    });
-                    return;
-                  }
-                  openTask(
-                    tasks.find((q3) => q3.id === p3.task.id),
-                    { occurrence: p3.task }
-                  );
-                }
+                title: t3("upcoming"),
+                count: plans.length,
+                ...foldProps("upcoming")
               },
-              /* @__PURE__ */ React10.createElement("strong", null, p3.title, p3.participant ? " \xB7 " + p3.participant : ""),
-              /* @__PURE__ */ React10.createElement("span", null, p3.date, " ", p3.time || t3("allDay"), p3.kind === "lesson" ? " \xB7 " + t3("lessons") : "")
-            )), plans.length > 5 && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("futureMore").replace("{n}", String(plans.length - 5))), !plans.length && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("noUpcoming")));
+              /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, plans.length > 0 && /* @__PURE__ */ React10.createElement(Btn, { onClick: () => setTab("calendar") }, t3("viewCalendar"))),
+              plans.slice(0, 5).map((p3) => /* @__PURE__ */ React10.createElement(
+                "button",
+                {
+                  key: p3.kind + ":" + (p3.task?.id || p3.lesson?.key) + p3.date,
+                  className: "ld-upcoming",
+                  onClick: () => {
+                    if (p3.kind === "lesson") {
+                      viewEnv.openLesson({
+                        type: "detail",
+                        lessonId: p3.lesson.lessonId
+                      });
+                      return;
+                    }
+                    openTask(
+                      tasks.find((q3) => q3.id === p3.task.id),
+                      { occurrence: p3.task }
+                    );
+                  }
+                },
+                /* @__PURE__ */ React10.createElement("strong", null, p3.title, p3.participant ? " \xB7 " + p3.participant : ""),
+                /* @__PURE__ */ React10.createElement("span", null, p3.date, " ", p3.time || t3("allDay"), p3.kind === "lesson" ? " \xB7 " + t3("lessons") : "")
+              )),
+              plans.length > 5 && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("futureMore").replace("{n}", String(plans.length - 5))),
+              !plans.length && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("noUpcoming"))
+            );
           }
           return null;
         };
@@ -35585,7 +36167,7 @@ function apply(ctx) {
         {
           className: "ld-content " + (tab !== "today" ? "ld-not-today" : "")
         },
-        /* @__PURE__ */ React10.createElement("div", { className: "ld-top-timer" }, /* @__PURE__ */ React10.createElement(Timer, { bar: true })),
+        (tab !== "today" || !data.settings.homeModules.hidden.includes("timer") && !isFolded(data.settings, "timer")) && /* @__PURE__ */ React10.createElement("div", { className: "ld-top-timer" }, /* @__PURE__ */ React10.createElement(Timer, { bar: true })),
         /* @__PURE__ */ React10.createElement("header", { className: "ld-page-heading" }, /* @__PURE__ */ React10.createElement("div", { className: "ld-heading-left" }, /* @__PURE__ */ React10.createElement("div", { className: "ld-eyebrow" }, tab === "today" ? new Intl.DateTimeFormat(
           ctx.locale.getLocale().active.startsWith("zh") ? "zh-CN" : "en",
           {
@@ -35637,7 +36219,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React10.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.9.6", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React10.createElement(
+        /* @__PURE__ */ React10.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.10.0", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React10.createElement(
           "button",
           {
             className: "ld-update-badge",
@@ -35691,7 +36273,9 @@ function apply(ctx) {
           const next = all.map((x4) => x4.id);
           const j4 = i3 + delta;
           [next[i3], next[j4]] = [next[j4], next[i3]];
-          setHomeModules({ order: next });
+          setHomeModules({
+            order: reorderHomeRegion(data.settings, region, next)
+          });
         };
         const moveTo = (from, to) => {
           if (from === to) return;
@@ -35700,7 +36284,9 @@ function apply(ctx) {
           if (f3 < 0 || t4 < 0) return;
           next.splice(f3, 1);
           next.splice(t4, 0, from);
-          setHomeModules({ order: next });
+          setHomeModules({
+            order: reorderHomeRegion(data.settings, region, next)
+          });
         };
         return /* @__PURE__ */ React10.createElement(
           "div",
@@ -35708,6 +36294,8 @@ function apply(ctx) {
             className: "ld-home-module" + (homeDrag === m3.id ? " is-dragging" : "") + (homeDrop === m3.id ? " is-drop" : ""),
             key: m3.id,
             onDragOver: (e3) => {
+              if (busy || !all.some((x4) => x4.id === homeDragRef.current))
+                return;
               e3.preventDefault();
               e3.dataTransfer.dropEffect = "move";
               if (homeDrop !== m3.id) setHomeDrop(m3.id);
@@ -35716,8 +36304,11 @@ function apply(ctx) {
               if (homeDrop === m3.id) setHomeDrop("");
             },
             onDrop: (e3) => {
+              if (busy) return;
               e3.preventDefault();
-              const from = e3.dataTransfer.getData("text/plain") || homeDrag;
+              const from = e3.dataTransfer.getData(
+                "application/x-time-desk-home"
+              ) || homeDragRef.current;
               if (from) moveTo(from, m3.id);
               setHomeDrag("");
               setHomeDrop("");
@@ -35731,11 +36322,16 @@ function apply(ctx) {
               title: t3("homeDragHint"),
               "aria-label": t3("homeDragHint"),
               onDragStart: (e3) => {
-                e3.dataTransfer.setData("text/plain", m3.id);
+                homeDragRef.current = m3.id;
+                e3.dataTransfer.setData(
+                  "application/x-time-desk-home",
+                  m3.id
+                );
                 e3.dataTransfer.effectAllowed = "move";
                 setHomeDrag(m3.id);
               },
               onDragEnd: () => {
+                homeDragRef.current = "";
                 setHomeDrag("");
                 setHomeDrop("");
               }
@@ -35779,6 +36375,12 @@ function apply(ctx) {
     ), /* @__PURE__ */ React10.createElement(Btn, { primary: true, onClick: () => setHomeOpen(false) }, t3("close")))), lessonModal && /* @__PURE__ */ React10.createElement(
       LessonHub,
       {
+        key: [
+          lessonModal.type,
+          lessonModal.mode,
+          lessonModal.lessonId || lessonModal.lesson?.id,
+          lessonModal.sessionId || lessonModal.originalDate || lessonModal.term?.id
+        ].join(":"),
         modal: lessonModal,
         env: viewEnv,
         close: () => setLessonModal(null)
@@ -35853,8 +36455,8 @@ function apply(ctx) {
     const [rule, setRule] = useState6(
       latestRule ? { ...latestRule, effective: item.id ? day : latestRule.effective } : null
     );
-    const dirty = useRef5(false);
-    const submissionId = useRef5(editor.requestId || uid());
+    const dirty = useRef6(false);
+    const submissionId = useRef6(editor.requestId || uid());
     const change = (k3, v3) => {
       submissionId.current = uid();
       dirty.current = true;

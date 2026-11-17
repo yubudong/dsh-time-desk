@@ -117,6 +117,30 @@ export const LessonInput = z
       .nullable()
       .default(null),
     defaultDeduction: z.number().positive().max(1000).default(1),
+    expiryWarnDays: z.number().int().min(0).max(365).nullable().default(30),
+    scheduleHistory: z
+      .array(
+        z.object({
+          from: day,
+          weekdays: z.array(z.number().int().min(0).max(6)).max(7),
+          time: clock,
+          weekdayTimes: z
+            .array(
+              z.object({
+                weekday: z.number().int().min(0).max(6),
+                time: clock,
+              }),
+            )
+            .max(7)
+            .default([]),
+          durationMinutes: z.number().int().min(0).max(1440),
+          place: str(200),
+          until: optionalDay,
+          defaultDeduction: z.number().positive().max(1000),
+        }),
+      )
+      .max(1000)
+      .default([]),
     balanceWarnAt: z.number().int().min(0).max(1000).nullable().default(null),
   })
   .refine((v) => !v.until || v.until >= v.effective, "结束日期不能早于开始日期")
@@ -144,6 +168,22 @@ export const LessonSessionInput = z.object({
   note: str(1000).default(""),
   deduction: z.number().min(0).max(1000).default(1),
   completedAt: z.string().nullable().default(null),
+  durationMinutes: z.number().int().min(0).max(1440).nullable().default(null),
+  chargeId: z.string().default(""),
+  changes: z
+    .array(
+      z.object({
+        at: z.string(),
+        action: z.string(),
+        fromDate: day,
+        date: day,
+        fromTime: clock,
+        time: clock,
+        note: str(1000),
+      }),
+    )
+    .max(10000)
+    .default([]),
   extra: z.boolean().default(false),
 });
 export const LessonChargeInput = z.object({
@@ -156,6 +196,7 @@ export const LessonChargeInput = z.object({
   amount: z.number().min(0).max(1e9).nullable().default(null),
   note: str(3000).default(""),
   sessionId: z.string().default(""),
+  reversesId: z.string().default(""),
   expiresOn: optionalDay,
 });
 export const HomeModules = z
@@ -227,6 +268,7 @@ export const DayPlan = z.object({
 });
 export const State = z.object({
   schemaVersion: z.literal(1),
+  dataEpoch: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).default(0),
   revision: z.number().int().min(0),
   deviceId: z.string(),
   settings: Settings,

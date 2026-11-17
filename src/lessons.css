@@ -267,3 +267,55 @@
   color: var(--ld-muted);
   white-space: nowrap;
 }
+
+.ld-lesson-form-lock {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.ld-lesson-draft-info {
+  margin-bottom: 10px;
+}
+.ld-lesson-draft-info > .ld-btn {
+  font-size: 11px;
+}
+.ld-history-filters {
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+.ld-history-filters > label {
+  display: grid;
+  gap: 4px;
+  min-width: 130px;
+  font-size: 11px;
+  color: var(--ld-muted);
+}
+.ld-history-filters > select {
+  min-width: 130px;
+  max-width: 100%;
+}
+.ld-lesson-changes {
+  flex-basis: 100%;
+  font-size: 11px;
+  color: var(--ld-muted);
+}
+.ld-lesson-row > small {
+  color: var(--ld-muted);
+}
+.ld-lesson-changes > summary {
+  cursor: pointer;
+}
+.ld-lesson-changes p {
+  overflow-wrap: anywhere;
+}
+.ld-lesson-history .ld-lesson-row {
+  gap: 6px 10px;
+}
+.ld-weekly-content {
+  margin: 0;
+}
+.ld-support .ld-fold-count:empty {
+  display: none;
+}

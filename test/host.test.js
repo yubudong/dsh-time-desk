@@ -176,5 +176,56 @@ test("compiled distribution exposes one operation to both UI route and agent too
     }),
     /更新/,
   );
+  for (const name of ["lesson", "lessonTerm", "lessonSession", "lessonCharge"])
+    assert.ok(
+      tool.parameters.properties.action.enum.includes(name),
+      name + " must be admitted by the Agent tool schema",
+    );
+  const strictJson = (value) =>
+    assert.deepEqual(
+      JSON.parse(JSON.stringify(value)),
+      value,
+      "Tool receipt must be lossless JSON",
+    );
+  const savedSettings = await tool.execute({
+    action: "settings",
+    revision: after.revision,
+    item: { focusMinutes: 35 },
+  });
+  strictJson(savedSettings);
+  assert.equal(savedSettings.lastRecord, null);
+  const course = await tool.execute({
+    action: "lesson",
+    revision: savedSettings.revision,
+    opening: 2,
+    item: {
+      title: "Synthetic tool course",
+      mode: "credit",
+      effective: "2020-01-01",
+      weekdays: [1],
+      time: "10:00",
+    },
+  });
+  strictJson(course);
+  assert.equal(course.lastRecord.title, "Synthetic tool course");
+  const attended = await tool.execute({
+    action: "lessonSession",
+    revision: course.revision,
+    id: course.lastRecord.id,
+    originalDate: "2020-01-06",
+    command: "complete",
+    deduction: 1,
+  });
+  strictJson(attended);
+  assert.equal(attended.lastRecord.status, "done");
+  const refunded = await tool.execute({
+    action: "lessonSession",
+    revision: attended.revision,
+    id: course.lastRecord.id,
+    sessionId: attended.lastRecord.id,
+    command: "undo",
+  });
+  strictJson(refunded);
+  assert.equal(refunded.lastRecord.status, "scheduled");
   for (const fn of disposers.reverse()) if (fn) await fn();
 });

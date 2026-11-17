@@ -32,3 +32,22 @@ export function homeModules(settings, region) {
 export function isFolded(settings, id) {
   return (settings?.homeModules?.folded || []).includes(id);
 }
+
+export function reorderHomeRegion(settings, region, ids) {
+  const expected = HOME_MODULES.filter((x) => x.region === region).map(
+    (x) => x.id,
+  );
+  if (
+    ids.length !== expected.length ||
+    new Set(ids).size !== ids.length ||
+    ids.some((id) => !expected.includes(id))
+  )
+    throw Error("模块顺序不属于该区域");
+  const all = {
+    ...settings,
+    homeModules: { ...settings.homeModules, hidden: [] },
+  };
+  const other = region === "main" ? "support" : "main";
+  const preserved = homeModules(all, other).map((x) => x.id);
+  return region === "main" ? [...ids, ...preserved] : [...preserved, ...ids];
+}

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { createLessonDraftStore } from "./lesson-drafts.js";
 import { monday, shift, today, weekday } from "./dates.js";
 import {
   lessonAccount,
@@ -11,9 +12,266 @@ import {
   lessonTerms,
   lessonTimeLabel,
   lessonWeeklyLabel,
+  lessonScheduleAt,
+  lessonTimeFor,
+  lessonScheduleSignature,
 } from "./lessons.js";
-const { useState, useEffect } = React;
-export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
+const { useState, useEffect, useRef } = React;
+type LessonEnv = {
+  data: any;
+  day: string;
+  busy: boolean;
+  act: (a: any) => Promise<any>;
+  openLesson: (v: any) => void;
+  refresh?: () => Promise<any>;
+};
+type LessonProps = { modal: any; env: LessonEnv; close: () => void };
+export function createLessonsUI({
+  t,
+  Btn,
+  Modal,
+  Field,
+  Icon,
+  drafts = new Map(),
+}: any) {
+  let storage;
+  try {
+    storage = window.localStorage;
+  } catch {}
+  const draftStore = createLessonDraftStore(storage);
+  function useFormDraft(modal: any, env: LessonEnv, close: () => void) {
+    const lessonId = modal.lessonId || modal.lesson?.id || "new";
+    const key =
+      "lifeDesk:lessonDraft:v1:" +
+      env.data.deviceId +
+      ":" +
+      [
+        modal.type,
+        modal.mode || "",
+        lessonId,
+        modal.term?.id ||
+          modal.sessionId ||
+          modal.originalDate ||
+          modal.date ||
+          "",
+      ].join(":");
+    const termId =
+      modal.term?.id ||
+      (modal.type === "editor" && modal.lesson?.mode === "term"
+        ? (
+            lessonSummary(env.data, modal.lesson, env.day).currentTerm ||
+            lessonTerms(env.data, lessonId).at(-1)
+          )?.id
+        : "");
+    const currentBase = () => ({
+      epoch: env.data.dataEpoch || 0,
+      lesson:
+        env.data.lessons.find((x: any) => x.id === lessonId && !x.deletedAt)
+          ?.version || 0,
+      term:
+        env.data.lessonTerms.find(
+          (x: any) =>
+            x.id === (ref.current?.values?.term?.id || termId) && !x.deletedAt,
+        )?.version || 0,
+      session:
+        env.data.lessonSessions.find(
+          (x: any) =>
+            !x.deletedAt &&
+            x.lessonId === lessonId &&
+            (modal.sessionId
+              ? x.id === modal.sessionId
+              : modal.originalDate && x.originalDate === modal.originalDate),
+        )?.version || 0,
+    });
+    const ref = useRef<any>(null);
+    if (!ref.current)
+      ref.current = draftStore.read(key) || {
+        format: 1,
+        values: {},
+        base: currentBase(),
+        requestId: crypto.randomUUID(),
+        dirty: false,
+      };
+    const [, tick] = useState(0);
+    const pending = useRef(false);
+    const durable = useRef(!drafts.has(key));
+    const persist = () => {
+      durable.current = draftStore.put(key, ref.current);
+      if (ref.current.dirty) drafts.set(key, "unsaved");
+    };
+    useEffect(() => {
+      if (ref.current.dirty) drafts.set(key, "unsaved");
+      return () => {
+        if (durable.current) drafts.delete(key);
+      };
+    }, [key]);
+    function useField(slot: string, initial: any) {
+      const [value, setValue] = useState(() => {
+        if (!Object.hasOwn(ref.current.values, slot))
+          ref.current.values[slot] = structuredClone(initial);
+        return structuredClone(ref.current.values[slot]);
+      });
+      const set = (next: any) => {
+        if (env.busy || pending.current) return;
+        const v =
+          typeof next === "function" ? next(ref.current.values[slot]) : next;
+        ref.current.values[slot] = v;
+        ref.current.dirty = true;
+        ref.current.requestId = crypto.randomUUID();
+        persist();
+        setValue(v);
+      };
+      return [value, set] as const;
+    }
+    const clear = () => {
+      draftStore.remove(key);
+      drafts.delete(key);
+      ref.current.dirty = false;
+    };
+    const act = async (a: any) => {
+      if (pending.current || env.busy) throw Error(t("loading"));
+      pending.current = true;
+      const action = {
+        ...a,
+        requestId: ref.current.requestId,
+        dataEpoch: ref.current.base.epoch || 0,
+      };
+      if (a.action === "lesson") {
+        action.version = ref.current.base.lesson;
+        const latestLesson = env.data.lessons.find(
+          (x: any) => x.id === a.id && !x.deletedAt,
+        );
+        if (latestLesson)
+          action.item = {
+            ...a.item,
+            scheduleHistory: latestLesson.scheduleHistory,
+          };
+        if (a.term?.id)
+          action.term = { ...a.term, version: ref.current.base.term };
+      }
+      if (a.action === "lessonSession" && a.command !== "add")
+        action.version = ref.current.base.session;
+      if (a.action === "lessonTerm" && a.item?.id)
+        action.item = { ...a.item, version: ref.current.base.term };
+      try {
+        const result = await env.act(action);
+        clear();
+        return result;
+      } catch (e) {
+        void env.refresh?.();
+        throw e;
+      } finally {
+        pending.current = false;
+      }
+    };
+    const latest = currentBase();
+    const relevant =
+      modal.type === "editor"
+        ? "lesson"
+        : modal.type === "term" && modal.term
+          ? "term"
+          : modal.type === "session"
+            ? "session"
+            : null;
+    const conflict =
+      latest.epoch !== (ref.current.base.epoch || 0) ||
+      (!!relevant && latest[relevant] !== ref.current.base[relevant]);
+    return {
+      useField,
+      act,
+      key,
+      dirty: ref.current.dirty,
+      durable: durable.current,
+      conflict,
+      close: () => {
+        if (!env.busy && !pending.current) close();
+      },
+      discard: () => {
+        if (!env.busy && !pending.current && window.confirm(t("dirty"))) {
+          clear();
+          close();
+        }
+      },
+      rebase: () => {
+        if (env.busy || pending.current) return;
+        ref.current.base = latest;
+        ref.current.requestId = crypto.randomUUID();
+        persist();
+        tick((x) => x + 1);
+      },
+    };
+  }
+  function DraftNotice({ form, modal, env }: any) {
+    const latest = env.data.lessons.find(
+      (x: any) => x.id === (modal.lessonId || modal.lesson?.id) && !x.deletedAt,
+    );
+    const latestSession = env.data.lessonSessions.find(
+      (x: any) =>
+        !x.deletedAt &&
+        x.lessonId === (modal.lessonId || modal.lesson?.id) &&
+        (modal.sessionId
+          ? x.id === modal.sessionId
+          : modal.originalDate && x.originalDate === modal.originalDate),
+    );
+    const latestTerm = env.data.lessonTerms.find(
+      (x: any) => x.id === modal.term?.id && !x.deletedAt,
+    );
+    return (
+      <div className="ld-lesson-draft-info">
+        <p className="ld-help">
+          {t(
+            form.dirty
+              ? form.durable
+                ? "lessonDraftKept"
+                : "lessonDraftMemoryOnly"
+              : "lessonDraftIntro",
+          )}
+        </p>
+        {form.conflict && (
+          <div className="ld-review-conflict">
+            <p className="ld-help">{t("lessonConflictDraft")}</p>
+            {latest && (
+              <p>
+                {latest.title} · {lessonWeeklyLabel(latest, t)} · {latest.place}
+              </p>
+            )}
+            {latestSession && (
+              <p>
+                {latestSession.date} {latestSession.time} ·{" "}
+                {t(
+                  "lessonStatus" +
+                    (latestSession.status === "done"
+                      ? "Done"
+                      : latestSession.status === "skipped"
+                        ? "Skipped"
+                        : "Scheduled"),
+                )}{" "}
+                · {latestSession.deduction} {t("lessonUnit")}
+              </p>
+            )}
+            {latestTerm && (
+              <p>
+                {latestTerm.start} – {latestTerm.end} · {latestTerm.note}
+              </p>
+            )}
+            <div className="ld-actions">
+              <Btn disabled={env.busy} onClick={form.rebase}>
+                {t("reviewKeepDraft")}
+              </Btn>
+              <Btn disabled={env.busy} onClick={form.discard}>
+                {t("lessonDiscardDraft")}
+              </Btn>
+            </div>
+          </div>
+        )}
+        {form.dirty && !form.conflict && (
+          <Btn disabled={env.busy} onClick={form.discard}>
+            {t("lessonDiscardDraft")}
+          </Btn>
+        )}
+      </div>
+    );
+  }
   const live = (data: any, key: string) =>
     data[key].filter((x: any) => !x.deletedAt);
   const lessonOf = (data: any, id: string) =>
@@ -43,6 +301,8 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
       const s = lessonSummary(data, l, date);
       if (!s.terms.length) return t("lessonNoTerm");
       if (s.expired) return t("lessonExpired");
+      if (s.termStatus === "upcoming")
+        return t("lessonTermNotStarted") + " · " + s.currentTerm.start;
       const stat = s.stats;
       return (
         (s.currentTerm
@@ -56,14 +316,16 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
     }
     return "";
   };
-  function LessonEditor({ modal, env, close }: any) {
+  function LessonEditor({ modal, env, close }: LessonProps) {
+    const draft = useFormDraft(modal, env, close);
     const lesson = modal.lesson;
     const existingTerm =
       modal.term ||
       (lesson?.mode === "term"
-        ? lessonSummary(env.data, lesson, env.day).currentTerm
+        ? lessonSummary(env.data, lesson, env.day).currentTerm ||
+          lessonTerms(env.data, lesson.id).at(-1)
         : null);
-    const [item, setItem] = useState<any>({
+    const [item, setItem] = draft.useField("item", {
       title: "",
       participant: "",
       place: "",
@@ -78,10 +340,12 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
       reminderMinutes: null,
       defaultDeduction: 1,
       balanceWarnAt: null,
+      expiryWarnDays: 30,
       ...(lesson || {}),
     });
-    const [term, setTerm] = useState<any>({
+    const [term, setTerm] = draft.useField("term", {
       id: existingTerm?.id || "",
+      version: existingTerm?.version,
       start: existingTerm?.start || lesson?.effective || env.day,
       end: existingTerm?.end || "",
       purchased: existingTerm?.purchased ?? 0,
@@ -89,7 +353,22 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
       note: existingTerm?.note || "",
     });
     const [error, setError] = useState("");
-    const [opening, setOpening] = useState<any>("");
+    const [opening, setOpening] = draft.useField("opening", "");
+    const currentDay = today(env.data.settings.timeZone);
+    const [scheduleFrom, setScheduleFrom] = draft.useField(
+      "from",
+      [
+        currentDay,
+        env.day,
+        lesson?.effective || "",
+        lesson?.scheduleHistory?.at(-1)?.from || "",
+      ]
+        .sort()
+        .at(-1),
+    );
+    const scheduleChanged =
+      !!lesson &&
+      lessonScheduleSignature(item) !== lessonScheduleSignature(lesson);
     const change = (k: string, v: any) =>
       setItem((x: any) => ({ ...x, [k]: v }));
     const toggleWeekday = (d: number) => {
@@ -134,8 +413,15 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
           (x: any) => x.time && item.weekdays.includes(x.weekday),
         ),
       };
+      if (
+        scheduleChanged &&
+        !window.confirm(
+          t("lessonScheduleConfirm").replace("{date}", scheduleFrom),
+        )
+      )
+        return;
       try {
-        await env.act({
+        await draft.act({
           action: "lesson",
           ...(item.mode === "credit" && opening !== ""
             ? { opening: Number(opening) }
@@ -143,6 +429,9 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
           id: item.id,
           version: item.version,
           item: payload,
+          ...(lesson && scheduleChanged
+            ? { from: scheduleFrom, confirm: true }
+            : {}),
           ...(item.mode === "term"
             ? {
                 term: {
@@ -162,7 +451,11 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
       }
     };
     return (
-      <Modal title={item.id ? t("lessonEdit") : t("lessonAdd")} onClose={close}>
+      <Modal
+        title={item.id ? t("lessonEdit") : t("lessonAdd")}
+        onClose={draft.close}
+      >
+        <DraftNotice form={draft} modal={modal} env={env} />
         <div className="ld-form">
           <Field label={t("lessonTitle")}>
             <input
@@ -194,6 +487,12 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
           </Field>
           <Field label={t("lessonMode")}>
             <select
+              disabled={
+                !!lesson &&
+                ["lessonCharges", "lessonSessions", "lessonTerms"].some((k) =>
+                  env.data[k].some((x: any) => x.lessonId === lesson.id),
+                )
+              }
               value={item.mode}
               onChange={(e) => change("mode", e.target.value)}
             >
@@ -223,8 +522,12 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
                 : t("lessonOnceHint")}
             </p>
           </Field>
-          {item.weekdays.length > 1 && (
-            <Field label={t("lessonWeekdayTimes")} wide>
+          {(item.weekdays.length > 1 ||
+            (item.weekdayTimes || []).some(
+              (x: any) => x.time && item.weekdays.includes(x.weekday),
+            )) && (
+            <div className="ld-field ld-wide">
+              <span>{t("lessonWeekdayTimes")}</span>
               <div className="ld-weekday-times">
                 {[1, 2, 3, 4, 5, 6, 0]
                   .filter((d) => item.weekdays.includes(d))
@@ -265,11 +568,16 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
                   })}
               </div>
               <p className="ld-help">{t("lessonWeekdayTimesHint")}</p>
-            </Field>
+            </div>
           )}
           <Field
             label={t(
-              item.weekdays.length > 1 ? "lessonDefaultTime" : "lessonTime",
+              item.weekdays.length > 1 ||
+                (item.weekdayTimes || []).some(
+                  (x: any) => x.time && item.weekdays.includes(x.weekday),
+                )
+                ? "lessonDefaultTime"
+                : "lessonTime",
             )}
           >
             <input
@@ -293,9 +601,45 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
             <input
               type="date"
               value={item.effective}
+              disabled={!!lesson}
               onChange={(e) => change("effective", e.target.value)}
             />
           </Field>
+          {lesson && scheduleChanged && (
+            <Field label={t("lessonScheduleFrom")} wide>
+              <input
+                type="date"
+                value={scheduleFrom}
+                min={
+                  currentDay > lesson.effective ? currentDay : lesson.effective
+                }
+                onChange={(e) => setScheduleFrom(e.target.value)}
+              />
+              <p className="ld-help">
+                {t("lessonSchedulePreserve")} {lessonWeeklyLabel(lesson, t)}
+              </p>
+            </Field>
+          )}
+          {item.mode !== "none" && (
+            <Field label={t("lessonExpiryWarn")}>
+              <select
+                value={item.expiryWarnDays ?? "off"}
+                onChange={(e) =>
+                  change(
+                    "expiryWarnDays",
+                    e.target.value === "off" ? null : Number(e.target.value),
+                  )
+                }
+              >
+                <option value="off">{t("lessonReminderOff")}</option>
+                {[0, 7, 14, 30, 60, 90].map((n) => (
+                  <option key={n} value={n}>
+                    {t("lessonExpiryBefore").replace("{n}", String(n))}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          )}
           {item.mode !== "term" && (
             <Field label={t("lessonUntil")}>
               <input
@@ -438,29 +782,37 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
           <Btn primary onClick={save} disabled={env.busy}>
             {t("save")}
           </Btn>
-          <Btn onClick={close}>{t("cancel")}</Btn>
+          <Btn onClick={draft.close}>{t("cancel")}</Btn>
         </div>
       </Modal>
     );
   }
-  function SessionModal({ modal, env, close }: any) {
+  function SessionModal({ modal, env, close }: LessonProps) {
+    const draft = useFormDraft(modal, env, close);
     const lesson = lessonOf(env.data, modal.lessonId);
     const occ0 = modal.occurrence;
     const [mode] = useState(modal.mode);
-    const [date, setDate] = useState(modal.date || occ0?.date || "");
-    const [time, setTime] = useState(
+    const [date, setDate] = draft.useField(
+      "date",
+      modal.date || occ0?.date || "",
+    );
+    const [time, setTime] = draft.useField(
+      "time",
       modal.time ?? occ0?.time ?? lesson?.time ?? "",
     );
-    const [place, setPlace] = useState(
+    const [place, setPlace] = draft.useField(
+      "place",
       modal.place ?? occ0?.place ?? lesson?.place ?? "",
     );
-    const [note, setNote] = useState(occ0?.note || "");
-    const [deduction, setDeduction] = useState(
+    const [note, setNote] = draft.useField("note", occ0?.note || "");
+    const [deduction, setDeduction] = draft.useField(
+      "deduction",
       occ0?.deduction ?? lesson?.defaultDeduction ?? 1,
     );
-    const [confirmShort, setShort] = useState(false),
-      [confirmConflict, setConflict] = useState(false);
+    const [confirmShort, setShort] = draft.useField("confirmShort", false),
+      [confirmConflict, setConflict] = draft.useField("confirmConflict", false);
     const [error, setError] = useState("");
+    const [skipCharged, setSkipCharged] = draft.useField("skipCharged", false);
     const account =
       lesson?.mode === "credit" ? lessonAccount(env.data, lesson) : null;
     if (!lesson) return null;
@@ -474,7 +826,7 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
           sessionId: modal.sessionId || occ0?.sessionId || "",
         };
         if (mode === "complete")
-          await env.act({
+          await draft.act({
             ...common,
             command: "complete",
             date,
@@ -483,7 +835,7 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
             confirmShort,
           });
         else if (mode === "move")
-          await env.act({
+          await draft.act({
             ...common,
             command: "save",
             date,
@@ -493,7 +845,7 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
             confirmConflict,
           });
         else if (mode === "extra")
-          await env.act({
+          await draft.act({
             ...common,
             command: "add",
             date,
@@ -503,17 +855,26 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
             confirmConflict,
           });
         else if (mode === "skip")
-          await env.act({ ...common, command: "skip", note });
-        else if (mode === "undo") await env.act({ ...common, command: "undo" });
+          await draft.act({
+            ...common,
+            command: "skip",
+            note,
+            deduction: skipCharged ? deduction : 0,
+            confirmShort,
+          });
+        else if (mode === "undo")
+          await draft.act({ ...common, command: "undo" });
         else if (mode === "restore")
-          await env.act({ ...common, command: "restore" });
+          await draft.act({ ...common, command: "restore" });
         else if (mode === "unskip")
-          await env.act({
+          await draft.act({
             ...common,
             command: "save",
-            date: modal.originalDate || occ0?.date,
-            time: lesson.time,
-            place: lesson.place,
+            date: occ0?.date || modal.originalDate,
+            time:
+              occ0?.time ??
+              lessonTimeFor(lesson, modal.originalDate || occ0?.date),
+            place: occ0?.place ?? lesson.place,
             note: "",
           });
         close();
@@ -531,8 +892,9 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
                 ? "lessonUnskip"
                 : "lessonRestore",
           )}
-          onClose={close}
+          onClose={draft.close}
         >
+          <DraftNotice form={draft} modal={modal} env={env} />
           <p className="ld-help">
             {t(
               mode === "undo"
@@ -557,15 +919,16 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
                     : "lessonRestore",
               )}
             </Btn>
-            <Btn onClick={close}>{t("cancel")}</Btn>
+            <Btn onClick={draft.close}>{t("cancel")}</Btn>
           </div>
         </Modal>
       );
     return (
       <Modal
         title={lesson.title + " · " + (occ0?.date || date)}
-        onClose={close}
+        onClose={draft.close}
       >
+        <DraftNotice form={draft} modal={modal} env={env} />
         <p className="ld-help">
           {t(
             mode === "complete"
@@ -573,8 +936,8 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
               : mode === "skip"
                 ? "lessonSkipHint"
                 : mode === "extra"
-                  ? t("lessonExtraHint")
-                  : t("lessonRescheduleHint"),
+                  ? "lessonExtraHint"
+                  : "lessonRescheduleHint",
           )}
         </p>
         {(mode === "complete" || mode === "move" || mode === "extra") && (
@@ -607,7 +970,13 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
               </Field>
             )}
             {mode === "complete" && (
-              <Field label={t("lessonDeduction")}>
+              <Field
+                label={t(
+                  lesson.mode === "credit"
+                    ? "lessonDeduction"
+                    : "lessonRecordedUnits",
+                )}
+              >
                 <input
                   type="number"
                   min={0}
@@ -654,6 +1023,40 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
             {t("lessonConflictConfirm")}
           </label>
         )}
+        {mode === "skip" && lesson.mode === "credit" && (
+          <div className="ld-form">
+            <label className="ld-check-label ld-wide">
+              <input
+                type="checkbox"
+                checked={skipCharged}
+                onChange={(e) => setSkipCharged(e.target.checked)}
+              />
+              {t("lessonChargeOnSkip")}
+            </label>
+            {skipCharged && (
+              <Field label={t("lessonDeduction")}>
+                <input
+                  type="number"
+                  min={0}
+                  max={1000}
+                  step={0.5}
+                  value={deduction}
+                  onChange={(e) => setDeduction(Number(e.target.value))}
+                />
+              </Field>
+            )}
+            {skipCharged && account && account.balance < deduction && (
+              <label className="ld-check-label ld-wide">
+                <input
+                  type="checkbox"
+                  checked={confirmShort}
+                  onChange={(e) => setShort(e.target.checked)}
+                />
+                {t("lessonShortConfirm")}
+              </label>
+            )}
+          </div>
+        )}
         {mode === "skip" && (
           <Field label={t("lessonNote")} wide>
             <textarea
@@ -675,23 +1078,24 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
               mode === "complete"
                 ? "lessonComplete"
                 : mode === "skip"
-                  ? t("lessonSkip")
-                  : t("save"),
+                  ? "lessonSkip"
+                  : "save",
             )}
           </Btn>
-          <Btn onClick={close}>{t("cancel")}</Btn>
+          <Btn onClick={draft.close}>{t("cancel")}</Btn>
         </div>
       </Modal>
     );
   }
-  function ChargeModal({ modal, env, close }: any) {
+  function ChargeModal({ modal, env, close }: LessonProps) {
+    const draft = useFormDraft(modal, env, close);
     const lesson = lessonOf(env.data, modal.lessonId);
-    const [kind, setKind] = useState(modal.kind || "purchase");
-    const [date, setDate] = useState(env.day);
-    const [delta, setDelta] = useState<any>("");
-    const [amount, setAmount] = useState<any>("");
-    const [expiresOn, setExpiry] = useState("");
-    const [note, setNote] = useState("");
+    const [kind, setKind] = draft.useField("kind", modal.kind || "purchase");
+    const [date, setDate] = draft.useField("date", env.day);
+    const [delta, setDelta] = draft.useField("delta", "");
+    const [amount, setAmount] = draft.useField("amount", "");
+    const [expiresOn, setExpiry] = draft.useField("expiresOn", "");
+    const [note, setNote] = draft.useField("note", "");
     const [error, setError] = useState("");
     if (!lesson) return null;
     const save = async () => {
@@ -699,7 +1103,7 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
         setError("");
         const n = Number(delta);
         if (!n) return setError(t("lessonChargeDeltaRequired"));
-        await env.act({
+        await draft.act({
           action: "lessonCharge",
           id: lesson.id,
           item: {
@@ -719,8 +1123,9 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
     return (
       <Modal
         title={t("lessonAddCharge") + " · " + lesson.title}
-        onClose={close}
+        onClose={draft.close}
       >
+        <DraftNotice form={draft} modal={modal} env={env} />
         <div className="ld-form">
           <Field label={t("lessonChargeKind")}>
             <select value={kind} onChange={(e) => setKind(e.target.value)}>
@@ -781,34 +1186,35 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
           <Btn primary onClick={save} disabled={env.busy}>
             {t("save")}
           </Btn>
-          <Btn onClick={close}>{t("cancel")}</Btn>
+          <Btn onClick={draft.close}>{t("cancel")}</Btn>
         </div>
       </Modal>
     );
   }
-  function TermModal({ modal, env, close }: any) {
+  function TermModal({ modal, env, close }: LessonProps) {
+    const draft = useFormDraft(modal, env, close);
     const lesson = lessonOf(env.data, modal.lessonId);
     const terms = lesson ? lessonTerms(env.data, lesson.id) : [];
     const last = terms.at(-1);
     const editing = modal.term;
-    const [start, setStart] = useState(
+    const [start, setStart] = draft.useField(
+      "start",
       editing?.start || (last ? shift(last.end, 1) : env.day),
     );
-    const [end, setEnd] = useState(editing?.end || "");
-    const [purchased, setPurchased] = useState(
-      editing?.purchased ?? last?.purchased ?? 0,
+    const [end, setEnd] = draft.useField("end", editing?.end || "");
+    const [purchased, setPurchased] = draft.useField(
+      "purchased",
+      editing?.purchased ?? 0,
     );
-    const [amount, setAmount] = useState<any>(
-      editing?.amount ?? last?.amount ?? "",
-    );
-    const [note, setNote] = useState(editing?.note || "");
+    const [amount, setAmount] = draft.useField("amount", editing?.amount ?? "");
+    const [note, setNote] = draft.useField("note", editing?.note || "");
     const [error, setError] = useState("");
     if (!lesson) return null;
     const save = async () => {
       try {
         setError("");
         if (!end) return setError(t("lessonTermRequired"));
-        await env.act({
+        await draft.act({
           action: "lessonTerm",
           id: lesson.id,
           command: editing ? "save" : "renew",
@@ -827,7 +1233,11 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
       }
     };
     return (
-      <Modal title={t("lessonRenew") + " · " + lesson.title} onClose={close}>
+      <Modal
+        title={t("lessonRenew") + " · " + lesson.title}
+        onClose={draft.close}
+      >
+        <DraftNotice form={draft} modal={modal} env={env} />
         <p className="ld-help">{t("lessonRenewHint")}</p>
         <div className="ld-form">
           <Field label={t("lessonTermStart")}>
@@ -877,7 +1287,7 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
           <Btn primary onClick={save} disabled={env.busy}>
             {t("save")}
           </Btn>
-          <Btn onClick={close}>{t("cancel")}</Btn>
+          <Btn onClick={draft.close}>{t("cancel")}</Btn>
         </div>
       </Modal>
     );
@@ -885,6 +1295,19 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
   function LessonDetail({ modal, env, close }: any) {
     const lesson = lessonOf(env.data, modal.lessonId);
     const [error, setError] = useState("");
+    const period = lesson
+      ? lessonSummary(env.data, lesson, env.day).currentTerm ||
+        lessonTerms(env.data, lesson.id).at(-1)
+      : null;
+    const [historyFrom, setHistoryFrom] = useState(
+      period && period.start <= env.day ? period.start : shift(env.day, -90),
+    );
+    const [historyTo, setHistoryTo] = useState(
+      period && period.end < env.day ? period.end : env.day,
+    );
+    const [historyStatus, setHistoryStatus] = useState("all");
+    const [historyPage, setHistoryPage] = useState(0);
+    useEffect(() => setHistoryPage(0), [historyFrom, historyTo, historyStatus]);
     if (!lesson) return null;
     const summary = lessonSummary(env.data, lesson, env.day);
     const next = lessonOccurrences(
@@ -934,6 +1357,166 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
         setError(e.message);
       }
     };
+    const renderRows = (rows: any[]) =>
+      rows.map((x: any) => (
+        <div className="ld-lesson-row" key={x.key}>
+          <span>
+            {x.date} {x.time}
+          </span>
+          <span>
+            {statusText(x.status)}
+            {x.movedFrom
+              ? " · " + t("lessonMovedFrom") + " " + x.movedFrom
+              : ""}
+          </span>
+          <div className="ld-actions">
+            {(x.status === "scheduled" || x.status === "skipped") && (
+              <Btn
+                disabled={
+                  env.busy ||
+                  x.date > today(env.data.settings.timeZone) ||
+                  x.charged
+                }
+                onClick={() =>
+                  open({
+                    type: "session",
+                    mode: "complete",
+                    lessonId: lesson.id,
+                    originalDate: x.originalDate,
+                    sessionId: x.sessionId,
+                    occurrence: x,
+                    date: x.date,
+                  })
+                }
+              >
+                {t("lessonComplete")}
+              </Btn>
+            )}
+            {x.status === "scheduled" && (
+              <Btn
+                onClick={() =>
+                  open({
+                    type: "session",
+                    mode: "move",
+                    lessonId: lesson.id,
+                    originalDate: x.originalDate,
+                    sessionId: x.sessionId,
+                    occurrence: x,
+                    date: x.date,
+                    time: x.time,
+                    place: x.place,
+                  })
+                }
+              >
+                {t("lessonReschedule")}
+              </Btn>
+            )}
+            {x.status === "scheduled" && (
+              <Btn
+                onClick={() =>
+                  open({
+                    type: "session",
+                    mode: "skip",
+                    lessonId: lesson.id,
+                    originalDate: x.originalDate,
+                    sessionId: x.sessionId,
+                    occurrence: x,
+                  })
+                }
+              >
+                {t("lessonSkip")}
+              </Btn>
+            )}
+            {x.status === "skipped" && !x.charged && (
+              <Btn
+                onClick={() =>
+                  open({
+                    type: "session",
+                    mode: "unskip",
+                    lessonId: lesson.id,
+                    originalDate: x.originalDate,
+                    sessionId: x.sessionId,
+                    occurrence: x,
+                  })
+                }
+              >
+                {t("lessonUnskip")}
+              </Btn>
+            )}
+            {x.movedFrom && x.status !== "done" && (
+              <Btn
+                onClick={() =>
+                  open({
+                    type: "session",
+                    mode: "restore",
+                    lessonId: lesson.id,
+                    originalDate: x.originalDate,
+                    sessionId: x.sessionId,
+                  })
+                }
+              >
+                {t("lessonRestore")}
+              </Btn>
+            )}
+            {x.extra && x.status !== "done" && (
+              <Btn onClick={() => removeExtra(x.sessionId)}>{t("delete")}</Btn>
+            )}
+            {(x.status === "done" || x.charged) && (
+              <Btn
+                onClick={() =>
+                  open({
+                    type: "session",
+                    mode: "undo",
+                    lessonId: lesson.id,
+                    sessionId: x.sessionId,
+                  })
+                }
+              >
+                {t("lessonUndoComplete")}
+              </Btn>
+            )}
+          </div>
+          {x.status === "done" && (
+            <small>
+              {t("lessonAttendanceUnits").replace("{n}", String(x.deduction))}
+            </small>
+          )}
+          {x.status === "skipped" && x.charged && (
+            <small>
+              {t("lessonSkippedCharge").replace("{n}", String(x.deduction))}
+            </small>
+          )}
+          {!!x.changes?.length && (
+            <details className="ld-lesson-changes">
+              <summary>
+                {t("lessonChangeHistory")} · {x.changes.length}
+              </summary>
+              {x.changes.map((event: any, i: number) => (
+                <p className="ld-help" key={event.at + i}>
+                  {event.at.slice(0, 10)} · {t("lessonAction" + event.action)} ·{" "}
+                  {event.fromDate} {event.fromTime} → {event.date} {event.time}
+                  {event.note ? " · " + event.note : ""}
+                </p>
+              ))}
+            </details>
+          )}
+        </div>
+      ));
+    const span =
+      (Date.parse(historyTo + "T00:00:00Z") -
+        Date.parse(historyFrom + "T00:00:00Z")) /
+      86400000;
+    const validHistory = Number.isFinite(span) && span >= 0 && span <= 3660;
+    const historyRows = validHistory
+      ? lessonOccurrences(env.data, lesson, historyFrom, historyTo).filter(
+          (x: any) =>
+            historyStatus === "all" || historyStatus === "pending"
+              ? historyStatus === "all" ||
+                (x.status === "scheduled" &&
+                  x.date <= today(env.data.settings.timeZone))
+              : x.status === historyStatus,
+        )
+      : [];
     return (
       <Modal title={lesson.title} onClose={close}>
         <p className="ld-help">
@@ -949,13 +1532,20 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
             <strong>{account.balance}</strong> {t("lessonUnit")}
             <small>
               {t("lessonPurchased")} {account.purchased} · {t("lessonGifted")}{" "}
-              {account.gifted} · {t("lessonUsed")} {account.used}
+              {account.gifted} · {t("lessonUsed")} {account.netUsed}
             </small>
           </div>
         )}
         {lesson.mode === "term" && (
           <div className="ld-lesson-money">
-            {summary.currentTerm ? (
+            {summary.termStatus === "upcoming" ? (
+              <>
+                <strong>{t("lessonTermNotStarted")}</strong>
+                <small>
+                  {summary.currentTerm.start} – {summary.currentTerm.end}
+                </small>
+              </>
+            ) : summary.currentTerm ? (
               <>
                 <strong>{summary.endsIn}</strong> {t("lessonDaysLeft")}
                 <small>
@@ -982,13 +1572,6 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
         <div className="ld-actions">
           <Btn
             onClick={() =>
-              open({ type: "session", mode: "complete", lessonId: lesson.id })
-            }
-          >
-            {t("lessonComplete")}
-          </Btn>
-          <Btn
-            onClick={() =>
               open({
                 type: "session",
                 mode: "extra",
@@ -1006,127 +1589,112 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
         <section className="ld-section">
           <h3>{t("lessonSchedule")}</h3>
           {next.length ? (
-            next.map((x: any) => (
-              <div className="ld-lesson-row" key={x.key}>
-                <span>
-                  {x.date} {x.time}
-                </span>
-                <span>
-                  {statusText(x.status)}
-                  {x.movedFrom
-                    ? " · " + t("lessonMovedFrom") + " " + x.movedFrom
-                    : ""}
-                </span>
-                <div className="ld-actions">
-                  {(x.status === "scheduled" || x.status === "skipped") && (
-                    <Btn
-                      onClick={() =>
-                        open({
-                          type: "session",
-                          mode: "complete",
-                          lessonId: lesson.id,
-                          originalDate: x.originalDate,
-                          sessionId: x.sessionId,
-                          occurrence: x,
-                          date: x.date,
-                        })
-                      }
-                    >
-                      {t("lessonComplete")}
-                    </Btn>
-                  )}
-                  {x.status === "scheduled" && (
-                    <Btn
-                      onClick={() =>
-                        open({
-                          type: "session",
-                          mode: "move",
-                          lessonId: lesson.id,
-                          originalDate: x.originalDate,
-                          sessionId: x.sessionId,
-                          occurrence: x,
-                          date: x.date,
-                          time: x.time,
-                          place: x.place,
-                        })
-                      }
-                    >
-                      {t("lessonReschedule")}
-                    </Btn>
-                  )}
-                  {x.status === "scheduled" && (
-                    <Btn
-                      onClick={() =>
-                        open({
-                          type: "session",
-                          mode: "skip",
-                          lessonId: lesson.id,
-                          originalDate: x.originalDate,
-                          sessionId: x.sessionId,
-                          occurrence: x,
-                        })
-                      }
-                    >
-                      {t("lessonSkip")}
-                    </Btn>
-                  )}
-                  {x.status === "skipped" && (
-                    <Btn
-                      onClick={() =>
-                        open({
-                          type: "session",
-                          mode: "unskip",
-                          lessonId: lesson.id,
-                          originalDate: x.originalDate,
-                          sessionId: x.sessionId,
-                          occurrence: x,
-                        })
-                      }
-                    >
-                      {t("lessonUnskip")}
-                    </Btn>
-                  )}
-                  {x.movedFrom && x.status !== "done" && (
-                    <Btn
-                      onClick={() =>
-                        open({
-                          type: "session",
-                          mode: "restore",
-                          lessonId: lesson.id,
-                          originalDate: x.originalDate,
-                          sessionId: x.sessionId,
-                        })
-                      }
-                    >
-                      {t("lessonRestore")}
-                    </Btn>
-                  )}
-                  {x.extra && x.status !== "done" && (
-                    <Btn onClick={() => removeExtra(x.sessionId)}>
-                      {t("delete")}
-                    </Btn>
-                  )}
-                  {x.status === "done" && (
-                    <Btn
-                      onClick={() =>
-                        open({
-                          type: "session",
-                          mode: "undo",
-                          lessonId: lesson.id,
-                          sessionId: x.sessionId,
-                        })
-                      }
-                    >
-                      {t("lessonUndoComplete")}
-                    </Btn>
-                  )}
-                </div>
-              </div>
-            ))
+            renderRows(next)
           ) : (
             <p className="ld-help">{t("lessonNoUpcoming")}</p>
           )}
         </section>
+        <section className="ld-section ld-lesson-history">
+          <h3>{t("lessonAttendanceHistory")}</h3>
+          <div className="ld-actions ld-history-filters">
+            <label>
+              {t("lessonHistoryFrom")}
+              <input
+                type="date"
+                value={historyFrom}
+                onChange={(e) => setHistoryFrom(e.target.value)}
+              />
+            </label>
+            <label>
+              {t("lessonHistoryTo")}
+              <input
+                type="date"
+                value={historyTo}
+                onChange={(e) => setHistoryTo(e.target.value)}
+              />
+            </label>
+            <select
+              aria-label={t("lessonHistoryStatus")}
+              value={historyStatus}
+              onChange={(e) => setHistoryStatus(e.target.value)}
+            >
+              {["all", "done", "pending", "skipped"].map((k) => (
+                <option key={k} value={k}>
+                  {t("lessonHistory" + k)}
+                </option>
+              ))}
+            </select>
+            {!!summary.terms.length && (
+              <select
+                aria-label={t("lessonTerms")}
+                value=""
+                onChange={(e) => {
+                  const term = summary.terms.find(
+                    (x: any) => x.id === e.target.value,
+                  );
+                  if (term) {
+                    setHistoryFrom(term.start);
+                    setHistoryTo(term.end);
+                  }
+                }}
+              >
+                <option value="">{t("lessonSelectTerm")}</option>
+                {summary.terms.map((term: any) => (
+                  <option key={term.id} value={term.id}>
+                    {term.start} – {term.end}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+          <p className="ld-help">{t("lessonHistoryHint")}</p>
+          {!validHistory ? (
+            <p className="ld-help">{t("lessonHistoryRange")}</p>
+          ) : (
+            <>
+              <p className="ld-help">
+                {historyRows.length} {t("lessonSessionCount")} ·{" "}
+                {lessonStats(env.data, lesson, historyFrom, historyTo).units}{" "}
+                {t("lessonUnit")}
+              </p>
+              {renderRows(
+                historyRows.slice(historyPage * 25, (historyPage + 1) * 25),
+              )}
+              {!historyRows.length && (
+                <p className="ld-help">{t("lessonNoHistory")}</p>
+              )}
+              {historyRows.length > 25 && (
+                <div className="ld-actions">
+                  <Btn
+                    disabled={historyPage === 0}
+                    onClick={() => setHistoryPage((p) => p - 1)}
+                  >
+                    {t("lessonPrevPage")}
+                  </Btn>
+                  <span>
+                    {historyPage + 1}/{Math.ceil(historyRows.length / 25)}
+                  </span>
+                  <Btn
+                    disabled={(historyPage + 1) * 25 >= historyRows.length}
+                    onClick={() => setHistoryPage((p) => p + 1)}
+                  >
+                    {t("lessonNextPage")}
+                  </Btn>
+                </div>
+              )}
+            </>
+          )}
+        </section>
+        {!!lesson.scheduleHistory?.length && (
+          <section className="ld-section">
+            <h3>{t("lessonScheduleVersions")}</h3>
+            {lesson.scheduleHistory.map((rule: any) => (
+              <p className="ld-help" key={rule.from}>
+                {rule.from} · {lessonWeeklyLabel({ ...lesson, ...rule }, t)}
+              </p>
+            ))}
+          </section>
+        )}
         {lesson.mode === "credit" && account && (
           <section className="ld-section">
             <div className="ld-section-heading">
@@ -1216,19 +1784,28 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
       </Modal>
     );
   }
-  function LessonHub({ modal, env, close }: any) {
+  function LessonHub({ modal, env, close }: LessonProps) {
     if (!modal) return null;
+    let body;
     if (modal.type === "editor")
-      return <LessonEditor modal={modal} env={env} close={close} />;
+      body = <LessonEditor modal={modal} env={env} close={close} />;
     if (modal.type === "session")
-      return <SessionModal modal={modal} env={env} close={close} />;
+      body = <SessionModal modal={modal} env={env} close={close} />;
     if (modal.type === "charge")
-      return <ChargeModal modal={modal} env={env} close={close} />;
+      body = <ChargeModal modal={modal} env={env} close={close} />;
     if (modal.type === "term")
-      return <TermModal modal={modal} env={env} close={close} />;
+      body = <TermModal modal={modal} env={env} close={close} />;
     if (modal.type === "detail")
-      return <LessonDetail modal={modal} env={env} close={close} />;
-    return null;
+      body = <LessonDetail modal={modal} env={env} close={close} />;
+    return (
+      <fieldset
+        className="ld-lesson-form-lock"
+        disabled={env.busy}
+        aria-busy={env.busy}
+      >
+        {body}
+      </fieldset>
+    );
   }
   function TodayLessons({ env }: any) {
     const data = env.data,

@@ -214,7 +214,14 @@ export function createPlanningUI({ t, Btn, Field }: any) {
       </section>
     );
   }
-  function PlanPanel({ plan, date, act, busy }: any) {
+  function PlanPanel({
+    plan,
+    date,
+    act,
+    busy,
+    folded = false,
+    onFold = () => {},
+  }: any) {
     const capacity = plan.load.availableMinutes;
     const [value, setValue] = useState(
         capacity === null ? "" : String(capacity),
@@ -242,56 +249,71 @@ export function createPlanningUI({ t, Btn, Field }: any) {
     return (
       <section className="ld-plan-panel" aria-label={t("dailyPlan")}>
         <div className="ld-plan-heading">
-          <h2>{t("dailyPlan")}</h2>
+          <h2>
+            <button
+              type="button"
+              className="ld-fold-toggle"
+              aria-expanded={!folded}
+              aria-controls="ld-plan-body"
+              onClick={onFold}
+            >
+              <span className="ld-fold-chevron">›</span>
+              {t("dailyPlan")}
+            </button>
+          </h2>
           <span>{date}</span>
         </div>
-        <div className="ld-plan-stats">
-          <div>
-            <strong>{load.knownMinutes}</strong>
-            <span>{t("estimatedMin")}</span>
+        <div id="ld-plan-body" hidden={folded}>
+          <div className="ld-plan-stats">
+            <div>
+              <strong>{load.knownMinutes}</strong>
+              <span>{t("estimatedMin")}</span>
+            </div>
+            <div>
+              <strong>{load.unknownCount}</strong>
+              <span>{t("unestimatedTasks")}</span>
+            </div>
+            <div>
+              <strong>{load.recordedFocusMinutes}</strong>
+              <span>{t("recordedFocus")}</span>
+            </div>
           </div>
-          <div>
-            <strong>{load.unknownCount}</strong>
-            <span>{t("unestimatedTasks")}</span>
-          </div>
-          <div>
-            <strong>{load.recordedFocusMinutes}</strong>
-            <span>{t("recordedFocus")}</span>
-          </div>
-        </div>
-        <form className="ld-plan-capacity" onSubmit={save}>
-          <label>
-            {t("availableToday")}
-            <input
-              type="number"
-              min={0}
-              max={1440}
-              step={1}
-              value={value}
-              placeholder={t("notSet")}
-              onChange={(e) => setValue(e.target.value)}
-            />
-          </label>
-          <Btn type="submit" disabled={busy}>
-            {t("save")}
-          </Btn>
-        </form>
-        <p
-          className={"ld-help " + (load.overMinutes > 0 ? "ld-plan-over" : "")}
-        >
-          {capacity === null
-            ? t("capacityHint")
-            : load.overMinutes > 0
-              ? t("overCapacity") + " " + load.overMinutes + " " + t("min")
-              : t("withinCapacity")}
-          {" · "}
-          {t("estimateHint")}
-        </p>
-        {error && (
-          <p className="ld-error" role="alert">
-            {error}
+          <form className="ld-plan-capacity" onSubmit={save}>
+            <label>
+              {t("availableToday")}
+              <input
+                type="number"
+                min={0}
+                max={1440}
+                step={1}
+                value={value}
+                placeholder={t("notSet")}
+                onChange={(e) => setValue(e.target.value)}
+              />
+            </label>
+            <Btn type="submit" disabled={busy}>
+              {t("save")}
+            </Btn>
+          </form>
+          <p
+            className={
+              "ld-help " + (load.overMinutes > 0 ? "ld-plan-over" : "")
+            }
+          >
+            {capacity === null
+              ? t("capacityHint")
+              : load.overMinutes > 0
+                ? t("overCapacity") + " " + load.overMinutes + " " + t("min")
+                : t("withinCapacity")}
+            {" · "}
+            {t("estimateHint")}
           </p>
-        )}
+          {error && (
+            <p className="ld-error" role="alert">
+              {error}
+            </p>
+          )}
+        </div>
       </section>
     );
   }

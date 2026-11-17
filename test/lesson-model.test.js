@@ -247,13 +247,16 @@ test("term lessons stop outside validity, renew into a new period and keep old s
   const terms = lessonTerms(h.state, l.id);
   assert.equal(terms.length, 2);
   assert.equal(terms[1].start, "2026-12-01");
-  h.do({
-    action: "lessonSession",
-    command: "complete",
-    id: l.id,
-    originalDate: "2026-12-07",
-    deduction: 1,
-  });
+  h.do(
+    {
+      action: "lessonSession",
+      command: "complete",
+      id: l.id,
+      originalDate: "2026-12-07",
+      deduction: 1,
+    },
+    Date.parse("2026-12-08T02:00:00Z"),
+  );
   assert.equal(lessonStats(h.state, l, "2026-12-01", "2027-02-28").sessions, 1);
   assert.equal(lessonStats(h.state, l, "2026-11-16", "2026-11-30").sessions, 1);
 });
@@ -263,13 +266,16 @@ test("a validity period cannot be shrunk past a completed lesson", () => {
     { mode: "term", weekdays: [1], effective: "2026-11-16" },
     { start: "2026-11-16", end: "2026-11-30", purchased: 4 },
   );
-  h.do({
-    action: "lessonSession",
-    command: "complete",
-    id: l.id,
-    originalDate: "2026-11-23",
-    deduction: 1,
-  });
+  h.do(
+    {
+      action: "lessonSession",
+      command: "complete",
+      id: l.id,
+      originalDate: "2026-11-23",
+      deduction: 1,
+    },
+    Date.parse("2026-11-24T02:00:00Z"),
+  );
   const term = lessonTerms(h.state, l.id)[0];
   assert.throws(
     () =>

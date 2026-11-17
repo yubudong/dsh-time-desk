@@ -30,13 +30,13 @@ const guide = {
   splitSeries:
     "修改这次及以后：id、originalDate、item 为新任务字段，必须先展示范围并得到用户同意。",
   lesson:
-    "课程：action=lesson，item 按 lessons schema（title、participant、weekdays、time、durationMinutes、effective、mode=none/credit/term、reminderMinutes、defaultDeduction、balanceWarnAt），带 id 修改需 version；不同星期不同时间用 weekdayTimes=[{weekday,time}]，weekday 必须在 weekdays 内，未填的星期沿用 time。新建课时包可传 opening=现有剩余课时，自动生成首次余额流水。期限课程必须同时提供 term={start,end,purchased,amount,note}；已有 term 继续修改时带上 term.id。删除用 trash collection=lessons。",
+    "课程：action=lesson，item 按 lessons schema（title、participant、weekdays、time、durationMinutes、effective、mode=none/credit/term、reminderMinutes、defaultDeduction、balanceWarnAt），带 id 修改需 version；改变已有课表必须给 from=今天或以后的生效日、confirm=true，保留原 effective；scheduleHistory 只读。不同星期不同时间用 weekdayTimes=[{weekday,time}]，weekday 必须在 weekdays 内，未填的星期沿用 time。新建课时包可传 opening=现有剩余课时，自动生成首次余额流水。期限课程必须同时提供 term={start,end,purchased,amount,note}；已有 term 继续修改时带 term.id 和 term.version；expiryWarnDays=null 关闭到期提示，数字为提前天数。删除用 trash collection=lessons。",
   lessonTerm:
     "有效期：id=lessonId，command=renew 从上一周期结束次日起新增周期，item={start,end,purchased,amount,note}；command=remove 加 removeId 仅删除无上课记录的周期。有效期不能排除已上课日期，不能重叠。",
   lessonSession:
-    "课表单次操作：id=lessonId、originalDate=原定日。command=save 调课（date/time/place，仅这一次；如重叠需 confirmConflict=true），restore 恢复原安排，skip 请假不扣课时，complete 确认上课（deduction 默认按课程），undo 撤销上课并返还课时，add 作为临时加课（originalDate 为空），remove 删除临时课。已上课先 undo 才能改期。期限课程的新日期必须在有效期内。",
+    "课表单次操作：id=lessonId、originalDate=原定日。command=save 调课（date/time/place，仅这一次；如重叠需 confirmConflict=true），restore 恢复原安排，skip 请假默认不扣课时，只有用户明确确认机构扣费时才传 deduction；complete 不允许未来日期，确认上课（deduction 默认按课程），undo 撤销上课并返还课时，add 作为临时加课（originalDate 为空），remove 删除临时课。已上课先 undo 才能改期。期限课程的新日期必须在有效期内。",
   lessonCharge:
-    "课时包流水：id=lessonId，item={date,delta,kind=purchase/gift/opening/adjust,amount,expiresOn,note}。delta 为实际增减（充值为正，adjust 可为负），上课扣减只能由 lessonSession complete 产生；删除误录充值用 command=remove + removeId，不能删除 use 记录。余额不足时 complete 需用户确认后传 confirmShort=true。",
+    "课时包流水：id=lessonId，item={date,delta,kind=purchase/gift/opening/adjust,amount,expiresOn,note}。delta 为实际增减（充值为正，adjust 可为负），上课扣减只能由 lessonSession complete 产生；删除误录充值用 command=remove + removeId，use/refund 系统记录不能删除或直接新建，调整必须填写原因；数字最多六位小数。余额不足时 complete 需用户确认后传 confirmShort=true。",
   habitLog:
     "id=habitId、date、value=本次增加数量，duration 习惯则为本次分钟（1–1440 整数）、note 可选、skipped 可选。status=missed 标记未达成；status=planned/unplanned 安排或取消该日的每周次数习惯，不产生打卡。撤销打卡用 removeId=habitLogId。周次数按不同天计算。",
   review:
@@ -44,7 +44,7 @@ const guide = {
   timer:
     "command=start/pause/resume/await/finish/discard；start 支持 phase=focus/short/long、taskId、originalDate，可通过 item.minutes 设置仅本轮专注时长（1–180 整数，不改变默认）。修改默认用 settings item.focusMinutes，不影响运行中计时；settings.timerFace 可为 digital/ring/flip/hourglass。其余计时操作需要 timerId。提前 finish 可传修正 seconds。",
   backup:
-    "返回备份；restoreBackup 需要 backup、confirm=true 和最新 revision，先得到用户明确同意。restorePrevious 恢复导入前的持久备份。",
+    "返回备份；restoreBackup 需要 backup、confirm=true 和最新 revision，先得到用户明确同意。restorePrevious 恢复导入前的持久备份。read 返回 dataEpoch，课程写入建议带上它；恢复后旧草稿须重新核对，不能绕过检查。",
   rules:
     "公历 weekly.days:0=周日至6=周六。lunar.month/day 是农历，date 仍为首次生效公历日。leap=regular/only/both，missing=last/skip。preview 可检查未来三次日期。日期使用 settings.timeZone。普通未完成任务从安排日开始在后续日期持续待办，截止日是最晚期限；无需为今日显示而改期。range 是日历发生日查询，不等于包含延续任务的今日执行清单。",
   authority:
@@ -212,6 +212,10 @@ export async function apply(ctx) {
               "occurrence",
               "splitSeries",
               "habitLog",
+              "lesson",
+              "lessonTerm",
+              "lessonSession",
+              "lessonCharge",
               "review",
               "settings",
               "timer",
@@ -225,6 +229,7 @@ export async function apply(ctx) {
             ],
           },
           revision: { type: "integer" },
+          dataEpoch: { type: "integer" },
           requestId: {
             type: "string",
             description: "同一次写入的唯一标识，重试复用。",
@@ -236,6 +241,7 @@ export async function apply(ctx) {
           date: { type: "string" },
           originalDate: { type: "string" },
           time: { type: "string" },
+          place: { type: "string" },
           status: { type: "string" },
           from: { type: "string" },
           to: { type: "string" },
@@ -333,6 +339,7 @@ export async function apply(ctx) {
             limit = Math.min(100, Math.max(1, a.limit || 30));
           const result = {
             revision: value.revision,
+            dataEpoch: value.dataEpoch,
             settings: value.settings,
             timer: value.timer,
           };
@@ -353,6 +360,7 @@ export async function apply(ctx) {
           return {
             ok: true,
             revision: value.revision,
+            dataEpoch: value.dataEpoch,
             counts: Object.fromEntries(
               [
                 "projects",
@@ -367,8 +375,23 @@ export async function apply(ctx) {
             lastRecord:
               a.action === "save"
                 ? value[a.collection].find((x) => x.id === a.id) ||
-                  value[a.collection].at(-1)
-                : undefined,
+                  value[a.collection].at(-1) ||
+                  null
+                : a.action === "lesson"
+                  ? value.lessons.find((x) => x.id === a.id) ||
+                    value.lessons.at(-1) ||
+                    null
+                  : a.action === "lessonSession"
+                    ? value.lessonSessions.find((x) => x.id === a.sessionId) ||
+                      value.lessonSessions.find(
+                        (x) =>
+                          !x.deletedAt &&
+                          x.lessonId === a.id &&
+                          x.originalDate === a.originalDate,
+                      ) ||
+                      value.lessonSessions.at(-1) ||
+                      null
+                    : null,
           };
         return value;
       },

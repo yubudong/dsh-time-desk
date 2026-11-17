@@ -277,13 +277,19 @@ test("conflicts compare only the same participant and allow skipping the moved s
     weekdays: [3],
     time: "18:30",
   });
-  assert.equal(lessonConflict(s, a, "2026-11-18", "18:30", 60).length, 1);
   assert.equal(
-    lessonConflict(s, a, "2026-11-18", "18:30", 60)[0].title,
+    lessonConflict(s, a, "2026-11-18", "18:30", 60, "a@2026-11-18").length,
+    1,
+  );
+  assert.equal(
+    lessonConflict(s, a, "2026-11-18", "18:30", 60, "a@2026-11-18")[0].title,
     "英语",
   );
   assert.equal(lessonConflict(s, a, "2026-11-18", "20:30", 60).length, 0);
-  assert.equal(lessonConflict(s, c, "2026-11-18", "18:30", 60).length, 0);
+  assert.equal(
+    lessonConflict(s, c, "2026-11-18", "18:30", 60, "c@2026-11-18").length,
+    0,
+  );
 });
 test("expiry warnings cover term ends and credit purchases with expiry", () => {
   const s = base();

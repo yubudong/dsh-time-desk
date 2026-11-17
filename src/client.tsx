@@ -21,7 +21,12 @@ import { createPlanningUI } from "./PlanningUI";
 import { HABIT_TEMPLATES, habitFromTemplate } from "./habit-templates.js";
 import { createReviewUI } from "./ReviewUI";
 import { createLessonsUI } from "./LessonsUI";
-import { HOME_MODULES, homeModules, isFolded } from "./home-modules.js";
+import {
+  HOME_MODULES,
+  homeModules,
+  isFolded,
+  reorderHomeRegion,
+} from "./home-modules.js";
 import {
   lessonOccurrences,
   lessonReminders,
@@ -381,6 +386,7 @@ export function apply(ctx: any) {
     Modal,
     Field,
     Icon,
+    drafts: reviewDrafts,
   });
   const { ReviewEditor, ReviewCheckIn } = createReviewUI({
     t,
@@ -435,6 +441,7 @@ export function apply(ctx: any) {
   function HabitCards({
     full = false,
     weeklyOnly = false,
+    heading = true,
     showWeekly = true,
     env,
   }: any) {
@@ -570,8 +577,8 @@ export function apply(ctx: any) {
     };
     const weeklyBlock =
       groups.weekly.length > 0 ? (
-        <section className="ld-weekly-goals">
-          <h3>{t("weeklyHabits")}</h3>
+        <section className={heading ? "ld-weekly-goals" : "ld-weekly-content"}>
+          {heading && <h3>{t("weeklyHabits")}</h3>}
           {groups.weekly.map((h: any) => {
             const r = habitRule(h, day);
             const count = Array.from({ length: 7 }, (_, i) =>
@@ -1748,6 +1755,7 @@ export function apply(ctx: any) {
     const [templateOpen, setTemplateOpen] = useState(false);
     const [captureDirty, setCaptureDirty] = useState(false);
     const captureButton = useRef<HTMLButtonElement>(null);
+    const homeDragRef = useRef("");
     const [updateView, setUpdateView] = useState<any>(null);
     const [upgradeView, setUpgradeView] = useState<any>(null);
     const [updateNotice, setUpdateNotice] = useState("");
@@ -1811,6 +1819,8 @@ export function apply(ctx: any) {
     const setHomeModules = (patch: any) =>
       run({
         action: "settings",
+        command: "homeModules",
+        text: JSON.stringify(data.settings.homeModules),
         item: {
           homeModules: { ...data.settings.homeModules, ...patch },
         },
@@ -1921,7 +1931,13 @@ export function apply(ctx: any) {
       upgradeRequest,
       rememberUpgrade: setUpgradeView,
       revision: data.revision,
-      editorOpen: !!editor || captureDirty,
+      editorOpen:
+        !!editor ||
+        !!lessonModal ||
+        captureDirty ||
+        [...reviewDrafts.keys()].some((k) =>
+          k.startsWith("lifeDesk:lessonDraft:"),
+        ),
       spiritBusy: () => spiritBusyRef.current,
       openLesson: (v: any) => setLessonModal(v),
       refresh,
@@ -2188,6 +2204,8 @@ export function apply(ctx: any) {
         const setHome = (patch: any) =>
           run({
             action: "settings",
+            command: "homeModules",
+            text: JSON.stringify(data.settings.homeModules),
             item: {
               homeModules: { ...data.settings.homeModules, ...patch },
             },
@@ -2207,7 +2225,15 @@ export function apply(ctx: any) {
 
         const renderMain = (id: string) => {
           if (id === "plan")
-            return <PlanPanel plan={groups} date={day} act={act} busy={busy} />;
+            return (
+              <PlanPanel
+                plan={groups}
+                date={day}
+                act={act}
+                busy={busy}
+                {...foldProps("plan")}
+              />
+            );
           if (id === "lessons") {
             const rows = live("lessons").flatMap((l: any) =>
               lessonOccurrences(data, l, day, day),
@@ -2362,25 +2388,33 @@ export function apply(ctx: any) {
         const renderSupport = (id: string) => {
           if (id === "timer")
             return (
-              <div className="ld-side-timer" key={id}>
-                <Timer />
-              </div>
+              <FoldSection title={t("focus")} {...foldProps("timer")}>
+                <div className="ld-side-timer">
+                  <Timer />
+                </div>
+              </FoldSection>
             );
           if (id === "habits")
             return (
-              <section className="ld-section" key={id}>
-                <h2>{t("todayHabits")}</h2>
+              <FoldSection title={t("todayHabits")} {...foldProps("habits")}>
                 <HabitCards env={viewEnv} showWeekly={false} />
-              </section>
+              </FoldSection>
             );
           if (id === "weekly")
-            return <HabitCards weeklyOnly env={viewEnv} key={id} />;
+            return (
+              <FoldSection title={t("weeklyHabits")} {...foldProps("weekly")}>
+                <HabitCards weeklyOnly heading={false} env={viewEnv} />
+              </FoldSection>
+            );
           if (id === "upcoming") {
             const plans = upcomingPlans(data, day, 7);
             return (
-              <section className="ld-section" key={id}>
-                <div className="ld-section-heading">
-                  <h2>{t("upcoming")}</h2>
+              <FoldSection
+                title={t("upcoming")}
+                count={plans.length}
+                {...foldProps("upcoming")}
+              >
+                <div className="ld-actions">
                   {plans.length > 0 && (
                     <Btn onClick={() => setTab("calendar")}>
                       {t("viewCalendar")}
@@ -2421,7 +2455,7 @@ export function apply(ctx: any) {
                   </p>
                 )}
                 {!plans.length && <p className="ld-help">{t("noUpcoming")}</p>}
-              </section>
+              </FoldSection>
             );
           }
           return null;
@@ -2934,9 +2968,13 @@ export function apply(ctx: any) {
                 "ld-content " + (tab !== "today" ? "ld-not-today" : "")
               }
             >
-              <div className="ld-top-timer">
-                <Timer bar />
-              </div>
+              {(tab !== "today" ||
+                (!data.settings.homeModules.hidden.includes("timer") &&
+                  !isFolded(data.settings, "timer"))) && (
+                <div className="ld-top-timer">
+                  <Timer bar />
+                </div>
+              )}
               <header className="ld-page-heading">
                 <div className="ld-heading-left">
                   <div className="ld-eyebrow">
@@ -3090,7 +3128,9 @@ export function apply(ctx: any) {
                       const next = all.map((x: any) => x.id);
                       const j = i + delta;
                       [next[i], next[j]] = [next[j], next[i]];
-                      setHomeModules({ order: next });
+                      setHomeModules({
+                        order: reorderHomeRegion(data.settings, region, next),
+                      });
                     };
                     const moveTo = (from: string, to: string) => {
                       if (from === to) return;
@@ -3100,7 +3140,9 @@ export function apply(ctx: any) {
                       if (f < 0 || t < 0) return;
                       next.splice(f, 1);
                       next.splice(t, 0, from);
-                      setHomeModules({ order: next });
+                      setHomeModules({
+                        order: reorderHomeRegion(data.settings, region, next),
+                      });
                     };
                     return (
                       <div
@@ -3111,6 +3153,11 @@ export function apply(ctx: any) {
                         }
                         key={m.id}
                         onDragOver={(e) => {
+                          if (
+                            busy ||
+                            !all.some((x: any) => x.id === homeDragRef.current)
+                          )
+                            return;
                           e.preventDefault();
                           e.dataTransfer.dropEffect = "move";
                           if (homeDrop !== m.id) setHomeDrop(m.id);
@@ -3119,9 +3166,12 @@ export function apply(ctx: any) {
                           if (homeDrop === m.id) setHomeDrop("");
                         }}
                         onDrop={(e) => {
+                          if (busy) return;
                           e.preventDefault();
                           const from =
-                            e.dataTransfer.getData("text/plain") || homeDrag;
+                            e.dataTransfer.getData(
+                              "application/x-time-desk-home",
+                            ) || homeDragRef.current;
                           if (from) moveTo(from, m.id);
                           setHomeDrag("");
                           setHomeDrop("");
@@ -3133,11 +3183,16 @@ export function apply(ctx: any) {
                           title={t("homeDragHint")}
                           aria-label={t("homeDragHint")}
                           onDragStart={(e) => {
-                            e.dataTransfer.setData("text/plain", m.id);
+                            homeDragRef.current = m.id;
+                            e.dataTransfer.setData(
+                              "application/x-time-desk-home",
+                              m.id,
+                            );
                             e.dataTransfer.effectAllowed = "move";
                             setHomeDrag(m.id);
                           }}
                           onDragEnd={() => {
+                            homeDragRef.current = "";
                             setHomeDrag("");
                             setHomeDrop("");
                           }}
@@ -3191,6 +3246,14 @@ export function apply(ctx: any) {
         )}
         {lessonModal && (
           <LessonHub
+            key={[
+              lessonModal.type,
+              lessonModal.mode,
+              lessonModal.lessonId || lessonModal.lesson?.id,
+              lessonModal.sessionId ||
+                lessonModal.originalDate ||
+                lessonModal.term?.id,
+            ].join(":")}
             modal={lessonModal}
             env={viewEnv}
             close={() => setLessonModal(null)}

@@ -426,6 +426,93 @@ try {
     "lessons: home modules, credit balance, duplicate protection, undo, reschedule, restore and term boundary passed",
   );
 
+  const post = async (action) => {
+    const res = await request({ revision: await revisionNow(), ...action });
+    const body = await res.json();
+    assert.equal(body.ok, true, body.error);
+    return body.value;
+  };
+  for (const deduction of [2, 3]) {
+    const written = await post({
+      action: "lessonSession",
+      command: "complete",
+      id: lessonId,
+      originalDate: planDate,
+      deduction,
+    });
+    const row = written.lessonSessions[0];
+    const undoneAgain = await post({
+      action: "lessonSession",
+      command: "undo",
+      id: lessonId,
+      sessionId: row.id,
+    });
+    const ledger = undoneAgain.lessonCharges.filter(
+      (x) => !x.deletedAt && x.lessonId === lessonId,
+    );
+    assert.equal(
+      ledger.reduce((n, x) => n + x.delta, 0),
+      8,
+    );
+    assert.equal(ledger.at(-1).reversesId, row.chargeId);
+  }
+  const futureDate = new Date(Date.now() + 3 * 86400000)
+    .toISOString()
+    .slice(0, 10);
+  const scheduled = await post({
+    action: "lesson",
+    id: lessonId,
+    from: futureDate,
+    confirm: true,
+    item: { time: "20:00" },
+  });
+  assert.equal(
+    scheduled.lessons.find((x) => x.id === lessonId).scheduleHistory.length,
+    2,
+  );
+  assert.equal(scheduled.lessonSessions[0].time, "18:00");
+  const backup = (await (await request({ action: "backup" })).json()).value;
+  await post({
+    action: "settings",
+    item: { homeModules: { hidden: ["timer"], order: [], folded: [] } },
+  });
+  const restoredAll = await post({
+    action: "restoreBackup",
+    backup,
+    confirm: true,
+  });
+  assert.deepEqual(restoredAll.lessonCharges, backup.state.lessonCharges);
+  assert.deepEqual(restoredAll.lessons, backup.state.lessons);
+  assert.deepEqual(
+    restoredAll.settings.homeModules,
+    backup.state.settings.homeModules,
+  );
+  assert.equal(restoredAll.dataEpoch, backup.state.dataEpoch + 1);
+  const staleDraft = await request({
+    action: "lesson",
+    id: lessonId,
+    dataEpoch: backup.state.dataEpoch,
+    revision: await revisionNow(),
+    item: { note: "stale" },
+  });
+  assert.equal(staleDraft.status, 400);
+  for (const action of [
+    "lesson",
+    "lessonTerm",
+    "lessonSession",
+    "lessonCharge",
+  ])
+    assert.ok(tool.parameters.properties.action.enum.includes(action));
+  const receipt = await tool.execute({
+    action: "settings",
+    revision: await revisionNow(),
+    item: { focusMinutes: 25 },
+  });
+  assert.deepEqual(JSON.parse(JSON.stringify(receipt)), receipt);
+  console.log(
+    "reliability: varying attendance reversals, audit links, schedule history, complete backup restore, stale draft protection and lossless Agent receipt passed",
+  );
+
   for (const callback of disposers.splice(0).reverse())
     if (typeof callback === "function") await callback();
   const reopened = await backend.kv.open({
@@ -448,6 +535,11 @@ try {
   assert.equal(storedReview.lessons.length, 2);
   assert.equal(storedReview.lessonSessions.length, 1);
   assert.equal(storedReview.lessonTerms.length, 1);
+  assert.equal(
+    storedReview.lessons.find((x) => x.id === lessonId).scheduleHistory.length,
+    2,
+  );
+  assert.deepEqual(storedReview.lessonCharges, backup.state.lessonCharges);
   await reopened.close();
   console.log(
     "PASS: real installed storage + real Connection route read/write + persistent reopen",
