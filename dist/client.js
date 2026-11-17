@@ -16600,8 +16600,8 @@ var copy = {
   ],
   templateDailyReview: ["\u6BCF\u65E5\u590D\u76D8", "Daily review"],
   templateDailyReviewNote: [
-    "\u4F18\u5148\u5F53\u665A\u590D\u76D8\uFF1B\u6765\u4E0D\u53CA\u65F6\uFF0C\u7B2C\u4E8C\u5929\u65E9\u6668\u9009\u62E9\u6628\u5929\u7684\u65E5\u671F\u8865\u5199\u3002",
-    "Review in the evening when you can; otherwise write yesterday's review the next morning."
+    "\u5F53\u5929\u590D\u76D8\u6216\u6B21\u65E5\u590D\u76D8\u90FD\u53EF\u4EE5\uFF0C\u9009\u62E9\u9002\u5408\u81EA\u5DF1\u7684\u8282\u594F\u3002",
+    "Review on the day itself or the following day\u2014choose the rhythm that works for you."
   ],
   templateWeeklyReview: ["\u6BCF\u5468\u590D\u76D8", "Weekly review"],
   templateWeeklyReviewNote: [
@@ -16971,8 +16971,8 @@ var copy = {
     "Use this as my daily review habit"
   ],
   reviewLinkHelp: [
-    "\u4EC5\u9002\u7528\u4E8E\u590D\u76D8\u7C7B\u4E60\u60EF\uFF1A\u4FDD\u5B58\u5F53\u5929\u7684\u65E5\u590D\u76D8\u7B14\u8BB0\u540E\uFF0C\u81EA\u52A8\u5B8C\u6210\u8FD9\u9879\u6253\u5361\u3002\u8FD0\u52A8\u3001\u51A5\u60F3\u548C\u9605\u8BFB\u8BF7\u4E0D\u8981\u5F00\u542F\u3002",
-    "For review habits only: saving a daily review also completes this check-in. Leave off for exercise, meditation and reading."
+    "\u4EC5\u9002\u7528\u4E8E\u590D\u76D8\u7C7B\u4E60\u60EF\uFF1A\u4FDD\u5B58\u65E5\u590D\u76D8\u540E\uFF0C\u81EA\u52A8\u5B8C\u6210\u8BE5\u590D\u76D8\u65E5\u671F\u7684\u6253\u5361\u3002\u6B21\u65E5\u56DE\u987E\u524D\u4E00\u5929\u65F6\uFF0C\u8BF7\u9009\u62E9\u524D\u4E00\u5929\u7684\u65E5\u671F\u3002\u8FD0\u52A8\u3001\u51A5\u60F3\u548C\u9605\u8BFB\u8BF7\u4E0D\u8981\u5F00\u542F\u3002",
+    "For review habits only: saving a daily review completes the check-in for its selected date. When reviewing the previous day, select that date. Leave off for exercise, meditation and reading."
   ],
   backendMissing: [
     "\u65F6\u95F4\u5DE5\u4F5C\u53F0\u540E\u7AEF\u672A\u542F\u52A8\uFF0C\u8BF7\u5728\u63D2\u4EF6\u9875\u67E5\u770B\u52A0\u8F7D\u72B6\u6001\uFF1B\u66F4\u65B0\u540E\u53EF\u80FD\u9700\u8981\u91CD\u542F DSH\u3002",
@@ -30353,7 +30353,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.7.6",
+        "data-reader-version": "0.7.8",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -30445,7 +30445,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.7.6")))
+      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.7.8")))
     );
   }
   return {
@@ -32268,7 +32268,7 @@ function apply(ctx) {
     const [error, setError] = useState4("");
     const [showNotes, setShowNotes] = useState4(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.7.6";
+    const current = v3.currentVersion || "0.7.8";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -33358,7 +33358,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React8.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.7.6", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React8.createElement(
+        /* @__PURE__ */ React8.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.7.8", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React8.createElement(
           "button",
           {
             className: "ld-update-badge",

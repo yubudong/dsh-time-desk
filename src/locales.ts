@@ -35,8 +35,8 @@ export const copy = {
   ],
   templateDailyReview: ["每日复盘", "Daily review"],
   templateDailyReviewNote: [
-    "优先当晚复盘；来不及时，第二天早晨选择昨天的日期补写。",
-    "Review in the evening when you can; otherwise write yesterday's review the next morning.",
+    "当天复盘或次日复盘都可以，选择适合自己的节奏。",
+    "Review on the day itself or the following day—choose the rhythm that works for you.",
   ],
   templateWeeklyReview: ["每周复盘", "Weekly review"],
   templateWeeklyReviewNote: [
@@ -408,8 +408,8 @@ export const copy = {
     "Use this as my daily review habit",
   ],
   reviewLinkHelp: [
-    "仅适用于复盘类习惯：保存当天的日复盘笔记后，自动完成这项打卡。运动、冥想和阅读请不要开启。",
-    "For review habits only: saving a daily review also completes this check-in. Leave off for exercise, meditation and reading.",
+    "仅适用于复盘类习惯：保存日复盘后，自动完成该复盘日期的打卡。次日回顾前一天时，请选择前一天的日期。运动、冥想和阅读请不要开启。",
+    "For review habits only: saving a daily review completes the check-in for its selected date. When reviewing the previous day, select that date. Leave off for exercise, meditation and reading.",
   ],
   backendMissing: [
     "时间工作台后端未启动，请在插件页查看加载状态；更新后可能需要重启 DSH。",
