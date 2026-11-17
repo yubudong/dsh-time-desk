@@ -382,8 +382,11 @@ export function apply(ctx: any) {
               }}
             >
               <span className="ld-task-title">{h.title}</span>
-              <span className="ld-task-meta">
-                {r?.paused
+              {(() => {
+                // Today groups already state the time of day; repeating the
+                // period under each habit adds noise. It stays on the full list,
+                // which has no group headings.
+                const meta = r?.paused
                   ? t("paused")
                   : p.missed
                     ? t("missedHabit")
@@ -395,8 +398,16 @@ export function apply(ctx: any) {
                           ? `${p.value}/${r.target} ${r.unit}`
                           : p.done
                             ? t("done")
-                            : t(h.period)}
-              </span>
+                            : "";
+                return meta || full ? (
+                  <span className="ld-task-meta">
+                    {meta}
+                    {full ? (
+                      <small className="ld-habit-period">{t(h.period)}</small>
+                    ) : null}
+                  </span>
+                ) : null;
+              })()}
             </button>
             <button
               className={"ld-habit-check " + (p.done ? "checked" : "")}

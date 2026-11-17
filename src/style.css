@@ -524,7 +524,7 @@
   margin: 10px 0;
 }
 .ld-habit {
-  padding: 10px 0;
+  padding: 9px 0;
 }
 .ld-habit + .ld-habit {
   border-top: 1px solid var(--ld-line);
@@ -533,6 +533,11 @@
   display: flex;
   gap: 12px;
   align-items: center;
+}
+.ld-habit-period {
+  margin-left: 6px;
+  font-size: 10px;
+  color: var(--ld-muted);
 }
 .ld-habit-check {
   border: 1px solid var(--ld-line) !important;
