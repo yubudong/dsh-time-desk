@@ -3268,7 +3268,7 @@ __export(client_exports, {
   inject: () => inject
 });
 module.exports = __toCommonJS(client_exports);
-var React9 = __toESM(require("react"), 1);
+var React10 = __toESM(require("react"), 1);
 
 // node_modules/@fullcalendar/react/dist/index.js
 var import_react = __toESM(require("react"), 1);
@@ -16564,6 +16564,213 @@ var l77 = {
 
 // src/locales.ts
 var copy = {
+  lessons: ["\u8BFE\u7A0B", "Lessons"],
+  lessonAlerts: ["\u8BFE\u7A0B\u63D0\u9192", "Lesson alerts"],
+  lessonLowBalance: [
+    "\u5269\u4F59 {n} \u8BFE\u65F6\uFF0C\u5EFA\u8BAE\u7EED\u8D39",
+    "{n} credits left; consider renewing"
+  ],
+  lessonTermExpiring: ["{n} \u5929\u540E\u5230\u671F", "Expires in {n} days"],
+  lessonCreditExpiring: [
+    "\u6709\u5145\u503C {n} \u5929\u540E\u5230\u671F",
+    "A purchase expires in {n} days"
+  ],
+  lessonExtraDeleteConfirm: [
+    "\u5220\u9664\u8FD9\u8282\u4E34\u65F6\u8BFE\u7A0B\uFF1F",
+    "Delete this extra session?"
+  ],
+  todayLessons: ["\u4ECA\u65E5\u8BFE\u7A0B", "Today\u2019s lessons"],
+  lessonAdd: ["\u6DFB\u52A0\u8BFE\u7A0B", "Add a lesson"],
+  lessonEdit: ["\u7F16\u8F91\u8BFE\u7A0B", "Edit lesson"],
+  lessonTitle: ["\u8BFE\u7A0B\u540D\u79F0", "Lesson name"],
+  lessonTitleRequired: ["\u8BF7\u586B\u5199\u8BFE\u7A0B\u540D\u79F0", "Enter a lesson name"],
+  lessonParticipant: ["\u4E0A\u8BFE\u4EBA", "Who attends"],
+  lessonNoParticipant: ["\u672A\u586B\u5199\u4E0A\u8BFE\u4EBA", "No attendee set"],
+  lessonPlace: ["\u5730\u70B9\u6216\u4E0A\u8BFE\u94FE\u63A5", "Place or class link"],
+  lessonNote: ["\u5907\u6CE8", "Note"],
+  lessonMode: ["\u7BA1\u7406\u65B9\u5F0F", "Tracking"],
+  lessonModeNone: ["\u4E0D\u7BA1\u7406\u4F59\u989D", "Schedule only"],
+  lessonModeCredit: ["\u8BFE\u65F6\u5305", "Lesson credits"],
+  lessonModeTerm: ["\u671F\u9650\u8BFE\u7A0B\uFF08\u5305\u5E74\uFF09", "Term course"],
+  lessonWeekdays: ["\u6BCF\u5468\u4E0A\u8BFE\u65E5", "Weekly days"],
+  lessonWeekdaysHint: [
+    "\u6309\u6240\u9009\u661F\u671F\u91CD\u590D\u3002\u4E34\u65F6\u8C03\u8BFE\u4F1A\u5728\u8BFE\u7A0B\u91CC\u5355\u72EC\u5904\u7406\uFF0C\u4E0D\u6539\u52A8\u6BCF\u5468\u5B89\u6392\u3002",
+    "Repeats on the chosen weekdays. A one-off change stays in the course without altering the weekly rule."
+  ],
+  lessonOnceHint: [
+    "\u672A\u9009\u62E9\u661F\u671F\u65F6\u662F\u5355\u6B21\u8BFE\u7A0B\uFF0C\u53EF\u6DFB\u52A0\u4E34\u65F6\u8BFE\u65F6\u3002",
+    "With no weekday selected this is a one-off course; extra sessions can be added."
+  ],
+  lessonTime: ["\u4E0A\u8BFE\u65F6\u95F4", "Start time"],
+  lessonDuration: ["\u65F6\u957F\uFF08\u5206\u949F\uFF09", "Minutes"],
+  lessonEffective: ["\u5F00\u59CB\u65E5\u671F", "Starts"],
+  lessonUntil: ["\u7ED3\u675F\u65E5\u671F\uFF08\u53EF\u9009\uFF09", "Ends (optional)"],
+  lessonReminder: ["\u8BFE\u524D\u63D0\u9192", "Lesson reminder"],
+  lessonReminderOff: ["\u5173\u95ED\u63D0\u9192", "No reminder"],
+  lessonBefore: ["\u63D0\u524D {n} \u5206\u949F", "{n} minutes before"],
+  lessonDefaultDeduction: ["\u6BCF\u6B21\u9ED8\u8BA4\u6263\u9664\u8BFE\u65F6", "Default credits per lesson"],
+  lessonBalanceWarn: ["\u5269\u4F59\u8BFE\u65F6\u63D0\u9192\u9608\u503C", "Low-balance alert at"],
+  lessonTermStart: ["\u6709\u6548\u671F\u5F00\u59CB", "Valid from"],
+  lessonTermEnd: ["\u6709\u6548\u671F\u7ED3\u675F", "Valid until"],
+  lessonTermPurchased: ["\u8D2D\u4E70\u8BFE\u65F6\uFF0F\u6B21\u6570", "Purchased credits"],
+  lessonTermAmount: ["\u5B9E\u4ED8\u91D1\u989D\uFF08\u53EF\u9009\uFF09", "Amount paid (optional)"],
+  lessonTermNote: ["\u5408\u540C\u6216\u5907\u6CE8", "Contract or note"],
+  lessonTermHint: [
+    "\u5230\u671F\u540E\u4E0D\u518D\u751F\u6210\u65B0\u7684\u8BFE\u7A0B\u5B89\u6392\uFF0C\u5DF2\u4E0A\u7684\u8BFE\u548C\u7EDF\u8BA1\u90FD\u4F1A\u4FDD\u7559\u3002\u7EED\u671F\u4F1A\u65B0\u589E\u4E00\u4E2A\u5468\u671F\uFF0C\u4E0D\u8986\u76D6\u4E0A\u4E00\u5E74\u3002",
+    "At expiry no new sessions are generated; attendance and totals stay. Renewal adds a new period and keeps the previous one."
+  ],
+  lessonTermRequired: [
+    "\u671F\u9650\u8BFE\u7A0B\u9700\u8981\u586B\u5199\u6709\u6548\u671F\u7ED3\u675F\u65E5\u671F",
+    "A term course needs an end date"
+  ],
+  lessonUnit: ["\u8BFE\u65F6", "credits"],
+  lessonRemaining: ["\u5269\u4F59", "remaining"],
+  lessonPurchased: ["\u8D2D\u5165", "purchased"],
+  lessonGifted: ["\u8D60\u9001", "gift"],
+  lessonUsed: ["\u5DF2\u7528", "used"],
+  lessonTerms: ["\u6709\u6548\u671F\u5468\u671F", "Terms"],
+  lessonTermUsed: [
+    "\u672C\u671F\u5DF2\u4E0A {n} \u6B21 \xB7 {u} \u8BFE\u65F6",
+    "This term: {n} sessions \xB7 {u} credits"
+  ],
+  lessonEndsInDays: ["\u5269\u4F59 {n} \u5929", "{n} days left"],
+  lessonDaysLeft: ["\u5929\u540E\u5230\u671F", "days until expiry"],
+  lessonExpired: ["\u5DF2\u5230\u671F", "Expired"],
+  lessonNoTerm: ["\u5C1A\u672A\u8BBE\u7F6E\u6709\u6548\u671F", "No validity period"],
+  lessonSchedule: ["\u8BFE\u7A0B\u5B89\u6392", "Schedule"],
+  lessonMovedFrom: ["\u539F\u5B9A", "moved from"],
+  lessonNoUpcoming: ["\u63A5\u4E0B\u6765\u6CA1\u6709\u8BFE\u7A0B\u5B89\u6392\u3002", "No upcoming sessions."],
+  lessonComplete: ["\u5DF2\u4E0A\u8BFE", "Attended"],
+  lessonCompleteHint: [
+    "\u6309\u5B9E\u9645\u51FA\u5E2D\u786E\u8BA4\uFF0C\u786E\u8BA4\u540E\u624D\u6263\u9664\u8BFE\u65F6\u6216\u8BA1\u5165\u672C\u671F\u7EDF\u8BA1\u3002\u8BF7\u5047\u4E0D\u8981\u70B9\u8FD9\u91CC\u3002",
+    "Confirm actual attendance. Credits or term totals change only after you confirm. Use Skip for an absence."
+  ],
+  lessonDeduction: ["\u672C\u6B21\u6263\u9664\u8BFE\u65F6", "Credits this session"],
+  lessonThisCost: ["\u672C\u6B21\u6263\u9664 {n}", "{n} this session"],
+  lessonShortConfirm: [
+    "\u8BFE\u65F6\u4E0D\u8DB3\uFF0C\u6211\u786E\u8BA4\u5B9E\u9645\u4E0A\u8BFE\u5E76\u7EE7\u7EED\u8BB0\u5F55",
+    "Credits are short; confirm attendance and record anyway"
+  ],
+  lessonConflictConfirm: [
+    "\u5141\u8BB8\u4E0E\u5DF2\u6709\u8BFE\u7A0B\u65F6\u95F4\u91CD\u53E0",
+    "Allow overlap with an existing lesson"
+  ],
+  lessonReschedule: ["\u8C03\u8BFE", "Reschedule"],
+  lessonRescheduleHint: [
+    "\u53EA\u8C03\u6574\u8FD9\u4E00\u8282\uFF0C\u4E0B\u5468\u53CA\u4EE5\u540E\u4ECD\u6309\u539F\u5B89\u6392\u3002\u539F\u65F6\u95F4\u63D0\u9192\u4F1A\u6539\u5230\u65B0\u65F6\u95F4\u3002",
+    "Changes this session only; later weeks keep the original rule. The reminder moves with it."
+  ],
+  lessonSkip: ["\u8BF7\u5047\uFF0F\u53D6\u6D88\u672C\u6B21", "Skip this session"],
+  lessonUnskip: ["\u53D6\u6D88\u8BF7\u5047", "Cancel skip"],
+  lessonUnskipHint: [
+    "\u628A\u8FD9\u4E00\u8282\u6062\u590D\u4E3A\u5F85\u4E0A\u8BFE\uFF1B\u4E0D\u4F1A\u6263\u9664\u8BFE\u65F6\u3002",
+    "Returns this session to scheduled; no credits are used."
+  ],
+  lessonSkipHint: [
+    "\u9ED8\u8BA4\u4E0D\u6263\u8BFE\u65F6\uFF0C\u4E5F\u4E0D\u8BA1\u5165\u672C\u671F\u4E0A\u8BFE\u7EDF\u8BA1\u3002",
+    "By default no credits are used and it is not counted as attended."
+  ],
+  lessonUndoComplete: ["\u64A4\u9500\u4E0A\u8BFE\u8BB0\u5F55", "Undo attendance"],
+  lessonUndoHint: [
+    "\u4F1A\u9001\u56DE\u672C\u6B21\u8BFE\u65F6\uFF0C\u5E76\u4FDD\u7559\u4E00\u6761\u66F4\u6B63\u8BB0\u5F55\u3002",
+    "Returns this session\u2019s credits and keeps a correction entry."
+  ],
+  lessonRestore: ["\u6062\u590D\u539F\u5B89\u6392", "Restore original"],
+  lessonRestoreHint: [
+    "\u79FB\u9664\u8FD9\u6B21\u8C03\u8BFE\uFF0C\u56DE\u5230\u539F\u6765\u7684\u65E5\u671F\u548C\u65F6\u95F4\u3002",
+    "Removes this reschedule and returns to the original date and time."
+  ],
+  lessonDate: ["\u65E5\u671F", "Date"],
+  lessonAddExtra: ["\u4E34\u65F6\u52A0\u8BFE", "Add extra session"],
+  lessonExtraHint: [
+    "\u7528\u4E8E\u8865\u8BFE\u6216\u8BA1\u5212\u5916\u7684\u4E00\u8282\uFF0C\u4E0D\u6539\u53D8\u6BCF\u5468\u5B89\u6392\u3002",
+    "Adds a make-up or extra session without changing the weekly rule."
+  ],
+  lessonStatusScheduled: ["\u5F85\u4E0A\u8BFE", "Scheduled"],
+  lessonStatusDone: ["\u5DF2\u4E0A\u8BFE", "Attended"],
+  lessonStatusSkipped: ["\u5DF2\u8BF7\u5047", "Skipped"],
+  lessonAddCharge: ["\u8BB0\u5F55\u5145\u503C", "Add credits"],
+  lessonChargeKind: ["\u7C7B\u578B", "Type"],
+  lessonChargePurchase: ["\u5145\u503C\u8BFE\u65F6", "Purchase"],
+  lessonChargeGift: ["\u8D60\u9001\u8BFE\u65F6", "Gift"],
+  lessonChargeOpening: ["\u73B0\u6709\u4F59\u989D", "Opening balance"],
+  lessonChargeAdjust: ["\u8C03\u6574", "Adjustment"],
+  lessonChargeUse: ["\u4E0A\u8BFE\u6263\u9664", "Attendance"],
+  lessonChargeRefund: ["\u8FD4\u8FD8", "Refund"],
+  lessonChargeDelta: [
+    "\u589E\u51CF\u8BFE\u65F6\uFF08\u8C03\u6574\u53EF\u586B\u8D1F\u6570\uFF09",
+    "Credits (+ or \u2212 for adjustment)"
+  ],
+  lessonChargeDeltaRequired: [
+    "\u8BF7\u586B\u5199\u975E\u96F6\u7684\u8BFE\u65F6\u6570",
+    "Enter a non-zero credit amount"
+  ],
+  lessonChargeAmount: ["\u5B9E\u4ED8\u91D1\u989D\uFF08\u53EF\u9009\uFF09", "Amount paid (optional)"],
+  lessonChargeExpires: [
+    "\u8BE5\u5145\u503C\u6709\u6548\u671F\uFF08\u53EF\u9009\uFF09",
+    "This purchase expires (optional)"
+  ],
+  lessonChargeNote: ["\u5907\u6CE8", "Note"],
+  lessonChargeHint: [
+    "\u6709\u6548\u671F\u53EA\u4F5C\u5230\u671F\u63D0\u793A\uFF0C\u4E0D\u4F1A\u81EA\u52A8\u6E05\u96F6\u8BFE\u65F6\u3002\u9996\u6B21\u4F7F\u7528\u53EF\u76F4\u63A5\u586B\u5199\u73B0\u6709\u4F59\u989D\uFF0C\u65E0\u9700\u8865\u5F55\u5386\u53F2\u3002",
+    "Expiry is a reminder only; credits are never zeroed automatically. An opening balance avoids backfilling history."
+  ],
+  lessonChargeRemove: ["\u5220\u9664", "Delete"],
+  lessonChargeRemoveConfirm: [
+    "\u5220\u9664\u8FD9\u6761\u5145\u503C\u6216\u8C03\u6574\u8BB0\u5F55\uFF1F\u4F59\u989D\u4F1A\u91CD\u65B0\u8BA1\u7B97\u3002",
+    "Delete this credit entry? The balance will be recalculated."
+  ],
+  lessonLedger: ["\u8BFE\u65F6\u6D41\u6C34", "Credit history"],
+  lessonNoLedger: ["\u8FD8\u6CA1\u6709\u5145\u503C\u6216\u4E0A\u8BFE\u8BB0\u5F55\u3002", "No credits or attendance yet."],
+  lessonRenew: ["\u7EED\u671F\uFF0F\u65B0\u589E\u5468\u671F", "Renew or add term"],
+  lessonRenewHint: [
+    "\u7EED\u671F\u4FDD\u7559\u65E7\u5468\u671F\uFF1B\u7ED3\u675F\u65E5\u671F\u6309\u5408\u540C\u586B\u5199\uFF0C\u4E0D\u4F1A\u56E0\u4E3A\u7F3A\u8BFE\u81EA\u52A8\u987A\u5EF6\u3002",
+    "Renewal keeps the old period. Set the end date from the contract; missed lessons do not extend it automatically."
+  ],
+  lessonDeleteConfirm: [
+    "\u5220\u9664\u8FD9\u95E8\u8BFE\u7A0B\uFF1F\u5386\u53F2\u4E0A\u8BFE\u548C\u8BFE\u65F6\u6D41\u6C34\u4F1A\u4FDD\u7559\u5728\u56DE\u6536\u7AD9\u53EF\u6062\u590D\u3002",
+    "Delete this course? Attendance and credit history stay recoverable in Trash."
+  ],
+  lessonDetail: ["\u8BE6\u60C5", "Details"],
+  lessonDay: ["\u5F53\u65E5\u8BFE\u7A0B", "That day"],
+  lessonDayEmpty: ["\u8FD9\u4E00\u5929\u6CA1\u6709\u8BFE\u7A0B\u3002", "No lessons on this day."],
+  lessonWeek: ["\u672C\u5468\u5B89\u6392", "This week"],
+  lessonCourses: ["\u8BFE\u7A0B\u4E0E\u8BFE\u65F6", "Courses and credits"],
+  lessonNext: ["\u4E0B\u4E00\u8282", "Next"],
+  lessonEmptyTitle: ["\u8FD8\u6CA1\u6709\u8BFE\u7A0B", "No courses yet"],
+  lessonEmptyText: [
+    "\u53EF\u4EE5\u6DFB\u52A0\u81EA\u5DF1\u6216\u5BB6\u4EBA\u7684\u56FA\u5B9A\u8BFE\u7A0B\u3001\u5355\u6B21\u8BFE\u3001\u8BFE\u65F6\u5305\u6216\u5E74\u5361\u3002",
+    "Add weekly or one-off lessons for yourself or family, with credits or a yearly term."
+  ],
+  lessonTodayEmpty: ["\u4ECA\u5929\u6CA1\u6709\u8BFE\u7A0B\u3002", "No lessons today."],
+  lessonAllPeople: ["\u5168\u90E8\u4E0A\u8BFE\u4EBA", "Everyone"],
+  allDay: ["\u5168\u5929", "All day"],
+  delete: ["\u5220\u9664", "Delete"],
+  noneDone: ["\u4ECA\u5929\u8FD8\u6CA1\u6709\u5B8C\u6210\u4E8B\u9879\u3002", "Nothing completed today."],
+  inboxEmpty: ["\u6536\u4EF6\u7BB1\u5DF2\u6E05\u7A7A\u3002", "Inbox is empty."],
+  noWeeklyHabits: ["\u6CA1\u6709\u9700\u8981\u5B89\u6392\u672C\u5468\u76EE\u6807\u7684\u4E60\u60EF\u3002", "No weekly goals to plan."],
+  weekdayShort0: ["\u5468\u65E5", "Sun"],
+  weekdayShort1: ["\u5468\u4E00", "Mon"],
+  weekdayShort2: ["\u5468\u4E8C", "Tue"],
+  weekdayShort3: ["\u5468\u4E09", "Wed"],
+  weekdayShort4: ["\u5468\u56DB", "Thu"],
+  weekdayShort5: ["\u5468\u4E94", "Fri"],
+  weekdayShort6: ["\u5468\u516D", "Sat"],
+  homeCustomize: ["\u81EA\u5B9A\u4E49\u9996\u9875", "Customize home"],
+  homeCustomizeHint: [
+    "\u53D6\u6D88\u52FE\u9009\u4F1A\u9690\u85CF\u6574\u4E2A\u6A21\u5757\uFF0C\u5305\u62EC\u6807\u9898\u548C\u7559\u767D\uFF1B\u6570\u636E\u4E0D\u4F1A\u5220\u9664\u3002\u53EF\u4EE5\u8C03\u6574\u987A\u5E8F\u3001\u6062\u590D\u9ED8\u8BA4\u3002",
+    "Unchecking hides the whole module, title and spacing included; nothing is deleted. Reorder or restore the default."
+  ],
+  homeMain: ["\u4E3B\u533A\u57DF", "Main area"],
+  homeSupport: ["\u4FA7\u680F\u533A\u57DF", "Side area"],
+  homeMoveUp: ["\u4E0A\u79FB", "Move up"],
+  homeMoveDown: ["\u4E0B\u79FB", "Move down"],
+  homeReset: ["\u6062\u590D\u9ED8\u8BA4\u9996\u9875", "Restore default home"],
+  homeAllHidden: ["\u9996\u9875\u6A21\u5757\u90FD\u5DF2\u9690\u85CF", "All home modules are hidden"],
+  homeAllHiddenHint: [
+    "\u53EF\u4EE5\u4ECE\u300C\u81EA\u5B9A\u4E49\u9996\u9875\u300D\u91CD\u65B0\u52FE\u9009\u9700\u8981\u7684\u6A21\u5757\u3002",
+    "Use Customize home to show the modules you need again."
+  ],
   reviewKeepDraft: ["\u6838\u5BF9\u540E\u4FDD\u7559\u6211\u7684\u8349\u7A3F", "Keep my draft after comparing"],
   reviewLoadLatest: ["\u6539\u7528\u6700\u65B0\u5185\u5BB9", "Use latest content"],
   reviewTemplateKeep: [
@@ -28658,7 +28865,7 @@ var Lunar = class _Lunar {
         filter = true;
       }
     }
-    const today2 = wholeDay ? this._solar.toYmd() : this._solar.toYmdHms();
+    const today3 = wholeDay ? this._solar.toYmd() : this._solar.toYmdHms();
     const keys = Object.keys(this._jieQi);
     for (let i3 = 0, j4 = keys.length; i3 < j4; i3++) {
       const key = keys[i3];
@@ -28671,7 +28878,7 @@ var Lunar = class _Lunar {
       }
       const day = wholeDay ? solar.toYmd() : solar.toYmdHms();
       if (forward) {
-        if (day <= today2) {
+        if (day <= today3) {
           continue;
         }
         if (null == near) {
@@ -28685,7 +28892,7 @@ var Lunar = class _Lunar {
           }
         }
       } else {
-        if (day > today2) {
+        if (day > today3) {
           continue;
         }
         if (null == near) {
@@ -30487,7 +30694,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.8.1",
+        "data-reader-version": "0.9.0",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -30579,7 +30786,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.8.1")))
+      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.9.0")))
     );
   }
   return {
@@ -31425,6 +31632,1167 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
   return { ReviewEditor, ReviewCheckIn };
 }
 
+// src/LessonsUI.tsx
+var React9 = __toESM(require("react"), 1);
+
+// src/lessons.js
+var live = (rows) => (rows || []).filter((x4) => !x4.deletedAt);
+var minutesOf = (time) => {
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time || ""))
+    return time ? Number.NaN : 0;
+  const [h3, m3] = time.split(":").map(Number);
+  return h3 * 60 + m3;
+};
+var lessonTerms = (state, lessonId) => live(state.lessonTerms).filter((x4) => x4.lessonId === lessonId);
+function lessonBounds(lesson, terms) {
+  const own = live(terms).filter((x4) => x4.lessonId === lesson.id);
+  if (lesson.mode === "term" && own.length)
+    return own.map((x4) => ({
+      start: x4.start > lesson.effective ? x4.start : lesson.effective,
+      end: x4.end
+    }));
+  return [{ start: lesson.effective, end: lesson.until || "" }];
+}
+var inBounds = (bounds, date) => bounds.some((b3) => date >= b3.start && (!b3.end || date <= b3.end));
+function occurrenceOf(state, lesson, originalDate, row) {
+  const base = {
+    lessonId: lesson.id,
+    title: lesson.title,
+    participant: lesson.participant,
+    originalDate,
+    date: row?.date || originalDate,
+    time: row?.time ?? lesson.time,
+    durationMinutes: lesson.durationMinutes,
+    place: row?.place ?? lesson.place,
+    status: row?.status || "scheduled",
+    note: row?.note || "",
+    deduction: row?.deduction ?? lesson.defaultDeduction,
+    completedAt: row?.completedAt ?? null,
+    extra: !!row?.extra,
+    movedFrom: row && row.date !== originalDate ? originalDate : "",
+    sessionId: row?.id || "",
+    key: lesson.id + "@" + (originalDate || "extra:" + (row?.id || ""))
+  };
+  return base;
+}
+function lessonOccurrences(state, lesson, from, to) {
+  if (lesson.deletedAt) return [];
+  const rows = live(state.lessonSessions).filter(
+    (x4) => x4.lessonId === lesson.id
+  );
+  const byOriginal = /* @__PURE__ */ new Map();
+  for (const r3 of rows) if (r3.originalDate) byOriginal.set(r3.originalDate, r3);
+  const bounds = lessonBounds(lesson, state.lessonTerms);
+  const out = [];
+  const emitted = /* @__PURE__ */ new Set();
+  if (lesson.weekdays.length)
+    for (let d2 = from; d2 <= to; d2 = shift(d2, 1)) {
+      if (!lesson.weekdays.includes(weekday(d2)) || !inBounds(bounds, d2))
+        continue;
+      const row = byOriginal.get(d2);
+      const date = row?.date || d2;
+      emitted.add((row?.originalDate || d2) + ":" + date);
+      if (date >= from && date <= to)
+        out.push(occurrenceOf(state, lesson, d2, row));
+    }
+  for (const r3 of rows) {
+    if (!r3.date || r3.date < from || r3.date > to) continue;
+    if (emitted.has((r3.originalDate || "") + ":" + r3.date)) continue;
+    out.push(occurrenceOf(state, lesson, r3.originalDate || "", r3));
+  }
+  return out.sort(
+    (a3, b3) => (a3.date + (a3.time || "99:99")).localeCompare(b3.date + (b3.time || "99:99"))
+  );
+}
+function lessonDone(state, lesson, from, to) {
+  return lessonOccurrences(state, lesson, from, to).filter(
+    (x4) => x4.status === "done"
+  );
+}
+function lessonAccount(state, lesson) {
+  const rows = live(state.lessonCharges).filter(
+    (x4) => x4.lessonId === lesson.id
+  );
+  const sum = (f3) => rows.filter(f3).reduce((s3, x4) => s3 + x4.delta, 0);
+  return {
+    balance: rows.reduce((s3, x4) => s3 + x4.delta, 0),
+    purchased: sum((x4) => x4.kind === "purchase"),
+    gifted: sum((x4) => x4.kind === "gift"),
+    opening: sum((x4) => x4.kind === "opening"),
+    used: -sum((x4) => x4.kind === "use"),
+    refunded: sum((x4) => x4.kind === "refund"),
+    adjusted: sum((x4) => x4.kind === "adjust"),
+    entries: rows.sort(
+      (a3, b3) => b3.date.localeCompare(a3.date) || b3.createdAt.localeCompare(a3.createdAt)
+    )
+  };
+}
+function lessonSummary(state, lesson, date) {
+  const terms = lessonTerms(state, lesson.id);
+  const account = lesson.mode === "credit" ? lessonAccount(state, lesson) : null;
+  const currentTerm = lesson.mode === "term" ? terms.find((x4) => date >= x4.start && date <= x4.end) || terms.find((x4) => x4.start > date) || null : null;
+  const termBounds = currentTerm ? { start: currentTerm.start, end: currentTerm.end } : lesson.mode === "term" && terms.length ? { start: terms.at(-1).start, end: terms.at(-1).end } : null;
+  const stats = lesson.mode === "term" && termBounds ? lessonStats(state, lesson, termBounds.start, termBounds.end) : null;
+  const expired = lesson.mode === "term" && !!terms.length && !terms.some((x4) => x4.end >= date);
+  const endsIn = lesson.mode === "term" && currentTerm ? Math.round(
+    (Date.parse(currentTerm.end + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
+  ) : null;
+  return {
+    account,
+    currentTerm,
+    terms,
+    stats,
+    expired,
+    endsIn
+  };
+}
+function lessonStats(state, lesson, from, to) {
+  const done = lessonDone(state, lesson, from, to);
+  return {
+    sessions: done.length,
+    units: done.reduce((s3, x4) => s3 + (Number(x4.deduction) || 0), 0),
+    skipped: lessonOccurrences(state, lesson, from, to).filter(
+      (x4) => x4.status === "skipped"
+    ).length,
+    from,
+    to
+  };
+}
+function lessonExpiring(state, date, withinDays = 30) {
+  const limit = shift(date, withinDays);
+  const out = [];
+  for (const l3 of live(state.lessons)) {
+    if (l3.mode === "term") {
+      for (const term of lessonTerms(state, l3.id))
+        if (term.end >= date && term.end <= limit)
+          out.push({
+            kind: "term",
+            lessonId: l3.id,
+            title: l3.title,
+            date: term.end,
+            days: Math.round(
+              (Date.parse(term.end + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
+            )
+          });
+    }
+    if (l3.mode === "credit") {
+      for (const row of live(state.lessonCharges).filter(
+        (x4) => x4.lessonId === l3.id && x4.expiresOn && x4.delta > 0
+      ))
+        if (row.expiresOn >= date && row.expiresOn <= limit)
+          out.push({
+            kind: "credit-expiry",
+            lessonId: l3.id,
+            title: l3.title,
+            date: row.expiresOn,
+            amount: row.delta,
+            days: Math.round(
+              (Date.parse(row.expiresOn + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
+            )
+          });
+    }
+  }
+  return out.sort((a3, b3) => a3.date.localeCompare(b3.date));
+}
+function lessonReminders(state, now, zone) {
+  const date = today(zone, now);
+  const out = [];
+  for (const l3 of live(state.lessons)) {
+    if (l3.reminderMinutes === null || !l3.time) continue;
+    for (const x4 of lessonOccurrences(state, l3, shift(date, -1), date)) {
+      if (x4.status !== "scheduled") continue;
+      const stamp = zonedStamp(x4.date, x4.time, zone) - l3.reminderMinutes * 6e4;
+      if (stamp > now || now - stamp > 12 * 60 * 6e4) continue;
+      out.push({
+        key: "lesson:" + x4.key + ":" + x4.date + ":" + x4.time + ":" + stamp,
+        title: x4.title + " \xB7 " + x4.date + " " + lessonTimeLabel(l3),
+        at: stamp,
+        date: x4.date,
+        time: x4.time,
+        lessonId: l3.id
+      });
+    }
+  }
+  return out.sort((a3, b3) => a3.at - b3.at);
+}
+function lessonTimeLabel(lesson) {
+  if (!lesson.time) return "";
+  const start = minutesOf(lesson.time);
+  const end = start + (Number(lesson.durationMinutes) || 0);
+  if (!Number.isFinite(end)) return lesson.time;
+  return lesson.time + (lesson.durationMinutes ? "\u2013" + fmtTime(end) : "");
+}
+function fmtTime(minutes) {
+  const dayMinutes = (minutes % 1440 + 1440) % 1440;
+  return String(Math.floor(dayMinutes / 60)).padStart(2, "0") + ":" + String(dayMinutes % 60).padStart(2, "0");
+}
+function lessonScheduleLabel(lesson, t3) {
+  if (!lesson.weekdays.length) return t3("lessonOnce");
+  return lesson.weekdays.slice().sort((a3, b3) => (a3 + 6) % 7 - (b3 + 6) % 7).map((d2) => t3("weekdayShort" + d2)).join(" \xB7 ");
+}
+
+// src/LessonsUI.tsx
+var { useState: useState5, useEffect: useEffect5 } = React9;
+function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
+  const live2 = (data, key) => data[key].filter((x4) => !x4.deletedAt);
+  const lessonOf = (data, id) => live2(data, "lessons").find((x4) => x4.id === id);
+  const statusText = (s3) => t3(
+    s3 === "done" ? "lessonStatusDone" : s3 === "skipped" ? "lessonStatusSkipped" : "lessonStatusScheduled"
+  );
+  const modeText = (m3) => t3(
+    m3 === "term" ? "lessonModeTerm" : m3 === "credit" ? "lessonModeCredit" : "lessonModeNone"
+  );
+  const accountLine = (data, l3, date) => {
+    if (l3.mode === "credit") {
+      const a3 = lessonAccount(data, l3);
+      return t3("lessonRemaining") + " " + a3.balance + " " + t3("lessonUnit");
+    }
+    if (l3.mode === "term") {
+      const s3 = lessonSummary(data, l3, date);
+      if (!s3.terms.length) return t3("lessonNoTerm");
+      if (s3.expired) return t3("lessonExpired");
+      const stat = s3.stats;
+      return (s3.currentTerm ? t3("lessonEndsInDays").replace("{n}", String(s3.endsIn)) : t3("lessonExpired")) + " \xB7 " + t3("lessonTermUsed").replace("{n}", String(stat?.sessions || 0)).replace("{u}", String(stat?.units || 0));
+    }
+    return "";
+  };
+  function LessonEditor({ modal, env, close }) {
+    const lesson = modal.lesson;
+    const existingTerm = modal.term || (lesson?.mode === "term" ? lessonSummary(env.data, lesson, env.day).currentTerm : null);
+    const [item, setItem] = useState5({
+      title: "",
+      participant: "",
+      place: "",
+      note: "",
+      mode: "none",
+      weekdays: [],
+      time: "",
+      durationMinutes: 60,
+      effective: env.day,
+      until: "",
+      reminderMinutes: null,
+      defaultDeduction: 1,
+      balanceWarnAt: null,
+      ...lesson || {}
+    });
+    const [term, setTerm] = useState5({
+      id: existingTerm?.id || "",
+      start: existingTerm?.start || lesson?.effective || env.day,
+      end: existingTerm?.end || "",
+      purchased: existingTerm?.purchased ?? 0,
+      amount: existingTerm?.amount ?? "",
+      note: existingTerm?.note || ""
+    });
+    const [error, setError] = useState5("");
+    const change = (k3, v3) => setItem((x4) => ({ ...x4, [k3]: v3 }));
+    const participants = [
+      .../* @__PURE__ */ new Set([
+        ...live2(env.data, "lessons").map((x4) => x4.participant).filter(Boolean),
+        "\u6211"
+      ])
+    ];
+    const save = async () => {
+      setError("");
+      if (!item.title.trim()) return setError(t3("lessonTitleRequired"));
+      if (item.mode === "term" && !term.end)
+        return setError(t3("lessonTermRequired"));
+      try {
+        await env.act({
+          action: "lesson",
+          id: item.id,
+          version: item.version,
+          item,
+          ...item.mode === "term" ? {
+            term: {
+              ...term,
+              start: term.start || item.effective,
+              amount: term.amount === "" || term.amount === null ? null : Number(term.amount)
+            }
+          } : {}
+        });
+        close();
+      } catch (e3) {
+        setError(e3.message);
+      }
+    };
+    return /* @__PURE__ */ React9.createElement(Modal, { title: item.id ? t3("lessonEdit") : t3("lessonAdd"), onClose: close }, /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTitle") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        value: item.title,
+        maxLength: 200,
+        autoFocus: true,
+        onChange: (e3) => change("title", e3.target.value)
+      }
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonParticipant") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        list: "ld-lesson-people",
+        value: item.participant,
+        maxLength: 40,
+        onChange: (e3) => change("participant", e3.target.value)
+      }
+    ), /* @__PURE__ */ React9.createElement("datalist", { id: "ld-lesson-people" }, participants.map((p3) => /* @__PURE__ */ React9.createElement("option", { key: p3, value: p3 })))), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonPlace") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        value: item.place,
+        maxLength: 200,
+        onChange: (e3) => change("place", e3.target.value)
+      }
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonMode") }, /* @__PURE__ */ React9.createElement(
+      "select",
+      {
+        value: item.mode,
+        onChange: (e3) => change("mode", e3.target.value)
+      },
+      ["none", "credit", "term"].map((m3) => /* @__PURE__ */ React9.createElement("option", { key: m3, value: m3 }, modeText(m3)))
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonWeekdays"), wide: true }, /* @__PURE__ */ React9.createElement("div", { className: "ld-days" }, [1, 2, 3, 4, 5, 6, 0].map((d2) => /* @__PURE__ */ React9.createElement(
+      "button",
+      {
+        type: "button",
+        key: d2,
+        "aria-pressed": item.weekdays.includes(d2),
+        onClick: () => change(
+          "weekdays",
+          item.weekdays.includes(d2) ? item.weekdays.filter((x4) => x4 !== d2) : [...item.weekdays, d2]
+        )
+      },
+      t3("weekdayShort" + d2)
+    ))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, item.weekdays.length ? t3("lessonWeekdaysHint") : t3("lessonOnceHint"))), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTime") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "time",
+        value: item.time,
+        onChange: (e3) => change("time", e3.target.value)
+      }
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDuration") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "number",
+        min: 0,
+        max: 1440,
+        value: item.durationMinutes,
+        onChange: (e3) => change("durationMinutes", Number(e3.target.value))
+      }
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonEffective") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "date",
+        value: item.effective,
+        onChange: (e3) => change("effective", e3.target.value)
+      }
+    )), item.mode !== "term" && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonUntil") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "date",
+        value: item.until || "",
+        onChange: (e3) => change("until", e3.target.value)
+      }
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonReminder") }, /* @__PURE__ */ React9.createElement(
+      "select",
+      {
+        value: item.reminderMinutes ?? "off",
+        onChange: (e3) => change(
+          "reminderMinutes",
+          e3.target.value === "off" ? null : Number(e3.target.value)
+        )
+      },
+      /* @__PURE__ */ React9.createElement("option", { value: "off" }, t3("lessonReminderOff")),
+      [0, 10, 15, 30, 60, 120, 1440].map((n2) => /* @__PURE__ */ React9.createElement("option", { key: n2, value: n2 }, t3("lessonBefore").replace("{n}", String(n2))))
+    )), item.mode === "credit" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDefaultDeduction") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "number",
+        min: 0.5,
+        step: 0.5,
+        max: 1e3,
+        value: item.defaultDeduction,
+        onChange: (e3) => change("defaultDeduction", Number(e3.target.value))
+      }
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonBalanceWarn") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "number",
+        min: 0,
+        max: 1e3,
+        value: item.balanceWarnAt ?? "",
+        onChange: (e3) => change(
+          "balanceWarnAt",
+          e3.target.value === "" ? null : Number(e3.target.value)
+        )
+      }
+    ))), item.mode === "term" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermStart") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "date",
+        value: term.start,
+        onChange: (e3) => setTerm({ ...term, start: e3.target.value })
+      }
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermEnd") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "date",
+        value: term.end,
+        onChange: (e3) => setTerm({ ...term, end: e3.target.value })
+      }
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermPurchased") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "number",
+        min: 0,
+        max: 1e5,
+        value: term.purchased,
+        onChange: (e3) => setTerm({ ...term, purchased: Number(e3.target.value) })
+      }
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermAmount") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "number",
+        min: 0,
+        value: term.amount,
+        onChange: (e3) => setTerm({
+          ...term,
+          amount: e3.target.value === "" ? "" : Number(e3.target.value)
+        })
+      }
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermNote"), wide: true }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        value: term.note,
+        maxLength: 3e3,
+        onChange: (e3) => setTerm({ ...term, note: e3.target.value })
+      }
+    )), /* @__PURE__ */ React9.createElement("p", { className: "ld-help ld-wide" }, t3("lessonTermHint"))), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonNote"), wide: true }, /* @__PURE__ */ React9.createElement(
+      "textarea",
+      {
+        rows: 2,
+        maxLength: 3e3,
+        value: item.note,
+        onChange: (e3) => change("note", e3.target.value)
+      }
+    ))), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React9.createElement(Btn, { onClick: close }, t3("cancel"))));
+  }
+  function SessionModal({ modal, env, close }) {
+    const lesson = lessonOf(env.data, modal.lessonId);
+    const occ0 = modal.occurrence;
+    const [mode] = useState5(modal.mode);
+    const [date, setDate] = useState5(modal.date || occ0?.date || "");
+    const [time, setTime] = useState5(
+      modal.time ?? occ0?.time ?? lesson?.time ?? ""
+    );
+    const [place, setPlace] = useState5(
+      modal.place ?? occ0?.place ?? lesson?.place ?? ""
+    );
+    const [note, setNote] = useState5(occ0?.note || "");
+    const [deduction, setDeduction] = useState5(
+      occ0?.deduction ?? lesson?.defaultDeduction ?? 1
+    );
+    const [confirmShort, setShort] = useState5(false), [confirmConflict, setConflict] = useState5(false);
+    const [error, setError] = useState5("");
+    const account = lesson?.mode === "credit" ? lessonAccount(env.data, lesson) : null;
+    if (!lesson) return null;
+    const submit = async () => {
+      try {
+        setError("");
+        const common = {
+          action: "lessonSession",
+          id: lesson.id,
+          originalDate: modal.originalDate ?? "",
+          sessionId: modal.sessionId || occ0?.sessionId || ""
+        };
+        if (mode === "complete")
+          await env.act({
+            ...common,
+            command: "complete",
+            date,
+            deduction,
+            note,
+            confirmShort
+          });
+        else if (mode === "move")
+          await env.act({
+            ...common,
+            command: "save",
+            date,
+            time,
+            place,
+            note,
+            confirmConflict
+          });
+        else if (mode === "extra")
+          await env.act({
+            ...common,
+            command: "add",
+            date,
+            time,
+            place,
+            note,
+            confirmConflict
+          });
+        else if (mode === "skip")
+          await env.act({ ...common, command: "skip", note });
+        else if (mode === "undo") await env.act({ ...common, command: "undo" });
+        else if (mode === "restore")
+          await env.act({ ...common, command: "restore" });
+        else if (mode === "unskip")
+          await env.act({
+            ...common,
+            command: "save",
+            date: modal.originalDate || occ0?.date,
+            time: lesson.time,
+            place: lesson.place,
+            note: ""
+          });
+        close();
+      } catch (e3) {
+        setError(e3.message);
+      }
+    };
+    if (mode === "undo" || mode === "restore" || mode === "unskip")
+      return /* @__PURE__ */ React9.createElement(
+        Modal,
+        {
+          title: t3(
+            mode === "undo" ? "lessonUndoComplete" : mode === "unskip" ? "lessonUnskip" : "lessonRestore"
+          ),
+          onClose: close
+        },
+        /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3(
+          mode === "undo" ? "lessonUndoHint" : mode === "unskip" ? "lessonUnskipHint" : "lessonRestoreHint"
+        )),
+        error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error),
+        /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: submit }, t3(
+          mode === "undo" ? "lessonUndoComplete" : mode === "unskip" ? "lessonUnskip" : "lessonRestore"
+        )), /* @__PURE__ */ React9.createElement(Btn, { onClick: close }, t3("cancel")))
+      );
+    return /* @__PURE__ */ React9.createElement(
+      Modal,
+      {
+        title: lesson.title + " \xB7 " + (occ0?.date || date),
+        onClose: close
+      },
+      /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3(
+        mode === "complete" ? "lessonCompleteHint" : mode === "skip" ? "lessonSkipHint" : mode === "extra" ? t3("lessonExtraHint") : t3("lessonRescheduleHint")
+      )),
+      (mode === "complete" || mode === "move" || mode === "extra") && /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, (mode === "move" || mode === "extra") && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDate") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "date",
+          value: date,
+          onChange: (e3) => setDate(e3.target.value)
+        }
+      )), (mode === "move" || mode === "extra") && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTime") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "time",
+          value: time,
+          onChange: (e3) => setTime(e3.target.value)
+        }
+      )), (mode === "move" || mode === "extra") && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonPlace") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          value: place,
+          maxLength: 200,
+          onChange: (e3) => setPlace(e3.target.value)
+        }
+      )), mode === "complete" && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDeduction") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "number",
+          min: 0,
+          max: 1e3,
+          step: 0.5,
+          value: deduction,
+          onChange: (e3) => setDeduction(Number(e3.target.value))
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonNote"), wide: true }, /* @__PURE__ */ React9.createElement(
+        "textarea",
+        {
+          rows: 2,
+          maxLength: 1e3,
+          value: note,
+          onChange: (e3) => setNote(e3.target.value)
+        }
+      ))),
+      mode === "complete" && account && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonRemaining"), " ", account.balance, " \xB7", " ", t3("lessonThisCost").replace("{n}", String(deduction))),
+      mode === "complete" && account && account.balance < deduction && /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "checkbox",
+          checked: confirmShort,
+          onChange: (e3) => setShort(e3.target.checked)
+        }
+      ), t3("lessonShortConfirm")),
+      (mode === "move" || mode === "extra") && /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "checkbox",
+          checked: confirmConflict,
+          onChange: (e3) => setConflict(e3.target.checked)
+        }
+      ), t3("lessonConflictConfirm")),
+      mode === "skip" && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonNote"), wide: true }, /* @__PURE__ */ React9.createElement(
+        "textarea",
+        {
+          rows: 2,
+          maxLength: 1e3,
+          value: note,
+          onChange: (e3) => setNote(e3.target.value)
+        }
+      )),
+      error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error),
+      /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: submit, disabled: env.busy }, t3(
+        mode === "complete" ? "lessonComplete" : mode === "skip" ? t3("lessonSkip") : t3("save")
+      )), /* @__PURE__ */ React9.createElement(Btn, { onClick: close }, t3("cancel")))
+    );
+  }
+  function ChargeModal({ modal, env, close }) {
+    const lesson = lessonOf(env.data, modal.lessonId);
+    const [kind, setKind] = useState5(modal.kind || "purchase");
+    const [date, setDate] = useState5(env.day);
+    const [delta, setDelta] = useState5("");
+    const [amount, setAmount] = useState5("");
+    const [expiresOn, setExpiry] = useState5("");
+    const [note, setNote] = useState5("");
+    const [error, setError] = useState5("");
+    if (!lesson) return null;
+    const save = async () => {
+      try {
+        setError("");
+        const n2 = Number(delta);
+        if (!n2) return setError(t3("lessonChargeDeltaRequired"));
+        await env.act({
+          action: "lessonCharge",
+          id: lesson.id,
+          item: {
+            date,
+            kind,
+            delta: n2,
+            amount: amount === "" ? null : Number(amount),
+            expiresOn,
+            note
+          }
+        });
+        close();
+      } catch (e3) {
+        setError(e3.message);
+      }
+    };
+    return /* @__PURE__ */ React9.createElement(
+      Modal,
+      {
+        title: t3("lessonAddCharge") + " \xB7 " + lesson.title,
+        onClose: close
+      },
+      /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonChargeKind") }, /* @__PURE__ */ React9.createElement("select", { value: kind, onChange: (e3) => setKind(e3.target.value) }, ["purchase", "gift", "opening", "adjust"].map((k3) => /* @__PURE__ */ React9.createElement("option", { key: k3, value: k3 }, t3("lessonCharge" + k3[0].toUpperCase() + k3.slice(1)))))), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDate") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "date",
+          value: date,
+          onChange: (e3) => setDate(e3.target.value)
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonChargeDelta") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "number",
+          step: 0.5,
+          value: delta,
+          onChange: (e3) => setDelta(e3.target.value)
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonChargeAmount") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "number",
+          min: 0,
+          value: amount,
+          onChange: (e3) => setAmount(e3.target.value)
+        }
+      )), (kind === "purchase" || kind === "gift") && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonChargeExpires") }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "date",
+          value: expiresOn,
+          onChange: (e3) => setExpiry(e3.target.value)
+        }
+      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonChargeNote"), wide: true }, /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          value: note,
+          maxLength: 3e3,
+          onChange: (e3) => setNote(e3.target.value)
+        }
+      ))),
+      /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonChargeHint")),
+      error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error),
+      /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React9.createElement(Btn, { onClick: close }, t3("cancel")))
+    );
+  }
+  function TermModal({ modal, env, close }) {
+    const lesson = lessonOf(env.data, modal.lessonId);
+    const terms = lesson ? lessonTerms(env.data, lesson.id) : [];
+    const last = terms.at(-1);
+    const editing = modal.term;
+    const [start, setStart] = useState5(
+      editing?.start || (last ? shift(last.end, 1) : env.day)
+    );
+    const [end, setEnd] = useState5(editing?.end || "");
+    const [purchased, setPurchased] = useState5(
+      editing?.purchased ?? last?.purchased ?? 0
+    );
+    const [amount, setAmount] = useState5(
+      editing?.amount ?? last?.amount ?? ""
+    );
+    const [note, setNote] = useState5(editing?.note || "");
+    const [error, setError] = useState5("");
+    if (!lesson) return null;
+    const save = async () => {
+      try {
+        setError("");
+        if (!end) return setError(t3("lessonTermRequired"));
+        await env.act({
+          action: "lessonTerm",
+          id: lesson.id,
+          command: editing ? "save" : "renew",
+          item: {
+            id: editing?.id,
+            start,
+            end,
+            purchased,
+            amount: amount === "" ? null : Number(amount),
+            note
+          }
+        });
+        close();
+      } catch (e3) {
+        setError(e3.message);
+      }
+    };
+    return /* @__PURE__ */ React9.createElement(Modal, { title: t3("lessonRenew") + " \xB7 " + lesson.title, onClose: close }, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonRenewHint")), /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermStart") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "date",
+        value: start,
+        onChange: (e3) => setStart(e3.target.value)
+      }
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermEnd") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "date",
+        value: end,
+        onChange: (e3) => setEnd(e3.target.value)
+      }
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermPurchased") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "number",
+        min: 0,
+        value: purchased,
+        onChange: (e3) => setPurchased(Number(e3.target.value))
+      }
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermAmount") }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        type: "number",
+        min: 0,
+        value: amount,
+        onChange: (e3) => setAmount(e3.target.value)
+      }
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTermNote"), wide: true }, /* @__PURE__ */ React9.createElement(
+      "input",
+      {
+        value: note,
+        maxLength: 3e3,
+        onChange: (e3) => setNote(e3.target.value)
+      }
+    ))), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React9.createElement(Btn, { onClick: close }, t3("cancel"))));
+  }
+  function LessonDetail({ modal, env, close }) {
+    const lesson = lessonOf(env.data, modal.lessonId);
+    const [error, setError] = useState5("");
+    if (!lesson) return null;
+    const summary = lessonSummary(env.data, lesson, env.day);
+    const next = lessonOccurrences(
+      env.data,
+      lesson,
+      env.day,
+      shift(env.day, 45)
+    ).slice(0, 8);
+    const account = summary.account;
+    const open = (v3) => env.openLesson(v3);
+    const removeCharge = async (id) => {
+      if (!window.confirm(t3("lessonChargeRemoveConfirm"))) return;
+      try {
+        await env.act({
+          action: "lessonCharge",
+          command: "remove",
+          id: lesson.id,
+          removeId: id
+        });
+      } catch (e3) {
+        setError(e3.message);
+      }
+    };
+    const removeExtra = async (sessionId) => {
+      if (!window.confirm(t3("lessonExtraDeleteConfirm"))) return;
+      try {
+        await env.act({
+          action: "lessonSession",
+          command: "remove",
+          id: lesson.id,
+          sessionId
+        });
+      } catch (e3) {
+        setError(e3.message);
+      }
+    };
+    const removeLesson = async () => {
+      if (!window.confirm(t3("lessonDeleteConfirm"))) return;
+      try {
+        await env.act({
+          action: "trash",
+          collection: "lessons",
+          id: lesson.id
+        });
+        close();
+      } catch (e3) {
+        setError(e3.message);
+      }
+    };
+    return /* @__PURE__ */ React9.createElement(Modal, { title: lesson.title, onClose: close }, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, lesson.participant || t3("lessonNoParticipant"), lesson.place ? " \xB7 " + lesson.place : ""), /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-summary" }, /* @__PURE__ */ React9.createElement("span", null, modeText(lesson.mode)), /* @__PURE__ */ React9.createElement("span", null, lessonScheduleLabel(lesson, t3), " \xB7 ", lessonTimeLabel(lesson)), /* @__PURE__ */ React9.createElement("span", null, lessonTimeLabel(lesson) ? "" : "\u5168\u5929")), lesson.mode === "credit" && account && /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-money" }, /* @__PURE__ */ React9.createElement("strong", null, account.balance), " ", t3("lessonUnit"), /* @__PURE__ */ React9.createElement("small", null, t3("lessonPurchased"), " ", account.purchased, " \xB7 ", t3("lessonGifted"), " ", account.gifted, " \xB7 ", t3("lessonUsed"), " ", account.used)), lesson.mode === "term" && /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-money" }, summary.currentTerm ? /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("strong", null, summary.endsIn), " ", t3("lessonDaysLeft"), /* @__PURE__ */ React9.createElement("small", null, summary.currentTerm.start, " \u2013 ", summary.currentTerm.end)) : /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("strong", null, t3("lessonExpired")), /* @__PURE__ */ React9.createElement("small", null, summary.terms.length ? summary.terms.at(-1).end : "")), summary.stats && /* @__PURE__ */ React9.createElement("small", null, t3("lessonTermUsed").replace("{n}", String(summary.stats.sessions)).replace("{u}", String(summary.stats.units)))), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+      Btn,
+      {
+        onClick: () => open({ type: "session", mode: "complete", lessonId: lesson.id })
+      },
+      t3("lessonComplete")
+    ), /* @__PURE__ */ React9.createElement(
+      Btn,
+      {
+        onClick: () => open({
+          type: "session",
+          mode: "extra",
+          lessonId: lesson.id,
+          date: env.day
+        })
+      },
+      t3("lessonAddExtra")
+    ), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => open({ type: "editor", lesson }) }, t3("edit"))), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h3", null, t3("lessonSchedule")), next.length ? next.map((x4) => /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-row", key: x4.key }, /* @__PURE__ */ React9.createElement("span", null, x4.date, " ", x4.time), /* @__PURE__ */ React9.createElement("span", null, statusText(x4.status), x4.movedFrom ? " \xB7 " + t3("lessonMovedFrom") + " " + x4.movedFrom : ""), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, (x4.status === "scheduled" || x4.status === "skipped") && /* @__PURE__ */ React9.createElement(
+      Btn,
+      {
+        onClick: () => open({
+          type: "session",
+          mode: "complete",
+          lessonId: lesson.id,
+          originalDate: x4.originalDate,
+          sessionId: x4.sessionId,
+          occurrence: x4,
+          date: x4.date
+        })
+      },
+      t3("lessonComplete")
+    ), x4.status === "scheduled" && /* @__PURE__ */ React9.createElement(
+      Btn,
+      {
+        onClick: () => open({
+          type: "session",
+          mode: "move",
+          lessonId: lesson.id,
+          originalDate: x4.originalDate,
+          sessionId: x4.sessionId,
+          occurrence: x4,
+          date: x4.date,
+          time: x4.time,
+          place: x4.place
+        })
+      },
+      t3("lessonReschedule")
+    ), x4.status === "scheduled" && /* @__PURE__ */ React9.createElement(
+      Btn,
+      {
+        onClick: () => open({
+          type: "session",
+          mode: "skip",
+          lessonId: lesson.id,
+          originalDate: x4.originalDate,
+          sessionId: x4.sessionId,
+          occurrence: x4
+        })
+      },
+      t3("lessonSkip")
+    ), x4.status === "skipped" && /* @__PURE__ */ React9.createElement(
+      Btn,
+      {
+        onClick: () => open({
+          type: "session",
+          mode: "unskip",
+          lessonId: lesson.id,
+          originalDate: x4.originalDate,
+          sessionId: x4.sessionId,
+          occurrence: x4
+        })
+      },
+      t3("lessonUnskip")
+    ), x4.movedFrom && x4.status !== "done" && /* @__PURE__ */ React9.createElement(
+      Btn,
+      {
+        onClick: () => open({
+          type: "session",
+          mode: "restore",
+          lessonId: lesson.id,
+          originalDate: x4.originalDate,
+          sessionId: x4.sessionId
+        })
+      },
+      t3("lessonRestore")
+    ), x4.extra && x4.status !== "done" && /* @__PURE__ */ React9.createElement(Btn, { onClick: () => removeExtra(x4.sessionId) }, t3("delete")), x4.status === "done" && /* @__PURE__ */ React9.createElement(
+      Btn,
+      {
+        onClick: () => open({
+          type: "session",
+          mode: "undo",
+          lessonId: lesson.id,
+          sessionId: x4.sessionId
+        })
+      },
+      t3("lessonUndoComplete")
+    )))) : /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonNoUpcoming"))), lesson.mode === "credit" && account && /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React9.createElement("h3", null, t3("lessonLedger")), /* @__PURE__ */ React9.createElement(
+      Btn,
+      {
+        onClick: () => open({ type: "charge", lessonId: lesson.id })
+      },
+      t3("lessonAddCharge")
+    )), account.entries.length ? account.entries.map((x4) => /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-row", key: x4.id }, /* @__PURE__ */ React9.createElement("span", null, x4.date), /* @__PURE__ */ React9.createElement("span", null, t3(
+      "lessonCharge" + x4.kind[0].toUpperCase() + x4.kind.slice(1)
+    )), /* @__PURE__ */ React9.createElement("strong", null, x4.delta > 0 ? "+" : "", x4.delta), /* @__PURE__ */ React9.createElement("span", null, x4.note), x4.kind !== "use" && /* @__PURE__ */ React9.createElement(Btn, { onClick: () => removeCharge(x4.id) }, t3("lessonChargeRemove")))) : /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonNoLedger"))), lesson.mode === "term" && /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React9.createElement("h3", null, t3("lessonTerms")), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => open({ type: "term", lessonId: lesson.id }) }, t3("lessonRenew"))), summary.terms.map((x4) => /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-row", key: x4.id }, /* @__PURE__ */ React9.createElement("span", null, x4.start, " \u2013 ", x4.end), /* @__PURE__ */ React9.createElement("span", null, t3("lessonTermUsed").replace(
+      "{n}",
+      String(
+        lessonStats(env.data, lesson, x4.start, x4.end).sessions
+      )
+    ).replace(
+      "{u}",
+      String(
+        lessonStats(env.data, lesson, x4.start, x4.end).units
+      )
+    )), /* @__PURE__ */ React9.createElement(
+      Btn,
+      {
+        onClick: () => open({ type: "term", lessonId: lesson.id, term: x4 })
+      },
+      t3("edit")
+    )))), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { onClick: removeLesson }, t3("delete")), /* @__PURE__ */ React9.createElement(Btn, { onClick: close }, t3("close"))));
+  }
+  function LessonHub({ modal, env, close }) {
+    if (!modal) return null;
+    if (modal.type === "editor")
+      return /* @__PURE__ */ React9.createElement(LessonEditor, { modal, env, close });
+    if (modal.type === "session")
+      return /* @__PURE__ */ React9.createElement(SessionModal, { modal, env, close });
+    if (modal.type === "charge")
+      return /* @__PURE__ */ React9.createElement(ChargeModal, { modal, env, close });
+    if (modal.type === "term")
+      return /* @__PURE__ */ React9.createElement(TermModal, { modal, env, close });
+    if (modal.type === "detail")
+      return /* @__PURE__ */ React9.createElement(LessonDetail, { modal, env, close });
+    return null;
+  }
+  function TodayLessons({ env }) {
+    const data = env.data, day = env.day;
+    const lessons = live2(data, "lessons");
+    const rows = lessons.flatMap(
+      (l3) => lessonOccurrences(data, l3, day, day)
+    );
+    const open = (v3) => env.openLesson({ ...v3, lessonId: v3.lessonId || l0(v3) });
+    const l0 = (v3) => v3.lessonId;
+    return /* @__PURE__ */ React9.createElement("section", { className: "ld-section ld-today-lessons" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React9.createElement("h2", null, t3("todayLessons")), /* @__PURE__ */ React9.createElement("span", { className: "ld-fold-count" }, rows.length)), rows.length ? rows.sort(
+      (a3, b3) => (a3.time || "99:99").localeCompare(b3.time || "99:99")
+    ).map((x4) => {
+      const l3 = lessons.find((q3) => q3.id === x4.lessonId);
+      return /* @__PURE__ */ React9.createElement(
+        "div",
+        {
+          className: "ld-lesson-today " + (x4.status === "done" ? "is-done" : ""),
+          key: x4.key
+        },
+        /* @__PURE__ */ React9.createElement(
+          "button",
+          {
+            className: "ld-task-body",
+            onClick: () => env.openLesson({ type: "detail", lessonId: x4.lessonId })
+          },
+          /* @__PURE__ */ React9.createElement("span", { className: "ld-task-title" }, /* @__PURE__ */ React9.createElement("span", { className: "ld-lesson-time" }, x4.time || t3("allDay")), x4.title, x4.participant ? " \xB7 " + x4.participant : ""),
+          /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, statusText(x4.status), x4.movedFrom ? " \xB7 " + t3("lessonMovedFrom") + " " + x4.movedFrom : "", " ", accountLine(data, l3, day))
+        ),
+        x4.status === "scheduled" && /* @__PURE__ */ React9.createElement(
+          Btn,
+          {
+            disabled: env.busy,
+            onClick: () => env.openLesson({
+              type: "session",
+              mode: "complete",
+              lessonId: x4.lessonId,
+              originalDate: x4.originalDate,
+              sessionId: x4.sessionId,
+              occurrence: x4,
+              date: x4.date
+            })
+          },
+          t3("lessonComplete")
+        )
+      );
+    }) : /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonTodayEmpty")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+      Btn,
+      {
+        disabled: env.busy,
+        onClick: () => env.openLesson({ type: "editor" })
+      },
+      t3("lessonAdd")
+    )));
+  }
+  function LessonsPage({ env }) {
+    const data = env.data;
+    const lessons = live2(data, "lessons");
+    const [person, setPerson] = useState5("");
+    const people = [
+      ...new Set(lessons.map((x4) => x4.participant).filter(Boolean))
+    ];
+    const filtered = person ? lessons.filter((x4) => x4.participant === person) : lessons;
+    const open = (v3) => env.openLesson(v3);
+    const dayRows = filtered.flatMap(
+      (l3) => lessonOccurrences(data, l3, env.day, env.day)
+    );
+    const start = monday(env.day), dates = Array.from({ length: 7 }, (_3, i3) => shift(start, i3));
+    const weekRows = filtered.flatMap(
+      (l3) => lessonOccurrences(data, l3, start, shift(start, 6))
+    );
+    const nextFor = (l3) => lessonOccurrences(data, l3, env.day, shift(env.day, 45)).find(
+      (x4) => x4.status === "scheduled"
+    );
+    return /* @__PURE__ */ React9.createElement("div", { className: "ld-lessons-page" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, icon: "plus", onClick: () => open({ type: "editor" }) }, t3("lessonAdd"))), !!people.length && /* @__PURE__ */ React9.createElement("select", { value: person, onChange: (e3) => setPerson(e3.target.value) }, /* @__PURE__ */ React9.createElement("option", { value: "" }, t3("lessonAllPeople")), people.map((p3) => /* @__PURE__ */ React9.createElement("option", { key: p3, value: p3 }, p3)))), (() => {
+      const warnings = lessonExpiring(data, env.day);
+      const low = lessons.filter(
+        (l3) => l3.mode === "credit" && l3.balanceWarnAt !== null && lessonAccount(data, l3).balance <= l3.balanceWarnAt
+      ).map((l3) => ({
+        kind: "low",
+        lessonId: l3.id,
+        title: l3.title,
+        balance: lessonAccount(data, l3).balance,
+        date: env.day
+      }));
+      const list = [...low, ...warnings];
+      return list.length ? /* @__PURE__ */ React9.createElement("section", { className: "ld-section ld-lesson-alerts" }, /* @__PURE__ */ React9.createElement("h2", null, t3("lessonAlerts")), list.map((x4, i3) => /* @__PURE__ */ React9.createElement(
+        "button",
+        {
+          className: "ld-time-index",
+          key: x4.kind + x4.lessonId + x4.date + i3,
+          onClick: () => open({ type: "detail", lessonId: x4.lessonId })
+        },
+        /* @__PURE__ */ React9.createElement("span", null, x4.date),
+        /* @__PURE__ */ React9.createElement("span", null, x4.title),
+        /* @__PURE__ */ React9.createElement("small", null, x4.kind === "low" ? t3("lessonLowBalance").replace("{n}", String(x4.balance)) : x4.kind === "term" ? t3("lessonTermExpiring").replace("{n}", String(x4.days)) : t3("lessonCreditExpiring").replace(
+          "{n}",
+          String(x4.days)
+        ))
+      ))) : null;
+    })(), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React9.createElement("h2", null, t3("lessonDay")), /* @__PURE__ */ React9.createElement("span", { className: "ld-fold-count" }, dayRows.length)), dayRows.length ? dayRows.sort(
+      (a3, b3) => (a3.time || "99:99").localeCompare(b3.time || "99:99")
+    ).map((x4) => /* @__PURE__ */ React9.createElement(
+      "div",
+      {
+        className: "ld-lesson-today " + (x4.status === "done" ? "is-done" : ""),
+        key: x4.key
+      },
+      /* @__PURE__ */ React9.createElement(
+        "button",
+        {
+          className: "ld-task-body",
+          onClick: () => open({ type: "detail", lessonId: x4.lessonId })
+        },
+        /* @__PURE__ */ React9.createElement("span", { className: "ld-task-title" }, /* @__PURE__ */ React9.createElement("span", { className: "ld-lesson-time" }, x4.time || t3("allDay")), x4.title, x4.participant ? " \xB7 " + x4.participant : ""),
+        /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, statusText(x4.status), x4.place ? " \xB7 " + x4.place : "", x4.movedFrom ? " \xB7 " + t3("lessonMovedFrom") + " " + x4.movedFrom : "")
+      ),
+      x4.status === "scheduled" && /* @__PURE__ */ React9.createElement(
+        Btn,
+        {
+          onClick: () => open({
+            type: "session",
+            mode: "complete",
+            lessonId: x4.lessonId,
+            originalDate: x4.originalDate,
+            sessionId: x4.sessionId,
+            occurrence: x4,
+            date: x4.date
+          })
+        },
+        t3("lessonComplete")
+      )
+    )) : /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonDayEmpty"))), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React9.createElement("h2", null, t3("lessonWeek")), /* @__PURE__ */ React9.createElement("span", { className: "ld-help" }, start, " \u2013 ", shift(start, 6))), /* @__PURE__ */ React9.createElement("div", { className: "ld-week-grid" }, dates.map((d2) => /* @__PURE__ */ React9.createElement("div", { className: "ld-week-cell", key: d2 }, /* @__PURE__ */ React9.createElement("h3", null, t3("weekdayShort" + weekday(d2)), " ", /* @__PURE__ */ React9.createElement("small", null, d2.slice(5))), weekRows.filter((x4) => x4.date === d2).sort(
+      (a3, b3) => (a3.time || "99:99").localeCompare(b3.time || "99:99")
+    ).map((x4) => /* @__PURE__ */ React9.createElement(
+      "button",
+      {
+        key: x4.key,
+        className: "ld-week-lesson " + (x4.status === "done" ? "is-done" : ""),
+        onClick: () => open({ type: "detail", lessonId: x4.lessonId })
+      },
+      /* @__PURE__ */ React9.createElement("span", null, x4.time),
+      /* @__PURE__ */ React9.createElement("strong", null, x4.title),
+      /* @__PURE__ */ React9.createElement("small", null, x4.participant || "", x4.status === "skipped" ? " \xB7 " + t3("lessonStatusSkipped") : "")
+    )))))), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React9.createElement("h2", null, t3("lessonCourses")), /* @__PURE__ */ React9.createElement("span", { className: "ld-fold-count" }, filtered.length)), filtered.length ? /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-cards" }, filtered.map((l3) => {
+      const next = nextFor(l3);
+      return /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-card", key: l3.id }, /* @__PURE__ */ React9.createElement(
+        "button",
+        {
+          className: "ld-task-body",
+          onClick: () => open({ type: "detail", lessonId: l3.id })
+        },
+        /* @__PURE__ */ React9.createElement("span", { className: "ld-task-title" }, l3.title, l3.participant ? " \xB7 " + l3.participant : ""),
+        /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, lessonScheduleLabel(l3, t3), l3.time ? " \xB7 " + lessonTimeLabel(l3) : "", l3.place ? " \xB7 " + l3.place : ""),
+        /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, modeText(l3.mode), accountLine(data, l3, env.day) ? " \xB7 " + accountLine(data, l3, env.day) : ""),
+        next && /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, t3("lessonNext"), " ", next.date, " ", next.time)
+      ), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+        Btn,
+        {
+          onClick: () => open({ type: "detail", lessonId: l3.id })
+        },
+        t3("lessonDetail")
+      ), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => open({ type: "editor", lesson: l3 }) }, t3("edit"))));
+    })) : /* @__PURE__ */ React9.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React9.createElement(Icon2, { name: "lessons", size: 28 }), /* @__PURE__ */ React9.createElement("h2", null, t3("lessonEmptyTitle")), /* @__PURE__ */ React9.createElement("p", null, t3("lessonEmptyText")), /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: () => open({ type: "editor" }) }, t3("lessonAdd")))));
+  }
+  return { LessonHub, LessonsPage, TodayLessons };
+}
+
+// src/home-modules.js
+var HOME_MODULES = [
+  { id: "plan", region: "main", titleKey: "dailyPlan" },
+  { id: "lessons", region: "main", titleKey: "todayLessons" },
+  { id: "priority", region: "main", titleKey: "priorities" },
+  { id: "schedule", region: "main", titleKey: "schedule" },
+  { id: "planned", region: "main", titleKey: "plannedTodos" },
+  { id: "carry", region: "main", titleKey: "carryBacklog" },
+  { id: "due", region: "main", titleKey: "deadlineWatch" },
+  { id: "previous", region: "main", titleKey: "earlierRecurring" },
+  { id: "done", region: "main", titleKey: "done" },
+  { id: "inbox", region: "main", titleKey: "inbox" },
+  { id: "timer", region: "support", titleKey: "focus" },
+  { id: "habits", region: "support", titleKey: "todayHabits" },
+  { id: "weekly", region: "support", titleKey: "weeklyHabits" },
+  { id: "upcoming", region: "support", titleKey: "upcoming" }
+];
+var HOME_MODULE_IDS = HOME_MODULES.map((x4) => x4.id);
+function homeModules(settings, region) {
+  const home = settings?.homeModules || {};
+  const hidden = new Set(home.hidden || []);
+  const order = home.order || [];
+  const rank = (id) => {
+    const i3 = order.indexOf(id);
+    return i3 < 0 ? Number.MAX_SAFE_INTEGER : i3;
+  };
+  return HOME_MODULES.filter(
+    (x4) => x4.region === region && !hidden.has(x4.id)
+  ).sort((a3, b3) => rank(a3.id) - rank(b3.id));
+}
+function isFolded(settings, id) {
+  return (settings?.homeModules?.folded || []).includes(id);
+}
+
 // src/style.css
 var style_default = '/* All surfaces inherit the active DSH theme. Mood accents derive from its semantic palette. */\n.ld-root {\n  --ld-accent: var(--dsw-alias-brand-primary);\n  --ld-ink: var(--dsw-alias-label-primary);\n  --ld-muted: var(--dsw-alias-label-secondary);\n  --ld-base: var(--dsw-alias-bg-base);\n  --ld-surface: var(--dsw-alias-bg-layer-1);\n  --ld-line: var(--dsw-alias-border-l1);\n  color: var(--ld-ink);\n  font:\n    14px/1.65 -apple-system,\n    BlinkMacSystemFont,\n    "Segoe UI",\n    "Microsoft YaHei",\n    sans-serif;\n  min-height: 0;\n}\n.ld-root.ld-bright {\n  --ld-accent: var(--dsw-alias-state-warn-primary);\n}\n.ld-root.ld-focus {\n  --ld-accent: var(--dsw-alias-brand-primary);\n}\n.ld-root.ld-calm {\n  --ld-accent: var(--dsw-alias-state-success-primary);\n}\n.ld-root * {\n  box-sizing: border-box;\n}\n.ld-shell {\n  display: grid;\n  grid-template-columns: 188px minmax(0, 1fr);\n  height: 100%;\n  min-height: 0;\n  background: var(--ld-base);\n}\n.ld-root:has(> .ld-shell) {\n  height: 100%;\n  overflow: hidden;\n  container: life-desk / inline-size;\n}\n.ld-shell.ld-collapsed {\n  grid-template-columns: 66px minmax(0, 1fr);\n}\n.ld-root button,\n.ld-root input,\n.ld-root select,\n.ld-root textarea {\n  font: inherit;\n  color: inherit;\n}\n.ld-root button {\n  cursor: pointer;\n}\n.ld-root button:disabled {\n  opacity: 0.45;\n  cursor: default;\n}\n.ld-root button {\n  border: 0;\n  background: transparent;\n}\n.ld-root input,\n.ld-root select,\n.ld-root textarea {\n  background: var(--ld-surface);\n  border: 1px solid var(--ld-line);\n  border-radius: 7px;\n  padding: 8px 10px;\n  min-width: 0;\n  max-width: 100%;\n}\n.ld-root textarea {\n  resize: vertical;\n  width: 100%;\n}\n.ld-root input[type="checkbox"] {\n  accent-color: var(--ld-accent);\n  width: 16px;\n  height: 16px;\n}\n.ld-root :focus-visible {\n  outline: 2px solid var(--ld-accent);\n  outline-offset: 3px;\n}\n.ld-root h1,\n.ld-root h2,\n.ld-root h3,\n.ld-root p {\n  margin: 0;\n}\n.ld-root h1 {\n  font-size: 30px;\n  line-height: 1.3;\n  font-weight: 650;\n  letter-spacing: -0.8px;\n}\n.ld-root h2 {\n  font-size: 15px;\n  font-weight: 600;\n  letter-spacing: 0.1px;\n}\n.ld-root h3 {\n  font-size: 14px;\n  font-weight: 600;\n}\n.ld-root p + p {\n  margin-top: 10px;\n}\n.ld-root svg {\n  flex-shrink: 0;\n  vertical-align: middle;\n}\n.ld-root strong {\n  font-weight: 600;\n}\n.ld-nav {\n  background: color-mix(\n    in srgb,\n    var(--dsw-alias-bg-layer-2) 60%,\n    var(--ld-base)\n  );\n  padding: 30px 14px 18px;\n  display: flex;\n  flex-direction: column;\n  gap: 5px;\n  overflow: auto;\n  border-right: 1px solid var(--ld-line);\n}\n.ld-brand {\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  font-size: 14px;\n  font-weight: 650;\n  padding: 3px 7px 26px;\n  white-space: nowrap;\n}\n.ld-nav button {\n  display: flex;\n  align-items: center;\n  gap: 11px;\n  width: 100%;\n  text-align: left;\n  min-height: 38px;\n  padding: 8px 10px;\n  border-radius: 7px;\n  color: var(--ld-muted);\n}\n.ld-nav button:hover,\n.ld-nav button.selected {\n  background: var(--dsw-alias-bg-layer-2);\n  color: var(--ld-ink);\n}\n.ld-nav button.selected svg {\n  color: var(--ld-accent);\n}\n.ld-nav .ld-nav-add {\n  color: var(--ld-ink);\n  border: 1px solid var(--ld-line);\n  background: var(--ld-surface);\n  margin-bottom: 18px;\n}\n.ld-nav-items {\n  display: grid;\n  gap: 3px;\n}\n.ld-nav .ld-nav-project {\n  padding-left: 13px;\n  font-size: 12px;\n  min-height: 31px;\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n}\n.ld-project-bullet {\n  height: 5px;\n  width: 5px;\n  flex: none;\n  border-radius: 50%;\n  background: var(--ld-muted);\n  margin: 0 7px;\n}\n.ld-nav-bottom {\n  margin-top: auto;\n  padding-top: 35px;\n}\n.ld-nav-bottom button {\n  font-size: 12px;\n}\n/* The toolbar is a separate grid row, outside the only page scroller. */\n.ld-workspace {\n  --ld-page-inline: clamp(22px, 3vw, 48px);\n  display: grid;\n  grid-template-rows: auto minmax(0, 1fr);\n  min-width: 0;\n  min-height: 0;\n  height: 100%;\n}\n.ld-content {\n  padding: 26px var(--ld-page-inline) 26px;\n  overflow: auto;\n  min-height: 0;\n}\n.ld-page-top {\n  display: flex;\n  justify-content: space-between;\n  gap: 18px;\n  align-items: center;\n  margin: 0;\n  min-width: 0;\n  padding: 20px var(--ld-page-inline) 16px;\n  background: var(--ld-base);\n  border-bottom: 1px solid var(--ld-line);\n  position: relative;\n  z-index: 20;\n}\n.ld-page-top,\n.ld-page-top * {\n  -webkit-app-region: no-drag;\n  app-region: no-drag;\n}\n.ld-page-top > .ld-actions {\n  margin-left: auto;\n  flex-shrink: 0;\n  max-width: 100%;\n}\n.ld-page-top .ld-btn {\n  flex-shrink: 0;\n  white-space: nowrap;\n}\n.ld-search {\n  flex: 1;\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  min-width: 100px;\n  color: var(--ld-muted);\n}\n.ld-search input {\n  border: 0;\n  background: transparent;\n  width: 230px;\n  font-size: 12px;\n  padding: 5px 0;\n}\n.ld-mood {\n  max-width: 112px;\n  font-size: 12px !important;\n  border-color: transparent !important;\n  background: transparent !important;\n}\n.ld-page-heading {\n  display: flex;\n  align-items: flex-end;\n  justify-content: space-between;\n  gap: 15px;\n  margin-bottom: 35px;\n  flex-wrap: wrap;\n}\n.ld-eyebrow {\n  font-size: 12px;\n  color: var(--ld-muted);\n  letter-spacing: 0.5px;\n  margin-bottom: 8px;\n}\n.ld-day-nav {\n  display: flex;\n  align-items: center;\n  gap: 3px;\n  font-size: 12px;\n}\n.ld-day-nav > button {\n  padding: 3px 7px;\n  font-size: 20px;\n  color: var(--ld-muted);\n}\n.ld-day-nav input {\n  padding: 3px 5px;\n  font-size: 11px;\n  background: transparent;\n  border-color: transparent;\n  width: 115px;\n}\n.ld-day-nav .ld-btn {\n  font-size: 12px;\n}\n.ld-today-grid {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) 248px;\n  gap: 40px;\n}\n.ld-main-col {\n  min-width: 0;\n}\n.ld-support {\n  min-width: 0;\n  border-left: 1px solid var(--ld-line);\n  padding-left: 28px;\n}\n.ld-section {\n  margin: 0 0 34px;\n}\n.ld-section-heading,\n.ld-section-title {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  margin-bottom: 14px;\n}\n.ld-section-title {\n  justify-content: flex-start;\n  font-size: 13px;\n  color: var(--ld-muted);\n}\n.ld-section > h2 {\n  margin-bottom: 16px;\n}\n.ld-help,\n.ld-muted {\n  color: var(--ld-muted);\n}\n.ld-help {\n  font-size: 11px;\n  line-height: 1.7;\n}\n.ld-empty {\n  padding: 18px 0;\n  color: var(--ld-muted);\n  font-size: 12px;\n}\n.ld-task {\n  display: flex;\n  align-items: flex-start;\n  gap: 11px;\n  min-height: 55px;\n  padding: 10px 0;\n}\n.ld-task + .ld-task {\n  border-top: 1px solid color-mix(in srgb, var(--ld-line) 55%, transparent);\n}\n.ld-check {\n  width: 18px;\n  height: 18px;\n  border: 1.3px solid var(--dsw-alias-border-l2) !important;\n  border-radius: 5px;\n  margin-top: 4px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  flex: none;\n}\n.ld-task-done .ld-check {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent) !important;\n}\n.ld-task-done .ld-task-title {\n  text-decoration: line-through;\n  color: var(--ld-muted);\n}\n.ld-task-body {\n  flex: 1;\n  min-width: 0;\n  text-align: left;\n  padding: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 3px;\n}\n.ld-task-title {\n  font-size: 14px;\n  overflow-wrap: anywhere;\n}\n.ld-task-meta {\n  font-size: 11px;\n  color: var(--ld-muted);\n  overflow-wrap: anywhere;\n}\n.ld-task-tools {\n  display: flex;\n  align-items: center;\n  flex: none;\n  opacity: 0.35;\n}\n.ld-task:hover .ld-task-tools,\n.ld-task:focus-within .ld-task-tools {\n  opacity: 1;\n}\n.ld-icon-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 28px;\n  height: 28px;\n  border-radius: 6px;\n  padding: 0;\n  color: var(--ld-muted) !important;\n}\n.ld-icon-btn:hover {\n  background: var(--dsw-alias-bg-layer-2);\n}\n.ld-star {\n  color: var(--ld-accent);\n}\n.ld-event-dot {\n  padding-top: 4px;\n  color: var(--ld-muted);\n}\n.ld-btn {\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  gap: 6px;\n  font-size: 12px !important;\n  padding: 7px 11px;\n  min-height: 32px;\n  border: 1px solid var(--ld-line) !important;\n  border-radius: 7px;\n  line-height: 1.4;\n  background: var(--ld-surface) !important;\n  text-decoration: none;\n  cursor: pointer;\n}\n.ld-btn:hover {\n  background: var(--dsw-alias-bg-layer-2) !important;\n}\n.ld-btn.ld-primary {\n  background: color-mix(\n    in srgb,\n    var(--ld-accent) 12%,\n    var(--ld-base)\n  ) !important;\n  border-color: color-mix(\n    in srgb,\n    var(--ld-accent) 35%,\n    var(--ld-line)\n  ) !important;\n  color: var(--ld-accent);\n}\n.ld-btn[aria-pressed="true"] {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent) !important;\n}\n.ld-actions {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n.ld-toolbar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  margin-bottom: 20px;\n}\n.ld-details {\n  border-top: 1px solid var(--ld-line);\n  padding: 14px 0;\n  color: var(--ld-muted);\n  font-size: 12px;\n}\n.ld-details summary {\n  cursor: pointer;\n}\n.ld-details .ld-task-list {\n  color: var(--ld-ink);\n  margin-top: 12px;\n}\n.ld-welcome {\n  padding: 5px 0 30px;\n}\n.ld-welcome > svg {\n  color: var(--ld-accent);\n  margin-bottom: 12px;\n}\n.ld-welcome h2 {\n  font-size: 19px;\n  margin-bottom: 9px;\n}\n.ld-welcome p {\n  color: var(--ld-muted);\n  font-size: 12px;\n  margin-bottom: 18px;\n}\n.ld-focus-card {\n  padding-bottom: 27px;\n  margin-bottom: 24px;\n  border-bottom: 1px solid var(--ld-line);\n}\n.ld-timer-title {\n  font-size: 12px;\n  color: var(--ld-muted);\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.ld-time {\n  font-size: 49px;\n  font-weight: 350;\n  letter-spacing: -2px;\n  line-height: 1.5;\n  font-variant-numeric: tabular-nums;\n  margin: 8px 0;\n}\n.ld-progress {\n  height: 3px;\n  background: var(--dsw-alias-bg-layer-2);\n  border-radius: 3px;\n  margin: 0 0 22px;\n  overflow: hidden;\n}\n.ld-progress i {\n  display: block;\n  height: 100%;\n  background: var(--ld-accent);\n}\n.ld-timer-end {\n  margin-top: 15px;\n}\n.ld-timer-end .ld-field {\n  margin: 10px 0;\n}\n.ld-habit {\n  padding: 9px 0;\n}\n.ld-habit + .ld-habit {\n  border-top: 1px solid var(--ld-line);\n}\n.ld-habit-main {\n  display: flex;\n  gap: 12px;\n  align-items: center;\n}\n/* Keep habit metadata beside the title, retaining its existing 11px type. */\n.ld-habit-main > .ld-task-body {\n  flex-direction: row;\n  flex-wrap: wrap;\n  align-items: baseline;\n  column-gap: 10px;\n  row-gap: 2px;\n}\n.ld-habit-main > .ld-task-body > .ld-task-title,\n.ld-habit-main > .ld-task-body > .ld-task-meta {\n  flex: 0 1 auto;\n  min-width: 0;\n  max-width: 100%;\n}\n.ld-habit-list-full .ld-habit {\n  padding: 8px 0;\n}\n.ld-habit-list-full .ld-week-dots {\n  margin: 6px 0 0;\n  gap: 6px;\n}\n.ld-habit-period {\n  margin-left: 6px;\n  font-size: 10px;\n  color: var(--ld-muted);\n}\n.ld-habit-check {\n  border: 1px solid var(--ld-line) !important;\n  width: 28px;\n  height: 28px;\n  border-radius: 50%;\n  color: var(--ld-muted) !important;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex: none;\n}\n.ld-habit-check.checked {\n  color: var(--ld-accent) !important;\n  background: color-mix(in srgb, var(--ld-accent) 10%, transparent);\n}\n.ld-week-dots {\n  display: flex;\n  gap: 8px;\n  align-items: center;\n  margin: 12px 0;\n  flex-wrap: wrap;\n}\n.ld-week-dots > button:not(.ld-btn) {\n  min-width: 28px;\n  height: 28px;\n  border-radius: 50%;\n  font-size: 11px;\n  background: var(--dsw-alias-bg-layer-2);\n}\n.ld-week-dots > button.checked {\n  color: var(--ld-accent);\n}\n.ld-upcoming {\n  display: flex;\n  flex-direction: column;\n  gap: 3px;\n  text-align: left;\n  width: 100%;\n  padding: 8px 0;\n}\n.ld-upcoming strong {\n  font-size: 12px;\n}\n.ld-upcoming span {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-project-row {\n  display: flex;\n  align-items: center;\n  gap: 13px;\n  width: 100%;\n  padding: 17px 0;\n  text-align: left;\n  border-bottom: 1px solid var(--ld-line) !important;\n}\n.ld-project-row > span:first-of-type {\n  display: flex;\n  flex: 1;\n  flex-direction: column;\n}\n.ld-project-row small {\n  font-size: 11px;\n  color: var(--ld-muted);\n  margin-top: 3px;\n}\n.ld-project-goal {\n  white-space: pre-wrap;\n  color: var(--ld-muted);\n  margin: 0 0 25px !important;\n}\n.ld-board {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  gap: 20px;\n  margin-top: 24px;\n  overflow: auto;\n}\n.ld-board > section {\n  min-width: 160px;\n  padding: 14px;\n  background: var(--dsw-alias-bg-layer-1);\n  border-radius: 8px;\n}\n.ld-board .ld-task {\n  flex-wrap: wrap;\n}\n.ld-board .ld-task-tools {\n  margin-left: auto;\n}\n.ld-review-stats {\n  display: flex;\n  gap: 35px;\n  padding: 30px 0;\n  flex-wrap: wrap;\n}\n.ld-review-stats > div {\n  display: flex;\n  flex-direction: column;\n}\n.ld-review-stats strong {\n  font-size: 30px;\n  font-weight: 450;\n}\n.ld-review-stats span {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-review-text {\n  min-height: 240px;\n  margin: 7px 0 15px;\n  line-height: 1.8;\n}\n.ld-log {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 15px;\n  padding: 12px 0;\n  border-bottom: 1px solid var(--ld-line);\n  font-size: 12px;\n}\n.ld-footer {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  font-size: 10px;\n  color: var(--ld-muted);\n  margin-top: 45px;\n}\n.ld-footer button {\n  font-size: 10px;\n  text-decoration: underline;\n}\n.ld-status {\n  font-size: 12px;\n  padding: 8px 10px;\n  background: var(--dsw-alias-bg-layer-1);\n  color: var(--dsw-alias-state-success-primary);\n  margin-bottom: 15px;\n  border-radius: 6px;\n  display: flex;\n  gap: 15px;\n  align-items: center;\n}\n.ld-status button {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-error {\n  color: var(--dsw-alias-state-error-primary);\n  font-size: 12px;\n  padding: 12px 0;\n}\n.ld-loading {\n  padding: 48px;\n}\n.ld-dialog {\n  padding: 24px;\n  border: 1px solid var(--ld-line);\n  border-radius: 14px;\n  background: var(--ld-base);\n  color: var(--ld-ink);\n  width: min(650px, calc(100% - 30px));\n  max-height: 85vh;\n  overflow: auto;\n  box-shadow: 0 15px 70px color-mix(in srgb, var(--ld-ink) 12%, transparent);\n}\n.ld-dialog::backdrop {\n  background: color-mix(\n    in srgb,\n    var(--dsw-alias-label-primary) 20%,\n    transparent\n  );\n}\n.ld-dialog > header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 22px;\n}\n.ld-dialog h2 {\n  font-size: 18px;\n}\n.ld-dialog h3 {\n  margin: 22px 0 10px;\n}\n.ld-dialog p {\n  margin: 10px 0;\n}\n.ld-form {\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 17px;\n}\n.ld-field {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n  font-size: 12px;\n}\n.ld-field > span {\n  color: var(--ld-muted);\n}\n.ld-field input,\n.ld-field select {\n  width: 100%;\n}\n.ld-wide {\n  grid-column: 1/-1;\n}\n.ld-check-label {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 12px;\n  min-height: 30px;\n}\n.ld-modal-footer {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 15px;\n  margin-top: 25px;\n  padding-top: 18px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-days {\n  display: flex;\n  gap: 8px;\n}\n.ld-days button {\n  width: 32px;\n  height: 32px;\n  border: 1px solid var(--ld-line);\n  border-radius: 50%;\n}\n.ld-days button[aria-pressed="true"] {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent);\n}\n.ld-scope {\n  padding: 12px;\n  background: var(--dsw-alias-bg-layer-1);\n  border-radius: 8px;\n  margin-bottom: 20px;\n}\n.ld-file {\n  position: relative;\n  overflow: hidden;\n}\n.ld-file input {\n  position: absolute;\n  inset: 0;\n  opacity: 0;\n  cursor: pointer;\n  width: 100%;\n}\n.ld-restore {\n  margin-top: 20px;\n  padding: 15px;\n  border: 1px solid var(--ld-line);\n  border-radius: 8px;\n}\n.ld-global-timer {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  font-size: 11px !important;\n  font-variant-numeric: tabular-nums;\n  color: var(--ld-accent) !important;\n  padding: 4px;\n}\n.ld-global-notice {\n  position: fixed;\n  right: 24px;\n  bottom: 24px;\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  max-width: min(440px, 90vw);\n  background: var(--ld-surface);\n  padding: 14px 18px;\n  border: 1px solid var(--ld-line);\n  border-radius: 10px;\n  box-shadow: 0 8px 30px color-mix(in srgb, var(--ld-ink) 10%, transparent);\n  font-size: 12px;\n  pointer-events: auto;\n  z-index: 1000;\n}\n.ld-root .fc {\n  --fc-border-color: var(--ld-line);\n  --fc-page-bg-color: var(--ld-base);\n  --fc-neutral-bg-color: var(--dsw-alias-bg-layer-1);\n  --fc-neutral-text-color: var(--ld-muted);\n  --fc-button-text-color: var(--ld-ink);\n  --fc-button-bg-color: var(--ld-surface);\n  --fc-button-border-color: var(--ld-line);\n  --fc-button-hover-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-button-hover-border-color: var(--ld-line);\n  --fc-button-active-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-button-active-border-color: var(--ld-accent);\n  --fc-event-bg-color: color-mix(in srgb, var(--ld-accent) 12%, var(--ld-base));\n  --fc-event-border-color: color-mix(\n    in srgb,\n    var(--ld-accent) 25%,\n    var(--ld-line)\n  );\n  --fc-event-text-color: var(--ld-ink);\n  --fc-today-bg-color: color-mix(in srgb, var(--ld-accent) 5%, transparent);\n  --fc-now-indicator-color: var(--ld-accent);\n  font-size: 12px;\n  margin-top: 18px;\n}\n.ld-root .fc .fc-toolbar-title {\n  font-size: 17px;\n  font-weight: 550;\n}\n.ld-root .fc .fc-button {\n  font-size: 12px;\n  border: 1px solid var(--ld-line);\n  padding: 5px 9px;\n}\n.ld-root .fc .fc-daygrid-day-number {\n  padding: 8px;\n}\n.ld-root .fc .fc-col-header-cell-cushion {\n  padding: 9px 0;\n  font-weight: 500;\n  color: var(--ld-muted);\n}\n.ld-root .fc-event {\n  border-radius: 4px;\n  padding: 2px 4px;\n}\n.ld-root .fc-event-done {\n  opacity: 0.5;\n  text-decoration: line-through;\n}\n.ld-root .ld-event-habit {\n  --fc-event-border-color: var(--ld-line);\n  --fc-event-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-event-text-color: var(--ld-muted);\n}\n@container life-desk (max-width:1050px) {\n  .ld-today-grid {\n    grid-template-columns: minmax(0, 1fr) 210px;\n    gap: 25px;\n  }\n  .ld-support {\n    padding-left: 22px;\n  }\n  .ld-shell {\n    grid-template-columns: 160px minmax(0, 1fr);\n  }\n  .ld-workspace {\n    --ld-page-inline: 25px;\n  }\n  .ld-search input {\n    width: 150px;\n  }\n}\n@container life-desk (max-width:820px) {\n  .ld-shell {\n    grid-template-columns: 60px minmax(0, 1fr);\n  }\n  .ld-nav {\n    padding-inline: 8px;\n  }\n  .ld-nav button > span,\n  .ld-brand > span,\n  .ld-nav-project,\n  .ld-nav-bottom button,\n  .ld-nav-add {\n    font-size: 0 !important;\n  }\n  .ld-nav button {\n    gap: 0;\n    justify-content: center;\n  }\n  .ld-nav .ld-nav-project {\n    display: none;\n  }\n  .ld-brand {\n    padding-inline: 8px;\n  }\n  .ld-nav-add svg,\n  .ld-nav-bottom svg {\n    width: 20px;\n  }\n  .ld-today-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n  .ld-support {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 25px;\n    border-left: 0;\n    border-top: 1px solid var(--ld-line);\n    padding: 25px 0 0;\n  }\n  .ld-support > .ld-section:last-child {\n    grid-column: 1/-1;\n  }\n  .ld-board {\n    grid-template-columns: 1fr;\n  }\n  .ld-day-nav {\n    width: 100%;\n  }\n}\n@container life-desk (max-width:530px) {\n  .ld-workspace {\n    --ld-page-inline: 16px;\n  }\n  .ld-content {\n    padding: 22px var(--ld-page-inline);\n  }\n  .ld-page-top {\n    padding-top: 16px;\n    padding-bottom: 12px;\n    flex-wrap: wrap;\n    gap: 10px;\n  }\n  .ld-page-top .ld-mood {\n    max-width: 88px;\n  }\n  .ld-search {\n    width: 100%;\n  }\n  .ld-search input {\n    width: 100%;\n  }\n  .ld-support {\n    grid-template-columns: 1fr;\n  }\n  .ld-root h1 {\n    font-size: 26px;\n  }\n  .ld-task-tools {\n    opacity: 1;\n  }\n  .ld-task-tools .ld-icon-btn:first-child {\n    display: none;\n  }\n}\n@media (max-width: 550px) {\n  .ld-form {\n    grid-template-columns: 1fr;\n  }\n  .ld-modal-footer {\n    align-items: flex-start;\n    flex-direction: column;\n  }\n  .ld-dialog {\n    padding: 18px;\n  }\n}\n@media (prefers-reduced-motion: reduce) {\n  .ld-root * {\n    animation: none !important;\n    transition: none !important;\n  }\n}\n\n/* Phase 2A: version visibility. Read-only discovery, never installs anything. */\n.ld-update {\n  margin-top: 34px;\n  padding-top: 24px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-update-meta {\n  display: grid;\n  grid-template-columns: max-content minmax(0, 1fr);\n  gap: 7px 20px;\n  font-size: 12px;\n}\n.ld-update-meta > span {\n  color: var(--ld-muted);\n}\n.ld-update-meta strong {\n  font-weight: 500;\n  overflow-wrap: anywhere;\n}\n.ld-update-ok {\n  margin-top: 12px;\n  font-size: 12px;\n  color: var(--dsw-alias-state-success-primary);\n}\n.ld-update-card {\n  margin-top: 14px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  padding: 14px;\n  background: var(--ld-surface);\n  display: grid;\n  gap: 9px;\n}\n.ld-update-card .ld-actions {\n  flex-wrap: wrap;\n}\n.ld-update-toggle {\n  justify-self: start;\n  font-size: 11px;\n  color: var(--ld-muted);\n  padding: 2px 0;\n}\n.ld-release-notes {\n  margin: 0;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  font: 11px/1.7 var(--dsh-font-family-code-default, ui-monospace, monospace);\n  background: var(--dsw-alias-bg-layer-2);\n  border-radius: 7px;\n  padding: 10px 12px;\n  max-height: 220px;\n  overflow: auto;\n  color: var(--ld-muted);\n}\n.ld-update-badge {\n  font-size: 10px;\n  color: var(--ld-accent);\n  text-decoration: none !important;\n  border: 1px solid color-mix(in srgb, var(--ld-accent) 40%, var(--ld-line));\n  border-radius: 20px;\n  padding: 1px 8px;\n}\n.ld-root a.ld-btn {\n  color: inherit;\n}\n.ld-snapshot-row {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  align-items: center;\n  gap: 2px 12px;\n  padding: 9px 0;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-snapshot-row:first-of-type {\n  border-top: 0;\n}\n.ld-snapshot-row > span {\n  font-size: 12px;\n  overflow-wrap: anywhere;\n}\n.ld-snapshot-row > small {\n  grid-column: 1;\n  color: var(--ld-muted);\n  font-size: 10px;\n}\n.ld-snapshot-row > .ld-btn {\n  grid-row: 1 / span 2;\n  grid-column: 2;\n}\n.ld-template-list {\n  display: grid;\n  gap: 0;\n  margin: 14px 0;\n}\n.ld-template {\n  display: grid;\n  gap: 4px;\n  text-align: left;\n  padding: 12px 0;\n  border-bottom: 1px solid var(--ld-line);\n}\n.ld-template-title {\n  font-size: 13px;\n}\n.ld-template-note {\n  font-size: 11px;\n  color: var(--ld-muted);\n  line-height: 1.6;\n}\n.ld-completion {\n  border: 0;\n  padding: 0;\n  margin: 4px 0 0;\n  display: grid;\n  gap: 7px;\n}\n.ld-completion legend {\n  font-size: 11px;\n  color: var(--ld-muted);\n  padding: 0;\n  margin-bottom: 4px;\n}\n.ld-fold-toggle {\n  display: inline-flex;\n  align-items: center;\n  gap: 7px;\n  font: inherit;\n  color: inherit;\n  font-weight: inherit;\n  padding: 0;\n  text-align: left;\n}\n.ld-fold-chevron {\n  display: inline-flex;\n  color: var(--ld-muted);\n  transition: transform 0.15s ease;\n}\n.ld-fold-toggle[aria-expanded="true"] .ld-fold-chevron {\n  transform: rotate(90deg);\n}\n.ld-fold-count {\n  margin-left: auto;\n  font-size: 11px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n@media (prefers-reduced-motion: reduce) {\n  .ld-fold-chevron {\n    transition: none;\n  }\n}\n.ld-review-prompts {\n  margin: 8px 0 10px;\n  padding-left: 18px;\n  color: var(--ld-muted);\n  font-size: 12px;\n  line-height: 1.8;\n}\n.ld-review-date {\n  margin-bottom: 12px;\n  flex-wrap: wrap;\n}\n';
 
@@ -32164,16 +33532,28 @@ var planning_default = "/* Resident toolbar with a bounded capture sheet; the pa
 // src/review.css
 var review_default = '/* Review content and templates remain separate; all text is rendered inertly. */\n.ld-review-editor {\n  min-width: 0;\n}\n.ld-review-options {\n  flex-wrap: wrap;\n  margin: 10px 0;\n}\n.ld-review-options .ld-btn {\n  font-size: 11px;\n}\n.ld-review-editor .ld-field {\n  margin: 12px 0;\n}\n.ld-review-text {\n  width: 100%;\n  box-sizing: border-box;\n}\n.ld-review-assistant {\n  margin: 20px 0 10px;\n  padding: 16px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  background: var(--dsw-alias-bg-layer-1);\n}\n.ld-review-assistant h3 {\n  margin: 0;\n  font-size: 13px;\n}\n.ld-review-chat {\n  max-height: 260px;\n  overflow: auto;\n  margin: 12px 0;\n}\n.ld-review-chat-message {\n  margin-bottom: 12px;\n  font-size: 12px;\n}\n.ld-review-chat-message strong {\n  font-size: 10px;\n  color: var(--ld-muted);\n  font-weight: 500;\n}\n.ld-review-chat-message p,\n.ld-review-chat > p,\n.ld-review-candidate > p {\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  line-height: 1.7;\n}\n.ld-review-candidate {\n  margin-top: 15px;\n  padding-top: 14px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-review-assistant textarea {\n  min-height: 65px;\n}\n.ld-previous-habits {\n  margin-bottom: 22px;\n  padding: 12px 14px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n}\n.ld-previous-habits h3 {\n  margin: 0 0 8px;\n}\n.ld-week-dots > .ld-habit-late {\n  outline: 1px dashed var(--ld-accent);\n  outline-offset: 2px;\n}\n.ld-root[data-reduce-motion="true"] .ld-fold-chevron {\n  transition: none;\n}\n@container life-desk (max-width: 530px) {\n  .ld-review-assistant {\n    padding: 12px;\n  }\n}\n';
 
+// src/lessons.css
+var lessons_default = '/* Courses stay compact: schedule, attendance and credit balance share a row. */\n.ld-today-grid.ld-single-col {\n  grid-template-columns: minmax(0, 1fr);\n}\n.ld-lessons-page {\n  min-width: 0;\n}\n.ld-lesson-today,\n.ld-lesson-card {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 9px 0;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-lesson-today:first-of-type,\n.ld-lesson-card:first-of-type {\n  border-top: 0;\n}\n.ld-lesson-today.is-done {\n  opacity: 0.72;\n}\n.ld-lesson-today > .ld-task-body {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  text-align: left;\n}\n.ld-lesson-today .ld-task-title,\n.ld-lesson-card .ld-task-title {\n  display: flex;\n  gap: 8px;\n  align-items: baseline;\n  flex-wrap: wrap;\n}\n.ld-lesson-time {\n  flex: none;\n  min-width: 42px;\n  font-size: 11px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-today > .ld-btn {\n  flex: none;\n  font-size: 11px;\n}\n.ld-lesson-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 10px;\n}\n.ld-lesson-card {\n  align-items: flex-start;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  padding: 12px;\n  background: var(--dsw-alias-bg-layer-1);\n}\n.ld-lesson-card .ld-actions {\n  flex-wrap: wrap;\n  margin-top: 6px;\n}\n.ld-week-grid {\n  display: grid;\n  grid-template-columns: repeat(7, minmax(0, 1fr));\n  gap: 6px;\n  margin-top: 10px;\n}\n.ld-week-cell {\n  min-width: 0;\n  padding: 8px 6px;\n  border: 1px solid var(--ld-line);\n  border-radius: 8px;\n  min-height: 74px;\n}\n.ld-week-cell h3 {\n  margin: 0 0 6px;\n  font-size: 11px;\n  font-weight: 500;\n  color: var(--ld-muted);\n  display: flex;\n  justify-content: space-between;\n  gap: 4px;\n}\n.ld-week-cell h3 small {\n  font-weight: 400;\n}\n.ld-week-lesson {\n  display: block;\n  width: 100%;\n  text-align: left;\n  padding: 5px 6px;\n  margin-bottom: 4px;\n  border-radius: 6px;\n  border: 1px solid var(--ld-line);\n  background: var(--dsw-alias-bg-layer-2);\n  font-size: 11px;\n  line-height: 1.45;\n  overflow-wrap: anywhere;\n}\n.ld-week-lesson span,\n.ld-week-lesson small {\n  display: block;\n  color: var(--ld-muted);\n  font-size: 10px;\n}\n.ld-week-lesson strong {\n  font-weight: 500;\n  color: var(--ld-fg);\n}\n.ld-week-lesson.is-done {\n  opacity: 0.62;\n}\n.ld-lesson-summary {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px 14px;\n  font-size: 12px;\n  color: var(--ld-muted);\n  margin-bottom: 10px;\n}\n.ld-lesson-money {\n  display: flex;\n  align-items: baseline;\n  gap: 8px;\n  flex-wrap: wrap;\n  margin: 8px 0 14px;\n  padding: 10px 12px;\n  border-radius: 8px;\n  background: color-mix(in srgb, var(--ld-accent) 7%, transparent);\n}\n.ld-lesson-money strong {\n  font-size: 24px;\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-money small {\n  color: var(--ld-muted);\n  font-size: 11px;\n  line-height: 1.6;\n}\n.ld-lesson-row {\n  display: flex;\n  align-items: center;\n  flex-wrap: wrap;\n  gap: 6px 12px;\n  padding: 7px 0;\n  border-top: 1px solid var(--ld-line);\n  font-size: 12px;\n}\n.ld-lesson-row:first-child {\n  border-top: 0;\n}\n.ld-lesson-row > span:first-child {\n  min-width: 116px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-row > strong {\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-row > .ld-btn {\n  margin-left: auto;\n  font-size: 11px;\n}\n.ld-home-module {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  padding: 7px 0;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-home-module:first-of-type {\n  border-top: 0;\n}\n.ld-home-module .ld-actions {\n  flex: none;\n}\n.ld-home-module .ld-btn {\n  min-width: 30px;\n  padding: 3px 8px;\n}\n.ld-event-lesson {\n  border-left: 3px solid var(--ld-accent) !important;\n}\n.ld-root[data-reduce-motion="true"] .ld-week-lesson {\n  transition: none;\n}\n@container life-desk (max-width: 760px) {\n  .ld-week-grid {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n}\n@container life-desk (max-width: 430px) {\n  .ld-week-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n  .ld-lesson-cards {\n    grid-template-columns: minmax(0, 1fr);\n  }\n}\n';
+
 // src/client.tsx
-var css = style_default + spirit_default + today_default + focus_default + planning_default + review_default;
-var { useState: useState5, useEffect: useEffect5, useRef: useRef5, useSyncExternalStore: useSyncExternalStore2 } = React9;
-var NAV = ["today", "projects", "habits", "life", "calendar", "review"];
+var css = style_default + spirit_default + today_default + focus_default + planning_default + review_default + lessons_default;
+var { useState: useState6, useEffect: useEffect6, useRef: useRef5, useSyncExternalStore: useSyncExternalStore2 } = React10;
+var NAV = [
+  "today",
+  "lessons",
+  "projects",
+  "habits",
+  "life",
+  "calendar",
+  "review"
+];
 var paths = {
   today: "M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4 M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0",
   projects: "M3 7h7l2 2h9v10H3ZM3 7V5h7l2 2",
   habits: "M19 7a8 8 0 1 0 1 8M19 3v5h-5m-6 4 3 3 5-6",
   life: "m3 11 9-8 9 8M6 9v12h12V9M10 21v-7h4v7",
   calendar: "M4 5h16v16H4ZM8 3v4m8-4v4M4 10h16m-11 4h2v3H9Z",
+  lessons: "M4 5h16v16H4ZM8 3v4m8-4v4M4 10h16M8 14h3v3H8Zm5 0h3M12 17h5",
   review: "M12 5c-3-2-7-2-9-1v15c3-1 6-1 9 1m0-15c3-2 7-2 9-1v15c-3-1-6-1-9 1Zm0 0v15",
   inbox: "M4 4h16v16H4ZM4 13h5l1 3h4l1-3h5",
   settings: "M4 6h16M4 12h16M4 18h16M8 3v6m8 0v6m-6 0v6",
@@ -32188,7 +33568,7 @@ var paths = {
   ai: "m12 3 2.3 6.7L21 12l-6.7 2.3L12 21l-2.3-6.7L3 12l6.7-2.3Z"
 };
 function Icon({ name = "focus", size = 20 }) {
-  return /* @__PURE__ */ React9.createElement(
+  return /* @__PURE__ */ React10.createElement(
     "svg",
     {
       width: size,
@@ -32201,7 +33581,7 @@ function Icon({ name = "focus", size = 20 }) {
       strokeLinejoin: "round",
       "aria-hidden": "true"
     },
-    /* @__PURE__ */ React9.createElement("path", { d: paths[name] || paths.focus })
+    /* @__PURE__ */ React10.createElement("path", { d: paths[name] || paths.focus })
   );
 }
 function uid() {
@@ -32307,7 +33687,7 @@ function apply(ctx) {
     icon = "",
     ...props
   }) {
-    return /* @__PURE__ */ React9.createElement(
+    return /* @__PURE__ */ React10.createElement(
       "button",
       {
         type: "button",
@@ -32315,7 +33695,7 @@ function apply(ctx) {
         onClick,
         ...props
       },
-      icon && /* @__PURE__ */ React9.createElement(Icon, { name: icon, size: 17 }),
+      icon && /* @__PURE__ */ React10.createElement(Icon, { name: icon, size: 17 }),
       " ",
       children
     );
@@ -32326,8 +33706,8 @@ function apply(ctx) {
     Field
   });
   function useClock() {
-    const [n2, set] = useState5(Date.now());
-    useEffect5(() => {
+    const [n2, set] = useState6(Date.now());
+    useEffect6(() => {
       const id = setInterval(() => set(Date.now()), 1e3);
       return () => clearInterval(id);
     }, []);
@@ -32337,14 +33717,14 @@ function apply(ctx) {
     let mood = data?.settings?.mood || "daily";
     if (data?.settings?.moodUntil && data.settings.moodUntil < today(data.settings.timeZone))
       mood = "daily";
-    return /* @__PURE__ */ React9.createElement("div", { className: "ld-root ld-" + mood }, children);
+    return /* @__PURE__ */ React10.createElement("div", { className: "ld-root ld-" + mood }, children);
   }
   function Alerts() {
     const { data } = useStore();
     const now = useClock();
-    const [notices, setNotices] = useState5([]);
+    const [notices, setNotices] = useState6([]);
     const sounded = useRef5(/* @__PURE__ */ new Set());
-    useEffect5(() => {
+    useEffect6(() => {
       if (!data) return;
       const day = today(data.settings.timeZone, now);
       const list = [];
@@ -32367,6 +33747,8 @@ function apply(ctx) {
         }
       } catch {
       }
+      for (const n2 of lessonReminders(data, now, data.settings.timeZone))
+        list.push({ key: n2.key, title: n2.title });
       const due = list.filter((x4) => !data.noticeAcks.includes(x4.key));
       setNotices(due);
       for (const n2 of due) {
@@ -32396,7 +33778,7 @@ function apply(ctx) {
         }
       }
     }, [data?.revision, Math.floor(now / 1e4)]);
-    return notices.length ? /* @__PURE__ */ React9.createElement("div", { className: "ld-global-notice", role: "status" }, /* @__PURE__ */ React9.createElement(Icon, { name: "today" }), /* @__PURE__ */ React9.createElement("span", null, notices[0].title, notices.length > 1 ? " +" + (notices.length - 1) : ""), /* @__PURE__ */ React9.createElement(
+    return notices.length ? /* @__PURE__ */ React10.createElement("div", { className: "ld-global-notice", role: "status" }, /* @__PURE__ */ React10.createElement(Icon, { name: "today" }), /* @__PURE__ */ React10.createElement("span", null, notices[0].title, notices.length > 1 ? " +" + (notices.length - 1) : ""), /* @__PURE__ */ React10.createElement(
       Btn,
       {
         onClick: () => {
@@ -32411,12 +33793,12 @@ function apply(ctx) {
   }
   function Modal({ title, onClose, children }) {
     const ref = useRef5(null);
-    useEffect5(() => {
+    useEffect6(() => {
       const before = document.activeElement;
       ref.current?.showModal();
       return () => before?.focus?.();
     }, []);
-    return /* @__PURE__ */ React9.createElement(
+    return /* @__PURE__ */ React10.createElement(
       "dialog",
       {
         ref,
@@ -32429,7 +33811,7 @@ function apply(ctx) {
           if (e3.target === e3.currentTarget) onClose();
         }
       },
-      /* @__PURE__ */ React9.createElement("header", null, /* @__PURE__ */ React9.createElement("h2", null, title), /* @__PURE__ */ React9.createElement(
+      /* @__PURE__ */ React10.createElement("header", null, /* @__PURE__ */ React10.createElement("h2", null, title), /* @__PURE__ */ React10.createElement(
         "button",
         {
           type: "button",
@@ -32442,6 +33824,13 @@ function apply(ctx) {
       children
     );
   }
+  const { LessonHub, LessonsPage, TodayLessons } = createLessonsUI({
+    t: t3,
+    Btn,
+    Modal,
+    Field,
+    Icon
+  });
   const { ReviewEditor, ReviewCheckIn } = createReviewUI({
     t: t3,
     Btn,
@@ -32450,33 +33839,47 @@ function apply(ctx) {
     send,
     drafts: reviewDrafts
   });
-  function FoldSection({ title, count, id, className = "", children }) {
-    const [open, setOpen] = useState5(true);
-    return /* @__PURE__ */ React9.createElement("section", { className: "ld-section ld-fold " + className }, /* @__PURE__ */ React9.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React9.createElement("h2", null, /* @__PURE__ */ React9.createElement(
+  function FoldSection({
+    title,
+    count,
+    id,
+    folded = false,
+    onFold = () => {
+    },
+    className = "",
+    children
+  }) {
+    const open = !folded;
+    return /* @__PURE__ */ React10.createElement("section", { className: "ld-section ld-fold " + className }, /* @__PURE__ */ React10.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React10.createElement("h2", null, /* @__PURE__ */ React10.createElement(
       "button",
       {
         type: "button",
         className: "ld-fold-toggle",
         "aria-expanded": open,
         "aria-controls": id,
-        onClick: () => setOpen(!open)
+        onClick: onFold
       },
-      /* @__PURE__ */ React9.createElement("span", { className: "ld-fold-chevron" }, /* @__PURE__ */ React9.createElement(Icon, { name: "chevron", size: 14 })),
+      /* @__PURE__ */ React10.createElement("span", { className: "ld-fold-chevron" }, /* @__PURE__ */ React10.createElement(Icon, { name: "chevron", size: 14 })),
       title
-    )), /* @__PURE__ */ React9.createElement("span", { className: "ld-fold-count" }, count)), open && /* @__PURE__ */ React9.createElement("div", { id }, children));
+    )), /* @__PURE__ */ React10.createElement("span", { className: "ld-fold-count" }, count)), open && /* @__PURE__ */ React10.createElement("div", { id }, children));
   }
   function Field({ label, children, wide = false }) {
-    return /* @__PURE__ */ React9.createElement("label", { className: "ld-field" + (wide ? " ld-wide" : "") }, /* @__PURE__ */ React9.createElement("span", null, label), children);
+    return /* @__PURE__ */ React10.createElement("label", { className: "ld-field" + (wide ? " ld-wide" : "") }, /* @__PURE__ */ React10.createElement("span", null, label), children);
   }
-  function HabitCards({ full = false, env }) {
-    const { data, day, timeZone, habits, busy, run, openHabit, setDay, live } = env;
+  function HabitCards({
+    full = false,
+    weeklyOnly = false,
+    showWeekly = true,
+    env
+  }) {
+    const { data, day, timeZone, habits, busy, run, openHabit, setDay, live: live2 } = env;
     const list = habits.filter((h3) => full || habitDue(h3, day));
     const groups = todayHabits(data, day);
-    const [record, setRecord] = useState5(null);
-    const [review, setReview] = useState5(null);
-    const [amount, setAmount] = useState5("1");
-    const [note, setNote] = useState5("");
-    const [recordDate, setRecordDate] = useState5(day);
+    const [record, setRecord] = useState6(null);
+    const [review, setReview] = useState6(null);
+    const [amount, setAmount] = useState6("1");
+    const [note, setNote] = useState6("");
+    const [recordDate, setRecordDate] = useState6(day);
     const previous = pendingPreviousHabits(data, day);
     const openLog = (h3, date) => {
       const r3 = habitRule(h3, date), p3 = habitProgress(data, h3, date);
@@ -32501,7 +33904,7 @@ function apply(ctx) {
       const count = weekDays.filter(
         (d2) => habitProgress(data, h3, d2).done
       ).length;
-      return /* @__PURE__ */ React9.createElement("div", { key: h3.id, className: "ld-habit" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-habit-main" }, /* @__PURE__ */ React9.createElement(
+      return /* @__PURE__ */ React10.createElement("div", { key: h3.id, className: "ld-habit" }, /* @__PURE__ */ React10.createElement("div", { className: "ld-habit-main" }, /* @__PURE__ */ React10.createElement(
         "button",
         {
           className: "ld-task-body",
@@ -32510,14 +33913,14 @@ function apply(ctx) {
             else openLog(h3, day);
           }
         },
-        /* @__PURE__ */ React9.createElement("span", { className: "ld-task-title" }, h3.title),
+        /* @__PURE__ */ React10.createElement("span", { className: "ld-task-title" }, h3.title),
         (() => {
           const meta = r3?.paused ? t3("paused") : p3.missed ? t3("missedHabit") : p3.skipped ? t3("skipped") : r3?.mode === "weekly" ? `${t3("weekly")} \xB7 ${count}/${r3.target}` : r3?.mode === "duration" ? `${p3.value}/${r3.target} ${t3("min")}` : r3?.mode === "quantity" ? `${p3.value}/${r3.target} ${r3.unit}` : p3.done ? t3(
             p3.status === "late" ? "habitLate" : "habitOnTime"
           ) : p3.status === "unrecorded" ? t3("habitUnrecorded") : "";
-          return meta ? /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, meta, p3.done && ["quantity", "duration"].includes(r3?.mode) ? " \xB7 " + t3(p3.status === "late" ? "habitLate" : "habitOnTime") : "") : null;
+          return meta ? /* @__PURE__ */ React10.createElement("span", { className: "ld-task-meta" }, meta, p3.done && ["quantity", "duration"].includes(r3?.mode) ? " \xB7 " + t3(p3.status === "late" ? "habitLate" : "habitOnTime") : "") : null;
         })()
-      ), /* @__PURE__ */ React9.createElement(
+      ), /* @__PURE__ */ React10.createElement(
         "button",
         {
           className: "ld-habit-check " + (p3.done ? "checked" : ""),
@@ -32525,10 +33928,10 @@ function apply(ctx) {
           disabled: busy || !habitDue(h3, day) || day > today(timeZone),
           onClick: () => openLog(h3, day)
         },
-        /* @__PURE__ */ React9.createElement(Icon, { name: p3.done ? "check" : "plus", size: 17 })
-      )), full && /* @__PURE__ */ React9.createElement("div", { className: "ld-week-dots" }, weekDays.map((d2) => {
+        /* @__PURE__ */ React10.createElement(Icon, { name: p3.done ? "check" : "plus", size: 17 })
+      )), full && /* @__PURE__ */ React10.createElement("div", { className: "ld-week-dots" }, weekDays.map((d2) => {
         const q3 = habitProgress(data, h3, d2);
-        return /* @__PURE__ */ React9.createElement(
+        return /* @__PURE__ */ React10.createElement(
           "button",
           {
             key: d2,
@@ -32542,24 +33945,16 @@ function apply(ctx) {
           d2.slice(8),
           q3.done ? " \xB7" : ""
         );
-      }), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => openHabit(h3) }, t3("edit"))));
+      }), /* @__PURE__ */ React10.createElement(Btn, { onClick: () => openHabit(h3) }, t3("edit"))));
     };
-    return /* @__PURE__ */ React9.createElement(React9.Fragment, null, full ? /* @__PURE__ */ React9.createElement("div", { className: "ld-habit-list ld-habit-list-full" }, list.map(renderHabit)) : /* @__PURE__ */ React9.createElement(React9.Fragment, null, previous.length > 0 && /* @__PURE__ */ React9.createElement("section", { className: "ld-previous-habits" }, /* @__PURE__ */ React9.createElement("h3", null, t3("yesterdayPending"), " \xB7 ", previous.length), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("previousHabitHint")), previous.map(({ habit, date }) => /* @__PURE__ */ React9.createElement("div", { className: "ld-habit", key: habit.id + date }, /* @__PURE__ */ React9.createElement("div", { className: "ld-habit-main" }, /* @__PURE__ */ React9.createElement(
-      "button",
-      {
-        className: "ld-task-body",
-        onClick: () => openLog(habit, date)
-      },
-      /* @__PURE__ */ React9.createElement("span", { className: "ld-task-title" }, habit.title),
-      /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, date)
-    ), /* @__PURE__ */ React9.createElement(Btn, { disabled: busy, onClick: () => openLog(habit, date) }, t3("log")))))), groups.pending.length > 0 && /* @__PURE__ */ React9.createElement("div", { className: "ld-habit-list" }, groups.pending.map(renderHabit)), !groups.pending.length && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("noPendingHabits")), groups.done.length > 0 && /* @__PURE__ */ React9.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React9.createElement("summary", null, t3("doneHabits"), " \xB7 ", groups.done.length), groups.done.map(renderHabit)), groups.settled.length > 0 && /* @__PURE__ */ React9.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React9.createElement("summary", null, t3("settledHabits"), " \xB7 ", groups.settled.length), groups.settled.map(renderHabit)), groups.weekly.length > 0 && /* @__PURE__ */ React9.createElement("section", { className: "ld-weekly-goals" }, /* @__PURE__ */ React9.createElement("h3", null, t3("weeklyHabits")), groups.weekly.map((h3) => {
+    const weeklyBlock = groups.weekly.length > 0 ? /* @__PURE__ */ React10.createElement("section", { className: "ld-weekly-goals" }, /* @__PURE__ */ React10.createElement("h3", null, t3("weeklyHabits")), groups.weekly.map((h3) => {
       const r3 = habitRule(h3, day);
       const count = Array.from(
         { length: 7 },
         (_3, i3) => shift(monday(day), i3)
       ).filter((d2) => habitProgress(data, h3, d2).done).length;
       const planned = h3.plannedDates?.includes(day);
-      return /* @__PURE__ */ React9.createElement("div", { className: "ld-weekly-row", key: h3.id }, /* @__PURE__ */ React9.createElement("span", null, h3.title, /* @__PURE__ */ React9.createElement("small", null, count, "/", r3.target, " ", t3("daysUnit"))), /* @__PURE__ */ React9.createElement(
+      return /* @__PURE__ */ React10.createElement("div", { className: "ld-weekly-row", key: h3.id }, /* @__PURE__ */ React10.createElement("span", null, h3.title, /* @__PURE__ */ React10.createElement("small", null, count, "/", r3.target, " ", t3("daysUnit"))), /* @__PURE__ */ React10.createElement(
         Btn,
         {
           disabled: busy || habitProgress(data, h3, day).done,
@@ -32572,7 +33967,18 @@ function apply(ctx) {
         },
         t3(planned ? "unplanHabit" : "planHabit")
       ));
-    }))), review && /* @__PURE__ */ React9.createElement(
+    })) : null;
+    if (weeklyOnly)
+      return weeklyBlock || /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("noWeeklyHabits"));
+    return /* @__PURE__ */ React10.createElement(React10.Fragment, null, full ? /* @__PURE__ */ React10.createElement("div", { className: "ld-habit-list ld-habit-list-full" }, list.map(renderHabit)) : /* @__PURE__ */ React10.createElement(React10.Fragment, null, previous.length > 0 && /* @__PURE__ */ React10.createElement("section", { className: "ld-previous-habits" }, /* @__PURE__ */ React10.createElement("h3", null, t3("yesterdayPending"), " \xB7 ", previous.length), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("previousHabitHint")), previous.map(({ habit, date }) => /* @__PURE__ */ React10.createElement("div", { className: "ld-habit", key: habit.id + date }, /* @__PURE__ */ React10.createElement("div", { className: "ld-habit-main" }, /* @__PURE__ */ React10.createElement(
+      "button",
+      {
+        className: "ld-task-body",
+        onClick: () => openLog(habit, date)
+      },
+      /* @__PURE__ */ React10.createElement("span", { className: "ld-task-title" }, habit.title),
+      /* @__PURE__ */ React10.createElement("span", { className: "ld-task-meta" }, date)
+    ), /* @__PURE__ */ React10.createElement(Btn, { disabled: busy, onClick: () => openLog(habit, date) }, t3("log")))))), groups.pending.length > 0 && /* @__PURE__ */ React10.createElement("div", { className: "ld-habit-list" }, groups.pending.map(renderHabit)), !groups.pending.length && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("noPendingHabits")), groups.done.length > 0 && /* @__PURE__ */ React10.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React10.createElement("summary", null, t3("doneHabits"), " \xB7 ", groups.done.length), groups.done.map(renderHabit)), groups.settled.length > 0 && /* @__PURE__ */ React10.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React10.createElement("summary", null, t3("settledHabits"), " \xB7 ", groups.settled.length), groups.settled.map(renderHabit)), showWeekly && weeklyBlock), review && /* @__PURE__ */ React10.createElement(
       ReviewCheckIn,
       {
         habit: review.habit,
@@ -32581,24 +33987,24 @@ function apply(ctx) {
         busy,
         close: () => setReview(null)
       }
-    ), record && /* @__PURE__ */ React9.createElement(
+    ), record && /* @__PURE__ */ React10.createElement(
       Modal,
       {
         title: record.title + " \xB7 " + recordDate,
         onClose: () => setRecord(null)
       },
-      /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, (() => {
+      /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, (() => {
         const mode = habitRule(record, recordDate)?.mode;
         return mode === "duration" ? t3("durationHint") : mode === "quantity" ? t3("quantityHint") : t3("checkInHint");
       })()),
-      /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, ["quantity", "duration"].includes(
+      /* @__PURE__ */ React10.createElement("div", { className: "ld-form" }, ["quantity", "duration"].includes(
         habitRule(record, recordDate)?.mode
-      ) && /* @__PURE__ */ React9.createElement(
+      ) && /* @__PURE__ */ React10.createElement(
         Field,
         {
           label: habitRule(record, recordDate)?.mode === "duration" ? t3("addMinutes") : t3("addValue")
         },
-        /* @__PURE__ */ React9.createElement(
+        /* @__PURE__ */ React10.createElement(
           "input",
           {
             type: "number",
@@ -32608,8 +34014,8 @@ function apply(ctx) {
             onChange: (e3) => setAmount(e3.target.value)
           }
         )
-      ), /* @__PURE__ */ React9.createElement(Field, { label: t3("note") }, /* @__PURE__ */ React9.createElement("input", { value: note, onChange: (e3) => setNote(e3.target.value) }))),
-      /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+      ), /* @__PURE__ */ React10.createElement(Field, { label: t3("note") }, /* @__PURE__ */ React10.createElement("input", { value: note, onChange: (e3) => setNote(e3.target.value) }))),
+      /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
         Btn,
         {
           primary: true,
@@ -32630,7 +34036,7 @@ function apply(ctx) {
         t3(
           habitRule(record, recordDate)?.mode === "duration" ? "recordMinutes" : habitRule(record, recordDate)?.mode === "quantity" ? "recordQuantity" : "check"
         )
-      ), /* @__PURE__ */ React9.createElement(
+      ), /* @__PURE__ */ React10.createElement(
         Btn,
         {
           disabled: busy,
@@ -32646,7 +34052,7 @@ function apply(ctx) {
           }
         },
         t3("skip")
-      ), /* @__PURE__ */ React9.createElement(
+      ), /* @__PURE__ */ React10.createElement(
         Btn,
         {
           disabled: busy || recordDate > today(timeZone),
@@ -32663,10 +34069,10 @@ function apply(ctx) {
         },
         t3("missedHabit")
       )),
-      /* @__PURE__ */ React9.createElement("h3", null, t3("history")),
-      live("habitLogs").filter(
+      /* @__PURE__ */ React10.createElement("h3", null, t3("history")),
+      live2("habitLogs").filter(
         (l3) => l3.habitId === record.id && l3.date === recordDate
-      ).map((l3) => /* @__PURE__ */ React9.createElement("div", { className: "ld-log", key: l3.id }, /* @__PURE__ */ React9.createElement("span", null, l3.missed ? t3("missedHabit") : l3.skipped ? t3("skipped") : l3.value + " " + (habitRule(record, recordDate)?.unit || ""), " ", l3.note), /* @__PURE__ */ React9.createElement(
+      ).map((l3) => /* @__PURE__ */ React10.createElement("div", { className: "ld-log", key: l3.id }, /* @__PURE__ */ React10.createElement("span", null, l3.missed ? t3("missedHabit") : l3.skipped ? t3("skipped") : l3.value + " " + (habitRule(record, recordDate)?.unit || ""), " ", l3.note), /* @__PURE__ */ React10.createElement(
         Btn,
         {
           disabled: busy,
@@ -32682,33 +34088,33 @@ function apply(ctx) {
     ));
   }
   function Review({ env }) {
-    const { data, day, timeZone, live, busy, run, tasks, projects } = env;
-    const [kind, setKind] = useState5("day");
+    const { data, day, timeZone, live: live2, busy, run, tasks, projects } = env;
+    const [kind, setKind] = useState6("day");
     const date = kind === "week" ? monday(day) : day;
     const switchKind = (k3) => setKind(k3);
     const from = kind === "week" ? date : day, to = kind === "week" ? shift(date, 6) : day;
-    const records = live("focusLogs").filter(
+    const records = live2("focusLogs").filter(
       (x4) => x4.date >= from && x4.date <= to
     );
-    const completed = live("occurrences").filter(
+    const completed = live2("occurrences").filter(
       (x4) => x4.status === "done" && x4.completedAt && today(timeZone, Date.parse(x4.completedAt)) >= from && today(timeZone, Date.parse(x4.completedAt)) <= to
     ).length + tasks.filter(
-      (x4) => x4.status === "done" && !live("occurrences").some(
+      (x4) => x4.status === "done" && !live2("occurrences").some(
         (o2) => o2.taskId === x4.id && o2.status === "done"
       ) && today(timeZone, Date.parse(x4.updatedAt)) >= from && today(timeZone, Date.parse(x4.updatedAt)) <= to
     ).length;
-    return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { onClick: () => switchKind("day"), "aria-pressed": kind === "day" }, t3("reviewDay")), /* @__PURE__ */ React9.createElement(
+    return /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { onClick: () => switchKind("day"), "aria-pressed": kind === "day" }, t3("reviewDay")), /* @__PURE__ */ React10.createElement(
       Btn,
       {
         onClick: () => switchKind("week"),
         "aria-pressed": kind === "week"
       },
       t3("reviewWeek")
-    )), /* @__PURE__ */ React9.createElement("div", { className: "ld-review-stats" }, /* @__PURE__ */ React9.createElement("div", null, /* @__PURE__ */ React9.createElement("strong", null, completed), /* @__PURE__ */ React9.createElement("span", null, t3("completed"))), /* @__PURE__ */ React9.createElement("div", null, /* @__PURE__ */ React9.createElement("strong", null, Math.floor(
+    )), /* @__PURE__ */ React10.createElement("div", { className: "ld-review-stats" }, /* @__PURE__ */ React10.createElement("div", null, /* @__PURE__ */ React10.createElement("strong", null, completed), /* @__PURE__ */ React10.createElement("span", null, t3("completed"))), /* @__PURE__ */ React10.createElement("div", null, /* @__PURE__ */ React10.createElement("strong", null, Math.floor(
       records.reduce((s3, x4) => s3 + x4.seconds, 0) / 60
-    )), /* @__PURE__ */ React9.createElement("span", null, t3("focused"), " \xB7 ", t3("min"))), /* @__PURE__ */ React9.createElement("div", null, /* @__PURE__ */ React9.createElement("strong", null, live("habitLogs").filter(
+    )), /* @__PURE__ */ React10.createElement("span", null, t3("focused"), " \xB7 ", t3("min"))), /* @__PURE__ */ React10.createElement("div", null, /* @__PURE__ */ React10.createElement("strong", null, live2("habitLogs").filter(
       (l3) => l3.date >= from && l3.date <= to && !l3.skipped
-    ).length), /* @__PURE__ */ React9.createElement("span", null, t3("check")))), /* @__PURE__ */ React9.createElement(
+    ).length), /* @__PURE__ */ React10.createElement("span", null, t3("check")))), /* @__PURE__ */ React10.createElement(
       ReviewEditor,
       {
         key: kind + ":" + date,
@@ -32717,16 +34123,16 @@ function apply(ctx) {
         kind,
         busy
       }
-    ), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h2", null, t3("savedLogs")), records.length ? records.map((r3) => /* @__PURE__ */ React9.createElement("div", { className: "ld-log", key: r3.id }, /* @__PURE__ */ React9.createElement("span", null, r3.date, " \xB7 ", r3.title || t3("directFocus")), /* @__PURE__ */ React9.createElement("span", null, Math.floor(r3.seconds / 60), " ", t3("min")))) : /* @__PURE__ */ React9.createElement("p", { className: "ld-muted" }, t3("noRecord"))), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h2", null, t3("projects")), projects.map((p3) => /* @__PURE__ */ React9.createElement("div", { className: "ld-log", key: p3.id }, /* @__PURE__ */ React9.createElement("span", null, p3.title), /* @__PURE__ */ React9.createElement("span", null, tasks.filter(
+    ), /* @__PURE__ */ React10.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React10.createElement("h2", null, t3("savedLogs")), records.length ? records.map((r3) => /* @__PURE__ */ React10.createElement("div", { className: "ld-log", key: r3.id }, /* @__PURE__ */ React10.createElement("span", null, r3.date, " \xB7 ", r3.title || t3("directFocus")), /* @__PURE__ */ React10.createElement("span", null, Math.floor(r3.seconds / 60), " ", t3("min")))) : /* @__PURE__ */ React10.createElement("p", { className: "ld-muted" }, t3("noRecord"))), /* @__PURE__ */ React10.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React10.createElement("h2", null, t3("projects")), projects.map((p3) => /* @__PURE__ */ React10.createElement("div", { className: "ld-log", key: p3.id }, /* @__PURE__ */ React10.createElement("span", null, p3.title), /* @__PURE__ */ React10.createElement("span", null, tasks.filter(
       (x4) => x4.projectId === p3.id && x4.status === "done"
     ).length, "/", tasks.filter((x4) => x4.projectId === p3.id).length)))));
   }
   function Calendar2({ env }) {
     const { data, day, tasks, habits, setDay, setTab, openTask } = env;
-    const [view, setView] = useState5("dayGridMonth"), [filter, setFilter] = useState5("all");
-    const [bounds, setBounds] = useState5([shift(day, -40), shift(day, 40)]);
+    const [view, setView] = useState6("dayGridMonth"), [filter, setFilter] = useState6("all");
+    const [bounds, setBounds] = useState6([shift(day, -40), shift(day, 40)]);
     const ref = useRef5(null);
-    useEffect5(() => {
+    useEffect6(() => {
       ref.current?.getApi().gotoDate(day);
     }, [day]);
     const range = occurrences(data, bounds[0], bounds[1]);
@@ -32760,12 +34166,32 @@ function apply(ctx) {
             });
         }
       }
-    const events = filter === "habits" ? habitEvents : [...ev, ...habitEvents];
-    return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, [
+    const lessonEvents = [];
+    if (filter === "all" || filter === "lessons") {
+      for (const l3 of data.lessons.filter((x4) => !x4.deletedAt))
+        for (const x4 of lessonOccurrences(data, l3, bounds[0], bounds[1]))
+          if (x4.status !== "skipped")
+            lessonEvents.push({
+              id: "lesson:" + x4.key,
+              title: x4.title + (x4.participant ? " \xB7 " + x4.participant : ""),
+              start: x4.date + (x4.time ? "T" + x4.time : ""),
+              end: x4.time && x4.durationMinutes ? new Date(
+                Date.parse(x4.date + "T" + x4.time + ":00Z") + x4.durationMinutes * 6e4
+              ).toISOString().replace("Z", "") : void 0,
+              allDay: !x4.time,
+              extendedProps: { lesson: x4 },
+              classNames: [
+                "ld-event-lesson",
+                x4.status === "done" ? "ld-event-done" : ""
+              ]
+            });
+    }
+    const events = filter === "habits" ? habitEvents : filter === "lessons" ? lessonEvents : [...ev, ...habitEvents, ...lessonEvents];
+    return /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, [
       ["dayGridMonth", "monthView"],
       ["timeGridWeek", "weekView"],
       ["timeGridDay", "dayView"]
-    ].map(([v3, label]) => /* @__PURE__ */ React9.createElement(
+    ].map(([v3, label]) => /* @__PURE__ */ React10.createElement(
       Btn,
       {
         key: v3,
@@ -32776,15 +34202,15 @@ function apply(ctx) {
         }
       },
       t3(label)
-    ))), /* @__PURE__ */ React9.createElement(
+    ))), /* @__PURE__ */ React10.createElement(
       "select",
       {
         "aria-label": t3("all"),
         value: filter,
         onChange: (e3) => setFilter(e3.target.value)
       },
-      ["all", "work", "life", "habits"].map((a3) => /* @__PURE__ */ React9.createElement("option", { key: a3, value: a3 }, t3(a3)))
-    )), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("calendarHint")), /* @__PURE__ */ React9.createElement(
+      ["all", "work", "life", "habits", "lessons"].map((a3) => /* @__PURE__ */ React10.createElement("option", { key: a3, value: a3 }, t3(a3)))
+    )), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("calendarHint")), /* @__PURE__ */ React10.createElement(
       FullCalendar,
       {
         ref,
@@ -32821,7 +34247,10 @@ function apply(ctx) {
         }),
         eventClick: (info) => {
           const p3 = info.event.extendedProps;
-          if (p3.habit) {
+          if (p3.lesson) {
+            setDay(p3.lesson.date);
+            env.openLesson({ type: "detail", lessonId: p3.lesson.lessonId });
+          } else if (p3.habit) {
             setDay(p3.date);
             setTab("habits");
           } else
@@ -32831,6 +34260,23 @@ function apply(ctx) {
             );
         },
         eventDrop: (info) => {
+          const lesson = info.event.extendedProps.lesson;
+          if (lesson) {
+            const date2 = info.event.startStr.slice(0, 10), time2 = info.event.allDay ? "" : info.event.startStr.slice(11, 16);
+            info.revert();
+            env.openLesson({
+              type: "session",
+              mode: "move",
+              lessonId: lesson.lessonId,
+              originalDate: lesson.originalDate,
+              sessionId: lesson.sessionId,
+              occurrence: lesson,
+              date: date2,
+              time: time2,
+              place: lesson.place
+            });
+            return;
+          }
           const x4 = info.event.extendedProps.source;
           const date = info.event.startStr.slice(0, 10), time = info.event.allDay ? "" : info.event.startStr.slice(11, 16);
           info.revert();
@@ -32856,11 +34302,11 @@ function apply(ctx) {
     saving,
     refresh: refresh2
   }) {
-    const [busy, setBusy] = useState5(false);
-    const [error, setError] = useState5("");
-    const [showNotes, setShowNotes] = useState5(false);
+    const [busy, setBusy] = useState6(false);
+    const [error, setError] = useState6("");
+    const [showNotes, setShowNotes] = useState6(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.8.1";
+    const current = v3.currentVersion || "0.9.0";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -32902,10 +34348,10 @@ function apply(ctx) {
     const pending = up.pending || null;
     const snapshots = up.snapshots || [];
     const upgraded = !!(pending && pending.targetVersion === current);
-    const [preparing, setPreparing] = useState5(false);
-    const [upgradeError, setUpgradeError] = useState5("");
-    const [blockers, setBlockers] = useState5([]);
-    const [restored, setRestored] = useState5("");
+    const [preparing, setPreparing] = useState6(false);
+    const [upgradeError, setUpgradeError] = useState6("");
+    const [blockers, setBlockers] = useState6([]);
+    const [restored, setRestored] = useState6("");
     const openUpgradeManager = () => {
       try {
         ctx.layout.selectPanel("plugins");
@@ -32979,8 +34425,8 @@ function apply(ctx) {
         setUpgradeError(e3?.message || t3("updateCheckFailed"));
       }
     };
-    const link = releaseUrl ? /* @__PURE__ */ React9.createElement("a", { className: "ld-btn", href: releaseUrl, target: "_blank", rel: "noreferrer" }, t3("viewRelease")) : null;
-    return /* @__PURE__ */ React9.createElement("section", { className: "ld-section ld-update", id: "ld-update" }, /* @__PURE__ */ React9.createElement("h2", null, t3("versionUpdate")), /* @__PURE__ */ React9.createElement("div", { className: "ld-update-meta" }, /* @__PURE__ */ React9.createElement("span", null, t3("currentVersion")), /* @__PURE__ */ React9.createElement("strong", null, "v", current), /* @__PURE__ */ React9.createElement("span", null, t3("installKindLabel")), /* @__PURE__ */ React9.createElement("strong", null, installText), /* @__PURE__ */ React9.createElement("span", null, t3("currentDsh")), /* @__PURE__ */ React9.createElement("strong", null, v3.dshVersion ? "v" + v3.dshVersion : t3("unknownValue")), /* @__PURE__ */ React9.createElement("span", null, t3("lastChecked")), /* @__PURE__ */ React9.createElement("strong", null, v3.lastCheck ? new Date(v3.lastCheck).toLocaleString() : t3("neverChecked"))), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions", style: { marginTop: 14 } }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, disabled: busy, onClick: () => void check(true) }, busy ? t3("checkingUpdate") : t3("checkNow")), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
+    const link = releaseUrl ? /* @__PURE__ */ React10.createElement("a", { className: "ld-btn", href: releaseUrl, target: "_blank", rel: "noreferrer" }, t3("viewRelease")) : null;
+    return /* @__PURE__ */ React10.createElement("section", { className: "ld-section ld-update", id: "ld-update" }, /* @__PURE__ */ React10.createElement("h2", null, t3("versionUpdate")), /* @__PURE__ */ React10.createElement("div", { className: "ld-update-meta" }, /* @__PURE__ */ React10.createElement("span", null, t3("currentVersion")), /* @__PURE__ */ React10.createElement("strong", null, "v", current), /* @__PURE__ */ React10.createElement("span", null, t3("installKindLabel")), /* @__PURE__ */ React10.createElement("strong", null, installText), /* @__PURE__ */ React10.createElement("span", null, t3("currentDsh")), /* @__PURE__ */ React10.createElement("strong", null, v3.dshVersion ? "v" + v3.dshVersion : t3("unknownValue")), /* @__PURE__ */ React10.createElement("span", null, t3("lastChecked")), /* @__PURE__ */ React10.createElement("strong", null, v3.lastCheck ? new Date(v3.lastCheck).toLocaleString() : t3("neverChecked"))), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions", style: { marginTop: 14 } }, /* @__PURE__ */ React10.createElement(Btn, { primary: true, disabled: busy, onClick: () => void check(true) }, busy ? t3("checkingUpdate") : t3("checkNow")), /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React10.createElement(
       "input",
       {
         type: "checkbox",
@@ -32988,7 +34434,7 @@ function apply(ctx) {
         disabled: busy,
         onChange: (e3) => void setAuto(e3.target.checked)
       }
-    ), t3("autoCheckUpdate"))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("autoCheckHint"), " ", t3("updateStableOnly")), v3.error && !error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, t3("updateCheckFailed"), "\uFF1A", v3.error.message), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error), v3.degraded === "feed" && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("feedFallbackNote")), state.kind === "none" && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("neverChecked")), state.kind === "latest" && /* @__PURE__ */ React9.createElement("p", { className: "ld-update-ok", role: "status" }, t3("upToDate"), " \xB7 v", state.version), (state.kind === "available" || state.kind === "unknown-compat") && /* @__PURE__ */ React9.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React9.createElement("strong", null, t3("updateFound"), " v", state.version), state.kind === "unknown-compat" && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("updateUnknownCompat"), " ", state.dshRange ? t3("compatRange") + " " + state.dshRange + "\u3002" : "", " ", !v3.dshVersion && t3("compatUnknownNote")), cache?.notes && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(
+    ), t3("autoCheckUpdate"))), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("autoCheckHint"), " ", t3("updateStableOnly")), v3.error && !error && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, t3("updateCheckFailed"), "\uFF1A", v3.error.message), error && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, error), v3.degraded === "feed" && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("feedFallbackNote")), state.kind === "none" && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("neverChecked")), state.kind === "latest" && /* @__PURE__ */ React10.createElement("p", { className: "ld-update-ok", role: "status" }, t3("upToDate"), " \xB7 v", state.version), (state.kind === "available" || state.kind === "unknown-compat") && /* @__PURE__ */ React10.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React10.createElement("strong", null, t3("updateFound"), " v", state.version), state.kind === "unknown-compat" && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("updateUnknownCompat"), " ", state.dshRange ? t3("compatRange") + " " + state.dshRange + "\u3002" : "", " ", !v3.dshVersion && t3("compatUnknownNote")), cache?.notes && /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement(
       "button",
       {
         type: "button",
@@ -32999,7 +34445,7 @@ function apply(ctx) {
       t3("releaseNotes"),
       " ",
       showNotes ? "\u2303" : "\u2304"
-    ), showNotes && /* @__PURE__ */ React9.createElement("pre", { className: "ld-release-notes" }, cache.notes)), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+    ), showNotes && /* @__PURE__ */ React10.createElement("pre", { className: "ld-release-notes" }, cache.notes)), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
       Btn,
       {
         primary: true,
@@ -33007,7 +34453,7 @@ function apply(ctx) {
         onClick: () => void startUpgrade(state.version)
       },
       preparing ? t3("checkingUpdate") : t3("prepareUpgrade")
-    ), link, /* @__PURE__ */ React9.createElement(Btn, { onClick: openUpgradeManager }, t3("openPluginManager")), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => void ignore(state.version) }, t3("ignoreVersion")))), state.kind === "incompatible" && /* @__PURE__ */ React9.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React9.createElement("strong", null, t3("updateIncompatible")), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("updateFound"), " v", state.version, " \xB7 ", t3("compatRange"), " ", state.dshRange, " \xB7 ", t3("currentDsh"), " v", state.dshVersion), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, link, /* @__PURE__ */ React9.createElement(Btn, { onClick: () => void ignore(state.version) }, t3("ignoreVersion")))), state.kind === "ignored" && /* @__PURE__ */ React9.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React9.createElement("strong", null, t3("updateIgnored"), " \xB7 v", state.version), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { onClick: () => void ignore("") }, t3("restoreVersionAlert")))), blockers.length > 0 && /* @__PURE__ */ React9.createElement("div", { className: "ld-update-card", role: "alert" }, /* @__PURE__ */ React9.createElement("strong", null, t3("prepareUpgrade")), blockers.map((x4) => /* @__PURE__ */ React9.createElement("p", { className: "ld-help", key: x4 }, x4))), upgradeError && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, upgradeError), restored && /* @__PURE__ */ React9.createElement("p", { className: "ld-update-ok", role: "status" }, restored), pending && /* @__PURE__ */ React9.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React9.createElement("strong", null, upgraded ? t3("upgradeDone") + " v" + current : t3("upgradePending") + " \xB7 v" + pending.targetVersion), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, upgraded ? t3("upgradeDone") + " v" + current + "\u3002" : t3("upgradePendingHint")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, upgraded ? /* @__PURE__ */ React9.createElement(Btn, { onClick: () => void dismissPending() }, t3("upgradeClearPending")) : /* @__PURE__ */ React9.createElement(Btn, { onClick: openUpgradeManager }, t3("openPluginManagerAgain")))), snapshots.length > 0 && /* @__PURE__ */ React9.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React9.createElement("strong", null, t3("snapshotsTitle"), " \xB7 ", snapshots.length), snapshots.slice().reverse().map((snap) => /* @__PURE__ */ React9.createElement("div", { className: "ld-snapshot-row", key: snap.id }, /* @__PURE__ */ React9.createElement("span", null, "v", snap.fromVersion, " \u2192 v", snap.targetVersion), /* @__PURE__ */ React9.createElement("small", null, new Date(snap.createdAt).toLocaleString()), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => void restore(snap) }, t3("snapshotRestore"))))), install === "development" && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("updateDevHint")), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("updateNetworkNote")));
+    ), link, /* @__PURE__ */ React10.createElement(Btn, { onClick: openUpgradeManager }, t3("openPluginManager")), /* @__PURE__ */ React10.createElement(Btn, { onClick: () => void ignore(state.version) }, t3("ignoreVersion")))), state.kind === "incompatible" && /* @__PURE__ */ React10.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React10.createElement("strong", null, t3("updateIncompatible")), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("updateFound"), " v", state.version, " \xB7 ", t3("compatRange"), " ", state.dshRange, " \xB7 ", t3("currentDsh"), " v", state.dshVersion), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, link, /* @__PURE__ */ React10.createElement(Btn, { onClick: () => void ignore(state.version) }, t3("ignoreVersion")))), state.kind === "ignored" && /* @__PURE__ */ React10.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React10.createElement("strong", null, t3("updateIgnored"), " \xB7 v", state.version), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { onClick: () => void ignore("") }, t3("restoreVersionAlert")))), blockers.length > 0 && /* @__PURE__ */ React10.createElement("div", { className: "ld-update-card", role: "alert" }, /* @__PURE__ */ React10.createElement("strong", null, t3("prepareUpgrade")), blockers.map((x4) => /* @__PURE__ */ React10.createElement("p", { className: "ld-help", key: x4 }, x4))), upgradeError && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, upgradeError), restored && /* @__PURE__ */ React10.createElement("p", { className: "ld-update-ok", role: "status" }, restored), pending && /* @__PURE__ */ React10.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React10.createElement("strong", null, upgraded ? t3("upgradeDone") + " v" + current : t3("upgradePending") + " \xB7 v" + pending.targetVersion), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, upgraded ? t3("upgradeDone") + " v" + current + "\u3002" : t3("upgradePendingHint")), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, upgraded ? /* @__PURE__ */ React10.createElement(Btn, { onClick: () => void dismissPending() }, t3("upgradeClearPending")) : /* @__PURE__ */ React10.createElement(Btn, { onClick: openUpgradeManager }, t3("openPluginManagerAgain")))), snapshots.length > 0 && /* @__PURE__ */ React10.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React10.createElement("strong", null, t3("snapshotsTitle"), " \xB7 ", snapshots.length), snapshots.slice().reverse().map((snap) => /* @__PURE__ */ React10.createElement("div", { className: "ld-snapshot-row", key: snap.id }, /* @__PURE__ */ React10.createElement("span", null, "v", snap.fromVersion, " \u2192 v", snap.targetVersion), /* @__PURE__ */ React10.createElement("small", null, new Date(snap.createdAt).toLocaleString()), /* @__PURE__ */ React10.createElement(Btn, { onClick: () => void restore(snap) }, t3("snapshotRestore"))))), install === "development" && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("updateDevHint")), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("updateNetworkNote")));
   }
   function SettingsView({ env }) {
     const {
@@ -33027,8 +34473,8 @@ function apply(ctx) {
       spiritBusy,
       refresh: refresh2
     } = env;
-    const [v3, setV] = useState5({ ...data.settings });
-    const [backup, setBackup] = useState5(null);
+    const [v3, setV] = useState6({ ...data.settings });
+    const [backup, setBackup] = useState6(null);
     const download = (obj) => {
       const url = URL.createObjectURL(
         new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" })
@@ -33039,19 +34485,19 @@ function apply(ctx) {
       a3.click();
       setTimeout(() => URL.revokeObjectURL(url), 1e3);
     };
-    return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("zone"), wide: true }, /* @__PURE__ */ React9.createElement(
+    return /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React10.createElement(Field, { label: t3("zone"), wide: true }, /* @__PURE__ */ React10.createElement(
       "input",
       {
         value: v3.timeZone,
         onChange: (e3) => setV({ ...v3, timeZone: e3.target.value })
       }
-    )), ["focusMinutes", "shortBreak", "longBreak"].map((k3, i3) => /* @__PURE__ */ React9.createElement(
+    )), ["focusMinutes", "shortBreak", "longBreak"].map((k3, i3) => /* @__PURE__ */ React10.createElement(
       Field,
       {
         key: k3,
         label: t3(["focusMinutes", "shortMinutes", "longMinutes"][i3])
       },
-      /* @__PURE__ */ React9.createElement(
+      /* @__PURE__ */ React10.createElement(
         "input",
         {
           type: "number",
@@ -33061,16 +34507,16 @@ function apply(ctx) {
           onChange: (e3) => setV({ ...v3, [k3]: Number(e3.target.value) })
         }
       )
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("mood") }, /* @__PURE__ */ React9.createElement(
+    )), /* @__PURE__ */ React10.createElement(Field, { label: t3("mood") }, /* @__PURE__ */ React10.createElement(
       "select",
       {
         value: v3.mood,
         onChange: (e3) => setV({ ...v3, mood: e3.target.value })
       },
-      ["daily", "bright", "focus", "calm"].map((m3) => /* @__PURE__ */ React9.createElement("option", { key: m3, value: m3 }, t3(
+      ["daily", "bright", "focus", "calm"].map((m3) => /* @__PURE__ */ React10.createElement("option", { key: m3, value: m3 }, t3(
         m3 === "daily" ? "moodDaily" : m3 === "focus" ? "moodFocus" : m3
       )))
-    )), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
+    )), /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React10.createElement(
       "input",
       {
         type: "checkbox",
@@ -33080,21 +34526,21 @@ function apply(ctx) {
           moodUntil: e3.target.checked ? today(timeZone) : ""
         })
       }
-    ), t3("moodOnlyToday")), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
+    ), t3("moodOnlyToday")), /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React10.createElement(
       "input",
       {
         type: "checkbox",
         checked: v3.sound,
         onChange: (e3) => setV({ ...v3, sound: e3.target.checked })
       }
-    ), t3("sound")), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
+    ), t3("sound")), /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React10.createElement(
       "input",
       {
         type: "checkbox",
         checked: v3.notifications,
         onChange: (e3) => setV({ ...v3, notifications: e3.target.checked })
       }
-    ), t3("notifications"))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("notifyHint"), " ", t3("soundsHelp")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+    ), t3("notifications"))), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("notifyHint"), " ", t3("soundsHelp")), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
       Btn,
       {
         primary: true,
@@ -33116,7 +34562,7 @@ function apply(ctx) {
         })
       },
       t3("save")
-    ), /* @__PURE__ */ React9.createElement(
+    ), /* @__PURE__ */ React10.createElement(
       Btn,
       {
         onClick: async () => {
@@ -33132,7 +34578,7 @@ function apply(ctx) {
         }
       },
       t3("permission")
-    )), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h2", null, t3("export"), " / ", t3("import")), /* @__PURE__ */ React9.createElement("p", { className: "ld-muted" }, t3("beforeRestore")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+    )), /* @__PURE__ */ React10.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React10.createElement("h2", null, t3("export"), " / ", t3("import")), /* @__PURE__ */ React10.createElement("p", { className: "ld-muted" }, t3("beforeRestore")), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
       Btn,
       {
         onClick: async () => {
@@ -33141,7 +34587,7 @@ function apply(ctx) {
         }
       },
       t3("export")
-    ), /* @__PURE__ */ React9.createElement("label", { className: "ld-btn ld-file" }, t3("import"), /* @__PURE__ */ React9.createElement(
+    ), /* @__PURE__ */ React10.createElement("label", { className: "ld-btn ld-file" }, t3("import"), /* @__PURE__ */ React10.createElement(
       "input",
       {
         type: "file",
@@ -33159,7 +34605,7 @@ function apply(ctx) {
           e3.target.value = "";
         }
       }
-    )), /* @__PURE__ */ React9.createElement(
+    )), /* @__PURE__ */ React10.createElement(
       Btn,
       {
         onClick: () => {
@@ -33168,7 +34614,7 @@ function apply(ctx) {
         }
       },
       t3("restorePrevious")
-    )), backup && /* @__PURE__ */ React9.createElement("div", { className: "ld-restore" }, /* @__PURE__ */ React9.createElement("p", null, t3("confirmRestore"), " \xB7 ", backup.exportedAt), /* @__PURE__ */ React9.createElement(
+    )), backup && /* @__PURE__ */ React10.createElement("div", { className: "ld-restore" }, /* @__PURE__ */ React10.createElement("p", null, t3("confirmRestore"), " \xB7 ", backup.exportedAt), /* @__PURE__ */ React10.createElement(
       Btn,
       {
         primary: true,
@@ -33183,7 +34629,7 @@ function apply(ctx) {
         }
       },
       t3("confirm")
-    ), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => setBackup(null) }, t3("cancel")))), /* @__PURE__ */ React9.createElement(
+    ), /* @__PURE__ */ React10.createElement(Btn, { onClick: () => setBackup(null) }, t3("cancel")))), /* @__PURE__ */ React10.createElement(
       UpdateSection,
       {
         update,
@@ -33202,15 +34648,15 @@ function apply(ctx) {
   }
   function App() {
     const { data, error, busy } = useStore();
-    const [tab, setTab] = useState5("today"), [project, setProject] = useState5(""), [selectedDay, setDay] = useState5(""), [search, setSearch] = useState5(""), [collapsed, setCollapsed] = useState5(false), [board, setBoard] = useState5(false), [editor, setEditor] = useState5(null), [message, setMessage] = useState5(""), [ai, setAi] = useState5(false), [lifeCategory, setLifeCategory] = useState5("");
-    const [captureOpen, setCaptureOpen] = useState5(false);
-    const [captureReset, setCaptureReset] = useState5(0);
-    const [templateOpen, setTemplateOpen] = useState5(false);
-    const [captureDirty, setCaptureDirty] = useState5(false);
+    const [tab, setTab] = useState6("today"), [project, setProject] = useState6(""), [selectedDay, setDay] = useState6(""), [search, setSearch] = useState6(""), [collapsed, setCollapsed] = useState6(false), [board, setBoard] = useState6(false), [editor, setEditor] = useState6(null), [message, setMessage] = useState6(""), [ai, setAi] = useState6(false), [lessonModal, setLessonModal] = useState6(null), [homeOpen, setHomeOpen] = useState6(false), [lifeCategory, setLifeCategory] = useState6("");
+    const [captureOpen, setCaptureOpen] = useState6(false);
+    const [captureReset, setCaptureReset] = useState6(0);
+    const [templateOpen, setTemplateOpen] = useState6(false);
+    const [captureDirty, setCaptureDirty] = useState6(false);
     const captureButton = useRef5(null);
-    const [updateView, setUpdateView] = useState5(null);
-    const [upgradeView, setUpgradeView] = useState5(null);
-    const [updateNotice, setUpdateNotice] = useState5("");
+    const [updateView, setUpdateView] = useState6(null);
+    const [upgradeView, setUpgradeView] = useState6(null);
+    const [updateNotice, setUpdateNotice] = useState6("");
     const updateChecking = useRef5(false);
     const spiritBusyRef = useRef5(false);
     const timeZone = data?.settings?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -33263,6 +34709,12 @@ function apply(ctx) {
       },
       ...extra
     });
+    const setHomeModules = (patch) => run({
+      action: "settings",
+      item: {
+        homeModules: { ...data.settings.homeModules, ...patch }
+      }
+    });
     const openHabit = (item) => setEditor({
       type: "habit",
       item: item || {
@@ -33286,12 +34738,12 @@ function apply(ctx) {
       setProject("");
       setSearch("");
     }
-    useEffect5(() => {
+    useEffect6(() => {
       if (!data) return;
       if (!selectedDay) setDay(today(timeZone));
     }, [data?.settings?.timeZone]);
     const rememberUpdate = (next) => setUpdateView(next);
-    useEffect5(() => {
+    useEffect6(() => {
       let alive = true;
       updateRequest("status").then((v3) => {
         if (alive) rememberUpdate(v3);
@@ -33305,7 +34757,7 @@ function apply(ctx) {
         alive = false;
       };
     }, []);
-    useEffect5(() => {
+    useEffect6(() => {
       const v3 = updateView;
       if (!v3?.prefs?.autoCheck || updateChecking.current) return;
       const interval = v3.autoInterval || 24 * 60 * 60 * 1e3;
@@ -33322,15 +34774,15 @@ function apply(ctx) {
       });
     }, [updateView?.prefs?.autoCheck, updateView?.lastCheck]);
     if (!data)
-      return /* @__PURE__ */ React9.createElement("div", { className: "ld-root" }, /* @__PURE__ */ React9.createElement("style", null, css), /* @__PURE__ */ React9.createElement("div", { className: "ld-loading" }, error || t3("loading"), " ", /* @__PURE__ */ React9.createElement(Btn, { onClick: () => void refresh() }, t3("retry"))));
-    const live = (c3) => data[c3].filter((x4) => !x4.deletedAt);
-    const projects = live("projects");
+      return /* @__PURE__ */ React10.createElement("div", { className: "ld-root" }, /* @__PURE__ */ React10.createElement("style", null, css), /* @__PURE__ */ React10.createElement("div", { className: "ld-loading" }, error || t3("loading"), " ", /* @__PURE__ */ React10.createElement(Btn, { onClick: () => void refresh() }, t3("retry"))));
+    const live2 = (c3) => data[c3].filter((x4) => !x4.deletedAt);
+    const projects = live2("projects");
     const query = search.trim().toLocaleLowerCase();
     const projectItem = projects.find((x4) => x4.id === project);
     const range = occurrences(data, shift(day, -365), shift(day, 366));
     const current = range.filter((x4) => x4.date === day);
-    const tasks = live("tasks");
-    const habits = live("habits");
+    const tasks = live2("tasks");
+    const habits = live2("habits");
     const planForDay = dailyPlan(data, day, range);
     const viewEnv = {
       data,
@@ -33341,7 +34793,7 @@ function apply(ctx) {
       run,
       openHabit,
       setDay,
-      live,
+      live: live2,
       tasks,
       projects,
       range,
@@ -33357,10 +34809,11 @@ function apply(ctx) {
       revision: data.revision,
       editorOpen: !!editor || captureDirty,
       spiritBusy: () => spiritBusyRef.current,
+      openLesson: (v3) => setLessonModal(v3),
       refresh
     };
     function taskRows(items, empty = true) {
-      return items.length ? /* @__PURE__ */ React9.createElement("div", { className: "ld-task-list" }, items.map((x4) => {
+      return items.length ? /* @__PURE__ */ React10.createElement("div", { className: "ld-task-list" }, items.map((x4) => {
         const isOccurrence = !!x4.originalDate;
         const done = x4.status === "done";
         const p3 = projects.find((p4) => p4.id === x4.projectId);
@@ -33383,13 +34836,13 @@ function apply(ctx) {
             item: { status: done ? "todo" : "done" }
           });
         };
-        return /* @__PURE__ */ React9.createElement(
+        return /* @__PURE__ */ React10.createElement(
           "div",
           {
             className: "ld-task " + (done ? "ld-task-done" : ""),
             key: x4.id + "@" + (x4.originalDate || "")
           },
-          x4.event ? /* @__PURE__ */ React9.createElement("span", { className: "ld-event-dot" }, /* @__PURE__ */ React9.createElement(Icon, { name: "calendar", size: 17 })) : /* @__PURE__ */ React9.createElement(
+          x4.event ? /* @__PURE__ */ React10.createElement("span", { className: "ld-event-dot" }, /* @__PURE__ */ React10.createElement(Icon, { name: "calendar", size: 17 })) : /* @__PURE__ */ React10.createElement(
             "button",
             {
               className: "ld-check",
@@ -33399,9 +34852,9 @@ function apply(ctx) {
               disabled: busy,
               onClick: complete
             },
-            done && /* @__PURE__ */ React9.createElement(Icon, { name: "check", size: 14 })
+            done && /* @__PURE__ */ React10.createElement(Icon, { name: "check", size: 14 })
           ),
-          /* @__PURE__ */ React9.createElement(
+          /* @__PURE__ */ React10.createElement(
             "button",
             {
               className: "ld-task-body",
@@ -33410,8 +34863,8 @@ function apply(ctx) {
                 isOccurrence ? { occurrence: x4 } : {}
               )
             },
-            /* @__PURE__ */ React9.createElement("span", { className: "ld-task-title" }, x4.priorityDate === day && /* @__PURE__ */ React9.createElement("span", { className: "ld-star" }, "\u2727 "), x4.title),
-            /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, [
+            /* @__PURE__ */ React10.createElement("span", { className: "ld-task-title" }, x4.priorityDate === day && /* @__PURE__ */ React10.createElement("span", { className: "ld-star" }, "\u2727 "), x4.title),
+            /* @__PURE__ */ React10.createElement("span", { className: "ld-task-meta" }, [
               p3?.title,
               x4.carriedFrom ? t3("carriedFrom") + " " + x4.carriedFrom + (x4.time ? " " + x4.time : "") : x4.date,
               x4.carriedFrom ? "" : x4.time,
@@ -33421,7 +34874,7 @@ function apply(ctx) {
               x4.repeat.kind === "lunar" && x4.date ? lunarLabel(x4.date) : "",
               x4.tag
             ].filter(Boolean).join(" \xB7 ")),
-            !x4.event && (x4.pomodoros || taskFocus(data, x4).completed) ? /* @__PURE__ */ React9.createElement(
+            !x4.event && (x4.pomodoros || taskFocus(data, x4).completed) ? /* @__PURE__ */ React10.createElement(
               Tomatoes,
               {
                 ...taskFocus(data, x4),
@@ -33429,7 +34882,7 @@ function apply(ctx) {
               }
             ) : null
           ),
-          /* @__PURE__ */ React9.createElement("div", { className: "ld-task-tools" }, tab === "today" && !done && !x4.event && /* @__PURE__ */ React9.createElement(React9.Fragment, null, x4.carriedFrom && x4.priorityDate !== day && /* @__PURE__ */ React9.createElement(
+          /* @__PURE__ */ React10.createElement("div", { className: "ld-task-tools" }, tab === "today" && !done && !x4.event && /* @__PURE__ */ React10.createElement(React10.Fragment, null, x4.carriedFrom && x4.priorityDate !== day && /* @__PURE__ */ React10.createElement(
             "button",
             {
               className: "ld-icon-btn",
@@ -33457,7 +34910,7 @@ function apply(ctx) {
             planForDay.backlog.some(
               (q3) => planKey(q3) === planKey(x4)
             ) ? "+" : "\u2212"
-          ), /* @__PURE__ */ React9.createElement(
+          ), /* @__PURE__ */ React10.createElement(
             "button",
             {
               className: "ld-icon-btn",
@@ -33477,7 +34930,7 @@ function apply(ctx) {
               })
             },
             "\u2727"
-          )), !done && !x4.event && /* @__PURE__ */ React9.createElement(
+          )), !done && !x4.event && /* @__PURE__ */ React10.createElement(
             "button",
             {
               className: "ld-icon-btn",
@@ -33491,8 +34944,8 @@ function apply(ctx) {
                 originalDate: x4.originalDate || x4.date
               })
             },
-            /* @__PURE__ */ React9.createElement(Icon, { name: "focus", size: 17 })
-          ), /* @__PURE__ */ React9.createElement(
+            /* @__PURE__ */ React10.createElement(Icon, { name: "focus", size: 17 })
+          ), /* @__PURE__ */ React10.createElement(
             "button",
             {
               className: "ld-icon-btn",
@@ -33503,22 +34956,22 @@ function apply(ctx) {
                 isOccurrence ? { occurrence: x4 } : {}
               )
             },
-            /* @__PURE__ */ React9.createElement(Icon, { name: "more", size: 18 })
+            /* @__PURE__ */ React10.createElement(Icon, { name: "more", size: 18 })
           ))
         );
-      })) : empty ? /* @__PURE__ */ React9.createElement("div", { className: "ld-empty" }, t3("empty")) : null;
+      })) : empty ? /* @__PURE__ */ React10.createElement("div", { className: "ld-empty" }, t3("empty")) : null;
     }
     function section(title2, items, extra) {
-      return /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React9.createElement("h2", null, title2), extra), taskRows(items));
+      return /* @__PURE__ */ React10.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React10.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React10.createElement("h2", null, title2), extra), taskRows(items));
     }
     function Body() {
       if (query) {
         const filtered = tasks.filter(
           (x4) => (x4.title + " " + x4.note).toLocaleLowerCase().includes(query)
         );
-        return /* @__PURE__ */ React9.createElement(React9.Fragment, null, taskRows(filtered), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, projects.filter(
+        return /* @__PURE__ */ React10.createElement(React10.Fragment, null, taskRows(filtered), /* @__PURE__ */ React10.createElement("section", { className: "ld-section" }, projects.filter(
           (p3) => (p3.title + " " + p3.goal).toLocaleLowerCase().includes(query)
-        ).map((p3) => /* @__PURE__ */ React9.createElement(
+        ).map((p3) => /* @__PURE__ */ React10.createElement(
           "button",
           {
             key: p3.id,
@@ -33529,99 +34982,184 @@ function apply(ctx) {
               setProject(p3.id);
             }
           },
-          /* @__PURE__ */ React9.createElement(Icon, { name: "projects" }),
+          /* @__PURE__ */ React10.createElement(Icon, { name: "projects" }),
           p3.title
         ))));
       }
       if (tab === "today") {
         const groups = planForDay;
         const priority = groups.priority;
-        return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-today-grid" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-main-col" }, !tasks.length && !habits.length && !projects.length && /* @__PURE__ */ React9.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React9.createElement(Icon, { name: "today", size: 30 }), /* @__PURE__ */ React9.createElement("h2", null, t3("startTitle")), /* @__PURE__ */ React9.createElement("p", null, t3("startText")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, onClick: () => openTask() }, t3("addTask")), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => setTemplateOpen(true) }, t3("addHabit")))), /* @__PURE__ */ React9.createElement(PlanPanel, { plan: groups, date: day, act, busy }), /* @__PURE__ */ React9.createElement(
-          FoldSection,
-          {
-            title: t3("priorities"),
-            count: priority.length + "/3",
-            id: "ld-fold-priority"
-          },
-          priority.length ? taskRows(priority) : /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("prioritiesEmpty"))
-        ), /* @__PURE__ */ React9.createElement(
-          FoldSection,
-          {
-            title: t3("schedule"),
-            count: groups.schedule.length,
-            id: "ld-fold-schedule"
-          },
-          groups.schedule.map(
-            (x4) => priority.some((p3) => p3.id === x4.id) ? /* @__PURE__ */ React9.createElement(
+        const main = homeModules(data.settings, "main");
+        const support = homeModules(data.settings, "support");
+        const setHome = (patch) => run({
+          action: "settings",
+          item: {
+            homeModules: { ...data.settings.homeModules, ...patch }
+          }
+        });
+        const foldProps = (id) => ({
+          id,
+          folded: isFolded(data.settings, id),
+          onFold: () => {
+            const folded = data.settings.homeModules.folded;
+            setHome({
+              folded: folded.includes(id) ? folded.filter((x4) => x4 !== id) : [...folded, id]
+            });
+          }
+        });
+        const weeklyVisible = support.some((m3) => m3.id === "weekly");
+        const renderMain = (id) => {
+          if (id === "plan")
+            return /* @__PURE__ */ React10.createElement(PlanPanel, { plan: groups, date: day, act, busy });
+          if (id === "lessons") return /* @__PURE__ */ React10.createElement(TodayLessons, { env: viewEnv });
+          if (id === "priority")
+            return /* @__PURE__ */ React10.createElement(
+              FoldSection,
+              {
+                title: t3("priorities"),
+                count: priority.length + "/3",
+                ...foldProps("priority")
+              },
+              priority.length ? taskRows(priority) : /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("prioritiesEmpty"))
+            );
+          if (id === "schedule")
+            return /* @__PURE__ */ React10.createElement(
+              FoldSection,
+              {
+                title: t3("schedule"),
+                count: groups.schedule.length,
+                ...foldProps("schedule")
+              },
+              groups.schedule.map(
+                (x4) => priority.some((p3) => p3.id === x4.id) ? /* @__PURE__ */ React10.createElement(
+                  "button",
+                  {
+                    className: "ld-time-index",
+                    key: x4.id + x4.originalDate,
+                    onClick: () => openTask(
+                      tasks.find((q3) => q3.id === x4.id),
+                      { occurrence: x4 }
+                    )
+                  },
+                  /* @__PURE__ */ React10.createElement("span", null, x4.time || t3("noTime")),
+                  /* @__PURE__ */ React10.createElement("span", null, x4.title),
+                  /* @__PURE__ */ React10.createElement("small", null, t3("priorities"))
+                ) : /* @__PURE__ */ React10.createElement(React10.Fragment, { key: x4.id + x4.originalDate }, taskRows([x4], false))
+              )
+            );
+          if (id === "planned")
+            return /* @__PURE__ */ React10.createElement(
+              FoldSection,
+              {
+                title: t3("plannedTodos"),
+                count: groups.todos.length,
+                ...foldProps("planned")
+              },
+              taskRows(groups.todos)
+            );
+          if (id === "carry")
+            return /* @__PURE__ */ React10.createElement(
+              FoldSection,
+              {
+                title: t3("carryBacklog"),
+                count: groups.backlog.length,
+                ...foldProps("carry")
+              },
+              /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("carryHint")),
+              taskRows(groups.backlog)
+            );
+          if (id === "due")
+            return groups.due.length ? /* @__PURE__ */ React10.createElement(
+              FoldSection,
+              {
+                title: t3("deadlineWatch"),
+                count: groups.due.length,
+                className: "ld-deadlines",
+                ...foldProps("due")
+              },
+              groups.due.map((x4) => /* @__PURE__ */ React10.createElement(
+                "button",
+                {
+                  className: "ld-time-index",
+                  key: x4.id,
+                  onClick: () => openTask(x4)
+                },
+                /* @__PURE__ */ React10.createElement("span", null, x4.deadline === day ? t3("dueToday") : x4.deadline < day ? t3("pastDeadline") : x4.deadline),
+                /* @__PURE__ */ React10.createElement("span", null, x4.title),
+                /* @__PURE__ */ React10.createElement("small", null, x4.date ? t3("originalPlan") + " " + x4.date : t3("noneDate"))
+              ))
+            ) : null;
+          if (id === "previous")
+            return groups.previousRecurring.length ? /* @__PURE__ */ React10.createElement(
+              FoldSection,
+              {
+                title: t3("earlierRecurring"),
+                count: groups.previousRecurring.length,
+                ...foldProps("previous")
+              },
+              taskRows(groups.previousRecurring)
+            ) : null;
+          if (id === "done")
+            return /* @__PURE__ */ React10.createElement(
+              FoldSection,
+              {
+                title: t3("done"),
+                count: groups.completed.length,
+                ...foldProps("done")
+              },
+              groups.completed.length ? taskRows(groups.completed, false) : /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("noneDone"))
+            );
+          if (id === "inbox")
+            return /* @__PURE__ */ React10.createElement(
+              FoldSection,
+              {
+                title: t3("inbox"),
+                count: inboxTasks(data).length,
+                ...foldProps("inbox")
+              },
+              inboxTasks(data).length ? taskRows(inboxTasks(data)) : /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("inboxEmpty"))
+            );
+          return null;
+        };
+        const renderSupport = (id) => {
+          if (id === "timer")
+            return /* @__PURE__ */ React10.createElement("div", { className: "ld-side-timer", key: id }, /* @__PURE__ */ React10.createElement(Timer, null));
+          if (id === "habits")
+            return /* @__PURE__ */ React10.createElement("section", { className: "ld-section", key: id }, /* @__PURE__ */ React10.createElement("h2", null, t3("todayHabits")), /* @__PURE__ */ React10.createElement(HabitCards, { env: viewEnv, showWeekly: !weeklyVisible }));
+          if (id === "weekly")
+            return /* @__PURE__ */ React10.createElement(HabitCards, { weeklyOnly: true, env: viewEnv, key: id });
+          if (id === "upcoming")
+            return /* @__PURE__ */ React10.createElement("section", { className: "ld-section", key: id }, /* @__PURE__ */ React10.createElement("h2", null, t3("upcoming")), range.filter(
+              (x4) => x4.date > day && x4.date <= shift(day, 14) && (x4.event || x4.reminderMinutes !== null || x4.deadline) && !["done", "cancelled", "skipped"].includes(x4.status)
+            ).slice(0, 5).map((x4) => /* @__PURE__ */ React10.createElement(
               "button",
               {
-                className: "ld-time-index",
                 key: x4.id + x4.originalDate,
+                className: "ld-upcoming",
                 onClick: () => openTask(
                   tasks.find((q3) => q3.id === x4.id),
                   { occurrence: x4 }
                 )
               },
-              /* @__PURE__ */ React9.createElement("span", null, x4.time || t3("noTime")),
-              /* @__PURE__ */ React9.createElement("span", null, x4.title),
-              /* @__PURE__ */ React9.createElement("small", null, t3("priorities"))
-            ) : /* @__PURE__ */ React9.createElement(React9.Fragment, { key: x4.id + x4.originalDate }, taskRows([x4], false))
-          )
-        ), /* @__PURE__ */ React9.createElement(
-          FoldSection,
+              /* @__PURE__ */ React10.createElement("strong", null, x4.title),
+              /* @__PURE__ */ React10.createElement("span", null, x4.date, x4.repeat.kind === "lunar" ? " \xB7 " + lunarLabel(x4.date) : "")
+            )), !range.some(
+              (x4) => x4.date > day && x4.date <= shift(day, 14) && (x4.event || x4.reminderMinutes !== null || x4.deadline) && !["done", "cancelled", "skipped"].includes(x4.status)
+            ) && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("noUpcoming")));
+          return null;
+        };
+        return /* @__PURE__ */ React10.createElement(React10.Fragment, null, !tasks.length && !habits.length && !projects.length && /* @__PURE__ */ React10.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React10.createElement(Icon, { name: "today", size: 30 }), /* @__PURE__ */ React10.createElement("h2", null, t3("startTitle")), /* @__PURE__ */ React10.createElement("p", null, t3("startText")), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { primary: true, onClick: () => openTask() }, t3("addTask")), /* @__PURE__ */ React10.createElement(Btn, { onClick: () => setTemplateOpen(true) }, t3("addHabit")))), /* @__PURE__ */ React10.createElement(
+          "div",
           {
-            title: t3("plannedTodos"),
-            count: groups.todos.length,
-            id: "ld-fold-planned"
+            className: "ld-today-grid" + (support.length ? "" : " ld-single-col")
           },
-          taskRows(groups.todos)
-        ), /* @__PURE__ */ React9.createElement(
-          FoldSection,
-          {
-            title: t3("carryBacklog"),
-            count: groups.backlog.length,
-            id: "ld-fold-carry"
-          },
-          /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("carryHint")),
-          taskRows(groups.backlog)
-        ), groups.due.length > 0 && /* @__PURE__ */ React9.createElement(
-          FoldSection,
-          {
-            title: t3("deadlineWatch"),
-            count: groups.due.length,
-            id: "ld-fold-due",
-            className: "ld-deadlines"
-          },
-          groups.due.map((x4) => /* @__PURE__ */ React9.createElement(
-            "button",
-            {
-              className: "ld-time-index",
-              key: x4.id,
-              onClick: () => openTask(x4)
-            },
-            /* @__PURE__ */ React9.createElement("span", null, x4.deadline === day ? t3("dueToday") : x4.deadline < day ? t3("pastDeadline") : x4.deadline),
-            /* @__PURE__ */ React9.createElement("span", null, x4.title),
-            /* @__PURE__ */ React9.createElement("small", null, x4.date ? t3("originalPlan") + " " + x4.date : t3("noneDate"))
-          ))
-        ), /* @__PURE__ */ React9.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React9.createElement("summary", null, t3("done"), " \xB7 ", groups.completed.length), taskRows(groups.completed, false)), groups.previousRecurring.length > 0 && /* @__PURE__ */ React9.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React9.createElement("summary", null, t3("earlierRecurring"), " \xB7", " ", groups.previousRecurring.length), taskRows(groups.previousRecurring)), /* @__PURE__ */ React9.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React9.createElement("summary", null, t3("inbox"), " \xB7 ", inboxTasks(data).length), taskRows(inboxTasks(data)))), /* @__PURE__ */ React9.createElement("aside", { className: "ld-support" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-side-timer" }, /* @__PURE__ */ React9.createElement(Timer, null)), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h2", null, t3("todayHabits")), /* @__PURE__ */ React9.createElement(HabitCards, { env: viewEnv })), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h2", null, t3("upcoming")), range.filter(
-          (x4) => x4.date > day && x4.date <= shift(day, 14) && (x4.event || x4.reminderMinutes !== null || x4.deadline) && !["done", "cancelled", "skipped"].includes(x4.status)
-        ).slice(0, 5).map((x4) => /* @__PURE__ */ React9.createElement(
-          "button",
-          {
-            key: x4.id + x4.originalDate,
-            className: "ld-upcoming",
-            onClick: () => openTask(
-              tasks.find((q3) => q3.id === x4.id),
-              { occurrence: x4 }
-            )
-          },
-          /* @__PURE__ */ React9.createElement("strong", null, x4.title),
-          /* @__PURE__ */ React9.createElement("span", null, x4.date, x4.repeat.kind === "lunar" ? " \xB7 " + lunarLabel(x4.date) : "")
-        ))))));
+          /* @__PURE__ */ React10.createElement("div", { className: "ld-main-col" }, main.length ? main.map((m3) => /* @__PURE__ */ React10.createElement(React10.Fragment, { key: m3.id }, renderMain(m3.id))) : /* @__PURE__ */ React10.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React10.createElement(Icon, { name: "today", size: 28 }), /* @__PURE__ */ React10.createElement("h2", null, t3("homeAllHidden")), /* @__PURE__ */ React10.createElement("p", null, t3("homeAllHiddenHint")), /* @__PURE__ */ React10.createElement(Btn, { primary: true, onClick: () => setHomeOpen(true) }, t3("homeCustomize")))),
+          !!support.length && /* @__PURE__ */ React10.createElement("aside", { className: "ld-support" }, support.map((m3) => /* @__PURE__ */ React10.createElement(React10.Fragment, { key: m3.id }, renderSupport(m3.id))))
+        ));
       }
       if (tab === "projects") {
         if (!project)
-          return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+          return /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
             Btn,
             {
               primary: true,
@@ -33640,36 +35178,36 @@ function apply(ctx) {
             t3("addProject")
           )), projects.length ? Array.from(
             new Set(projects.map((p3) => p3.group || t3("projects")))
-          ).map((group) => /* @__PURE__ */ React9.createElement("section", { key: group, className: "ld-section" }, /* @__PURE__ */ React9.createElement("h2", null, group), projects.filter((p3) => (p3.group || t3("projects")) === group).map((p3) => {
+          ).map((group) => /* @__PURE__ */ React10.createElement("section", { key: group, className: "ld-section" }, /* @__PURE__ */ React10.createElement("h2", null, group), projects.filter((p3) => (p3.group || t3("projects")) === group).map((p3) => {
             const list2 = tasks.filter(
               (x4) => x4.projectId === p3.id
             );
-            return /* @__PURE__ */ React9.createElement(
+            return /* @__PURE__ */ React10.createElement(
               "button",
               {
                 key: p3.id,
                 className: "ld-project-row",
                 onClick: () => setProject(p3.id)
               },
-              /* @__PURE__ */ React9.createElement(Icon, { name: "projects" }),
-              /* @__PURE__ */ React9.createElement("span", null, /* @__PURE__ */ React9.createElement("strong", null, p3.title), /* @__PURE__ */ React9.createElement("small", null, t3(p3.status), p3.deadline ? " \xB7 " + p3.deadline : "")),
-              /* @__PURE__ */ React9.createElement("span", { className: "ld-muted" }, list2.filter((x4) => x4.status === "done").length, "/", list2.length),
-              /* @__PURE__ */ React9.createElement(Icon, { name: "chevron", size: 16 })
+              /* @__PURE__ */ React10.createElement(Icon, { name: "projects" }),
+              /* @__PURE__ */ React10.createElement("span", null, /* @__PURE__ */ React10.createElement("strong", null, p3.title), /* @__PURE__ */ React10.createElement("small", null, t3(p3.status), p3.deadline ? " \xB7 " + p3.deadline : "")),
+              /* @__PURE__ */ React10.createElement("span", { className: "ld-muted" }, list2.filter((x4) => x4.status === "done").length, "/", list2.length),
+              /* @__PURE__ */ React10.createElement(Icon, { name: "chevron", size: 16 })
             );
-          }))) : /* @__PURE__ */ React9.createElement("p", { className: "ld-empty" }, t3("empty")));
+          }))) : /* @__PURE__ */ React10.createElement("p", { className: "ld-empty" }, t3("empty")));
         const list = tasks.filter((x4) => x4.projectId === project);
-        return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React9.createElement(Btn, { onClick: () => setProject("") }, "\u2190 ", t3("projects")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { "aria-pressed": !board, onClick: () => setBoard(false) }, t3("list")), /* @__PURE__ */ React9.createElement(Btn, { "aria-pressed": board, onClick: () => setBoard(true) }, t3("board")), /* @__PURE__ */ React9.createElement(
+        return /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React10.createElement(Btn, { onClick: () => setProject("") }, "\u2190 ", t3("projects")), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { "aria-pressed": !board, onClick: () => setBoard(false) }, t3("list")), /* @__PURE__ */ React10.createElement(Btn, { "aria-pressed": board, onClick: () => setBoard(true) }, t3("board")), /* @__PURE__ */ React10.createElement(
           Btn,
           {
             onClick: () => setEditor({ type: "project", item: projectItem })
           },
           t3("edit")
-        ))), /* @__PURE__ */ React9.createElement("p", { className: "ld-project-goal" }, projectItem?.goal), /* @__PURE__ */ React9.createElement(Btn, { primary: true, icon: "plus", onClick: () => openTask() }, t3("addTask")), board ? /* @__PURE__ */ React9.createElement("div", { className: "ld-board" }, ["todo", "doing", "done"].map((status) => /* @__PURE__ */ React9.createElement("section", { key: status }, /* @__PURE__ */ React9.createElement("h3", null, t3(status), " \xB7", " ", list.filter((x4) => x4.status === status).length), taskRows(list.filter((x4) => x4.status === status))))) : taskRows(list));
+        ))), /* @__PURE__ */ React10.createElement("p", { className: "ld-project-goal" }, projectItem?.goal), /* @__PURE__ */ React10.createElement(Btn, { primary: true, icon: "plus", onClick: () => openTask() }, t3("addTask")), board ? /* @__PURE__ */ React10.createElement("div", { className: "ld-board" }, ["todo", "doing", "done"].map((status) => /* @__PURE__ */ React10.createElement("section", { key: status }, /* @__PURE__ */ React10.createElement("h3", null, t3(status), " \xB7", " ", list.filter((x4) => x4.status === status).length), taskRows(list.filter((x4) => x4.status === status))))) : taskRows(list));
       }
       if (tab === "habits")
-        return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, icon: "plus", onClick: () => setTemplateOpen(true) }, t3("addHabit"))), /* @__PURE__ */ React9.createElement(HabitCards, { full: true, env: viewEnv }));
+        return /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { primary: true, icon: "plus", onClick: () => setTemplateOpen(true) }, t3("addHabit"))), /* @__PURE__ */ React10.createElement(HabitCards, { full: true, env: viewEnv }));
       if (tab === "life")
-        return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React9.createElement(
+        return /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React10.createElement(
           Btn,
           {
             primary: true,
@@ -33677,8 +35215,8 @@ function apply(ctx) {
             onClick: () => openTask({ area: "life", tag: lifeCategory })
           },
           t3("addLife")
-        )), /* @__PURE__ */ React9.createElement("p", { className: "ld-help ld-life-template-help" }, t3("lifeTemplateHelp")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions ld-life-templates" }, ["subscription", "payment", "shopping", "anniversary"].map(
-          (k3) => /* @__PURE__ */ React9.createElement(
+        )), /* @__PURE__ */ React10.createElement("p", { className: "ld-help ld-life-template-help" }, t3("lifeTemplateHelp")), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions ld-life-templates" }, ["subscription", "payment", "shopping", "anniversary"].map(
+          (k3) => /* @__PURE__ */ React10.createElement(
             Btn,
             {
               key: k3,
@@ -33699,7 +35237,7 @@ function apply(ctx) {
             },
             t3(k3)
           )
-        )), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions ld-life-filters" }, /* @__PURE__ */ React9.createElement(
+        )), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions ld-life-filters" }, /* @__PURE__ */ React10.createElement(
           Btn,
           {
             "aria-pressed": !lifeCategory,
@@ -33710,7 +35248,7 @@ function apply(ctx) {
           ...new Set(
             tasks.filter((x4) => x4.area === "life" && x4.tag).map((x4) => x4.tag)
           )
-        ].map((tag) => /* @__PURE__ */ React9.createElement(
+        ].map((tag) => /* @__PURE__ */ React10.createElement(
           Btn,
           {
             key: tag,
@@ -33724,12 +35262,20 @@ function apply(ctx) {
             (x4) => x4.area === "life" && (!lifeCategory || x4.tag === lifeCategory)
           )
         ));
-      if (tab === "calendar") return /* @__PURE__ */ React9.createElement(Calendar2, { env: viewEnv });
-      if (tab === "review") return /* @__PURE__ */ React9.createElement(Review, { env: viewEnv });
-      if (tab === "settings") return /* @__PURE__ */ React9.createElement(SettingsView, { env: viewEnv });
+      if (tab === "lessons") return /* @__PURE__ */ React10.createElement(LessonsPage, { env: viewEnv });
+      if (tab === "calendar") return /* @__PURE__ */ React10.createElement(Calendar2, { env: viewEnv });
+      if (tab === "review") return /* @__PURE__ */ React10.createElement(Review, { env: viewEnv });
+      if (tab === "settings") return /* @__PURE__ */ React10.createElement(SettingsView, { env: viewEnv });
       if (tab === "trash")
-        return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("p", { className: "ld-muted" }, t3("recover")), ["projects", "tasks", "habits", "reviews", "focusLogs"].flatMap(
-          (c3) => data[c3].filter((x4) => x4.deletedAt).map((x4) => /* @__PURE__ */ React9.createElement("div", { className: "ld-log", key: x4.id }, /* @__PURE__ */ React9.createElement("span", null, x4.title || x4.date, " \xB7 ", t3(c3 === "tasks" ? "todos" : c3)), /* @__PURE__ */ React9.createElement(
+        return /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("p", { className: "ld-muted" }, t3("recover")), [
+          "projects",
+          "tasks",
+          "habits",
+          "lessons",
+          "reviews",
+          "focusLogs"
+        ].flatMap(
+          (c3) => data[c3].filter((x4) => x4.deletedAt).map((x4) => /* @__PURE__ */ React10.createElement("div", { className: "ld-log", key: x4.id }, /* @__PURE__ */ React10.createElement("span", null, x4.title || x4.date, " \xB7 ", t3(c3 === "tasks" ? "todos" : c3)), /* @__PURE__ */ React10.createElement(
             Btn,
             {
               disabled: busy,
@@ -33738,7 +35284,7 @@ function apply(ctx) {
             t3("restore")
           )))
         ));
-      return /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("inboxHelp")), /* @__PURE__ */ React9.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React9.createElement("h2", null, t3("awaitingTriage"), " \xB7 ", inboxTasks(data).length), inboxTasks(data).map((task) => /* @__PURE__ */ React9.createElement(
+      return /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("inboxHelp")), /* @__PURE__ */ React10.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React10.createElement("h2", null, t3("awaitingTriage"), " \xB7 ", inboxTasks(data).length), inboxTasks(data).map((task) => /* @__PURE__ */ React10.createElement(
         InboxItem,
         {
           key: task.id,
@@ -33749,7 +35295,7 @@ function apply(ctx) {
           onEdit: openTask,
           day
         }
-      )), !inboxTasks(data).length && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("empty"))), section(
+      )), !inboxTasks(data).length && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("empty"))), section(
         t3("organizedUnscheduled"),
         tasks.filter(
           (x4) => !x4.date && x4.status !== "done" && !inboxTasks(data).some((q3) => q3.id === x4.id)
@@ -33757,7 +35303,7 @@ function apply(ctx) {
       ));
     }
     const title = projectItem && tab === "projects" ? projectItem.title : tab === "today" && day !== today(timeZone) ? day : t3(tab);
-    return /* @__PURE__ */ React9.createElement(Ambient, { data }, /* @__PURE__ */ React9.createElement("style", null, css), /* @__PURE__ */ React9.createElement(
+    return /* @__PURE__ */ React10.createElement(Ambient, { data }, /* @__PURE__ */ React10.createElement("style", null, css), /* @__PURE__ */ React10.createElement(
       "div",
       {
         className: "ld-shell " + (collapsed ? "ld-collapsed " : "") + (ai ? "ld-spirit-open" : ""),
@@ -33769,7 +35315,7 @@ function apply(ctx) {
           }
         }
       },
-      /* @__PURE__ */ React9.createElement("nav", { className: "ld-nav", "aria-label": t3("title") }, /* @__PURE__ */ React9.createElement("div", { className: "ld-brand" }, /* @__PURE__ */ React9.createElement(Icon, { name: "review", size: 22 }), !collapsed && /* @__PURE__ */ React9.createElement("span", null, t3("title"))), /* @__PURE__ */ React9.createElement(
+      /* @__PURE__ */ React10.createElement("nav", { className: "ld-nav", "aria-label": t3("title") }, /* @__PURE__ */ React10.createElement("div", { className: "ld-brand" }, /* @__PURE__ */ React10.createElement(Icon, { name: "review", size: 22 }), !collapsed && /* @__PURE__ */ React10.createElement("span", null, t3("title"))), /* @__PURE__ */ React10.createElement(
         "button",
         {
           className: "ld-nav-add",
@@ -33781,9 +35327,9 @@ function apply(ctx) {
           title: t3("quickCapture") + " \xB7 \u2318/Ctrl+Shift+K",
           onClick: () => setCaptureOpen(!captureOpen)
         },
-        /* @__PURE__ */ React9.createElement(Icon, { name: "plus" }),
+        /* @__PURE__ */ React10.createElement(Icon, { name: "plus" }),
         !collapsed && t3("quickCapture")
-      ), /* @__PURE__ */ React9.createElement("div", { className: "ld-nav-items" }, [...NAV, "inbox"].map((n2) => /* @__PURE__ */ React9.createElement(
+      ), /* @__PURE__ */ React10.createElement("div", { className: "ld-nav-items" }, [...NAV, "inbox"].map((n2) => /* @__PURE__ */ React10.createElement(
         "button",
         {
           key: n2,
@@ -33792,11 +35338,11 @@ function apply(ctx) {
           "aria-current": tab === n2 ? "page" : void 0,
           onClick: () => go(n2)
         },
-        /* @__PURE__ */ React9.createElement(Icon, { name: n2 }),
-        !collapsed && /* @__PURE__ */ React9.createElement("span", null, t3(n2), n2 === "inbox" && inboxTasks(data).length > 0 ? " \xB7 " + inboxTasks(data).length : "")
+        /* @__PURE__ */ React10.createElement(Icon, { name: n2 }),
+        !collapsed && /* @__PURE__ */ React10.createElement("span", null, t3(n2), n2 === "inbox" && inboxTasks(data).length > 0 ? " \xB7 " + inboxTasks(data).length : "")
       ))), !collapsed && projects.filter(
         (p3) => p3.status !== "done" && p3.status !== "paused"
-      ).slice(0, 6).map((p3) => /* @__PURE__ */ React9.createElement(
+      ).slice(0, 6).map((p3) => /* @__PURE__ */ React10.createElement(
         "button",
         {
           key: p3.id,
@@ -33807,25 +35353,25 @@ function apply(ctx) {
             setSearch("");
           }
         },
-        /* @__PURE__ */ React9.createElement("span", { className: "ld-project-bullet" }),
+        /* @__PURE__ */ React10.createElement("span", { className: "ld-project-bullet" }),
         p3.title
-      )), /* @__PURE__ */ React9.createElement("div", { className: "ld-nav-bottom" }, ["settings", "trash"].map((n2) => /* @__PURE__ */ React9.createElement("button", { key: n2, title: t3(n2), onClick: () => go(n2) }, /* @__PURE__ */ React9.createElement(Icon, { name: n2 }), !collapsed && t3(n2))), /* @__PURE__ */ React9.createElement(
+      )), /* @__PURE__ */ React10.createElement("div", { className: "ld-nav-bottom" }, ["settings", "trash"].map((n2) => /* @__PURE__ */ React10.createElement("button", { key: n2, title: t3(n2), onClick: () => go(n2) }, /* @__PURE__ */ React10.createElement(Icon, { name: n2 }), !collapsed && t3(n2))), /* @__PURE__ */ React10.createElement(
         "button",
         {
           onClick: () => setCollapsed(!collapsed),
           title: t3(collapsed ? "expand" : "collapse")
         },
-        /* @__PURE__ */ React9.createElement(Icon, { name: "chevron", size: 18 }),
+        /* @__PURE__ */ React10.createElement(Icon, { name: "chevron", size: 18 }),
         !collapsed && t3("collapse")
       ))),
-      /* @__PURE__ */ React9.createElement("div", { className: "ld-workspace" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-toolbar-wrap" }, /* @__PURE__ */ React9.createElement(
+      /* @__PURE__ */ React10.createElement("div", { className: "ld-workspace" }, /* @__PURE__ */ React10.createElement("div", { className: "ld-toolbar-wrap" }, /* @__PURE__ */ React10.createElement(
         "div",
         {
           className: "ld-page-top",
           role: "region",
           "aria-label": t3("workspaceActions")
         },
-        /* @__PURE__ */ React9.createElement("div", { className: "ld-search" }, /* @__PURE__ */ React9.createElement(Icon, { name: "search", size: 17 }), /* @__PURE__ */ React9.createElement(
+        /* @__PURE__ */ React10.createElement("div", { className: "ld-search" }, /* @__PURE__ */ React10.createElement(Icon, { name: "search", size: 17 }), /* @__PURE__ */ React10.createElement(
           "input",
           {
             value: search,
@@ -33834,7 +35380,7 @@ function apply(ctx) {
             "aria-label": t3("search")
           }
         )),
-        /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+        /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
           "select",
           {
             className: "ld-mood",
@@ -33845,17 +35391,17 @@ function apply(ctx) {
               item: { mood: e3.target.value }
             })
           },
-          ["daily", "bright", "focus", "calm"].map((m3) => /* @__PURE__ */ React9.createElement("option", { key: m3, value: m3 }, t3(
+          ["daily", "bright", "focus", "calm"].map((m3) => /* @__PURE__ */ React10.createElement("option", { key: m3, value: m3 }, t3(
             m3 === "daily" ? "moodDaily" : m3 === "focus" ? "moodFocus" : m3
           )))
-        ), /* @__PURE__ */ React9.createElement(Btn, { "aria-pressed": ai, onClick: () => setAi(!ai) }, /* @__PURE__ */ React9.createElement(
+        ), /* @__PURE__ */ React10.createElement(Btn, { "aria-pressed": ai, onClick: () => setAi(!ai) }, /* @__PURE__ */ React10.createElement(
           SpiritIcon,
           {
             size: 32,
             reducedMotion: data.settings.reduceMotion
           }
         ), t3("spirit")))
-      ), /* @__PURE__ */ React9.createElement(
+      ), /* @__PURE__ */ React10.createElement(
         QuickCapture,
         {
           open: captureOpen,
@@ -33878,13 +35424,13 @@ function apply(ctx) {
             else reviewDrafts.delete("quick-capture");
           }
         }
-      )), /* @__PURE__ */ React9.createElement(
+      )), /* @__PURE__ */ React10.createElement(
         "main",
         {
           className: "ld-content " + (tab !== "today" ? "ld-not-today" : "")
         },
-        /* @__PURE__ */ React9.createElement("div", { className: "ld-top-timer" }, /* @__PURE__ */ React9.createElement(Timer, { bar: true })),
-        /* @__PURE__ */ React9.createElement("header", { className: "ld-page-heading" }, /* @__PURE__ */ React9.createElement("div", null, /* @__PURE__ */ React9.createElement("div", { className: "ld-eyebrow" }, tab === "today" ? new Intl.DateTimeFormat(
+        /* @__PURE__ */ React10.createElement("div", { className: "ld-top-timer" }, /* @__PURE__ */ React10.createElement(Timer, { bar: true })),
+        /* @__PURE__ */ React10.createElement("header", { className: "ld-page-heading" }, /* @__PURE__ */ React10.createElement("div", null, /* @__PURE__ */ React10.createElement("div", { className: "ld-eyebrow" }, tab === "today" ? new Intl.DateTimeFormat(
           ctx.locale.getLocale().active.startsWith("zh") ? "zh-CN" : "en",
           {
             weekday: "long",
@@ -33892,14 +35438,14 @@ function apply(ctx) {
             day: "numeric",
             timeZone: "UTC"
           }
-        ).format(/* @__PURE__ */ new Date(day + "T12:00:00Z")) : t3("appSubtitle")), /* @__PURE__ */ React9.createElement("h1", null, title)), /* @__PURE__ */ React9.createElement("div", { className: "ld-day-nav" }, /* @__PURE__ */ React9.createElement(
+        ).format(/* @__PURE__ */ new Date(day + "T12:00:00Z")) : t3("appSubtitle")), /* @__PURE__ */ React10.createElement("h1", null, title)), /* @__PURE__ */ React10.createElement("div", { className: "ld-day-nav" }, /* @__PURE__ */ React10.createElement(
           "button",
           {
             "aria-label": "Previous day",
             onClick: () => setDay(shift(day, tab === "review" ? -7 : -1))
           },
           "\u2039"
-        ), /* @__PURE__ */ React9.createElement(
+        ), /* @__PURE__ */ React10.createElement(
           "input",
           {
             type: "date",
@@ -33909,24 +35455,24 @@ function apply(ctx) {
               if (e3.target.value) setDay(e3.target.value);
             }
           }
-        ), /* @__PURE__ */ React9.createElement(
+        ), /* @__PURE__ */ React10.createElement(
           "button",
           {
             "aria-label": "Next day",
             onClick: () => setDay(shift(day, tab === "review" ? 7 : 1))
           },
           "\u203A"
-        ), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => setDay(today(timeZone)) }, t3("backToday")))),
-        error && /* @__PURE__ */ React9.createElement("div", { className: "ld-error", role: "alert" }, error, " ", /* @__PURE__ */ React9.createElement(Btn, { onClick: () => void refresh() }, t3("retry"))),
-        message && /* @__PURE__ */ React9.createElement("div", { className: "ld-status", role: "status" }, message, /* @__PURE__ */ React9.createElement(
+        ), tab === "today" && /* @__PURE__ */ React10.createElement(Btn, { onClick: () => setHomeOpen(true) }, t3("homeCustomize")), /* @__PURE__ */ React10.createElement(Btn, { onClick: () => setDay(today(timeZone)) }, t3("backToday")))),
+        error && /* @__PURE__ */ React10.createElement("div", { className: "ld-error", role: "alert" }, error, " ", /* @__PURE__ */ React10.createElement(Btn, { onClick: () => void refresh() }, t3("retry"))),
+        message && /* @__PURE__ */ React10.createElement("div", { className: "ld-status", role: "status" }, message, /* @__PURE__ */ React10.createElement(
           "button",
           {
             "aria-label": t3("close"),
             onClick: () => setMessage("")
           },
           "\xD7"
-        ), /* @__PURE__ */ React9.createElement("button", { onClick: () => run({ action: "undo" }) }, t3("undo"))),
-        updateNotice && /* @__PURE__ */ React9.createElement("div", { className: "ld-status", role: "status" }, updateNotice, /* @__PURE__ */ React9.createElement(
+        ), /* @__PURE__ */ React10.createElement("button", { onClick: () => run({ action: "undo" }) }, t3("undo"))),
+        updateNotice && /* @__PURE__ */ React10.createElement("div", { className: "ld-status", role: "status" }, updateNotice, /* @__PURE__ */ React10.createElement(
           "button",
           {
             "aria-label": t3("close"),
@@ -33935,7 +35481,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React9.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.8.1", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React9.createElement(
+        /* @__PURE__ */ React10.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.9.0", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React10.createElement(
           "button",
           {
             className: "ld-update-badge",
@@ -33951,9 +35497,9 @@ function apply(ctx) {
             }
           },
           t3("updateAvailable")
-        ), /* @__PURE__ */ React9.createElement("button", { onClick: () => void refresh() }, t3("retry")))
+        ), /* @__PURE__ */ React10.createElement("button", { onClick: () => void refresh() }, t3("retry")))
       )),
-      /* @__PURE__ */ React9.createElement(
+      /* @__PURE__ */ React10.createElement(
         SpiritPanel,
         {
           open: ai,
@@ -33964,7 +35510,69 @@ function apply(ctx) {
           }
         }
       )
-    ), templateOpen && /* @__PURE__ */ React9.createElement(Modal, { title: t3("addHabit"), onClose: () => setTemplateOpen(false) }, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("templateHeading")), /* @__PURE__ */ React9.createElement("div", { className: "ld-template-list" }, HABIT_TEMPLATES.map((tpl) => /* @__PURE__ */ React9.createElement(
+    ), homeOpen && /* @__PURE__ */ React10.createElement(Modal, { title: t3("homeCustomize"), onClose: () => setHomeOpen(false) }, /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("homeCustomizeHint")), ["main", "support"].map((region) => {
+      const rank = (id) => {
+        const i3 = data.settings.homeModules.order.indexOf(id);
+        return i3 < 0 ? 999 : i3;
+      };
+      const all = HOME_MODULES.filter(
+        (m3) => m3.region === region
+      ).sort((a3, b3) => rank(a3.id) - rank(b3.id));
+      return /* @__PURE__ */ React10.createElement("section", { className: "ld-section", key: region }, /* @__PURE__ */ React10.createElement("h3", null, t3(region === "main" ? "homeMain" : "homeSupport")), all.map((m3, i3) => {
+        const hidden = data.settings.homeModules.hidden.includes(
+          m3.id
+        );
+        const toggle = () => setHomeModules({
+          hidden: hidden ? data.settings.homeModules.hidden.filter(
+            (x4) => x4 !== m3.id
+          ) : [...data.settings.homeModules.hidden, m3.id]
+        });
+        const move = (delta) => {
+          const next = all.map((x4) => x4.id);
+          const j4 = i3 + delta;
+          [next[i3], next[j4]] = [next[j4], next[i3]];
+          setHomeModules({ order: next });
+        };
+        return /* @__PURE__ */ React10.createElement("div", { className: "ld-home-module", key: m3.id }, /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React10.createElement(
+          "input",
+          {
+            type: "checkbox",
+            checked: !hidden,
+            disabled: busy,
+            onChange: toggle
+          }
+        ), t3(m3.titleKey)), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
+          Btn,
+          {
+            disabled: busy || i3 === 0,
+            "aria-label": t3("homeMoveUp"),
+            onClick: () => move(-1)
+          },
+          "\u2191"
+        ), /* @__PURE__ */ React10.createElement(
+          Btn,
+          {
+            disabled: busy || i3 === all.length - 1,
+            "aria-label": t3("homeMoveDown"),
+            onClick: () => move(1)
+          },
+          "\u2193"
+        )));
+      }));
+    }), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
+      Btn,
+      {
+        onClick: () => setHomeModules({ hidden: [], order: [], folded: [] })
+      },
+      t3("homeReset")
+    ), /* @__PURE__ */ React10.createElement(Btn, { primary: true, onClick: () => setHomeOpen(false) }, t3("close")))), lessonModal && /* @__PURE__ */ React10.createElement(
+      LessonHub,
+      {
+        modal: lessonModal,
+        env: viewEnv,
+        close: () => setLessonModal(null)
+      }
+    ), templateOpen && /* @__PURE__ */ React10.createElement(Modal, { title: t3("addHabit"), onClose: () => setTemplateOpen(false) }, /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("templateHeading")), /* @__PURE__ */ React10.createElement("div", { className: "ld-template-list" }, HABIT_TEMPLATES.map((tpl) => /* @__PURE__ */ React10.createElement(
       "button",
       {
         key: tpl.id,
@@ -33974,9 +35582,9 @@ function apply(ctx) {
           openHabit(habitFromTemplate(tpl, today(timeZone), t3));
         }
       },
-      /* @__PURE__ */ React9.createElement("span", { className: "ld-template-title" }, t3(tpl.titleKey)),
-      /* @__PURE__ */ React9.createElement("span", { className: "ld-template-note" }, t3(tpl.noteKey))
-    ))), HABIT_TEMPLATES.some((x4) => x4.mode === "weekly") && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("templateWeeklyHint")), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("templateSavedHint")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+      /* @__PURE__ */ React10.createElement("span", { className: "ld-template-title" }, t3(tpl.titleKey)),
+      /* @__PURE__ */ React10.createElement("span", { className: "ld-template-note" }, t3(tpl.noteKey))
+    ))), HABIT_TEMPLATES.some((x4) => x4.mode === "weekly") && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("templateWeeklyHint")), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("templateSavedHint")), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
       Btn,
       {
         onClick: () => {
@@ -33985,7 +35593,7 @@ function apply(ctx) {
         }
       },
       t3("templateCustom")
-    ), /* @__PURE__ */ React9.createElement(Btn, { onClick: () => setTemplateOpen(false) }, t3("cancel"))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("templateCustomHint"))), editor && /* @__PURE__ */ React9.createElement(
+    ), /* @__PURE__ */ React10.createElement(Btn, { onClick: () => setTemplateOpen(false) }, t3("cancel"))), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("templateCustomHint"))), editor && /* @__PURE__ */ React10.createElement(
       Editor,
       {
         editor,
@@ -34022,16 +35630,16 @@ function apply(ctx) {
     busy
   }) {
     const type = editor.type;
-    const [item, setItem] = useState5(structuredClone(editor.item));
-    const [scope, setScope] = useState5(editor.occurrence ? "single" : "series");
-    const [occ, setOcc] = useState5({ ...editor.occurrence });
-    const [preview, setPreview] = useState5([]);
-    const [localError, setLocalError] = useState5("");
-    const [steps, setSteps] = useState5(
+    const [item, setItem] = useState6(structuredClone(editor.item));
+    const [scope, setScope] = useState6(editor.occurrence ? "single" : "series");
+    const [occ, setOcc] = useState6({ ...editor.occurrence });
+    const [preview, setPreview] = useState6([]);
+    const [localError, setLocalError] = useState6("");
+    const [steps, setSteps] = useState6(
       item.steps?.map((x4) => x4.title).join("\n") || ""
     );
     const latestRule = item.rules?.at(-1);
-    const [rule, setRule] = useState5(
+    const [rule, setRule] = useState6(
       latestRule ? { ...latestRule, effective: item.id ? day : latestRule.effective } : null
     );
     const dirty = useRef5(false);
@@ -34049,7 +35657,7 @@ function apply(ctx) {
     const onClose = () => {
       if (!dirty.current || window.confirm(t3("dirty"))) close();
     };
-    const input = (k3, kind = "text", props = {}) => /* @__PURE__ */ React9.createElement(
+    const input = (k3, kind = "text", props = {}) => /* @__PURE__ */ React10.createElement(
       "input",
       {
         type: kind,
@@ -34058,17 +35666,17 @@ function apply(ctx) {
         ...props
       }
     );
-    const options = (k3, values, labels) => /* @__PURE__ */ React9.createElement("select", { value: item[k3], onChange: (e3) => change(k3, e3.target.value) }, values.map((v3, i3) => /* @__PURE__ */ React9.createElement("option", { key: v3, value: v3 }, t3(labels?.[i3] || v3))));
+    const options = (k3, values, labels) => /* @__PURE__ */ React10.createElement("select", { value: item[k3], onChange: (e3) => change(k3, e3.target.value) }, values.map((v3, i3) => /* @__PURE__ */ React10.createElement("option", { key: v3, value: v3 }, t3(labels?.[i3] || v3))));
     const repeat = item.repeat || { kind: "none" };
-    const repeatField = (k3, values, labels) => /* @__PURE__ */ React9.createElement(
+    const repeatField = (k3, values, labels) => /* @__PURE__ */ React10.createElement(
       "select",
       {
         value: repeat[k3],
         onChange: (e3) => changeRepeat(k3, e3.target.value)
       },
-      values.map((v3, i3) => /* @__PURE__ */ React9.createElement("option", { key: v3, value: v3 }, t3(labels?.[i3] || v3)))
+      values.map((v3, i3) => /* @__PURE__ */ React10.createElement("option", { key: v3, value: v3 }, t3(labels?.[i3] || v3)))
     );
-    const weekdayButtons = (days, onChange) => /* @__PURE__ */ React9.createElement("div", { className: "ld-days" }, [1, 2, 3, 4, 5, 6, 0].map((d2) => /* @__PURE__ */ React9.createElement(
+    const weekdayButtons = (days, onChange) => /* @__PURE__ */ React10.createElement("div", { className: "ld-days" }, [1, 2, 3, 4, 5, 6, 0].map((d2) => /* @__PURE__ */ React10.createElement(
       "button",
       {
         type: "button",
@@ -34156,7 +35764,7 @@ function apply(ctx) {
         setLocalError(e4.message);
       }
     }
-    return /* @__PURE__ */ React9.createElement(
+    return /* @__PURE__ */ React10.createElement(
       Modal,
       {
         title: t3(
@@ -34164,7 +35772,7 @@ function apply(ctx) {
         ),
         onClose
       },
-      /* @__PURE__ */ React9.createElement("form", { onSubmit: submit }, editor.occurrence && /* @__PURE__ */ React9.createElement("div", { className: "ld-scope" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("editSeries") }, /* @__PURE__ */ React9.createElement(
+      /* @__PURE__ */ React10.createElement("form", { onSubmit: submit }, editor.occurrence && /* @__PURE__ */ React10.createElement("div", { className: "ld-scope" }, /* @__PURE__ */ React10.createElement(Field, { label: t3("editSeries") }, /* @__PURE__ */ React10.createElement(
         "select",
         {
           value: scope,
@@ -34175,9 +35783,9 @@ function apply(ctx) {
             }
           }
         },
-        /* @__PURE__ */ React9.createElement("option", { value: "single" }, t3("single")),
-        item.repeat?.kind !== "none" && item.repeat?.kind !== "completion" && /* @__PURE__ */ React9.createElement("option", { value: "future" }, t3("future"))
-      )), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("originalDate"), " \xB7 ", editor.occurrence.originalDate)), editor.occurrence && scope === "single" ? /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("date") }, /* @__PURE__ */ React9.createElement(
+        /* @__PURE__ */ React10.createElement("option", { value: "single" }, t3("single")),
+        item.repeat?.kind !== "none" && item.repeat?.kind !== "completion" && /* @__PURE__ */ React10.createElement("option", { value: "future" }, t3("future"))
+      )), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("originalDate"), " \xB7 ", editor.occurrence.originalDate)), editor.occurrence && scope === "single" ? /* @__PURE__ */ React10.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React10.createElement(Field, { label: t3("date") }, /* @__PURE__ */ React10.createElement(
         "input",
         {
           type: "date",
@@ -34188,7 +35796,7 @@ function apply(ctx) {
             setOcc({ ...occ, date: e3.target.value });
           }
         }
-      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("time") }, /* @__PURE__ */ React9.createElement(
+      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("time") }, /* @__PURE__ */ React10.createElement(
         "input",
         {
           type: "time",
@@ -34198,7 +35806,7 @@ function apply(ctx) {
             setOcc({ ...occ, time: e3.target.value });
           }
         }
-      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("status") }, /* @__PURE__ */ React9.createElement(
+      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("status") }, /* @__PURE__ */ React10.createElement(
         "select",
         {
           value: occ.status,
@@ -34208,20 +35816,20 @@ function apply(ctx) {
           }
         },
         ["todo", "doing", "done", "skipped", "cancelled"].map(
-          (s3) => /* @__PURE__ */ React9.createElement("option", { key: s3, value: s3 }, t3(s3))
+          (s3) => /* @__PURE__ */ React10.createElement("option", { key: s3, value: s3 }, t3(s3))
         )
-      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("name") }, /* @__PURE__ */ React9.createElement("input", { value: item.title, readOnly: true }))) : /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("name"), wide: true }, input("title", "text", {
+      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("name") }, /* @__PURE__ */ React10.createElement("input", { value: item.title, readOnly: true }))) : /* @__PURE__ */ React10.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React10.createElement(Field, { label: t3("name"), wide: true }, input("title", "text", {
         required: true,
         maxLength: 200,
         autoFocus: true
-      })), type === "project" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(Field, { label: t3("group") }, input("group")), /* @__PURE__ */ React9.createElement(Field, { label: t3("deadline") }, input("deadline", "date")), /* @__PURE__ */ React9.createElement(Field, { label: t3("status") }, options("status", ["todo", "doing", "done", "paused"])), /* @__PURE__ */ React9.createElement(Field, { label: t3("goal"), wide: true }, /* @__PURE__ */ React9.createElement(
+      })), type === "project" && /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement(Field, { label: t3("group") }, input("group")), /* @__PURE__ */ React10.createElement(Field, { label: t3("deadline") }, input("deadline", "date")), /* @__PURE__ */ React10.createElement(Field, { label: t3("status") }, options("status", ["todo", "doing", "done", "paused"])), /* @__PURE__ */ React10.createElement(Field, { label: t3("goal"), wide: true }, /* @__PURE__ */ React10.createElement(
         "textarea",
         {
           value: item.goal,
           onChange: (e3) => change("goal", e3.target.value),
           rows: 4
         }
-      ))), type === "habit" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(Field, { label: t3("habitMode") }, /* @__PURE__ */ React9.createElement(
+      ))), type === "habit" && /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement(Field, { label: t3("habitMode") }, /* @__PURE__ */ React10.createElement(
         "select",
         {
           value: rule.mode,
@@ -34238,8 +35846,8 @@ function apply(ctx) {
             }
           }
         },
-        ["daily", "quantity", "duration", "weekly"].map((m3) => /* @__PURE__ */ React9.createElement("option", { key: m3, value: m3 }, t3(m3 === "duration" ? "durationMode" : m3)))
-      )), /* @__PURE__ */ React9.createElement(Field, { label: t3("effective") }, /* @__PURE__ */ React9.createElement(
+        ["daily", "quantity", "duration", "weekly"].map((m3) => /* @__PURE__ */ React10.createElement("option", { key: m3, value: m3 }, t3(m3 === "duration" ? "durationMode" : m3)))
+      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("effective") }, /* @__PURE__ */ React10.createElement(
         "input",
         {
           type: "date",
@@ -34248,12 +35856,12 @@ function apply(ctx) {
           min: item.id ? day : void 0,
           onChange: (e3) => changeRule("effective", e3.target.value)
         }
-      )), rule.mode !== "daily" && /* @__PURE__ */ React9.createElement(
+      )), rule.mode !== "daily" && /* @__PURE__ */ React10.createElement(
         Field,
         {
           label: rule.mode === "duration" ? t3("targetMinutes") : t3("target")
         },
-        /* @__PURE__ */ React9.createElement(
+        /* @__PURE__ */ React10.createElement(
           "input",
           {
             type: "number",
@@ -34264,20 +35872,20 @@ function apply(ctx) {
             onChange: (e3) => changeRule("target", Number(e3.target.value))
           }
         )
-      ), rule.mode === "quantity" && /* @__PURE__ */ React9.createElement(Field, { label: t3("unit") }, /* @__PURE__ */ React9.createElement(
+      ), rule.mode === "quantity" && /* @__PURE__ */ React10.createElement(Field, { label: t3("unit") }, /* @__PURE__ */ React10.createElement(
         "input",
         {
           value: rule.unit,
           onChange: (e3) => changeRule("unit", e3.target.value)
         }
-      )), rule.mode !== "weekly" && /* @__PURE__ */ React9.createElement(Field, { label: t3("days"), wide: true }, weekdayButtons(rule.days, (v3) => changeRule("days", v3))), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
+      )), rule.mode !== "weekly" && /* @__PURE__ */ React10.createElement(Field, { label: t3("days"), wide: true }, weekdayButtons(rule.days, (v3) => changeRule("days", v3))), /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React10.createElement(
         "input",
         {
           type: "checkbox",
           checked: rule.paused,
           onChange: (e3) => changeRule("paused", e3.target.checked)
         }
-      ), t3("pause")), /* @__PURE__ */ React9.createElement("fieldset", { className: "ld-wide ld-completion" }, /* @__PURE__ */ React9.createElement("legend", null, t3("completionLabel")), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
+      ), t3("pause")), /* @__PURE__ */ React10.createElement("fieldset", { className: "ld-wide ld-completion" }, /* @__PURE__ */ React10.createElement("legend", null, t3("completionLabel")), /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React10.createElement(
         "input",
         {
           type: "radio",
@@ -34285,7 +35893,7 @@ function apply(ctx) {
           checked: !item.reviewLinked,
           onChange: () => change("reviewLinked", false)
         }
-      ), t3("completionManual")), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
+      ), t3("completionManual")), /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React10.createElement(
         "input",
         {
           type: "radio",
@@ -34294,21 +35902,21 @@ function apply(ctx) {
           disabled: rule.mode !== "daily",
           onChange: () => change("reviewLinked", true)
         }
-      ), t3("completionReview")), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, rule.mode === "daily" ? t3("reviewLinkHelp") : t3("completionDailyOnly"))), rule.mode !== "weekly" && /* @__PURE__ */ React9.createElement("div", { className: "ld-wide" }, /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
+      ), t3("completionReview")), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, rule.mode === "daily" ? t3("reviewLinkHelp") : t3("completionDailyOnly"))), rule.mode !== "weekly" && /* @__PURE__ */ React10.createElement("div", { className: "ld-wide" }, /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React10.createElement(
         "input",
         {
           type: "checkbox",
           checked: !!rule.allowNextDay,
           onChange: (e3) => changeRule("allowNextDay", e3.target.checked)
         }
-      ), t3("allowNextDay")), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("allowNextDayHint"))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help ld-wide" }, t3("habitHint"))), type === "task" && /* @__PURE__ */ React9.createElement(
+      ), t3("allowNextDay")), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("allowNextDayHint"))), /* @__PURE__ */ React10.createElement("p", { className: "ld-help ld-wide" }, t3("habitHint"))), type === "task" && /* @__PURE__ */ React10.createElement(
         "details",
         {
           className: "ld-wide ld-advanced",
           open: !!item.id || repeat.kind !== "none" || !!item.date || !!item.projectId || item.area === "life"
         },
-        /* @__PURE__ */ React9.createElement("summary", null, t3("advanced")),
-        /* @__PURE__ */ React9.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("projects") }, /* @__PURE__ */ React9.createElement(
+        /* @__PURE__ */ React10.createElement("summary", null, t3("advanced")),
+        /* @__PURE__ */ React10.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React10.createElement(Field, { label: t3("projects") }, /* @__PURE__ */ React10.createElement(
           "select",
           {
             value: item.projectId,
@@ -34317,13 +35925,13 @@ function apply(ctx) {
               if (e3.target.value) change("area", "work");
             }
           },
-          /* @__PURE__ */ React9.createElement("option", { value: "" }, t3("noProject")),
-          data.projects.filter((x4) => !x4.deletedAt).map((p3) => /* @__PURE__ */ React9.createElement("option", { key: p3.id, value: p3.id }, p3.title))
-        )), /* @__PURE__ */ React9.createElement(Field, { label: t3("group") }, options(
+          /* @__PURE__ */ React10.createElement("option", { value: "" }, t3("noProject")),
+          data.projects.filter((x4) => !x4.deletedAt).map((p3) => /* @__PURE__ */ React10.createElement("option", { key: p3.id, value: p3.id }, p3.title))
+        )), /* @__PURE__ */ React10.createElement(Field, { label: t3("group") }, options(
           "area",
           ["inbox", "work", "life"],
           ["inboxArea", "work", "lifeArea"]
-        )), /* @__PURE__ */ React9.createElement(Field, { label: t3("date") }, input("date", "date")), /* @__PURE__ */ React9.createElement(Field, { label: t3("deadline") }, input("deadline", "date")), /* @__PURE__ */ React9.createElement(Field, { label: t3("time") }, input("time", "time")), /* @__PURE__ */ React9.createElement(Field, { label: t3("estimatedTomatoes") }, /* @__PURE__ */ React9.createElement(
+        )), /* @__PURE__ */ React10.createElement(Field, { label: t3("date") }, input("date", "date")), /* @__PURE__ */ React10.createElement(Field, { label: t3("deadline") }, input("deadline", "date")), /* @__PURE__ */ React10.createElement(Field, { label: t3("time") }, input("time", "time")), /* @__PURE__ */ React10.createElement(Field, { label: t3("estimatedTomatoes") }, /* @__PURE__ */ React10.createElement(
           "input",
           {
             type: "number",
@@ -34332,12 +35940,12 @@ function apply(ctx) {
             value: item.pomodoros || 0,
             onChange: (e3) => change("pomodoros", Number(e3.target.value))
           }
-        ), /* @__PURE__ */ React9.createElement("small", { className: "ld-help" }, t3("tomatoEstimateHint"))), /* @__PURE__ */ React9.createElement(Field, { label: t3("minutes") }, input("minutes", "number", { min: 0, max: 1440 })), /* @__PURE__ */ React9.createElement(Field, { label: t3("status") }, options("status", ["todo", "doing", "done"])), /* @__PURE__ */ React9.createElement(
+        ), /* @__PURE__ */ React10.createElement("small", { className: "ld-help" }, t3("tomatoEstimateHint"))), /* @__PURE__ */ React10.createElement(Field, { label: t3("minutes") }, input("minutes", "number", { min: 0, max: 1440 })), /* @__PURE__ */ React10.createElement(Field, { label: t3("status") }, options("status", ["todo", "doing", "done"])), /* @__PURE__ */ React10.createElement(
           Field,
           {
             label: t3(item.area === "life" ? "lifeCategory" : "tag")
           },
-          /* @__PURE__ */ React9.createElement(
+          /* @__PURE__ */ React10.createElement(
             "input",
             {
               value: item.tag,
@@ -34347,28 +35955,28 @@ function apply(ctx) {
               onChange: (e3) => change("tag", e3.target.value)
             }
           ),
-          /* @__PURE__ */ React9.createElement("datalist", { id: "ld-life-categories" }, [
+          /* @__PURE__ */ React10.createElement("datalist", { id: "ld-life-categories" }, [
             ...new Set(
               data.tasks.filter(
                 (x4) => !x4.deletedAt && x4.area === "life" && x4.tag
               ).map((x4) => x4.tag)
             )
-          ].map((tag) => /* @__PURE__ */ React9.createElement("option", { key: tag, value: tag })))
-        ), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
+          ].map((tag) => /* @__PURE__ */ React10.createElement("option", { key: tag, value: tag })))
+        ), /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React10.createElement(
           "input",
           {
             type: "checkbox",
             checked: !!item.priorityDate,
             onChange: (e3) => change("priorityDate", e3.target.checked ? day : "")
           }
-        ), t3("priority")), /* @__PURE__ */ React9.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
+        ), t3("priority")), /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React10.createElement(
           "input",
           {
             type: "checkbox",
             checked: item.event,
             onChange: (e3) => change("event", e3.target.checked)
           }
-        ), t3("event")), /* @__PURE__ */ React9.createElement(Field, { label: t3("steps"), wide: true }, /* @__PURE__ */ React9.createElement(
+        ), t3("event")), /* @__PURE__ */ React10.createElement(Field, { label: t3("steps"), wide: true }, /* @__PURE__ */ React10.createElement(
           "textarea",
           {
             rows: 3,
@@ -34378,7 +35986,7 @@ function apply(ctx) {
               setSteps(e3.target.value);
             }
           }
-        )), item.steps?.length > 0 && /* @__PURE__ */ React9.createElement("div", { className: "ld-wide" }, item.steps.map((step, i3) => /* @__PURE__ */ React9.createElement("label", { key: step.id, className: "ld-check-label" }, /* @__PURE__ */ React9.createElement(
+        )), item.steps?.length > 0 && /* @__PURE__ */ React10.createElement("div", { className: "ld-wide" }, item.steps.map((step, i3) => /* @__PURE__ */ React10.createElement("label", { key: step.id, className: "ld-check-label" }, /* @__PURE__ */ React10.createElement(
           "input",
           {
             type: "checkbox",
@@ -34390,7 +35998,7 @@ function apply(ctx) {
               )
             )
           }
-        ), step.title))), /* @__PURE__ */ React9.createElement(Field, { label: t3("repeats") }, /* @__PURE__ */ React9.createElement(
+        ), step.title))), /* @__PURE__ */ React10.createElement(Field, { label: t3("repeats") }, /* @__PURE__ */ React10.createElement(
           "select",
           {
             value: repeat.kind,
@@ -34404,10 +36012,10 @@ function apply(ctx) {
             "yearly",
             "lunar",
             "completion"
-          ].map((k3) => /* @__PURE__ */ React9.createElement("option", { key: k3, value: k3 }, t3(
+          ].map((k3) => /* @__PURE__ */ React10.createElement("option", { key: k3, value: k3 }, t3(
             k3 === "daily" ? "repeatDaily" : k3 === "weekly" ? "repeatWeekly" : k3
           )))
-        )), repeat.kind !== "none" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(Field, { label: t3("interval") }, /* @__PURE__ */ React9.createElement(
+        )), repeat.kind !== "none" && /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement(Field, { label: t3("interval") }, /* @__PURE__ */ React10.createElement(
           "input",
           {
             type: "number",
@@ -34416,25 +36024,25 @@ function apply(ctx) {
             value: repeat.interval || 1,
             onChange: (e3) => changeRepeat("interval", Number(e3.target.value))
           }
-        )), /* @__PURE__ */ React9.createElement(Field, { label: t3("until") }, /* @__PURE__ */ React9.createElement(
+        )), /* @__PURE__ */ React10.createElement(Field, { label: t3("until") }, /* @__PURE__ */ React10.createElement(
           "input",
           {
             type: "date",
             value: repeat.until || "",
             onChange: (e3) => changeRepeat("until", e3.target.value)
           }
-        )), repeat.kind === "weekly" && /* @__PURE__ */ React9.createElement(Field, { label: t3("days"), wide: true }, weekdayButtons(
+        )), repeat.kind === "weekly" && /* @__PURE__ */ React10.createElement(Field, { label: t3("days"), wide: true }, weekdayButtons(
           repeat.days || [1],
           (v3) => changeRepeat("days", v3)
-        )), repeat.kind === "monthly" && /* @__PURE__ */ React9.createElement(Field, { label: t3("monthMode") }, repeatField(
+        )), repeat.kind === "monthly" && /* @__PURE__ */ React10.createElement(Field, { label: t3("monthMode") }, repeatField(
           "monthMode",
           ["date", "lastWeekday"],
           ["monthDate", "lastWeekday"]
-        )), repeat.kind === "completion" && /* @__PURE__ */ React9.createElement(Field, { label: t3("unit") }, repeatField(
+        )), repeat.kind === "completion" && /* @__PURE__ */ React10.createElement(Field, { label: t3("unit") }, repeatField(
           "unit",
           ["days", "months", "years"],
           ["daysUnit", "monthsUnit", "yearsUnit"]
-        )), repeat.kind === "lunar" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement(Field, { label: t3("month") }, /* @__PURE__ */ React9.createElement(
+        )), repeat.kind === "lunar" && /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement(Field, { label: t3("month") }, /* @__PURE__ */ React10.createElement(
           "input",
           {
             type: "number",
@@ -34443,7 +36051,7 @@ function apply(ctx) {
             value: repeat.month || 1,
             onChange: (e3) => changeRepeat("month", Number(e3.target.value))
           }
-        )), /* @__PURE__ */ React9.createElement(Field, { label: t3("day") }, /* @__PURE__ */ React9.createElement(
+        )), /* @__PURE__ */ React10.createElement(Field, { label: t3("day") }, /* @__PURE__ */ React10.createElement(
           "input",
           {
             type: "number",
@@ -34452,17 +36060,17 @@ function apply(ctx) {
             value: repeat.day || 1,
             onChange: (e3) => changeRepeat("day", Number(e3.target.value))
           }
-        )), /* @__PURE__ */ React9.createElement(Field, { label: t3("leap") }, repeatField("leap", ["regular", "only", "both"])), repeat.leap === "only" && /* @__PURE__ */ React9.createElement(Field, { label: t3("leapFallback") }, repeatField(
+        )), /* @__PURE__ */ React10.createElement(Field, { label: t3("leap") }, repeatField("leap", ["regular", "only", "both"])), repeat.leap === "only" && /* @__PURE__ */ React10.createElement(Field, { label: t3("leapFallback") }, repeatField(
           "leapFallback",
           ["regular", "skip"],
           ["fallbackRegular", "skipYear"]
         ))), ["monthly", "yearly", "lunar"].includes(
           repeat.kind
-        ) && /* @__PURE__ */ React9.createElement(Field, { label: t3("missing") }, repeatField(
+        ) && /* @__PURE__ */ React10.createElement(Field, { label: t3("missing") }, repeatField(
           "missing",
           ["last", "skip"],
           ["last", "skipYear"]
-        )), /* @__PURE__ */ React9.createElement("div", { className: "ld-wide" }, /* @__PURE__ */ React9.createElement(
+        )), /* @__PURE__ */ React10.createElement("div", { className: "ld-wide" }, /* @__PURE__ */ React10.createElement(
           Btn,
           {
             onClick: async () => {
@@ -34480,7 +36088,7 @@ function apply(ctx) {
             }
           },
           t3("preview")
-        ), preview.length > 0 && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("previewDates"), " \xB7 ", preview.join(" \xB7 ")), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("repeatHint")))), /* @__PURE__ */ React9.createElement(Field, { label: t3("reminder") }, /* @__PURE__ */ React9.createElement(
+        ), preview.length > 0 && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("previewDates"), " \xB7 ", preview.join(" \xB7 ")), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("repeatHint")))), /* @__PURE__ */ React10.createElement(Field, { label: t3("reminder") }, /* @__PURE__ */ React10.createElement(
           "input",
           {
             type: "number",
@@ -34492,8 +36100,8 @@ function apply(ctx) {
               e3.target.value === "" ? null : Number(e3.target.value)
             )
           }
-        )), /* @__PURE__ */ React9.createElement(Field, { label: t3("reminderTime") }, input("reminderTime", "time")), /* @__PURE__ */ React9.createElement("p", { className: "ld-help ld-wide" }, t3("notifyHint")))
-      ), type !== "project" && /* @__PURE__ */ React9.createElement(Field, { label: t3("note"), wide: true }, /* @__PURE__ */ React9.createElement(
+        )), /* @__PURE__ */ React10.createElement(Field, { label: t3("reminderTime") }, input("reminderTime", "time")), /* @__PURE__ */ React10.createElement("p", { className: "ld-help ld-wide" }, t3("notifyHint")))
+      ), type !== "project" && /* @__PURE__ */ React10.createElement(Field, { label: t3("note"), wide: true }, /* @__PURE__ */ React10.createElement(
         "textarea",
         {
           value: item.note,
@@ -34501,7 +36109,7 @@ function apply(ctx) {
           maxLength: 1e4,
           onChange: (e3) => change("note", e3.target.value)
         }
-      ))), (localError || snapshot.error) && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, localError || snapshot.error), /* @__PURE__ */ React9.createElement("div", { className: "ld-modal-footer" }, /* @__PURE__ */ React9.createElement("div", null, item.id && /* @__PURE__ */ React9.createElement(
+      ))), (localError || snapshot.error) && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, localError || snapshot.error), /* @__PURE__ */ React10.createElement("div", { className: "ld-modal-footer" }, /* @__PURE__ */ React10.createElement("div", null, item.id && /* @__PURE__ */ React10.createElement(
         Btn,
         {
           disabled: busy,
@@ -34518,7 +36126,7 @@ function apply(ctx) {
           }
         },
         t3("remove")
-      )), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { onClick: onClose }, t3("cancel")), /* @__PURE__ */ React9.createElement(
+      )), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { onClick: onClose }, t3("cancel")), /* @__PURE__ */ React10.createElement(
         "button",
         {
           type: "submit",
@@ -34538,7 +36146,7 @@ function apply(ctx) {
         order: 7,
         label: () => t3("title")
       },
-      ({ size }) => /* @__PURE__ */ React9.createElement(Icon, { name: "review", size })
+      ({ size }) => /* @__PURE__ */ React10.createElement(Icon, { name: "review", size })
     )
   );
   ctx.slots.inject(
@@ -34556,7 +36164,7 @@ function apply(ctx) {
       },
       () => {
         const { data } = useStore();
-        return /* @__PURE__ */ React9.createElement(Ambient, { data }, /* @__PURE__ */ React9.createElement("style", null, css), /* @__PURE__ */ React9.createElement(Timer, { compact: true }));
+        return /* @__PURE__ */ React10.createElement(Ambient, { data }, /* @__PURE__ */ React10.createElement("style", null, css), /* @__PURE__ */ React10.createElement(Timer, { compact: true }));
       }
     )
   );
@@ -34566,7 +36174,7 @@ function apply(ctx) {
       { name: "shell.overlay", id: "life-desk-reminders", order: 20 },
       () => {
         const { data } = useStore();
-        return /* @__PURE__ */ React9.createElement(Ambient, { data }, /* @__PURE__ */ React9.createElement("style", null, css), /* @__PURE__ */ React9.createElement(Alerts, null), /* @__PURE__ */ React9.createElement(Fullscreen, null));
+        return /* @__PURE__ */ React10.createElement(Ambient, { data }, /* @__PURE__ */ React10.createElement("style", null, css), /* @__PURE__ */ React10.createElement(Alerts, null), /* @__PURE__ */ React10.createElement(Fullscreen, null));
       }
     )
   );

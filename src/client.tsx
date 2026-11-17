@@ -14,6 +14,13 @@ import { dailyPlan, inboxTasks, planKey } from "./planning.js";
 import { createPlanningUI } from "./PlanningUI";
 import { HABIT_TEMPLATES, habitFromTemplate } from "./habit-templates.js";
 import { createReviewUI } from "./ReviewUI";
+import { createLessonsUI } from "./LessonsUI";
+import { HOME_MODULES, homeModules, isFolded } from "./home-modules.js";
+import {
+  lessonOccurrences,
+  lessonReminders,
+  lessonTimeLabel,
+} from "./lessons.js";
 import {
   today,
   shift,
@@ -33,9 +40,25 @@ import todayCss from "./today.css";
 import focusCss from "./focus.css";
 import planningCss from "./planning.css";
 import reviewCss from "./review.css";
-const css = baseCss + spiritCss + todayCss + focusCss + planningCss + reviewCss;
+import lessonsCss from "./lessons.css";
+const css =
+  baseCss +
+  spiritCss +
+  todayCss +
+  focusCss +
+  planningCss +
+  reviewCss +
+  lessonsCss;
 const { useState, useEffect, useRef, useSyncExternalStore } = React;
-const NAV = ["today", "projects", "habits", "life", "calendar", "review"];
+const NAV = [
+  "today",
+  "lessons",
+  "projects",
+  "habits",
+  "life",
+  "calendar",
+  "review",
+];
 const paths = {
   today:
     "M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4 M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0",
@@ -43,6 +66,7 @@ const paths = {
   habits: "M19 7a8 8 0 1 0 1 8M19 3v5h-5m-6 4 3 3 5-6",
   life: "m3 11 9-8 9 8M6 9v12h12V9M10 21v-7h4v7",
   calendar: "M4 5h16v16H4ZM8 3v4m8-4v4M4 10h16m-11 4h2v3H9Z",
+  lessons: "M4 5h16v16H4ZM8 3v4m8-4v4M4 10h16M8 14h3v3H8Zm5 0h3M12 17h5",
   review:
     "M12 5c-3-2-7-2-9-1v15c3-1 6-1 9 1m0-15c3-2 7-2 9-1v15c-3-1-6-1-9 1Zm0 0v15",
   inbox: "M4 4h16v16H4ZM4 13h5l1 3h4l1-3h5",
@@ -255,6 +279,8 @@ export function apply(ctx: any) {
             });
         }
       } catch {}
+      for (const n of lessonReminders(data, now, data.settings.timeZone))
+        list.push({ key: n.key, title: n.title });
       const due = list.filter((x) => !data.noticeAcks.includes(x.key));
       setNotices(due);
       for (const n of due) {
@@ -341,6 +367,13 @@ export function apply(ctx: any) {
       </dialog>
     );
   }
+  const { LessonHub, LessonsPage, TodayLessons } = createLessonsUI({
+    t,
+    Btn,
+    Modal,
+    Field,
+    Icon,
+  });
   const { ReviewEditor, ReviewCheckIn } = createReviewUI({
     t,
     Btn,
@@ -349,8 +382,16 @@ export function apply(ctx: any) {
     send,
     drafts: reviewDrafts,
   });
-  function FoldSection({ title, count, id, className = "", children }: any) {
-    const [open, setOpen] = useState(true);
+  function FoldSection({
+    title,
+    count,
+    id,
+    folded = false,
+    onFold = () => {},
+    className = "",
+    children,
+  }: any) {
+    const open = !folded;
     return (
       <section className={"ld-section ld-fold " + className}>
         <div className="ld-section-heading">
@@ -360,7 +401,7 @@ export function apply(ctx: any) {
               className="ld-fold-toggle"
               aria-expanded={open}
               aria-controls={id}
-              onClick={() => setOpen(!open)}
+              onClick={onFold}
             >
               <span className="ld-fold-chevron">
                 <Icon name="chevron" size={14} />
@@ -383,7 +424,12 @@ export function apply(ctx: any) {
       </label>
     );
   }
-  function HabitCards({ full = false, env }: any) {
+  function HabitCards({
+    full = false,
+    weeklyOnly = false,
+    showWeekly = true,
+    env,
+  }: any) {
     const { data, day, timeZone, habits, busy, run, openHabit, setDay, live } =
       env;
     const list = habits.filter((h: any) => full || habitDue(h, day));
@@ -514,6 +560,44 @@ export function apply(ctx: any) {
         </div>
       );
     };
+    const weeklyBlock =
+      groups.weekly.length > 0 ? (
+        <section className="ld-weekly-goals">
+          <h3>{t("weeklyHabits")}</h3>
+          {groups.weekly.map((h: any) => {
+            const r = habitRule(h, day);
+            const count = Array.from({ length: 7 }, (_, i) =>
+              shift(monday(day), i),
+            ).filter((d) => habitProgress(data, h, d).done).length;
+            const planned = h.plannedDates?.includes(day);
+            return (
+              <div className="ld-weekly-row" key={h.id}>
+                <span>
+                  {h.title}
+                  <small>
+                    {count}/{r.target} {t("daysUnit")}
+                  </small>
+                </span>
+                <Btn
+                  disabled={busy || habitProgress(data, h, day).done}
+                  onClick={() =>
+                    run({
+                      action: "habitLog",
+                      id: h.id,
+                      date: day,
+                      status: planned ? "unplanned" : "planned",
+                    })
+                  }
+                >
+                  {t(planned ? "unplanHabit" : "planHabit")}
+                </Btn>
+              </div>
+            );
+          })}
+        </section>
+      ) : null;
+    if (weeklyOnly)
+      return weeklyBlock || <p className="ld-help">{t("noWeeklyHabits")}</p>;
     return (
       <>
         {full ? (
@@ -570,41 +654,7 @@ export function apply(ctx: any) {
                 {groups.settled.map(renderHabit)}
               </details>
             )}
-            {groups.weekly.length > 0 && (
-              <section className="ld-weekly-goals">
-                <h3>{t("weeklyHabits")}</h3>
-                {groups.weekly.map((h: any) => {
-                  const r = habitRule(h, day);
-                  const count = Array.from({ length: 7 }, (_, i) =>
-                    shift(monday(day), i),
-                  ).filter((d) => habitProgress(data, h, d).done).length;
-                  const planned = h.plannedDates?.includes(day);
-                  return (
-                    <div className="ld-weekly-row" key={h.id}>
-                      <span>
-                        {h.title}
-                        <small>
-                          {count}/{r.target} {t("daysUnit")}
-                        </small>
-                      </span>
-                      <Btn
-                        disabled={busy || habitProgress(data, h, day).done}
-                        onClick={() =>
-                          run({
-                            action: "habitLog",
-                            id: h.id,
-                            date: day,
-                            status: planned ? "unplanned" : "planned",
-                          })
-                        }
-                      >
-                        {t(planned ? "unplanHabit" : "planHabit")}
-                      </Btn>
-                    </div>
-                  );
-                })}
-              </section>
-            )}
+            {showWeekly && weeklyBlock}
           </>
         )}
         {review && (
@@ -919,7 +969,37 @@ export function apply(ctx: any) {
             });
         }
       }
-    const events = filter === "habits" ? habitEvents : [...ev, ...habitEvents];
+    const lessonEvents = [];
+    if (filter === "all" || filter === "lessons")
+      for (const l of data.lessons.filter((x: any) => !x.deletedAt))
+        for (const x of lessonOccurrences(data, l, bounds[0], bounds[1]))
+          if (x.status !== "skipped")
+            lessonEvents.push({
+              id: "lesson:" + x.key,
+              title: x.title + (x.participant ? " · " + x.participant : ""),
+              start: x.date + (x.time ? "T" + x.time : ""),
+              end:
+                x.time && x.durationMinutes
+                  ? new Date(
+                      Date.parse(x.date + "T" + x.time + ":00Z") +
+                        x.durationMinutes * 60000,
+                    )
+                      .toISOString()
+                      .replace("Z", "")
+                  : undefined,
+              allDay: !x.time,
+              extendedProps: { lesson: x },
+              classNames: [
+                "ld-event-lesson",
+                x.status === "done" ? "ld-event-done" : "",
+              ],
+            });
+    const events =
+      filter === "habits"
+        ? habitEvents
+        : filter === "lessons"
+          ? lessonEvents
+          : [...ev, ...habitEvents, ...lessonEvents];
     return (
       <>
         <div className="ld-toolbar">
@@ -946,7 +1026,7 @@ export function apply(ctx: any) {
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
           >
-            {["all", "work", "life", "habits"].map((a) => (
+            {["all", "work", "life", "habits", "lessons"].map((a) => (
               <option key={a} value={a}>
                 {t(a)}
               </option>
@@ -994,7 +1074,10 @@ export function apply(ctx: any) {
           }
           eventClick={(info) => {
             const p = info.event.extendedProps;
-            if (p.habit) {
+            if (p.lesson) {
+              setDay(p.lesson.date);
+              env.openLesson({ type: "detail", lessonId: p.lesson.lessonId });
+            } else if (p.habit) {
               setDay(p.date);
               setTab("habits");
             } else
@@ -1004,6 +1087,26 @@ export function apply(ctx: any) {
               );
           }}
           eventDrop={(info) => {
+            const lesson = info.event.extendedProps.lesson;
+            if (lesson) {
+              const date = info.event.startStr.slice(0, 10),
+                time = info.event.allDay
+                  ? ""
+                  : info.event.startStr.slice(11, 16);
+              info.revert();
+              env.openLesson({
+                type: "session",
+                mode: "move",
+                lessonId: lesson.lessonId,
+                originalDate: lesson.originalDate,
+                sessionId: lesson.sessionId,
+                occurrence: lesson,
+                date,
+                time,
+                place: lesson.place,
+              });
+              return;
+            }
             const x = info.event.extendedProps.source;
             const date = info.event.startStr.slice(0, 10),
               time = info.event.allDay ? "" : info.event.startStr.slice(11, 16);
@@ -1624,6 +1727,8 @@ export function apply(ctx: any) {
       [editor, setEditor] = useState<any>(null),
       [message, setMessage] = useState(""),
       [ai, setAi] = useState(false),
+      [lessonModal, setLessonModal] = useState<any>(null),
+      [homeOpen, setHomeOpen] = useState(false),
       [lifeCategory, setLifeCategory] = useState("");
     const [captureOpen, setCaptureOpen] = useState(false);
     const [captureReset, setCaptureReset] = useState(0);
@@ -1689,6 +1794,13 @@ export function apply(ctx: any) {
           ...item,
         },
         ...extra,
+      });
+    const setHomeModules = (patch: any) =>
+      run({
+        action: "settings",
+        item: {
+          homeModules: { ...data.settings.homeModules, ...patch },
+        },
       });
     const openHabit = (item: any) =>
       setEditor({
@@ -1797,6 +1909,7 @@ export function apply(ctx: any) {
       revision: data.revision,
       editorOpen: !!editor || captureDirty,
       spiritBusy: () => spiritBusyRef.current,
+      openLesson: (v: any) => setLessonModal(v),
       refresh,
     };
     function taskRows(items: any[], empty = true) {
@@ -2056,173 +2169,278 @@ export function apply(ctx: any) {
       if (tab === "today") {
         const groups = planForDay;
         const priority = groups.priority;
+        const main = homeModules(data.settings, "main");
+        const support = homeModules(data.settings, "support");
+        const setHome = (patch: any) =>
+          run({
+            action: "settings",
+            item: {
+              homeModules: { ...data.settings.homeModules, ...patch },
+            },
+          });
+        const foldProps = (id: string) => ({
+          id,
+          folded: isFolded(data.settings, id),
+          onFold: () => {
+            const folded = data.settings.homeModules.folded;
+            setHome({
+              folded: folded.includes(id)
+                ? folded.filter((x: string) => x !== id)
+                : [...folded, id],
+            });
+          },
+        });
+        const weeklyVisible = support.some((m: any) => m.id === "weekly");
+        const renderMain = (id: string) => {
+          if (id === "plan")
+            return <PlanPanel plan={groups} date={day} act={act} busy={busy} />;
+          if (id === "lessons") return <TodayLessons env={viewEnv} />;
+          if (id === "priority")
+            return (
+              <FoldSection
+                title={t("priorities")}
+                count={priority.length + "/3"}
+                {...foldProps("priority")}
+              >
+                {priority.length ? (
+                  taskRows(priority)
+                ) : (
+                  <p className="ld-help">{t("prioritiesEmpty")}</p>
+                )}
+              </FoldSection>
+            );
+          if (id === "schedule")
+            return (
+              <FoldSection
+                title={t("schedule")}
+                count={groups.schedule.length}
+                {...foldProps("schedule")}
+              >
+                {groups.schedule.map((x: any) =>
+                  priority.some((p: any) => p.id === x.id) ? (
+                    <button
+                      className="ld-time-index"
+                      key={x.id + x.originalDate}
+                      onClick={() =>
+                        openTask(
+                          tasks.find((q: any) => q.id === x.id),
+                          { occurrence: x },
+                        )
+                      }
+                    >
+                      <span>{x.time || t("noTime")}</span>
+                      <span>{x.title}</span>
+                      <small>{t("priorities")}</small>
+                    </button>
+                  ) : (
+                    <React.Fragment key={x.id + x.originalDate}>
+                      {taskRows([x], false)}
+                    </React.Fragment>
+                  ),
+                )}
+              </FoldSection>
+            );
+          if (id === "planned")
+            return (
+              <FoldSection
+                title={t("plannedTodos")}
+                count={groups.todos.length}
+                {...foldProps("planned")}
+              >
+                {taskRows(groups.todos)}
+              </FoldSection>
+            );
+          if (id === "carry")
+            return (
+              <FoldSection
+                title={t("carryBacklog")}
+                count={groups.backlog.length}
+                {...foldProps("carry")}
+              >
+                <p className="ld-help">{t("carryHint")}</p>
+                {taskRows(groups.backlog)}
+              </FoldSection>
+            );
+          if (id === "due")
+            return groups.due.length ? (
+              <FoldSection
+                title={t("deadlineWatch")}
+                count={groups.due.length}
+                className="ld-deadlines"
+                {...foldProps("due")}
+              >
+                {groups.due.map((x: any) => (
+                  <button
+                    className="ld-time-index"
+                    key={x.id}
+                    onClick={() => openTask(x)}
+                  >
+                    <span>
+                      {x.deadline === day
+                        ? t("dueToday")
+                        : x.deadline < day
+                          ? t("pastDeadline")
+                          : x.deadline}
+                    </span>
+                    <span>{x.title}</span>
+                    <small>
+                      {x.date
+                        ? t("originalPlan") + " " + x.date
+                        : t("noneDate")}
+                    </small>
+                  </button>
+                ))}
+              </FoldSection>
+            ) : null;
+          if (id === "previous")
+            return groups.previousRecurring.length ? (
+              <FoldSection
+                title={t("earlierRecurring")}
+                count={groups.previousRecurring.length}
+                {...foldProps("previous")}
+              >
+                {taskRows(groups.previousRecurring)}
+              </FoldSection>
+            ) : null;
+          if (id === "done")
+            return (
+              <FoldSection
+                title={t("done")}
+                count={groups.completed.length}
+                {...foldProps("done")}
+              >
+                {groups.completed.length ? (
+                  taskRows(groups.completed, false)
+                ) : (
+                  <p className="ld-help">{t("noneDone")}</p>
+                )}
+              </FoldSection>
+            );
+          if (id === "inbox")
+            return (
+              <FoldSection
+                title={t("inbox")}
+                count={inboxTasks(data).length}
+                {...foldProps("inbox")}
+              >
+                {inboxTasks(data).length ? (
+                  taskRows(inboxTasks(data))
+                ) : (
+                  <p className="ld-help">{t("inboxEmpty")}</p>
+                )}
+              </FoldSection>
+            );
+          return null;
+        };
+        const renderSupport = (id: string) => {
+          if (id === "timer")
+            return (
+              <div className="ld-side-timer" key={id}>
+                <Timer />
+              </div>
+            );
+          if (id === "habits")
+            return (
+              <section className="ld-section" key={id}>
+                <h2>{t("todayHabits")}</h2>
+                <HabitCards env={viewEnv} showWeekly={!weeklyVisible} />
+              </section>
+            );
+          if (id === "weekly")
+            return <HabitCards weeklyOnly env={viewEnv} key={id} />;
+          if (id === "upcoming")
+            return (
+              <section className="ld-section" key={id}>
+                <h2>{t("upcoming")}</h2>
+                {range
+                  .filter(
+                    (x: any) =>
+                      x.date > day &&
+                      x.date <= shift(day, 14) &&
+                      (x.event || x.reminderMinutes !== null || x.deadline) &&
+                      !["done", "cancelled", "skipped"].includes(x.status),
+                  )
+                  .slice(0, 5)
+                  .map((x: any) => (
+                    <button
+                      key={x.id + x.originalDate}
+                      className="ld-upcoming"
+                      onClick={() =>
+                        openTask(
+                          tasks.find((q: any) => q.id === x.id),
+                          { occurrence: x },
+                        )
+                      }
+                    >
+                      <strong>{x.title}</strong>
+                      <span>
+                        {x.date}
+                        {x.repeat.kind === "lunar"
+                          ? " · " + lunarLabel(x.date)
+                          : ""}
+                      </span>
+                    </button>
+                  ))}
+                {!range.some(
+                  (x: any) =>
+                    x.date > day &&
+                    x.date <= shift(day, 14) &&
+                    (x.event || x.reminderMinutes !== null || x.deadline) &&
+                    !["done", "cancelled", "skipped"].includes(x.status),
+                ) && <p className="ld-help">{t("noUpcoming")}</p>}
+              </section>
+            );
+          return null;
+        };
         return (
           <>
-            <div className="ld-today-grid">
+            {!tasks.length && !habits.length && !projects.length && (
+              <div className="ld-welcome">
+                <Icon name="today" size={30} />
+                <h2>{t("startTitle")}</h2>
+                <p>{t("startText")}</p>
+                <div className="ld-actions">
+                  <Btn primary onClick={() => openTask()}>
+                    {t("addTask")}
+                  </Btn>
+                  <Btn onClick={() => setTemplateOpen(true)}>
+                    {t("addHabit")}
+                  </Btn>
+                </div>
+              </div>
+            )}
+            <div
+              className={
+                "ld-today-grid" + (support.length ? "" : " ld-single-col")
+              }
+            >
               <div className="ld-main-col">
-                {!tasks.length && !habits.length && !projects.length && (
+                {main.length ? (
+                  main.map((m: any) => (
+                    <React.Fragment key={m.id}>
+                      {renderMain(m.id)}
+                    </React.Fragment>
+                  ))
+                ) : (
                   <div className="ld-welcome">
-                    <Icon name="today" size={30} />
-                    <h2>{t("startTitle")}</h2>
-                    <p>{t("startText")}</p>
-                    <div className="ld-actions">
-                      <Btn primary onClick={() => openTask()}>
-                        {t("addTask")}
-                      </Btn>
-                      <Btn onClick={() => setTemplateOpen(true)}>
-                        {t("addHabit")}
-                      </Btn>
-                    </div>
+                    <Icon name="today" size={28} />
+                    <h2>{t("homeAllHidden")}</h2>
+                    <p>{t("homeAllHiddenHint")}</p>
+                    <Btn primary onClick={() => setHomeOpen(true)}>
+                      {t("homeCustomize")}
+                    </Btn>
                   </div>
                 )}
-                <PlanPanel plan={groups} date={day} act={act} busy={busy} />
-                <FoldSection
-                  title={t("priorities")}
-                  count={priority.length + "/3"}
-                  id="ld-fold-priority"
-                >
-                  {priority.length ? (
-                    taskRows(priority)
-                  ) : (
-                    <p className="ld-help">{t("prioritiesEmpty")}</p>
-                  )}
-                </FoldSection>
-                <FoldSection
-                  title={t("schedule")}
-                  count={groups.schedule.length}
-                  id="ld-fold-schedule"
-                >
-                  {groups.schedule.map((x: any) =>
-                    priority.some((p: any) => p.id === x.id) ? (
-                      <button
-                        className="ld-time-index"
-                        key={x.id + x.originalDate}
-                        onClick={() =>
-                          openTask(
-                            tasks.find((q: any) => q.id === x.id),
-                            { occurrence: x },
-                          )
-                        }
-                      >
-                        <span>{x.time || t("noTime")}</span>
-                        <span>{x.title}</span>
-                        <small>{t("priorities")}</small>
-                      </button>
-                    ) : (
-                      <React.Fragment key={x.id + x.originalDate}>
-                        {taskRows([x], false)}
-                      </React.Fragment>
-                    ),
-                  )}
-                </FoldSection>
-                <FoldSection
-                  title={t("plannedTodos")}
-                  count={groups.todos.length}
-                  id="ld-fold-planned"
-                >
-                  {taskRows(groups.todos)}
-                </FoldSection>
-                <FoldSection
-                  title={t("carryBacklog")}
-                  count={groups.backlog.length}
-                  id="ld-fold-carry"
-                >
-                  <p className="ld-help">{t("carryHint")}</p>
-                  {taskRows(groups.backlog)}
-                </FoldSection>
-                {groups.due.length > 0 && (
-                  <FoldSection
-                    title={t("deadlineWatch")}
-                    count={groups.due.length}
-                    id="ld-fold-due"
-                    className="ld-deadlines"
-                  >
-                    {groups.due.map((x: any) => (
-                      <button
-                        className="ld-time-index"
-                        key={x.id}
-                        onClick={() => openTask(x)}
-                      >
-                        <span>
-                          {x.deadline === day
-                            ? t("dueToday")
-                            : x.deadline < day
-                              ? t("pastDeadline")
-                              : x.deadline}
-                        </span>
-                        <span>{x.title}</span>
-                        <small>
-                          {x.date
-                            ? t("originalPlan") + " " + x.date
-                            : t("noneDate")}
-                        </small>
-                      </button>
-                    ))}
-                  </FoldSection>
-                )}
-                <details className="ld-details">
-                  <summary>
-                    {t("done")} · {groups.completed.length}
-                  </summary>
-                  {taskRows(groups.completed, false)}
-                </details>
-                {groups.previousRecurring.length > 0 && (
-                  <details className="ld-details">
-                    <summary>
-                      {t("earlierRecurring")} ·{" "}
-                      {groups.previousRecurring.length}
-                    </summary>
-                    {taskRows(groups.previousRecurring)}
-                  </details>
-                )}
-                <details className="ld-details">
-                  <summary>
-                    {t("inbox")} · {inboxTasks(data).length}
-                  </summary>
-                  {taskRows(inboxTasks(data))}
-                </details>
               </div>
-              <aside className="ld-support">
-                <div className="ld-side-timer">
-                  <Timer />
-                </div>
-                <section className="ld-section">
-                  <h2>{t("todayHabits")}</h2>
-                  <HabitCards env={viewEnv} />
-                </section>
-                <section className="ld-section">
-                  <h2>{t("upcoming")}</h2>
-                  {range
-                    .filter(
-                      (x: any) =>
-                        x.date > day &&
-                        x.date <= shift(day, 14) &&
-                        (x.event || x.reminderMinutes !== null || x.deadline) &&
-                        !["done", "cancelled", "skipped"].includes(x.status),
-                    )
-                    .slice(0, 5)
-                    .map((x: any) => (
-                      <button
-                        key={x.id + x.originalDate}
-                        className="ld-upcoming"
-                        onClick={() =>
-                          openTask(
-                            tasks.find((q: any) => q.id === x.id),
-                            { occurrence: x },
-                          )
-                        }
-                      >
-                        <strong>{x.title}</strong>
-                        <span>
-                          {x.date}
-                          {x.repeat.kind === "lunar"
-                            ? " · " + lunarLabel(x.date)
-                            : ""}
-                        </span>
-                      </button>
-                    ))}
-                </section>
-              </aside>
+              {!!support.length && (
+                <aside className="ld-support">
+                  {support.map((m: any) => (
+                    <React.Fragment key={m.id}>
+                      {renderSupport(m.id)}
+                    </React.Fragment>
+                  ))}
+                </aside>
+              )}
             </div>
           </>
         );
@@ -2428,6 +2646,7 @@ export function apply(ctx: any) {
             )}
           </>
         );
+      if (tab === "lessons") return <LessonsPage env={viewEnv} />;
       if (tab === "calendar") return <Calendar env={viewEnv} />;
       if (tab === "review") return <Review env={viewEnv} />;
       if (tab === "settings") return <SettingsView env={viewEnv} />;
@@ -2435,25 +2654,31 @@ export function apply(ctx: any) {
         return (
           <>
             <p className="ld-muted">{t("recover")}</p>
-            {["projects", "tasks", "habits", "reviews", "focusLogs"].flatMap(
-              (c) =>
-                data[c]
-                  .filter((x: any) => x.deletedAt)
-                  .map((x: any) => (
-                    <div className="ld-log" key={x.id}>
-                      <span>
-                        {x.title || x.date} · {t(c === "tasks" ? "todos" : c)}
-                      </span>
-                      <Btn
-                        disabled={busy}
-                        onClick={() =>
-                          run({ action: "restore", collection: c, id: x.id })
-                        }
-                      >
-                        {t("restore")}
-                      </Btn>
-                    </div>
-                  )),
+            {[
+              "projects",
+              "tasks",
+              "habits",
+              "lessons",
+              "reviews",
+              "focusLogs",
+            ].flatMap((c) =>
+              data[c]
+                .filter((x: any) => x.deletedAt)
+                .map((x: any) => (
+                  <div className="ld-log" key={x.id}>
+                    <span>
+                      {x.title || x.date} · {t(c === "tasks" ? "todos" : c)}
+                    </span>
+                    <Btn
+                      disabled={busy}
+                      onClick={() =>
+                        run({ action: "restore", collection: c, id: x.id })
+                      }
+                    >
+                      {t("restore")}
+                    </Btn>
+                  </div>
+                )),
             )}
           </>
         );
@@ -2720,6 +2945,11 @@ export function apply(ctx: any) {
                   >
                     ›
                   </button>
+                  {tab === "today" && (
+                    <Btn onClick={() => setHomeOpen(true)}>
+                      {t("homeCustomize")}
+                    </Btn>
+                  )}
                   <Btn onClick={() => setDay(today(timeZone))}>
                     {t("backToday")}
                   </Btn>
@@ -2789,6 +3019,92 @@ export function apply(ctx: any) {
             }}
           />
         </div>
+        {homeOpen && (
+          <Modal title={t("homeCustomize")} onClose={() => setHomeOpen(false)}>
+            <p className="ld-help">{t("homeCustomizeHint")}</p>
+            {["main", "support"].map((region) => {
+              const rank = (id: string) => {
+                const i = data.settings.homeModules.order.indexOf(id);
+                return i < 0 ? 999 : i;
+              };
+              const all = HOME_MODULES.filter(
+                (m: any) => m.region === region,
+              ).sort((a: any, b: any) => rank(a.id) - rank(b.id));
+              return (
+                <section className="ld-section" key={region}>
+                  <h3>{t(region === "main" ? "homeMain" : "homeSupport")}</h3>
+                  {all.map((m: any, i: number) => {
+                    const hidden = data.settings.homeModules.hidden.includes(
+                      m.id,
+                    );
+                    const toggle = () =>
+                      setHomeModules({
+                        hidden: hidden
+                          ? data.settings.homeModules.hidden.filter(
+                              (x: string) => x !== m.id,
+                            )
+                          : [...data.settings.homeModules.hidden, m.id],
+                      });
+                    const move = (delta: number) => {
+                      const next = all.map((x: any) => x.id);
+                      const j = i + delta;
+                      [next[i], next[j]] = [next[j], next[i]];
+                      setHomeModules({ order: next });
+                    };
+                    return (
+                      <div className="ld-home-module" key={m.id}>
+                        <label className="ld-check-label">
+                          <input
+                            type="checkbox"
+                            checked={!hidden}
+                            disabled={busy}
+                            onChange={toggle}
+                          />
+                          {t(m.titleKey)}
+                        </label>
+                        <div className="ld-actions">
+                          <Btn
+                            disabled={busy || i === 0}
+                            aria-label={t("homeMoveUp")}
+                            onClick={() => move(-1)}
+                          >
+                            ↑
+                          </Btn>
+                          <Btn
+                            disabled={busy || i === all.length - 1}
+                            aria-label={t("homeMoveDown")}
+                            onClick={() => move(1)}
+                          >
+                            ↓
+                          </Btn>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </section>
+              );
+            })}
+            <div className="ld-actions">
+              <Btn
+                onClick={() =>
+                  setHomeModules({ hidden: [], order: [], folded: [] })
+                }
+              >
+                {t("homeReset")}
+              </Btn>
+              <Btn primary onClick={() => setHomeOpen(false)}>
+                {t("close")}
+              </Btn>
+            </div>
+          </Modal>
+        )}
+        {lessonModal && (
+          <LessonHub
+            modal={lessonModal}
+            env={viewEnv}
+            close={() => setLessonModal(null)}
+          />
+        )}
         {templateOpen && (
           <Modal title={t("addHabit")} onClose={() => setTemplateOpen(false)}>
             <p className="ld-help">{t("templateHeading")}</p>

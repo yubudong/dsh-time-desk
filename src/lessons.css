@@ -1,0 +1,203 @@
+/* Courses stay compact: schedule, attendance and credit balance share a row. */
+.ld-today-grid.ld-single-col {
+  grid-template-columns: minmax(0, 1fr);
+}
+.ld-lessons-page {
+  min-width: 0;
+}
+.ld-lesson-today,
+.ld-lesson-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  border-top: 1px solid var(--ld-line);
+}
+.ld-lesson-today:first-of-type,
+.ld-lesson-card:first-of-type {
+  border-top: 0;
+}
+.ld-lesson-today.is-done {
+  opacity: 0.72;
+}
+.ld-lesson-today > .ld-task-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+.ld-lesson-today .ld-task-title,
+.ld-lesson-card .ld-task-title {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+.ld-lesson-time {
+  flex: none;
+  min-width: 42px;
+  font-size: 11px;
+  color: var(--ld-muted);
+  font-variant-numeric: tabular-nums;
+}
+.ld-lesson-today > .ld-btn {
+  flex: none;
+  font-size: 11px;
+}
+.ld-lesson-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px;
+}
+.ld-lesson-card {
+  align-items: flex-start;
+  border: 1px solid var(--ld-line);
+  border-radius: 9px;
+  padding: 12px;
+  background: var(--dsw-alias-bg-layer-1);
+}
+.ld-lesson-card .ld-actions {
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+.ld-week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 10px;
+}
+.ld-week-cell {
+  min-width: 0;
+  padding: 8px 6px;
+  border: 1px solid var(--ld-line);
+  border-radius: 8px;
+  min-height: 74px;
+}
+.ld-week-cell h3 {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ld-muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+.ld-week-cell h3 small {
+  font-weight: 400;
+}
+.ld-week-lesson {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 5px 6px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  border: 1px solid var(--ld-line);
+  background: var(--dsw-alias-bg-layer-2);
+  font-size: 11px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.ld-week-lesson span,
+.ld-week-lesson small {
+  display: block;
+  color: var(--ld-muted);
+  font-size: 10px;
+}
+.ld-week-lesson strong {
+  font-weight: 500;
+  color: var(--ld-fg);
+}
+.ld-week-lesson.is-done {
+  opacity: 0.62;
+}
+.ld-lesson-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 12px;
+  color: var(--ld-muted);
+  margin-bottom: 10px;
+}
+.ld-lesson-money {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 8px 0 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ld-accent) 7%, transparent);
+}
+.ld-lesson-money strong {
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+}
+.ld-lesson-money small {
+  color: var(--ld-muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.ld-lesson-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  padding: 7px 0;
+  border-top: 1px solid var(--ld-line);
+  font-size: 12px;
+}
+.ld-lesson-row:first-child {
+  border-top: 0;
+}
+.ld-lesson-row > span:first-child {
+  min-width: 116px;
+  color: var(--ld-muted);
+  font-variant-numeric: tabular-nums;
+}
+.ld-lesson-row > strong {
+  font-variant-numeric: tabular-nums;
+}
+.ld-lesson-row > .ld-btn {
+  margin-left: auto;
+  font-size: 11px;
+}
+.ld-home-module {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-top: 1px solid var(--ld-line);
+}
+.ld-home-module:first-of-type {
+  border-top: 0;
+}
+.ld-home-module .ld-actions {
+  flex: none;
+}
+.ld-home-module .ld-btn {
+  min-width: 30px;
+  padding: 3px 8px;
+}
+.ld-event-lesson {
+  border-left: 3px solid var(--ld-accent) !important;
+}
+.ld-root[data-reduce-motion="true"] .ld-week-lesson {
+  transition: none;
+}
+@container life-desk (max-width: 760px) {
+  .ld-week-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@container life-desk (max-width: 430px) {
+  .ld-week-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ld-lesson-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

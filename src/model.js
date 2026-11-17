@@ -9,8 +9,19 @@ import {
   TaskInput,
   HabitInput,
   Settings,
+  LessonInput,
+  LessonTermInput,
+  LessonSessionInput,
+  LessonChargeInput,
   day,
 } from "./schema.js";
+import {
+  lessonAccount,
+  lessonBounds,
+  lessonConflict,
+  lessonTermAt,
+  lessonTerms,
+} from "./lessons.js";
 import {
   occurrences,
   today,
@@ -20,6 +31,7 @@ import {
   habitProgress,
   ruleDates,
   zonedStamp,
+  weekday,
 } from "./dates.js";
 const fail = (m) => {
   throw new Error(m);
@@ -64,6 +76,49 @@ export function timerSeconds(timer, now) {
         (timer.status === "running" ? (now - timer.segmentAt) / 1000 : 0),
     ),
   );
+}
+function upsertTerm(s, lesson, input, now, iso, explicitId) {
+  const id = explicitId || input?.id || "";
+  const existing = id ? live(s, "lessonTerms", id) : null;
+  if (existing && existing.lessonId !== lesson.id) fail("有效期不属于该课程");
+  const data = LessonTermInput.parse({
+    ...existing,
+    ...input,
+    id: existing?.id,
+    lessonId: lesson.id,
+  });
+  if (
+    s.lessonTerms.some(
+      (x) =>
+        !x.deletedAt &&
+        x.lessonId === lesson.id &&
+        x.id !== existing?.id &&
+        x.start <= data.end &&
+        data.start <= x.end,
+    )
+  )
+    fail("有效期与已有周期重叠");
+  if (existing) {
+    const outside = s.lessonSessions.some(
+      (x) =>
+        !x.deletedAt &&
+        x.lessonId === lesson.id &&
+        x.status === "done" &&
+        (x.date < data.start || x.date > data.end),
+    );
+    if (outside) fail("有效期不能排除已上课记录，请先核对历史");
+    const record = stamp({ ...existing, ...data }, now);
+    s.lessonTerms[s.lessonTerms.indexOf(existing)] = record;
+    return record;
+  }
+  const record = {
+    ...data,
+    ...nowMeta(now),
+    createdAt: iso,
+    updatedAt: iso,
+  };
+  s.lessonTerms.push(record);
+  return record;
 }
 export function applyAction(current, a, now = Date.now()) {
   const s = structuredClone(current);
@@ -185,9 +240,14 @@ export function applyAction(current, a, now = Date.now()) {
     else s[collection].push(record);
   } else if (a.action === "trash" || a.action === "restore") {
     if (
-      !["projects", "tasks", "habits", "reviews", "focusLogs"].includes(
-        collection,
-      )
+      ![
+        "projects",
+        "tasks",
+        "habits",
+        "lessons",
+        "reviews",
+        "focusLogs",
+      ].includes(collection)
     )
       fail("不支持的记录类型");
     const x = s[collection].find((x) => x.id === a.id) || fail("记录不存在");
@@ -414,6 +474,305 @@ export function applyAction(current, a, now = Date.now()) {
             sourceReviewId: review.id,
           });
       }
+  } else if (a.action === "lesson") {
+    const old = a.id ? live(s, "lessons", a.id) : null;
+    if (old && a.version !== undefined && old.version !== a.version)
+      fail("这条课程已被修改，请重新读取");
+    const data = LessonInput.parse({ ...old, ...a.item });
+    data.weekdays = [...new Set(data.weekdays)].sort((x, y) => x - y);
+    const record = {
+      ...data,
+      ...(old
+        ? {
+            id: old.id,
+            createdAt: old.createdAt,
+            updatedAt: iso,
+            version: old.version + 1,
+            deletedAt: null,
+          }
+        : nowMeta(now)),
+    };
+    if (old) s.lessons[s.lessons.findIndex((x) => x.id === old.id)] = record;
+    else s.lessons.push(record);
+    if (a.term) upsertTerm(s, record, a.term, now, iso);
+    if (record.mode === "term" && !lessonTerms(s, record.id).length)
+      fail("期限课程需要填写有效期");
+  } else if (a.action === "lessonTerm") {
+    const lesson = live(s, "lessons", a.id);
+    if (lesson.mode !== "term") fail("只有期限课程可以设置有效期");
+    if (a.command === "remove") {
+      const term = live(s, "lessonTerms", a.removeId);
+      if (term.lessonId !== lesson.id) fail("有效期不属于该课程");
+      const used = s.lessonSessions.some(
+        (x) =>
+          !x.deletedAt &&
+          x.lessonId === lesson.id &&
+          x.status === "done" &&
+          x.date >= term.start &&
+          x.date <= term.end,
+      );
+      if (used) fail("该有效期已有上课记录，不能删除");
+      term.deletedAt = iso;
+      stamp(term, now);
+    } else {
+      const list = lessonTerms(s, lesson.id);
+      const last = list.at(-1);
+      const base =
+        a.command === "renew" && last
+          ? {
+              start: shift(last.end, 1),
+              purchased: last.purchased,
+              amount: last.amount,
+              note: "",
+            }
+          : {};
+      upsertTerm(s, lesson, { ...base, ...a.item }, now, iso, a.item?.id);
+    }
+  } else if (a.action === "lessonSession") {
+    const lesson = live(s, "lessons", a.id);
+    const originalDate = a.originalDate ? day.parse(a.originalDate) : "";
+    const existing = a.sessionId
+      ? live(s, "lessonSessions", a.sessionId)
+      : originalDate
+        ? s.lessonSessions.find(
+            (x) =>
+              x.lessonId === lesson.id &&
+              x.originalDate === originalDate &&
+              !x.deletedAt,
+          ) || null
+        : null;
+    if (existing && existing.lessonId !== lesson.id) fail("记录不属于该课程");
+    const termDate = (date) => {
+      if (lesson.mode !== "term") return;
+      if (!lessonTermAt(lesson, s.lessonTerms, date))
+        fail("该日期不在有效期内，请先调整有效期或续费");
+    };
+    const upsert = (patch) => {
+      const row = {
+        ...(existing || nowMeta(now)),
+        lessonId: lesson.id,
+        originalDate:
+          patch.originalDate !== undefined
+            ? patch.originalDate
+            : (existing?.originalDate ?? originalDate),
+        date: patch.date ?? existing?.date ?? originalDate,
+        time: patch.time ?? existing?.time ?? lesson.time,
+        place: patch.place ?? existing?.place ?? lesson.place,
+        status: patch.status ?? existing?.status ?? "scheduled",
+        note: patch.note ?? existing?.note ?? "",
+        deduction:
+          patch.deduction ?? existing?.deduction ?? lesson.defaultDeduction,
+        completedAt: patch.completedAt ?? existing?.completedAt ?? null,
+        extra: patch.extra ?? existing?.extra ?? false,
+      };
+      LessonSessionInput.parse(row);
+      if (existing)
+        s.lessonSessions[s.lessonSessions.indexOf(existing)] = stamp(row, now);
+      else s.lessonSessions.push(stamp(row, now));
+      return row;
+    };
+    if (a.command === "add") {
+      const date = day.parse(a.date);
+      termDate(date);
+      const time = a.time ?? lesson.time;
+      const conflicts = lessonConflict(
+        s,
+        lesson,
+        date,
+        time,
+        lesson.durationMinutes,
+      );
+      if (conflicts.length && a.confirmConflict !== true)
+        fail(
+          "与 " +
+            conflicts.map((x) => x.title).join("、") +
+            " 时间重叠，确认后仍可保存",
+        );
+      upsert({
+        originalDate: "",
+        date,
+        time,
+        place: a.place ?? lesson.place,
+        note: a.note || "",
+        status: "scheduled",
+        extra: true,
+      });
+    } else if (a.command === "restore") {
+      if (!existing) fail("这一节没有被调整");
+      if (existing.status === "done") fail("已上课的记录请先撤销再恢复安排");
+      if (existing.extra) {
+        existing.deletedAt = iso;
+        stamp(existing, now);
+      } else {
+        const restored = {
+          ...existing,
+          date: existing.originalDate,
+          time: lesson.time,
+          place: lesson.place,
+          note: "",
+        };
+        LessonSessionInput.parse(restored);
+        s.lessonSessions[s.lessonSessions.indexOf(existing)] = stamp(
+          restored,
+          now,
+        );
+      }
+    } else if (a.command === "skip") {
+      if (!existing && !originalDate) fail("请指定要请假的课程");
+      if (existing?.status === "done") fail("已上课的记录请先撤销再请假");
+      const date = existing?.date || originalDate;
+      termDate(date);
+      const base =
+        !!originalDate &&
+        lesson.weekdays.includes(weekday(originalDate)) &&
+        lessonBounds(lesson, s.lessonTerms).some(
+          (b) => originalDate >= b.start && (!b.end || originalDate <= b.end),
+        );
+      if (!existing && !base) fail("该日期不属于课程安排，请使用临时加课");
+      upsert({ status: "skipped", completedAt: null, note: a.note || "" });
+    } else if (a.command === "complete") {
+      const rowDate = existing?.date || originalDate;
+      if (!rowDate) fail("请指定上课日期");
+      if (existing?.status === "done") fail("这一节已经记录上课");
+      termDate(rowDate);
+      if (!existing) {
+        const base =
+          !!originalDate &&
+          lesson.weekdays.includes(weekday(originalDate)) &&
+          lessonBounds(lesson, s.lessonTerms).some(
+            (b) => originalDate >= b.start && (!b.end || originalDate <= b.end),
+          );
+        if (!base) fail("该日期不属于课程安排，请使用临时加课");
+      }
+      const deduction = Number(
+        a.deduction ?? existing?.deduction ?? lesson.defaultDeduction,
+      );
+      if (!Number.isFinite(deduction) || deduction < 0 || deduction > 1000)
+        fail("本次扣除课时应在 0–1000");
+      if (lesson.mode === "credit" && deduction > 0) {
+        const balance = lessonAccount(s, lesson).balance;
+        if (balance < deduction && a.confirmShort !== true)
+          fail(
+            "课时不足：剩余 " +
+              balance +
+              "，本次需要 " +
+              deduction +
+              "。如已上课，请确认后再记录。",
+          );
+      }
+      const row = upsert({
+        status: "done",
+        date: rowDate,
+        completedAt: iso,
+        deduction,
+        note: a.note || "",
+      });
+      if (lesson.mode === "credit" && deduction > 0)
+        s.lessonCharges.push({
+          ...nowMeta(now),
+          lessonId: lesson.id,
+          date: rowDate,
+          delta: -deduction,
+          kind: "use",
+          amount: null,
+          note: "上课",
+          sessionId: row.id,
+          expiresOn: "",
+        });
+    } else if (a.command === "undo") {
+      if (!existing || existing.status !== "done")
+        fail("只有已上课的记录可以撤销");
+      const refund = existing.deduction;
+      existing.status = "scheduled";
+      existing.completedAt = null;
+      stamp(existing, now);
+      if (lesson.mode === "credit" && refund > 0) {
+        const used = s.lessonCharges.find(
+          (x) =>
+            !x.deletedAt &&
+            x.lessonId === lesson.id &&
+            x.sessionId === existing.id &&
+            x.kind === "use",
+        );
+        if (used)
+          s.lessonCharges.push({
+            ...nowMeta(now),
+            lessonId: lesson.id,
+            date: existing.date,
+            delta: Math.abs(used.delta),
+            kind: "refund",
+            amount: null,
+            note: "撤销上课记录",
+            sessionId: existing.id,
+            expiresOn: "",
+          });
+      }
+    } else if (a.command === "remove") {
+      if (!existing?.extra) fail("只有临时增加的课程可以删除");
+      if (existing.status === "done") fail("已上课的记录请先撤销再删除");
+      existing.deletedAt = iso;
+      stamp(existing, now);
+    } else if (a.command === "save") {
+      const date = day.parse(a.date || existing?.date || originalDate);
+      if (!date) fail("请选择调整后的日期");
+      if (!originalDate && !existing?.extra) fail("请指定原定日期");
+      if (existing?.status === "done") fail("已上课的记录请先撤销再调课");
+      if (!existing) {
+        const baseExists =
+          !!originalDate &&
+          lesson.weekdays.includes(weekday(originalDate)) &&
+          lessonBounds(lesson, s.lessonTerms).some(
+            (b) => originalDate >= b.start && (!b.end || originalDate <= b.end),
+          );
+        if (!baseExists) fail("该日期不属于课程安排");
+      }
+      termDate(date);
+      const time = a.time ?? existing?.time ?? lesson.time;
+      if (time && !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) fail("时刻无效");
+      const place = a.place ?? existing?.place ?? lesson.place;
+      const conflicts = lessonConflict(
+        s,
+        lesson,
+        date,
+        time,
+        lesson.durationMinutes,
+        originalDate ? lesson.id + "@" + originalDate : "",
+      );
+      if (conflicts.length && a.confirmConflict !== true)
+        fail(
+          "与 " +
+            conflicts.map((x) => x.title).join("、") +
+            " 时间重叠，确认后仍可保存",
+        );
+      const noChange =
+        !!existing &&
+        date === originalDate &&
+        time === lesson.time &&
+        place === lesson.place &&
+        !(a.note || existing.note);
+      if (noChange) {
+        existing.deletedAt = iso;
+        stamp(existing, now);
+      } else upsert({ date, time, place, note: a.note, status: "scheduled" });
+    } else fail("未知的课程安排操作");
+  } else if (a.action === "lessonCharge") {
+    const lesson = live(s, "lessons", a.id);
+    if (lesson.mode !== "credit") fail("只有课时包课程才需要充值记录");
+    if (a.command === "remove") {
+      const row = live(s, "lessonCharges", a.removeId);
+      if (row.lessonId !== lesson.id) fail("记录不属于该课程");
+      if (row.kind === "use") fail("上课扣减请使用撤销上课，不要直接删除");
+      row.deletedAt = iso;
+      stamp(row, now);
+    } else {
+      const item = LessonChargeInput.parse({ ...a.item, lessonId: lesson.id });
+      if (!item.delta) fail("本次增减课时不能为 0");
+      if (["purchase", "gift", "opening"].includes(item.kind) && item.delta < 0)
+        fail("充值、赠送和首次余额应填写正数");
+      if (item.kind === "use") fail("上课扣减请在课程中记录上课");
+      if (item.kind === "refund" && item.delta < 0) fail("返还课时应填写正数");
+      s.lessonCharges.push({ ...item, ...nowMeta(now) });
+    }
   } else if (a.action === "settings") {
     if (a.command === "reviewTemplate" && a.text !== s.settings.reviewTemplate)
       fail("模板已在其他窗口更新，当前编辑内容保留，请先核对最新模板");
@@ -504,6 +863,10 @@ export function validateState(input) {
     "projects",
     "tasks",
     "habits",
+    "lessons",
+    "lessonTerms",
+    "lessonSessions",
+    "lessonCharges",
     "occurrences",
     "habitLogs",
     "reviews",
@@ -527,6 +890,33 @@ export function validateState(input) {
     ).size !== s.occurrences.filter((x) => !x.deletedAt).length
   )
     fail("备份含重复发生记录");
+  const lessonIds = new Set(s.lessons.map((x) => x.id));
+  if (
+    s.lessonTerms.some((x) => !lessonIds.has(x.lessonId)) ||
+    s.lessonSessions.some((x) => !lessonIds.has(x.lessonId)) ||
+    s.lessonCharges.some((x) => !lessonIds.has(x.lessonId))
+  )
+    fail("备份含无效课程关联");
+  const sessionKeys = s.lessonSessions
+    .filter((x) => !x.deletedAt && x.originalDate)
+    .map((x) => x.lessonId + "@" + x.originalDate);
+  if (new Set(sessionKeys).size !== sessionKeys.length)
+    fail("备份含重复的课程安排记录");
+  const sessionIds = new Set(s.lessonSessions.map((x) => x.id));
+  if (s.lessonCharges.some((x) => x.sessionId && !sessionIds.has(x.sessionId)))
+    fail("备份含无效的上课扣减关联");
+  for (const id of lessonIds) {
+    const terms = s.lessonTerms.filter(
+      (x) => x.lessonId === id && !x.deletedAt,
+    );
+    for (let i = 0; i < terms.length; i++)
+      for (let j = i + 1; j < terms.length; j++)
+        if (terms[i].start <= terms[j].end && terms[j].start <= terms[i].end)
+          fail("备份含重叠的课程有效期");
+    const lesson = s.lessons.find((x) => x.id === id);
+    if (lesson?.mode === "term" && !terms.length)
+      fail("备份含没有有效期的期限课程");
+  }
   for (const t of s.tasks.filter((t) => !t.deletedAt)) {
     const settings = { ...s, tasks: [] };
     validateTask(settings, t);

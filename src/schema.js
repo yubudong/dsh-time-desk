@@ -1,8 +1,12 @@
 import { z } from "zod";
 import { validDate } from "./dates.js";
+import { HOME_MODULE_IDS } from "./home-modules.js";
 const day = z.string().refine(validDate, "日期应为 YYYY-MM-DD");
 const optionalDay = z.union([day, z.literal("")]).default("");
 const str = (n = 200) => z.string().trim().max(n);
+const clock = z
+  .union([z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/), z.literal("")])
+  .default("");
 export const Repeat = z
   .object({
     kind: z
@@ -76,6 +80,77 @@ export const TaskInput = z.object({
     .max(100)
     .default([]),
 });
+export const LessonInput = z
+  .object({
+    title: str(200).min(1),
+    participant: str(40).default(""),
+    place: str(200).default(""),
+    note: str(3000).default(""),
+    mode: z.enum(["none", "credit", "term"]).default("none"),
+    weekdays: z
+      .array(z.number().int().min(0).max(6))
+      .max(7)
+      .default([])
+      .refine((v) => new Set(v).size === v.length, "同一天只能安排一次"),
+    time: clock,
+    durationMinutes: z.number().int().min(0).max(1440).default(60),
+    effective: day,
+    until: optionalDay,
+    reminderMinutes: z
+      .number()
+      .int()
+      .min(0)
+      .max(10080)
+      .nullable()
+      .default(null),
+    defaultDeduction: z.number().positive().max(1000).default(1),
+    balanceWarnAt: z.number().int().min(0).max(1000).nullable().default(null),
+  })
+  .refine(
+    (v) => !v.until || v.until >= v.effective,
+    "结束日期不能早于开始日期",
+  );
+export const LessonTermInput = z
+  .object({
+    lessonId: z.string().min(1),
+    start: day,
+    end: day,
+    purchased: z.number().int().min(0).max(100000).default(0),
+    amount: z.number().min(0).max(1e9).nullable().default(null),
+    note: str(3000).default(""),
+  })
+  .refine((v) => v.end >= v.start, "有效期结束不能早于开始");
+export const LessonSessionInput = z.object({
+  lessonId: z.string().min(1),
+  originalDate: z.union([day, z.literal("")]).default(""),
+  date: day,
+  time: clock,
+  place: str(200).default(""),
+  status: z.enum(["scheduled", "done", "skipped"]).default("scheduled"),
+  note: str(1000).default(""),
+  deduction: z.number().min(0).max(1000).default(1),
+  completedAt: z.string().nullable().default(null),
+  extra: z.boolean().default(false),
+});
+export const LessonChargeInput = z.object({
+  lessonId: z.string().min(1),
+  date: day,
+  delta: z.number().min(-100000).max(100000),
+  kind: z
+    .enum(["purchase", "gift", "opening", "use", "refund", "adjust"])
+    .default("adjust"),
+  amount: z.number().min(0).max(1e9).nullable().default(null),
+  note: str(3000).default(""),
+  sessionId: z.string().default(""),
+  expiresOn: optionalDay,
+});
+export const HomeModules = z
+  .object({
+    hidden: z.array(z.enum(HOME_MODULE_IDS)).max(50).default([]),
+    order: z.array(z.enum(HOME_MODULE_IDS)).max(50).default([]),
+    folded: z.array(z.enum(HOME_MODULE_IDS)).max(50).default([]),
+  })
+  .default({ hidden: [], order: [], folded: [] });
 export const HabitRule = z
   .object({
     effective: day,
@@ -126,6 +201,7 @@ export const Settings = z.object({
   sound: z.boolean().default(false),
   notifications: z.boolean().default(false),
   reviewTemplate: str(2000).default(""),
+  homeModules: HomeModules,
 });
 export const DayPlan = z.object({
   date: day,
@@ -141,6 +217,10 @@ export const State = z.object({
   deviceId: z.string(),
   settings: Settings,
   dayPlans: z.array(DayPlan).max(5000).default([]),
+  lessons: z.array(LessonInput.extend(meta)).default([]),
+  lessonTerms: z.array(LessonTermInput.extend(meta)).default([]),
+  lessonSessions: z.array(LessonSessionInput.extend(meta)).default([]),
+  lessonCharges: z.array(LessonChargeInput.extend(meta)).default([]),
   projects: z.array(ProjectInput.extend(meta)),
   tasks: z.array(TaskInput.extend(meta)),
   habits: z.array(HabitInput.extend(meta)),
@@ -219,6 +299,10 @@ export const blankState = (deviceId) =>
     deviceId,
     settings: {},
     projects: [],
+    lessons: [],
+    lessonTerms: [],
+    lessonSessions: [],
+    lessonCharges: [],
     tasks: [],
     habits: [],
     occurrences: [],

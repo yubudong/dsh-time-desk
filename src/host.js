@@ -7,7 +7,16 @@ import {
   detectDshVersion,
 } from "./update.js";
 import { createUpgradeService } from "./upgrade.js";
-import { ProjectInput, TaskInput, HabitInput, Settings } from "./schema.js";
+import {
+  ProjectInput,
+  TaskInput,
+  HabitInput,
+  LessonInput,
+  LessonTermInput,
+  LessonSessionInput,
+  LessonChargeInput,
+  Settings,
+} from "./schema.js";
 export const inject = [
   "storage",
   "storage.backend.json",
@@ -15,11 +24,19 @@ export const inject = [
   "tools",
 ];
 const guide = {
-  save: "先 read 获取 revision；collection=projects/tasks/habits，item 遵循 schemas，修改带 id，未提供的字段保留。tasks.pomodoros 为预计番茄数量，0 表示不估算；完整专注轮数独立记录且不自动完成任务。删除用 trash，恢复用 restore。",
+  save: "先 read 获取 revision；collection=projects/tasks/habits，item 遵循 schemas，修改带 id，未提供的字段保留。课程使用 lesson 动作，不要塞进 save。tasks.pomodoros 为预计番茄数量，0 表示不估算；完整专注轮数独立记录且不自动完成任务。删除用 trash，恢复用 restore。",
   occurrence:
     "重复事项的单次状态/改期：id=taskId、originalDate=原始发生日、date=改后日期、time=时刻、status=todo/doing/done/skipped/cancelled。无日期任务先 save 设置 date。",
   splitSeries:
     "修改这次及以后：id、originalDate、item 为新任务字段，必须先展示范围并得到用户同意。",
+  lesson:
+    "课程：action=lesson，item 按 lessons schema（title、participant、weekdays、time、durationMinutes、effective、mode=none/credit/term、reminderMinutes、defaultDeduction、balanceWarnAt），带 id 修改需 version。期限课程必须同时提供 term={start,end,purchased,amount,note}；已有 term 继续修改时带上 term.id。删除用 trash collection=lessons。",
+  lessonTerm:
+    "有效期：id=lessonId，command=renew 从上一周期结束次日起新增周期，item={start,end,purchased,amount,note}；command=remove 加 removeId 仅删除无上课记录的周期。有效期不能排除已上课日期，不能重叠。",
+  lessonSession:
+    "课表单次操作：id=lessonId、originalDate=原定日。command=save 调课（date/time/place，仅这一次；如重叠需 confirmConflict=true），restore 恢复原安排，skip 请假不扣课时，complete 确认上课（deduction 默认按课程），undo 撤销上课并返还课时，add 作为临时加课（originalDate 为空），remove 删除临时课。已上课先 undo 才能改期。期限课程的新日期必须在有效期内。",
+  lessonCharge:
+    "课时包流水：id=lessonId，item={date,delta,kind=purchase/gift/opening/adjust,amount,expiresOn,note}。delta 为实际增减（充值为正，adjust 可为负），上课扣减只能由 lessonSession complete 产生；删除误录充值用 command=remove + removeId，不能删除 use 记录。余额不足时 complete 需用户确认后传 confirmShort=true。",
   habitLog:
     "id=habitId、date、value=本次增加数量，duration 习惯则为本次分钟（1–1440 整数）、note 可选、skipped 可选。status=missed 标记未达成；status=planned/unplanned 安排或取消该日的每周次数习惯，不产生打卡。撤销打卡用 removeId=habitLogId。周次数按不同天计算。",
   review:
@@ -177,7 +194,7 @@ export async function apply(ctx) {
     ctx.tools.register({
       name: "life_desk",
       description:
-        "管理时间工作台：项目、生活待办、公历/农历重复、数量/周次数习惯、复盘和番茄钟。首次调用 help 获取字段规范；修改前 read 获取 revision 和记录 ID。",
+        "管理时间工作台：项目、生活待办、公历/农历重复、数量/周次数习惯、课程与课时账本、复盘和番茄钟。首次调用 help 获取字段规范；修改前 read 获取 revision 和记录 ID。",
       parameters: {
         type: "object",
         properties: {
@@ -238,6 +255,11 @@ export async function apply(ctx) {
           confirm: { type: "boolean" },
           autoCheck: { type: "boolean" },
           keys: { type: "array", items: { type: "string" } },
+          term: { type: "object", additionalProperties: true },
+          sessionId: { type: "string" },
+          deduction: { type: "number" },
+          confirmShort: { type: "boolean" },
+          confirmConflict: { type: "boolean" },
           offset: { type: "integer" },
           limit: { type: "integer" },
         },
@@ -284,6 +306,10 @@ export async function apply(ctx) {
               projects: z.toJSONSchema(ProjectInput),
               tasks: z.toJSONSchema(TaskInput),
               habits: z.toJSONSchema(HabitInput),
+              lessons: z.toJSONSchema(LessonInput),
+              lessonTerms: z.toJSONSchema(LessonTermInput),
+              lessonSessions: z.toJSONSchema(LessonSessionInput),
+              lessonCharges: z.toJSONSchema(LessonChargeInput),
               settings: z.toJSONSchema(Settings),
             },
           };
@@ -293,6 +319,10 @@ export async function apply(ctx) {
             "projects",
             "tasks",
             "habits",
+            "lessons",
+            "lessonTerms",
+            "lessonSessions",
+            "lessonCharges",
             "occurrences",
             "habitLogs",
             "reviews",
@@ -323,9 +353,15 @@ export async function apply(ctx) {
             ok: true,
             revision: value.revision,
             counts: Object.fromEntries(
-              ["projects", "tasks", "habits", "habitLogs", "focusLogs"].map(
-                (k) => [k, value[k].filter((x) => !x.deletedAt).length],
-              ),
+              [
+                "projects",
+                "tasks",
+                "habits",
+                "lessons",
+                "lessonSessions",
+                "habitLogs",
+                "focusLogs",
+              ].map((k) => [k, value[k].filter((x) => !x.deletedAt).length]),
             ),
             lastRecord:
               a.action === "save"

@@ -17,6 +17,10 @@ const { HostConnectionService } = await load(
 const { Context } = await load("@deepseek-ai/cordis");
 const workspace = await realpath(process.cwd());
 const temp = await mkdtemp(path.join(workspace, ".life-desk-runtime-test-"));
+const shiftDate = (date, days) =>
+  new Date(Date.parse(date + "T00:00:00Z") + days * 86400000)
+    .toISOString()
+    .slice(0, 10);
 const backend = new JsonStorageBackend(temp);
 const root = new Context();
 const connection = new HostConnectionService(root, [], {
@@ -285,6 +289,143 @@ try {
     "review: personal template, question-only rejection, shared content, one completion, version conflict and edit-time preservation passed",
   );
 
+  const homeSaved = await (
+    await request({
+      action: "settings",
+      revision: await revisionNow(),
+      item: {
+        homeModules: {
+          hidden: ["due"],
+          order: ["lessons", "plan"],
+          folded: ["priority"],
+        },
+      },
+    })
+  ).json();
+  assert.equal(homeSaved.ok, true);
+  assert.deepEqual(homeSaved.value.settings.homeModules.order, [
+    "lessons",
+    "plan",
+  ]);
+  const lessonCreated = await (
+    await request({
+      action: "lesson",
+      revision: await revisionNow(),
+      item: {
+        title: "Synthetic course",
+        participant: "Child",
+        weekdays: [1],
+        time: "18:00",
+        durationMinutes: 60,
+        effective: planDate,
+        mode: "credit",
+      },
+    })
+  ).json();
+  assert.equal(lessonCreated.ok, true);
+  const lessonId = lessonCreated.value.lessons[0].id;
+  const chargeSaved = await (
+    await request({
+      action: "lessonCharge",
+      id: lessonId,
+      revision: await revisionNow(),
+      item: { date: planDate, delta: 8, kind: "opening", note: "opening" },
+    })
+  ).json();
+  assert.equal(chargeSaved.value.lessonCharges.length, 1);
+  const attended = await (
+    await request({
+      action: "lessonSession",
+      command: "complete",
+      id: lessonId,
+      originalDate: planDate,
+      revision: await revisionNow(),
+    })
+  ).json();
+  assert.equal(attended.value.lessonSessions.length, 1);
+  assert.equal(attended.value.lessonSessions[0].status, "done");
+  const duplicateAttendance = await request({
+    action: "lessonSession",
+    command: "complete",
+    id: lessonId,
+    originalDate: planDate,
+    revision: await revisionNow(),
+  });
+  assert.equal(duplicateAttendance.status, 400);
+  const undone = await (
+    await request({
+      action: "lessonSession",
+      command: "undo",
+      id: lessonId,
+      sessionId: attended.value.lessonSessions[0].id,
+      revision: await revisionNow(),
+    })
+  ).json();
+  assert.equal(undone.ok, true);
+  const moved = await (
+    await request({
+      action: "lessonSession",
+      command: "save",
+      id: lessonId,
+      originalDate: planDate,
+      date: shiftDate(planDate, 2),
+      time: "19:00",
+      revision: await revisionNow(),
+    })
+  ).json();
+  assert.equal(moved.ok, true);
+  assert.equal(moved.value.lessonSessions[0].date, shiftDate(planDate, 2));
+  const restored = await (
+    await request({
+      action: "lessonSession",
+      command: "restore",
+      id: lessonId,
+      originalDate: planDate,
+      revision: await revisionNow(),
+    })
+  ).json();
+  assert.equal(restored.value.lessonSessions[0].date, planDate);
+  const termLesson = await (
+    await request({
+      action: "lesson",
+      revision: await revisionNow(),
+      item: {
+        title: "Synthetic term",
+        participant: "Child",
+        weekdays: [1],
+        time: "10:00",
+        effective: planDate,
+        mode: "term",
+      },
+      term: { start: planDate, end: shiftDate(planDate, 13), purchased: 4 },
+    })
+  ).json();
+  assert.equal(termLesson.ok, true);
+  const termId = termLesson.value.lessons.find(
+    (x) => x.title === "Synthetic term",
+  ).id;
+  const outsideTerm = await request({
+    action: "lessonSession",
+    command: "complete",
+    id: termId,
+    originalDate: shiftDate(planDate, 21),
+    revision: await revisionNow(),
+  });
+  assert.equal(outsideTerm.status, 400);
+  const agentLessons = await tool.execute({
+    action: "read",
+    collection: "lessons",
+  });
+  assert.equal(agentLessons.lessons.total, 2);
+  const agentSessions = await tool.execute({
+    action: "read",
+    collection: "lessonSessions",
+  });
+  assert.equal(agentSessions.lessonSessions.items.length, 1);
+  console.log(
+    "lessons: home modules, credit balance, duplicate protection, undo, reschedule, restore and term boundary passed",
+  );
+
   for (const callback of disposers.splice(0).reverse())
     if (typeof callback === "function") await callback();
   const reopened = await backend.kv.open({
@@ -303,6 +444,10 @@ try {
   assert.equal(storedReview.reviews[0].text, "Edited synthetic review");
   assert.equal(storedReview.habitLogs.length, 1);
   assert.ok(storedReview.settings.reviewTemplate.includes("收获"));
+  assert.deepEqual(storedReview.settings.homeModules.hidden, ["due"]);
+  assert.equal(storedReview.lessons.length, 2);
+  assert.equal(storedReview.lessonSessions.length, 1);
+  assert.equal(storedReview.lessonTerms.length, 1);
   await reopened.close();
   console.log(
     "PASS: real installed storage + real Connection route read/write + persistent reopen",

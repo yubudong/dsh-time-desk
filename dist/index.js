@@ -35030,10 +35030,30 @@ function dailyPlan(state, date5, items = occurrences(state, shift(date5, -365), 
   };
 }
 
+// src/home-modules.js
+var HOME_MODULES = [
+  { id: "plan", region: "main", titleKey: "dailyPlan" },
+  { id: "lessons", region: "main", titleKey: "todayLessons" },
+  { id: "priority", region: "main", titleKey: "priorities" },
+  { id: "schedule", region: "main", titleKey: "schedule" },
+  { id: "planned", region: "main", titleKey: "plannedTodos" },
+  { id: "carry", region: "main", titleKey: "carryBacklog" },
+  { id: "due", region: "main", titleKey: "deadlineWatch" },
+  { id: "previous", region: "main", titleKey: "earlierRecurring" },
+  { id: "done", region: "main", titleKey: "done" },
+  { id: "inbox", region: "main", titleKey: "inbox" },
+  { id: "timer", region: "support", titleKey: "focus" },
+  { id: "habits", region: "support", titleKey: "todayHabits" },
+  { id: "weekly", region: "support", titleKey: "weeklyHabits" },
+  { id: "upcoming", region: "support", titleKey: "upcoming" }
+];
+var HOME_MODULE_IDS = HOME_MODULES.map((x) => x.id);
+
 // src/schema.js
 var day = external_exports.string().refine(validDate, "\u65E5\u671F\u5E94\u4E3A YYYY-MM-DD");
 var optionalDay = external_exports.union([day, external_exports.literal("")]).default("");
 var str = (n = 200) => external_exports.string().trim().max(n);
+var clock = external_exports.union([external_exports.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/), external_exports.literal("")]).default("");
 var Repeat = external_exports.object({
   kind: external_exports.enum([
     "none",
@@ -35094,6 +35114,59 @@ var TaskInput = external_exports.object({
   repeat: Repeat.prefault({ kind: "none" }),
   steps: external_exports.array(external_exports.object({ id: external_exports.string(), title: str().min(1), done: external_exports.boolean() })).max(100).default([])
 });
+var LessonInput = external_exports.object({
+  title: str(200).min(1),
+  participant: str(40).default(""),
+  place: str(200).default(""),
+  note: str(3e3).default(""),
+  mode: external_exports.enum(["none", "credit", "term"]).default("none"),
+  weekdays: external_exports.array(external_exports.number().int().min(0).max(6)).max(7).default([]).refine((v) => new Set(v).size === v.length, "\u540C\u4E00\u5929\u53EA\u80FD\u5B89\u6392\u4E00\u6B21"),
+  time: clock,
+  durationMinutes: external_exports.number().int().min(0).max(1440).default(60),
+  effective: day,
+  until: optionalDay,
+  reminderMinutes: external_exports.number().int().min(0).max(10080).nullable().default(null),
+  defaultDeduction: external_exports.number().positive().max(1e3).default(1),
+  balanceWarnAt: external_exports.number().int().min(0).max(1e3).nullable().default(null)
+}).refine(
+  (v) => !v.until || v.until >= v.effective,
+  "\u7ED3\u675F\u65E5\u671F\u4E0D\u80FD\u65E9\u4E8E\u5F00\u59CB\u65E5\u671F"
+);
+var LessonTermInput = external_exports.object({
+  lessonId: external_exports.string().min(1),
+  start: day,
+  end: day,
+  purchased: external_exports.number().int().min(0).max(1e5).default(0),
+  amount: external_exports.number().min(0).max(1e9).nullable().default(null),
+  note: str(3e3).default("")
+}).refine((v) => v.end >= v.start, "\u6709\u6548\u671F\u7ED3\u675F\u4E0D\u80FD\u65E9\u4E8E\u5F00\u59CB");
+var LessonSessionInput = external_exports.object({
+  lessonId: external_exports.string().min(1),
+  originalDate: external_exports.union([day, external_exports.literal("")]).default(""),
+  date: day,
+  time: clock,
+  place: str(200).default(""),
+  status: external_exports.enum(["scheduled", "done", "skipped"]).default("scheduled"),
+  note: str(1e3).default(""),
+  deduction: external_exports.number().min(0).max(1e3).default(1),
+  completedAt: external_exports.string().nullable().default(null),
+  extra: external_exports.boolean().default(false)
+});
+var LessonChargeInput = external_exports.object({
+  lessonId: external_exports.string().min(1),
+  date: day,
+  delta: external_exports.number().min(-1e5).max(1e5),
+  kind: external_exports.enum(["purchase", "gift", "opening", "use", "refund", "adjust"]).default("adjust"),
+  amount: external_exports.number().min(0).max(1e9).nullable().default(null),
+  note: str(3e3).default(""),
+  sessionId: external_exports.string().default(""),
+  expiresOn: optionalDay
+});
+var HomeModules = external_exports.object({
+  hidden: external_exports.array(external_exports.enum(HOME_MODULE_IDS)).max(50).default([]),
+  order: external_exports.array(external_exports.enum(HOME_MODULE_IDS)).max(50).default([]),
+  folded: external_exports.array(external_exports.enum(HOME_MODULE_IDS)).max(50).default([])
+}).default({ hidden: [], order: [], folded: [] });
 var HabitRule = external_exports.object({
   effective: day,
   mode: external_exports.enum(["daily", "quantity", "duration", "weekly"]).default("daily"),
@@ -35132,7 +35205,8 @@ var Settings = external_exports.object({
   longBreak: external_exports.number().int().min(1).max(120).default(15),
   sound: external_exports.boolean().default(false),
   notifications: external_exports.boolean().default(false),
-  reviewTemplate: str(2e3).default("")
+  reviewTemplate: str(2e3).default(""),
+  homeModules: HomeModules
 });
 var DayPlan = external_exports.object({
   date: day,
@@ -35145,6 +35219,10 @@ var State = external_exports.object({
   deviceId: external_exports.string(),
   settings: Settings,
   dayPlans: external_exports.array(DayPlan).max(5e3).default([]),
+  lessons: external_exports.array(LessonInput.extend(meta3)).default([]),
+  lessonTerms: external_exports.array(LessonTermInput.extend(meta3)).default([]),
+  lessonSessions: external_exports.array(LessonSessionInput.extend(meta3)).default([]),
+  lessonCharges: external_exports.array(LessonChargeInput.extend(meta3)).default([]),
   projects: external_exports.array(ProjectInput.extend(meta3)),
   tasks: external_exports.array(TaskInput.extend(meta3)),
   habits: external_exports.array(HabitInput.extend(meta3)),
@@ -35216,6 +35294,10 @@ var blankState = (deviceId) => State.parse({
   deviceId,
   settings: {},
   projects: [],
+  lessons: [],
+  lessonTerms: [],
+  lessonSessions: [],
+  lessonCharges: [],
   tasks: [],
   habits: [],
   occurrences: [],
@@ -35226,6 +35308,128 @@ var blankState = (deviceId) => State.parse({
   receipts: [],
   noticeAcks: []
 });
+
+// src/lessons.js
+var live = (rows) => (rows || []).filter((x) => !x.deletedAt);
+var minutesOf = (time3) => {
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time3 || ""))
+    return time3 ? Number.NaN : 0;
+  const [h, m] = time3.split(":").map(Number);
+  return h * 60 + m;
+};
+var lessonTerms = (state, lessonId) => live(state.lessonTerms).filter((x) => x.lessonId === lessonId);
+function lessonBounds(lesson, terms) {
+  const own2 = live(terms).filter((x) => x.lessonId === lesson.id);
+  if (lesson.mode === "term" && own2.length)
+    return own2.map((x) => ({
+      start: x.start > lesson.effective ? x.start : lesson.effective,
+      end: x.end
+    }));
+  return [{ start: lesson.effective, end: lesson.until || "" }];
+}
+var inBounds = (bounds, date5) => bounds.some((b) => date5 >= b.start && (!b.end || date5 <= b.end));
+function lessonTermAt(lesson, terms, date5) {
+  return live(terms).find(
+    (x) => x.lessonId === lesson.id && date5 >= x.start && date5 <= x.end
+  ) || null;
+}
+function occurrenceOf(state, lesson, originalDate, row) {
+  const base = {
+    lessonId: lesson.id,
+    title: lesson.title,
+    participant: lesson.participant,
+    originalDate,
+    date: row?.date || originalDate,
+    time: row?.time ?? lesson.time,
+    durationMinutes: lesson.durationMinutes,
+    place: row?.place ?? lesson.place,
+    status: row?.status || "scheduled",
+    note: row?.note || "",
+    deduction: row?.deduction ?? lesson.defaultDeduction,
+    completedAt: row?.completedAt ?? null,
+    extra: !!row?.extra,
+    movedFrom: row && row.date !== originalDate ? originalDate : "",
+    sessionId: row?.id || "",
+    key: lesson.id + "@" + (originalDate || "extra:" + (row?.id || ""))
+  };
+  return base;
+}
+function lessonOccurrences(state, lesson, from, to) {
+  if (lesson.deletedAt) return [];
+  const rows = live(state.lessonSessions).filter(
+    (x) => x.lessonId === lesson.id
+  );
+  const byOriginal = /* @__PURE__ */ new Map();
+  for (const r of rows) if (r.originalDate) byOriginal.set(r.originalDate, r);
+  const bounds = lessonBounds(lesson, state.lessonTerms);
+  const out = [];
+  const emitted = /* @__PURE__ */ new Set();
+  if (lesson.weekdays.length)
+    for (let d = from; d <= to; d = shift(d, 1)) {
+      if (!lesson.weekdays.includes(weekday(d)) || !inBounds(bounds, d))
+        continue;
+      const row = byOriginal.get(d);
+      const date5 = row?.date || d;
+      emitted.add((row?.originalDate || d) + ":" + date5);
+      if (date5 >= from && date5 <= to)
+        out.push(occurrenceOf(state, lesson, d, row));
+    }
+  for (const r of rows) {
+    if (!r.date || r.date < from || r.date > to) continue;
+    if (emitted.has((r.originalDate || "") + ":" + r.date)) continue;
+    out.push(occurrenceOf(state, lesson, r.originalDate || "", r));
+  }
+  return out.sort(
+    (a, b) => (a.date + (a.time || "99:99")).localeCompare(b.date + (b.time || "99:99"))
+  );
+}
+function lessonAccount(state, lesson) {
+  const rows = live(state.lessonCharges).filter(
+    (x) => x.lessonId === lesson.id
+  );
+  const sum = (f) => rows.filter(f).reduce((s, x) => s + x.delta, 0);
+  return {
+    balance: rows.reduce((s, x) => s + x.delta, 0),
+    purchased: sum((x) => x.kind === "purchase"),
+    gifted: sum((x) => x.kind === "gift"),
+    opening: sum((x) => x.kind === "opening"),
+    used: -sum((x) => x.kind === "use"),
+    refunded: sum((x) => x.kind === "refund"),
+    adjusted: sum((x) => x.kind === "adjust"),
+    entries: rows.sort(
+      (a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt)
+    )
+  };
+}
+function lessonConflict(state, lesson, date5, time3, durationMinutes, skipKey = "") {
+  if (!time3) return [];
+  const start = minutesOf(time3);
+  if (!Number.isFinite(start)) return [];
+  const end = start + Math.max(0, Number(durationMinutes) || 0);
+  const who = (lesson.participant || "").trim();
+  if (!who) return [];
+  const out = [];
+  for (const l of live(state.lessons)) {
+    if (l.id === lesson.id) continue;
+    if ((l.participant || "").trim() !== who) continue;
+    for (const x of lessonOccurrences(state, l, date5, date5)) {
+      if (x.date !== date5 || x.status === "skipped") continue;
+      if (skipKey && x.key === skipKey) continue;
+      const otherStart = minutesOf(x.time);
+      if (!Number.isFinite(otherStart)) continue;
+      const otherEnd = otherStart + Math.max(0, Number(x.durationMinutes) || 0);
+      if (start < otherEnd && otherStart < end)
+        out.push({
+          key: x.key,
+          lessonId: l.id,
+          title: l.title,
+          time: x.time,
+          date: x.date
+        });
+    }
+  }
+  return out;
+}
 
 // src/model.js
 var fail = (m) => {
@@ -35238,7 +35442,7 @@ var nowMeta = (now) => ({
   version: 1,
   deletedAt: null
 });
-var live = (s, c, id) => s[c]?.find((x) => x.id === id && !x.deletedAt) || fail("\u8BB0\u5F55\u4E0D\u5B58\u5728\u6216\u5DF2\u5220\u9664");
+var live2 = (s, c, id) => s[c]?.find((x) => x.id === id && !x.deletedAt) || fail("\u8BB0\u5F55\u4E0D\u5B58\u5728\u6216\u5DF2\u5220\u9664");
 function validateTask(s, t) {
   if (t.projectId && !s.projects.some((p) => p.id === t.projectId))
     fail("\u5173\u8054\u9879\u76EE\u4E0D\u5B58\u5728");
@@ -35267,6 +35471,38 @@ function timerSeconds(timer, now) {
     )
   );
 }
+function upsertTerm(s, lesson, input2, now, iso, explicitId) {
+  const id = explicitId || input2?.id || "";
+  const existing = id ? live2(s, "lessonTerms", id) : null;
+  if (existing && existing.lessonId !== lesson.id) fail("\u6709\u6548\u671F\u4E0D\u5C5E\u4E8E\u8BE5\u8BFE\u7A0B");
+  const data = LessonTermInput.parse({
+    ...existing,
+    ...input2,
+    id: existing?.id,
+    lessonId: lesson.id
+  });
+  if (s.lessonTerms.some(
+    (x) => !x.deletedAt && x.lessonId === lesson.id && x.id !== existing?.id && x.start <= data.end && data.start <= x.end
+  ))
+    fail("\u6709\u6548\u671F\u4E0E\u5DF2\u6709\u5468\u671F\u91CD\u53E0");
+  if (existing) {
+    const outside = s.lessonSessions.some(
+      (x) => !x.deletedAt && x.lessonId === lesson.id && x.status === "done" && (x.date < data.start || x.date > data.end)
+    );
+    if (outside) fail("\u6709\u6548\u671F\u4E0D\u80FD\u6392\u9664\u5DF2\u4E0A\u8BFE\u8BB0\u5F55\uFF0C\u8BF7\u5148\u6838\u5BF9\u5386\u53F2");
+    const record3 = stamp({ ...existing, ...data }, now);
+    s.lessonTerms[s.lessonTerms.indexOf(existing)] = record3;
+    return record3;
+  }
+  const record2 = {
+    ...data,
+    ...nowMeta(now),
+    createdAt: iso,
+    updatedAt: iso
+  };
+  s.lessonTerms.push(record2);
+  return record2;
+}
 function applyAction(current, a, now = Date.now()) {
   const s = structuredClone(current);
   const iso = new Date(now).toISOString();
@@ -35285,7 +35521,7 @@ function applyAction(current, a, now = Date.now()) {
         fail("\u8BF7\u660E\u786E\u63D0\u4F9B\u53EF\u7528\u5206\u949F\uFF0C\u6216 null \u6E05\u9664\u8BBE\u7F6E");
       plan.availableMinutes = a.item.availableMinutes;
     } else if (["pick", "unpick"].includes(a.command)) {
-      const task = live(s, "tasks", a.id);
+      const task = live2(s, "tasks", a.id);
       const groups = dailyPlan(s, date5);
       const candidates = [
         ...groups.backlog,
@@ -35310,7 +35546,7 @@ function applyAction(current, a, now = Date.now()) {
   } else if (a.action === "save") {
     if (!["projects", "tasks", "habits"].includes(collection))
       fail("\u4E0D\u652F\u6301\u7684\u8BB0\u5F55\u7C7B\u578B");
-    const old = a.id ? live(s, collection, a.id) : null;
+    const old = a.id ? live2(s, collection, a.id) : null;
     if (old && a.version !== void 0 && old.version !== a.version)
       fail("\u8FD9\u6761\u8BB0\u5F55\u5DF2\u88AB\u4FEE\u6539\uFF0C\u8BF7\u91CD\u65B0\u8BFB\u53D6");
     const schema = {
@@ -35367,16 +35603,21 @@ function applyAction(current, a, now = Date.now()) {
       s[collection][s[collection].findIndex((x) => x.id === old.id)] = record2;
     else s[collection].push(record2);
   } else if (a.action === "trash" || a.action === "restore") {
-    if (!["projects", "tasks", "habits", "reviews", "focusLogs"].includes(
-      collection
-    ))
+    if (![
+      "projects",
+      "tasks",
+      "habits",
+      "lessons",
+      "reviews",
+      "focusLogs"
+    ].includes(collection))
       fail("\u4E0D\u652F\u6301\u7684\u8BB0\u5F55\u7C7B\u578B");
     const x = s[collection].find((x2) => x2.id === a.id) || fail("\u8BB0\u5F55\u4E0D\u5B58\u5728");
     if (a.action === "restore" && collection === "tasks") validateTask(s, x);
     x.deletedAt = a.action === "trash" ? iso : null;
     stamp(x, now);
   } else if (a.action === "occurrence") {
-    const t = live(s, "tasks", a.id);
+    const t = live2(s, "tasks", a.id);
     const originalDate = day.parse(a.originalDate);
     const existing = s.occurrences.find(
       (x2) => x2.taskId === t.id && x2.originalDate === originalDate && !x2.deletedAt
@@ -35427,7 +35668,7 @@ function applyAction(current, a, now = Date.now()) {
       stamp(t, now);
     }
   } else if (a.action === "splitSeries") {
-    const t = live(s, "tasks", a.id);
+    const t = live2(s, "tasks", a.id);
     if (t.repeat.kind === "none" || t.repeat.kind === "completion")
       fail("\u8BE5\u4E8B\u9879\u4E0D\u652F\u6301\u62C6\u5206");
     const split = day.parse(a.originalDate);
@@ -35450,7 +35691,7 @@ function applyAction(current, a, now = Date.now()) {
       stamp(x, now);
     }
   } else if (a.action === "habitLog") {
-    const h = live(s, "habits", a.id);
+    const h = live2(s, "habits", a.id);
     const date5 = day.parse(a.date || localDay);
     if (a.status === "planned" || a.status === "unplanned") {
       if (!habitDue(h, date5) || habitRule(h, date5)?.mode !== "weekly")
@@ -35474,7 +35715,7 @@ function applyAction(current, a, now = Date.now()) {
     if (date5 > localDay) fail("\u4E0D\u80FD\u63D0\u524D\u6253\u5361");
     if (!habitDue(h, date5)) fail("\u8BE5\u65E5\u672A\u5B89\u6392\u6B64\u4E60\u60EF\u6216\u5DF2\u6682\u505C");
     if (a.removeId) {
-      const l = live(s, "habitLogs", a.removeId);
+      const l = live2(s, "habitLogs", a.removeId);
       if (l.habitId !== h.id || l.date !== date5) fail("\u8BB0\u5F55\u4E0D\u5339\u914D");
       l.deletedAt = iso;
       stamp(l, now);
@@ -35529,7 +35770,7 @@ function applyAction(current, a, now = Date.now()) {
     if (a.version !== void 0 && a.version !== (old?.version || 0))
       fail("\u8BE5\u65E5\u590D\u76D8\u5DF2\u88AB\u4FEE\u6539\uFF0C\u8349\u7A3F\u5DF2\u4FDD\u7559\uFF0C\u8BF7\u91CD\u65B0\u8BFB\u53D6\u540E\u6838\u5BF9");
     if (a.id) {
-      const h = live(s, "habits", a.id);
+      const h = live2(s, "habits", a.id);
       if (!h.reviewLinked || !habitDue(h, date5) || habitRule(h, date5)?.mode !== "daily")
         fail("\u8BE5\u65E5\u4E60\u60EF\u4E0D\u5173\u8054\u65E5\u590D\u76D8");
       const progress = habitProgress(s, h, date5, now);
@@ -35563,6 +35804,258 @@ function applyAction(current, a, now = Date.now()) {
             sourceReviewId: review.id
           });
       }
+  } else if (a.action === "lesson") {
+    const old = a.id ? live2(s, "lessons", a.id) : null;
+    if (old && a.version !== void 0 && old.version !== a.version)
+      fail("\u8FD9\u6761\u8BFE\u7A0B\u5DF2\u88AB\u4FEE\u6539\uFF0C\u8BF7\u91CD\u65B0\u8BFB\u53D6");
+    const data = LessonInput.parse({ ...old, ...a.item });
+    data.weekdays = [...new Set(data.weekdays)].sort((x, y) => x - y);
+    const record2 = {
+      ...data,
+      ...old ? {
+        id: old.id,
+        createdAt: old.createdAt,
+        updatedAt: iso,
+        version: old.version + 1,
+        deletedAt: null
+      } : nowMeta(now)
+    };
+    if (old) s.lessons[s.lessons.findIndex((x) => x.id === old.id)] = record2;
+    else s.lessons.push(record2);
+    if (a.term) upsertTerm(s, record2, a.term, now, iso);
+    if (record2.mode === "term" && !lessonTerms(s, record2.id).length)
+      fail("\u671F\u9650\u8BFE\u7A0B\u9700\u8981\u586B\u5199\u6709\u6548\u671F");
+  } else if (a.action === "lessonTerm") {
+    const lesson = live2(s, "lessons", a.id);
+    if (lesson.mode !== "term") fail("\u53EA\u6709\u671F\u9650\u8BFE\u7A0B\u53EF\u4EE5\u8BBE\u7F6E\u6709\u6548\u671F");
+    if (a.command === "remove") {
+      const term = live2(s, "lessonTerms", a.removeId);
+      if (term.lessonId !== lesson.id) fail("\u6709\u6548\u671F\u4E0D\u5C5E\u4E8E\u8BE5\u8BFE\u7A0B");
+      const used = s.lessonSessions.some(
+        (x) => !x.deletedAt && x.lessonId === lesson.id && x.status === "done" && x.date >= term.start && x.date <= term.end
+      );
+      if (used) fail("\u8BE5\u6709\u6548\u671F\u5DF2\u6709\u4E0A\u8BFE\u8BB0\u5F55\uFF0C\u4E0D\u80FD\u5220\u9664");
+      term.deletedAt = iso;
+      stamp(term, now);
+    } else {
+      const list = lessonTerms(s, lesson.id);
+      const last = list.at(-1);
+      const base = a.command === "renew" && last ? {
+        start: shift(last.end, 1),
+        purchased: last.purchased,
+        amount: last.amount,
+        note: ""
+      } : {};
+      upsertTerm(s, lesson, { ...base, ...a.item }, now, iso, a.item?.id);
+    }
+  } else if (a.action === "lessonSession") {
+    const lesson = live2(s, "lessons", a.id);
+    const originalDate = a.originalDate ? day.parse(a.originalDate) : "";
+    const existing = a.sessionId ? live2(s, "lessonSessions", a.sessionId) : originalDate ? s.lessonSessions.find(
+      (x) => x.lessonId === lesson.id && x.originalDate === originalDate && !x.deletedAt
+    ) || null : null;
+    if (existing && existing.lessonId !== lesson.id) fail("\u8BB0\u5F55\u4E0D\u5C5E\u4E8E\u8BE5\u8BFE\u7A0B");
+    const termDate = (date5) => {
+      if (lesson.mode !== "term") return;
+      if (!lessonTermAt(lesson, s.lessonTerms, date5))
+        fail("\u8BE5\u65E5\u671F\u4E0D\u5728\u6709\u6548\u671F\u5185\uFF0C\u8BF7\u5148\u8C03\u6574\u6709\u6548\u671F\u6216\u7EED\u8D39");
+    };
+    const upsert = (patch) => {
+      const row = {
+        ...existing || nowMeta(now),
+        lessonId: lesson.id,
+        originalDate: patch.originalDate !== void 0 ? patch.originalDate : existing?.originalDate ?? originalDate,
+        date: patch.date ?? existing?.date ?? originalDate,
+        time: patch.time ?? existing?.time ?? lesson.time,
+        place: patch.place ?? existing?.place ?? lesson.place,
+        status: patch.status ?? existing?.status ?? "scheduled",
+        note: patch.note ?? existing?.note ?? "",
+        deduction: patch.deduction ?? existing?.deduction ?? lesson.defaultDeduction,
+        completedAt: patch.completedAt ?? existing?.completedAt ?? null,
+        extra: patch.extra ?? existing?.extra ?? false
+      };
+      LessonSessionInput.parse(row);
+      if (existing)
+        s.lessonSessions[s.lessonSessions.indexOf(existing)] = stamp(row, now);
+      else s.lessonSessions.push(stamp(row, now));
+      return row;
+    };
+    if (a.command === "add") {
+      const date5 = day.parse(a.date);
+      termDate(date5);
+      const time3 = a.time ?? lesson.time;
+      const conflicts = lessonConflict(
+        s,
+        lesson,
+        date5,
+        time3,
+        lesson.durationMinutes
+      );
+      if (conflicts.length && a.confirmConflict !== true)
+        fail(
+          "\u4E0E " + conflicts.map((x) => x.title).join("\u3001") + " \u65F6\u95F4\u91CD\u53E0\uFF0C\u786E\u8BA4\u540E\u4ECD\u53EF\u4FDD\u5B58"
+        );
+      upsert({
+        originalDate: "",
+        date: date5,
+        time: time3,
+        place: a.place ?? lesson.place,
+        note: a.note || "",
+        status: "scheduled",
+        extra: true
+      });
+    } else if (a.command === "restore") {
+      if (!existing) fail("\u8FD9\u4E00\u8282\u6CA1\u6709\u88AB\u8C03\u6574");
+      if (existing.status === "done") fail("\u5DF2\u4E0A\u8BFE\u7684\u8BB0\u5F55\u8BF7\u5148\u64A4\u9500\u518D\u6062\u590D\u5B89\u6392");
+      if (existing.extra) {
+        existing.deletedAt = iso;
+        stamp(existing, now);
+      } else {
+        const restored = {
+          ...existing,
+          date: existing.originalDate,
+          time: lesson.time,
+          place: lesson.place,
+          note: ""
+        };
+        LessonSessionInput.parse(restored);
+        s.lessonSessions[s.lessonSessions.indexOf(existing)] = stamp(
+          restored,
+          now
+        );
+      }
+    } else if (a.command === "skip") {
+      if (!existing && !originalDate) fail("\u8BF7\u6307\u5B9A\u8981\u8BF7\u5047\u7684\u8BFE\u7A0B");
+      if (existing?.status === "done") fail("\u5DF2\u4E0A\u8BFE\u7684\u8BB0\u5F55\u8BF7\u5148\u64A4\u9500\u518D\u8BF7\u5047");
+      const date5 = existing?.date || originalDate;
+      termDate(date5);
+      const base = !!originalDate && lesson.weekdays.includes(weekday(originalDate)) && lessonBounds(lesson, s.lessonTerms).some(
+        (b) => originalDate >= b.start && (!b.end || originalDate <= b.end)
+      );
+      if (!existing && !base) fail("\u8BE5\u65E5\u671F\u4E0D\u5C5E\u4E8E\u8BFE\u7A0B\u5B89\u6392\uFF0C\u8BF7\u4F7F\u7528\u4E34\u65F6\u52A0\u8BFE");
+      upsert({ status: "skipped", completedAt: null, note: a.note || "" });
+    } else if (a.command === "complete") {
+      const rowDate = existing?.date || originalDate;
+      if (!rowDate) fail("\u8BF7\u6307\u5B9A\u4E0A\u8BFE\u65E5\u671F");
+      if (existing?.status === "done") fail("\u8FD9\u4E00\u8282\u5DF2\u7ECF\u8BB0\u5F55\u4E0A\u8BFE");
+      termDate(rowDate);
+      if (!existing) {
+        const base = !!originalDate && lesson.weekdays.includes(weekday(originalDate)) && lessonBounds(lesson, s.lessonTerms).some(
+          (b) => originalDate >= b.start && (!b.end || originalDate <= b.end)
+        );
+        if (!base) fail("\u8BE5\u65E5\u671F\u4E0D\u5C5E\u4E8E\u8BFE\u7A0B\u5B89\u6392\uFF0C\u8BF7\u4F7F\u7528\u4E34\u65F6\u52A0\u8BFE");
+      }
+      const deduction = Number(
+        a.deduction ?? existing?.deduction ?? lesson.defaultDeduction
+      );
+      if (!Number.isFinite(deduction) || deduction < 0 || deduction > 1e3)
+        fail("\u672C\u6B21\u6263\u9664\u8BFE\u65F6\u5E94\u5728 0\u20131000");
+      if (lesson.mode === "credit" && deduction > 0) {
+        const balance = lessonAccount(s, lesson).balance;
+        if (balance < deduction && a.confirmShort !== true)
+          fail(
+            "\u8BFE\u65F6\u4E0D\u8DB3\uFF1A\u5269\u4F59 " + balance + "\uFF0C\u672C\u6B21\u9700\u8981 " + deduction + "\u3002\u5982\u5DF2\u4E0A\u8BFE\uFF0C\u8BF7\u786E\u8BA4\u540E\u518D\u8BB0\u5F55\u3002"
+          );
+      }
+      const row = upsert({
+        status: "done",
+        date: rowDate,
+        completedAt: iso,
+        deduction,
+        note: a.note || ""
+      });
+      if (lesson.mode === "credit" && deduction > 0)
+        s.lessonCharges.push({
+          ...nowMeta(now),
+          lessonId: lesson.id,
+          date: rowDate,
+          delta: -deduction,
+          kind: "use",
+          amount: null,
+          note: "\u4E0A\u8BFE",
+          sessionId: row.id,
+          expiresOn: ""
+        });
+    } else if (a.command === "undo") {
+      if (!existing || existing.status !== "done")
+        fail("\u53EA\u6709\u5DF2\u4E0A\u8BFE\u7684\u8BB0\u5F55\u53EF\u4EE5\u64A4\u9500");
+      const refund = existing.deduction;
+      existing.status = "scheduled";
+      existing.completedAt = null;
+      stamp(existing, now);
+      if (lesson.mode === "credit" && refund > 0) {
+        const used = s.lessonCharges.find(
+          (x) => !x.deletedAt && x.lessonId === lesson.id && x.sessionId === existing.id && x.kind === "use"
+        );
+        if (used)
+          s.lessonCharges.push({
+            ...nowMeta(now),
+            lessonId: lesson.id,
+            date: existing.date,
+            delta: Math.abs(used.delta),
+            kind: "refund",
+            amount: null,
+            note: "\u64A4\u9500\u4E0A\u8BFE\u8BB0\u5F55",
+            sessionId: existing.id,
+            expiresOn: ""
+          });
+      }
+    } else if (a.command === "remove") {
+      if (!existing?.extra) fail("\u53EA\u6709\u4E34\u65F6\u589E\u52A0\u7684\u8BFE\u7A0B\u53EF\u4EE5\u5220\u9664");
+      if (existing.status === "done") fail("\u5DF2\u4E0A\u8BFE\u7684\u8BB0\u5F55\u8BF7\u5148\u64A4\u9500\u518D\u5220\u9664");
+      existing.deletedAt = iso;
+      stamp(existing, now);
+    } else if (a.command === "save") {
+      const date5 = day.parse(a.date || existing?.date || originalDate);
+      if (!date5) fail("\u8BF7\u9009\u62E9\u8C03\u6574\u540E\u7684\u65E5\u671F");
+      if (!originalDate && !existing?.extra) fail("\u8BF7\u6307\u5B9A\u539F\u5B9A\u65E5\u671F");
+      if (existing?.status === "done") fail("\u5DF2\u4E0A\u8BFE\u7684\u8BB0\u5F55\u8BF7\u5148\u64A4\u9500\u518D\u8C03\u8BFE");
+      if (!existing) {
+        const baseExists = !!originalDate && lesson.weekdays.includes(weekday(originalDate)) && lessonBounds(lesson, s.lessonTerms).some(
+          (b) => originalDate >= b.start && (!b.end || originalDate <= b.end)
+        );
+        if (!baseExists) fail("\u8BE5\u65E5\u671F\u4E0D\u5C5E\u4E8E\u8BFE\u7A0B\u5B89\u6392");
+      }
+      termDate(date5);
+      const time3 = a.time ?? existing?.time ?? lesson.time;
+      if (time3 && !/^([01]\d|2[0-3]):[0-5]\d$/.test(time3)) fail("\u65F6\u523B\u65E0\u6548");
+      const place = a.place ?? existing?.place ?? lesson.place;
+      const conflicts = lessonConflict(
+        s,
+        lesson,
+        date5,
+        time3,
+        lesson.durationMinutes,
+        originalDate ? lesson.id + "@" + originalDate : ""
+      );
+      if (conflicts.length && a.confirmConflict !== true)
+        fail(
+          "\u4E0E " + conflicts.map((x) => x.title).join("\u3001") + " \u65F6\u95F4\u91CD\u53E0\uFF0C\u786E\u8BA4\u540E\u4ECD\u53EF\u4FDD\u5B58"
+        );
+      const noChange = !!existing && date5 === originalDate && time3 === lesson.time && place === lesson.place && !(a.note || existing.note);
+      if (noChange) {
+        existing.deletedAt = iso;
+        stamp(existing, now);
+      } else upsert({ date: date5, time: time3, place, note: a.note, status: "scheduled" });
+    } else fail("\u672A\u77E5\u7684\u8BFE\u7A0B\u5B89\u6392\u64CD\u4F5C");
+  } else if (a.action === "lessonCharge") {
+    const lesson = live2(s, "lessons", a.id);
+    if (lesson.mode !== "credit") fail("\u53EA\u6709\u8BFE\u65F6\u5305\u8BFE\u7A0B\u624D\u9700\u8981\u5145\u503C\u8BB0\u5F55");
+    if (a.command === "remove") {
+      const row = live2(s, "lessonCharges", a.removeId);
+      if (row.lessonId !== lesson.id) fail("\u8BB0\u5F55\u4E0D\u5C5E\u4E8E\u8BE5\u8BFE\u7A0B");
+      if (row.kind === "use") fail("\u4E0A\u8BFE\u6263\u51CF\u8BF7\u4F7F\u7528\u64A4\u9500\u4E0A\u8BFE\uFF0C\u4E0D\u8981\u76F4\u63A5\u5220\u9664");
+      row.deletedAt = iso;
+      stamp(row, now);
+    } else {
+      const item = LessonChargeInput.parse({ ...a.item, lessonId: lesson.id });
+      if (!item.delta) fail("\u672C\u6B21\u589E\u51CF\u8BFE\u65F6\u4E0D\u80FD\u4E3A 0");
+      if (["purchase", "gift", "opening"].includes(item.kind) && item.delta < 0)
+        fail("\u5145\u503C\u3001\u8D60\u9001\u548C\u9996\u6B21\u4F59\u989D\u5E94\u586B\u5199\u6B63\u6570");
+      if (item.kind === "use") fail("\u4E0A\u8BFE\u6263\u51CF\u8BF7\u5728\u8BFE\u7A0B\u4E2D\u8BB0\u5F55\u4E0A\u8BFE");
+      if (item.kind === "refund" && item.delta < 0) fail("\u8FD4\u8FD8\u8BFE\u65F6\u5E94\u586B\u5199\u6B63\u6570");
+      s.lessonCharges.push({ ...item, ...nowMeta(now) });
+    }
   } else if (a.action === "settings") {
     if (a.command === "reviewTemplate" && a.text !== s.settings.reviewTemplate)
       fail("\u6A21\u677F\u5DF2\u5728\u5176\u4ED6\u7A97\u53E3\u66F4\u65B0\uFF0C\u5F53\u524D\u7F16\u8F91\u5185\u5BB9\u4FDD\u7559\uFF0C\u8BF7\u5148\u6838\u5BF9\u6700\u65B0\u6A21\u677F");
@@ -35578,7 +36071,7 @@ function applyAction(current, a, now = Date.now()) {
     let t = s.timer;
     if (a.command === "start") {
       if (t) fail("\u8BF7\u5148\u7ED3\u675F\u5F53\u524D\u4E13\u6CE8\u6216\u4F11\u606F");
-      if (a.taskId) live(s, "tasks", a.taskId);
+      if (a.taskId) live2(s, "tasks", a.taskId);
       const phase = a.phase || "focus";
       if (!["focus", "short", "long"].includes(phase)) fail("\u9636\u6BB5\u65E0\u6548");
       const duration3 = durationSeconds(s.settings, phase, a.item?.minutes);
@@ -35588,7 +36081,7 @@ function applyAction(current, a, now = Date.now()) {
         status: "running",
         taskId: a.taskId || "",
         originalDate: a.originalDate || "",
-        title: a.taskId ? live(s, "tasks", a.taskId).title : "",
+        title: a.taskId ? live2(s, "tasks", a.taskId).title : "",
         startedAt: now,
         segmentAt: now,
         duration: duration3,
@@ -35649,6 +36142,10 @@ function validateState(input2) {
     "projects",
     "tasks",
     "habits",
+    "lessons",
+    "lessonTerms",
+    "lessonSessions",
+    "lessonCharges",
     "occurrences",
     "habitLogs",
     "reviews",
@@ -35662,13 +36159,34 @@ function validateState(input2) {
     s.occurrences.filter((x) => !x.deletedAt).map((x) => x.taskId + "@" + x.originalDate)
   ).size !== s.occurrences.filter((x) => !x.deletedAt).length)
     fail("\u5907\u4EFD\u542B\u91CD\u590D\u53D1\u751F\u8BB0\u5F55");
+  const lessonIds = new Set(s.lessons.map((x) => x.id));
+  if (s.lessonTerms.some((x) => !lessonIds.has(x.lessonId)) || s.lessonSessions.some((x) => !lessonIds.has(x.lessonId)) || s.lessonCharges.some((x) => !lessonIds.has(x.lessonId)))
+    fail("\u5907\u4EFD\u542B\u65E0\u6548\u8BFE\u7A0B\u5173\u8054");
+  const sessionKeys = s.lessonSessions.filter((x) => !x.deletedAt && x.originalDate).map((x) => x.lessonId + "@" + x.originalDate);
+  if (new Set(sessionKeys).size !== sessionKeys.length)
+    fail("\u5907\u4EFD\u542B\u91CD\u590D\u7684\u8BFE\u7A0B\u5B89\u6392\u8BB0\u5F55");
+  const sessionIds = new Set(s.lessonSessions.map((x) => x.id));
+  if (s.lessonCharges.some((x) => x.sessionId && !sessionIds.has(x.sessionId)))
+    fail("\u5907\u4EFD\u542B\u65E0\u6548\u7684\u4E0A\u8BFE\u6263\u51CF\u5173\u8054");
+  for (const id of lessonIds) {
+    const terms = s.lessonTerms.filter(
+      (x) => x.lessonId === id && !x.deletedAt
+    );
+    for (let i = 0; i < terms.length; i++)
+      for (let j = i + 1; j < terms.length; j++)
+        if (terms[i].start <= terms[j].end && terms[j].start <= terms[i].end)
+          fail("\u5907\u4EFD\u542B\u91CD\u53E0\u7684\u8BFE\u7A0B\u6709\u6548\u671F");
+    const lesson = s.lessons.find((x) => x.id === id);
+    if (lesson?.mode === "term" && !terms.length)
+      fail("\u5907\u4EFD\u542B\u6CA1\u6709\u6709\u6548\u671F\u7684\u671F\u9650\u8BFE\u7A0B");
+  }
   for (const t of s.tasks.filter((t2) => !t2.deletedAt)) {
     const settings = { ...s, tasks: [] };
     validateTask(settings, t);
   }
   return s;
 }
-async function createService(unit, clock = () => Date.now()) {
+async function createService(unit, clock2 = () => Date.now()) {
   const initial = (await unit.loadAll()).global;
   let current = initial ? validateState(initial) : blankState(randomUUID());
   if (initial && initial.habits?.some((h) => h && "period" in h)) {
@@ -35683,7 +36201,7 @@ async function createService(unit, clock = () => Date.now()) {
         if (a.action === "read") return structuredClone(current);
         if (a.action === "plan" && (!a.command || a.command === "read")) {
           const date5 = day.parse(
-            a.date || today(current.settings.timeZone, clock())
+            a.date || today(current.settings.timeZone, clock2())
           );
           return {
             ...dailyPlan(current, date5),
@@ -35694,7 +36212,7 @@ async function createService(unit, clock = () => Date.now()) {
         if (a.action === "preview") {
           const t = TaskInput.parse(a.item);
           validateTask(current, t);
-          const from = a.from || today(current.settings.timeZone, clock());
+          const from = a.from || today(current.settings.timeZone, clock2());
           return { dates: ruleDates(t, from, shift(from, 735)).slice(0, 3) };
         }
         if (a.action === "range")
@@ -35702,7 +36220,7 @@ async function createService(unit, clock = () => Date.now()) {
         if (a.action === "backup")
           return {
             format: "dsh-time-desk",
-            exportedAt: new Date(clock()).toISOString(),
+            exportedAt: new Date(clock2()).toISOString(),
             state: structuredClone(current)
           };
         if (a.action === "restoreBackup") {
@@ -35747,7 +36265,7 @@ async function createService(unit, clock = () => Date.now()) {
           previous = null;
           return structuredClone(current);
         }
-        const next = applyAction(current, a, clock());
+        const next = applyAction(current, a, clock2());
         if (next.revision !== current.revision) {
           await unit.setGlobal(next);
           previous = current;
@@ -35778,6 +36296,7 @@ var SPIRIT_PROMPT = `\u4F60\u662F\u201C\u65F6\u95F4\u7CBE\u7075\u201D\uFF0C\u662
 \u666E\u901A\u4EFB\u52A1\u4ECE\u5B89\u6392\u65E5\u5F00\u59CB\uFF0C\u672A\u5B8C\u6210\u5C31\u5C5E\u4E8E\u540E\u7EED\u65E5\u671F\u7684\u6267\u884C\u5F85\u529E\uFF0C\u622A\u6B62\u65E5\u53EA\u8868\u793A\u6700\u665A\u671F\u9650\uFF1B\u4E0D\u8981\u4E3A\u4E86\u8BA9\u65E7\u4EFB\u52A1\u663E\u793A\u5728\u4ECA\u5929\u800C\u64C5\u81EA\u4FEE\u6539\u5B89\u6392\u65E5\u6216\u622A\u6B62\u65E5\u3002\u660E\u786E\u6539\u671F\u5230\u672A\u6765\u7684\u4EFB\u52A1\u9075\u4ECE\u6539\u671F\uFF1B\u91CD\u590D\u4E8B\u9879\u6309\u53D1\u751F\u6B21\u5E8F\u72EC\u7ACB\u5904\u7406\uFF0C\u4E60\u60EF\u4E0D\u7D2F\u79EF\u6628\u5929\u7684\u6B21\u6570\u3002
 \u67E5\u770B\u4ECA\u65E5\u8BA1\u5212\u4F18\u5148\u4F7F\u7528 life_desk action=plan command=read\uFF0C\u5EF6\u7EED\u5F85\u529E\u9700\u8981\u7528\u6237\u6311\u9009\u624D\u8BA1\u5165\u8BA1\u5212\u8D1F\u8377\uFF1B\u7528 pick/unpick \u9009\u62E9\u6216\u53D6\u6D88\u5EF6\u7EED\u4EFB\u52A1\uFF0C\u4E0D\u6539\u539F\u65E5\u671F\u3002\u53EF\u7528\u65F6\u95F4\u672A\u8BBE\u7F6E\u5C31\u8BF4\u660E\u672A\u8BBE\u7F6E\uFF0C\u672A\u4F30\u65F6\u4E8B\u9879\u4E0D\u80FD\u5F53\u4F5C\u96F6\u65F6\u957F\u3002\u6574\u7406\u6536\u4EF6\u7BB1\u3001\u6279\u91CF\u5B89\u6392\u548C\u4ECA\u65E5\u8BA1\u5212\u5EFA\u8BAE\u5148\u5217\u51FA\u53D7\u5F71\u54CD\u4E8B\u9879\u4E0E\u65E5\u671F\uFF0C\u7B49\u7528\u6237\u660E\u786E\u540C\u610F\u518D\u9010\u9879\u6267\u884C\uFF0C\u53D6\u6D88\u91CD\u70B9\u53EA\u6E05 priorityDate\uFF0C\u4E0D\u6539\u5B89\u6392\u65E5\u548C\u622A\u6B62\u65E5\u3002
 \u672C\u8F6E\u53D6\u6D88\u4E0D\u4F1A\u56DE\u6EDA\u5DF2\u7ECF\u5B8C\u6210\u7684\u4FEE\u6539\uFF1B\u7528\u6237\u60F3\u6062\u590D\u65F6\u5148\u8BFB\u5F53\u524D\u72B6\u6001\uFF0C\u518D\u4F7F\u7528\u64A4\u9500\u6216\u76F8\u5E94\u53CD\u5411\u64CD\u4F5C\u3002
+\u8BFE\u7A0B\u4E0E\u8BFE\u65F6\uFF1A\u8BFE\u8868\u5728 lessons\uFF0C\u56FA\u5B9A\u5468\u51E0\u3001\u65F6\u95F4\u3001\u65F6\u957F\u4E0E\u4E0A\u8BFE\u4EBA\uFF1B\u5355\u6B21\u8C03\u8BFE\u3001\u8BF7\u5047\u3001\u6062\u590D\u7528 lessonSession\uFF0C\u53EA\u6709\u7528\u6237\u786E\u8BA4\u51FA\u5E2D\u624D\u7528 complete \u6263\u8BFE\u65F6\uFF0C\u4E34\u65F6\u8BFE\u7528 add\u3002\u8BFE\u65F6\u5305\u7528 lessonCharge \u8BB0\u5145\u503C\u3001\u8D60\u9001\u3001\u9996\u6B21\u4F59\u989D\u548C\u8C03\u6574\uFF0C\u4F59\u989D\u4E0D\u8DB3\u9700\u7528\u6237\u786E\u8BA4\uFF1B\u5305\u5E74\u8BFE\u7A0B mode=term \u5FC5\u987B\u6709\u6709\u6548\u671F\uFF0C\u5230\u671F\u4E0D\u81EA\u52A8\u7B97\u5B8C\u6210\uFF0C\u7EED\u671F\u7528 lessonTerm renew \u5E76\u4FDD\u7559\u65E7\u5468\u671F\u3002\u4E0D\u8981\u731C\u4E0A\u8BFE\u4EBA\u3001\u4EF7\u683C\u6216\u6709\u6548\u671F\u3002\u9996\u9875\u6A21\u5757\u504F\u597D\u4EC5\u5728\u7528\u6237\u660E\u786E\u8981\u6C42\u65F6\u6539 settings.homeModules\u3002
 \u590D\u76D8\u5148\u660E\u786E\u5F52\u5C5E\u65E5\u671F\uFF1B\u4E2A\u4EBA\u6A21\u677F\u5728 settings.reviewTemplate\uFF0C\u6CA1\u6709\u65F6\u4F7F\u7528\u7B80\u77ED\u5185\u7F6E\u95EE\u9898\u3002\u8BF7\u6C42\u5E2E\u52A9\u590D\u76D8\u65F6\u4E00\u6B21\u95EE\u4E00\u4E2A\u95EE\u9898\uFF0C\u901A\u5E38\u4E24\u4E09\u4E2A\uFF0C\u7528\u6237\u60F3\u7ED3\u675F\u5C31\u6536\u675F\uFF1B\u5148\u7ED9\u53EF\u7F16\u8F91\u8349\u7A3F\uFF0C\u660E\u786E\u786E\u8BA4\u4FDD\u5B58\u540E\u518D\u7528 review \u5199\u5165\uFF0C\u4E0D\u80FD\u628A\u6A21\u677F\u6807\u9898\u5F53\u56DE\u7B54\uFF0C\u4E5F\u4E0D\u80FD\u53EA\u6253\u5361\u4EE3\u66FF\u5173\u8054\u590D\u76D8\u3002\u5141\u8BB8\u6B21\u65E5\u5B8C\u6210\u7684\u4E60\u60EF\u6309\u6B21\u65E5\u5168\u5929\u8BA1\u7B97\uFF0C\u89C4\u5219\u5199\u5728 rules.allowNextDay \u5E76\u4ECE effective \u751F\u6548\uFF1B\u4E0D\u8981\u6539\u52A8\u8FC7\u53BB\u89C4\u5219\u3002\u4FEE\u6539\u6A21\u677F\u53EA\u4FDD\u5B58\u95EE\u9898\u7ED3\u6784\uFF0C\u4E0D\u81EA\u52A8\u628A\u5F53\u5929\u56DE\u7B54\u53D8\u6210\u6A21\u677F\u3002
 \u5148\u5B8C\u6210\u5B9E\u9645\u64CD\u4F5C\uFF0C\u518D\u7B80\u660E\u8BF4\u6E05\u7ED3\u679C\u3002\u9664\u975E\u7528\u6237\u8981\u6C42\u65B9\u6848\uFF0C\u4E0D\u8981\u53EA\u7ED9\u5EFA\u8BAE\u800C\u4E0D\u6267\u884C\u5DF2\u660E\u786E\u6388\u6743\u7684\u4E8B\u9879\u3002`;
 var REVIEW_SPIRIT_PROMPT = `\u4F60\u662F\u65F6\u95F4\u7CBE\u7075\u7684\u590D\u76D8\u52A9\u624B\uFF0C\u7528\u6237\u4E3B\u52A8\u8BF7\u4F60\u5E2E\u52A9\u56DE\u987E\u6240\u9009\u65E5\u671F\u3002\u53EA\u5904\u7406\u5F53\u524D\u590D\u76D8\uFF0C\u4E0D\u64CD\u4F5C\u4EFB\u52A1\u3001\u4E60\u60EF\u3001\u8BBE\u7F6E\u6216\u5176\u4ED6\u8BB0\u5F55\u3002
@@ -36508,7 +37027,7 @@ function createUpdateService({
   installKind = "unknown",
   dshVersion = null,
   fetchImpl = globalThis.fetch,
-  clock = () => Date.now()
+  clock: clock2 = () => Date.now()
 }) {
   let prefs = { ...DEFAULT };
   let queue = Promise.resolve();
@@ -36570,7 +37089,7 @@ function createUpdateService({
           return snapshot({ state: state() });
         }
         if (command === "check") {
-          const now = clock();
+          const now = clock2();
           if (!a.force && prefs.lastCheck && now - prefs.lastCheck < MANUAL_CHECK_COOLDOWN)
             return snapshot({
               state: state(),
@@ -36584,7 +37103,7 @@ function createUpdateService({
               dshRange: result.dshRange,
               degraded: result.degraded || null
             };
-            prefs.lastCheck = clock();
+            prefs.lastCheck = clock2();
             await persist();
             return snapshot({
               state: state(),
@@ -36593,7 +37112,7 @@ function createUpdateService({
               degraded: result.degraded || null
             });
           } catch (error62) {
-            prefs.lastCheck = clock();
+            prefs.lastCheck = clock2();
             await persist();
             return snapshot({
               state: state(),
@@ -36629,7 +37148,7 @@ function createUpgradeService({
   restoreState,
   currentVersion = null,
   isBusy = async () => false,
-  clock = () => Date.now()
+  clock: clock2 = () => Date.now()
 }) {
   let global = { pending: null, snapshots: [] };
   let queue = Promise.resolve();
@@ -36690,7 +37209,7 @@ function createUpgradeService({
             id: "snapshot-" + randomUUID3(),
             fromVersion: from,
             targetVersion: target,
-            createdAt: clock(),
+            createdAt: clock2(),
             bytes,
             counts: Object.fromEntries(
               ["projects", "tasks", "habits", "focusLogs"].map((k) => [
@@ -36757,9 +37276,13 @@ var inject = [
   "tools"
 ];
 var guide = {
-  save: "\u5148 read \u83B7\u53D6 revision\uFF1Bcollection=projects/tasks/habits\uFF0Citem \u9075\u5FAA schemas\uFF0C\u4FEE\u6539\u5E26 id\uFF0C\u672A\u63D0\u4F9B\u7684\u5B57\u6BB5\u4FDD\u7559\u3002tasks.pomodoros \u4E3A\u9884\u8BA1\u756A\u8304\u6570\u91CF\uFF0C0 \u8868\u793A\u4E0D\u4F30\u7B97\uFF1B\u5B8C\u6574\u4E13\u6CE8\u8F6E\u6570\u72EC\u7ACB\u8BB0\u5F55\u4E14\u4E0D\u81EA\u52A8\u5B8C\u6210\u4EFB\u52A1\u3002\u5220\u9664\u7528 trash\uFF0C\u6062\u590D\u7528 restore\u3002",
+  save: "\u5148 read \u83B7\u53D6 revision\uFF1Bcollection=projects/tasks/habits\uFF0Citem \u9075\u5FAA schemas\uFF0C\u4FEE\u6539\u5E26 id\uFF0C\u672A\u63D0\u4F9B\u7684\u5B57\u6BB5\u4FDD\u7559\u3002\u8BFE\u7A0B\u4F7F\u7528 lesson \u52A8\u4F5C\uFF0C\u4E0D\u8981\u585E\u8FDB save\u3002tasks.pomodoros \u4E3A\u9884\u8BA1\u756A\u8304\u6570\u91CF\uFF0C0 \u8868\u793A\u4E0D\u4F30\u7B97\uFF1B\u5B8C\u6574\u4E13\u6CE8\u8F6E\u6570\u72EC\u7ACB\u8BB0\u5F55\u4E14\u4E0D\u81EA\u52A8\u5B8C\u6210\u4EFB\u52A1\u3002\u5220\u9664\u7528 trash\uFF0C\u6062\u590D\u7528 restore\u3002",
   occurrence: "\u91CD\u590D\u4E8B\u9879\u7684\u5355\u6B21\u72B6\u6001/\u6539\u671F\uFF1Aid=taskId\u3001originalDate=\u539F\u59CB\u53D1\u751F\u65E5\u3001date=\u6539\u540E\u65E5\u671F\u3001time=\u65F6\u523B\u3001status=todo/doing/done/skipped/cancelled\u3002\u65E0\u65E5\u671F\u4EFB\u52A1\u5148 save \u8BBE\u7F6E date\u3002",
   splitSeries: "\u4FEE\u6539\u8FD9\u6B21\u53CA\u4EE5\u540E\uFF1Aid\u3001originalDate\u3001item \u4E3A\u65B0\u4EFB\u52A1\u5B57\u6BB5\uFF0C\u5FC5\u987B\u5148\u5C55\u793A\u8303\u56F4\u5E76\u5F97\u5230\u7528\u6237\u540C\u610F\u3002",
+  lesson: "\u8BFE\u7A0B\uFF1Aaction=lesson\uFF0Citem \u6309 lessons schema\uFF08title\u3001participant\u3001weekdays\u3001time\u3001durationMinutes\u3001effective\u3001mode=none/credit/term\u3001reminderMinutes\u3001defaultDeduction\u3001balanceWarnAt\uFF09\uFF0C\u5E26 id \u4FEE\u6539\u9700 version\u3002\u671F\u9650\u8BFE\u7A0B\u5FC5\u987B\u540C\u65F6\u63D0\u4F9B term={start,end,purchased,amount,note}\uFF1B\u5DF2\u6709 term \u7EE7\u7EED\u4FEE\u6539\u65F6\u5E26\u4E0A term.id\u3002\u5220\u9664\u7528 trash collection=lessons\u3002",
+  lessonTerm: "\u6709\u6548\u671F\uFF1Aid=lessonId\uFF0Ccommand=renew \u4ECE\u4E0A\u4E00\u5468\u671F\u7ED3\u675F\u6B21\u65E5\u8D77\u65B0\u589E\u5468\u671F\uFF0Citem={start,end,purchased,amount,note}\uFF1Bcommand=remove \u52A0 removeId \u4EC5\u5220\u9664\u65E0\u4E0A\u8BFE\u8BB0\u5F55\u7684\u5468\u671F\u3002\u6709\u6548\u671F\u4E0D\u80FD\u6392\u9664\u5DF2\u4E0A\u8BFE\u65E5\u671F\uFF0C\u4E0D\u80FD\u91CD\u53E0\u3002",
+  lessonSession: "\u8BFE\u8868\u5355\u6B21\u64CD\u4F5C\uFF1Aid=lessonId\u3001originalDate=\u539F\u5B9A\u65E5\u3002command=save \u8C03\u8BFE\uFF08date/time/place\uFF0C\u4EC5\u8FD9\u4E00\u6B21\uFF1B\u5982\u91CD\u53E0\u9700 confirmConflict=true\uFF09\uFF0Crestore \u6062\u590D\u539F\u5B89\u6392\uFF0Cskip \u8BF7\u5047\u4E0D\u6263\u8BFE\u65F6\uFF0Ccomplete \u786E\u8BA4\u4E0A\u8BFE\uFF08deduction \u9ED8\u8BA4\u6309\u8BFE\u7A0B\uFF09\uFF0Cundo \u64A4\u9500\u4E0A\u8BFE\u5E76\u8FD4\u8FD8\u8BFE\u65F6\uFF0Cadd \u4F5C\u4E3A\u4E34\u65F6\u52A0\u8BFE\uFF08originalDate \u4E3A\u7A7A\uFF09\uFF0Cremove \u5220\u9664\u4E34\u65F6\u8BFE\u3002\u5DF2\u4E0A\u8BFE\u5148 undo \u624D\u80FD\u6539\u671F\u3002\u671F\u9650\u8BFE\u7A0B\u7684\u65B0\u65E5\u671F\u5FC5\u987B\u5728\u6709\u6548\u671F\u5185\u3002",
+  lessonCharge: "\u8BFE\u65F6\u5305\u6D41\u6C34\uFF1Aid=lessonId\uFF0Citem={date,delta,kind=purchase/gift/opening/adjust,amount,expiresOn,note}\u3002delta \u4E3A\u5B9E\u9645\u589E\u51CF\uFF08\u5145\u503C\u4E3A\u6B63\uFF0Cadjust \u53EF\u4E3A\u8D1F\uFF09\uFF0C\u4E0A\u8BFE\u6263\u51CF\u53EA\u80FD\u7531 lessonSession complete \u4EA7\u751F\uFF1B\u5220\u9664\u8BEF\u5F55\u5145\u503C\u7528 command=remove + removeId\uFF0C\u4E0D\u80FD\u5220\u9664 use \u8BB0\u5F55\u3002\u4F59\u989D\u4E0D\u8DB3\u65F6 complete \u9700\u7528\u6237\u786E\u8BA4\u540E\u4F20 confirmShort=true\u3002",
   habitLog: "id=habitId\u3001date\u3001value=\u672C\u6B21\u589E\u52A0\u6570\u91CF\uFF0Cduration \u4E60\u60EF\u5219\u4E3A\u672C\u6B21\u5206\u949F\uFF081\u20131440 \u6574\u6570\uFF09\u3001note \u53EF\u9009\u3001skipped \u53EF\u9009\u3002status=missed \u6807\u8BB0\u672A\u8FBE\u6210\uFF1Bstatus=planned/unplanned \u5B89\u6392\u6216\u53D6\u6D88\u8BE5\u65E5\u7684\u6BCF\u5468\u6B21\u6570\u4E60\u60EF\uFF0C\u4E0D\u4EA7\u751F\u6253\u5361\u3002\u64A4\u9500\u6253\u5361\u7528 removeId=habitLogId\u3002\u5468\u6B21\u6570\u6309\u4E0D\u540C\u5929\u8BA1\u7B97\u3002",
   review: "date\u3001kind=day/week\u3001text\uFF08\u5FC5\u987B\u6709\u56DE\u7B54\u5185\u5BB9\uFF0C\u7A7A\u767D\u6216\u53EA\u6709\u6A21\u677F\u95EE\u9898\u4E0D\u7B97\u5B8C\u6210\uFF09\uFF0C\u5EFA\u8BAE\u5E26\u590D\u76D8\u8BB0\u5F55 version\uFF08\u65B0\u5EFA\u4E3A0\uFF09\u9632\u6B62\u8986\u76D6\u3002\u590D\u76D8\u6309\u5F52\u5C5E\u65E5\u671F\u8BB0\u5F55\uFF0C\u9996\u6B21\u5B8C\u6210\u65F6\u95F4\u4FDD\u7559\uFF0C\u7F16\u8F91\u4E0D\u91CD\u7F6E\uFF1B\u5173\u8054\u4E60\u60EF\u53EA\u63A5\u53D7\u4FDD\u5B58\u65E5\u590D\u76D8\u5B8C\u6210\uFF0C\u4E0D\u5141\u8BB8\u53EA\u6253\u5361\u3002HabitRule.allowNextDay \u53EF\u9009\uFF0C\u9ED8\u8BA4false\uFF0C\u5F00\u542F\u540E\u5230\u6B21\u65E5\u5168\u5929\u7ED3\u675F\u4ECD\u6309\u65F6\uFF1B\u8FC7\u7A97\u672A\u8BB0\u5F55\u4E0D\u81EA\u52A8\u5224\u672A\u8FBE\u6210\u3002\u8BE5\u89C4\u5219\u6309 effective \u751F\u6548\u4E0D\u8FFD\u6EAF\u6539\u8FC7\u53BB\u3002settings.reviewTemplate \u4E00\u4EFD\u4E2A\u4EBA\u9ED8\u8BA4\u65E5\u590D\u76D8\u95EE\u9898\uFF0C\u6BCF\u884C\u4E00\u4E2A\u3001\u6700\u591A8\u884C2000\u5B57\uFF0C\u4E0D\u80FD\u4ECE\u5F53\u65E5\u56DE\u7B54\u81EA\u52A8\u63D0\u53D6\u3002",
   timer: "command=start/pause/resume/await/finish/discard\uFF1Bstart \u652F\u6301 phase=focus/short/long\u3001taskId\u3001originalDate\uFF0C\u53EF\u901A\u8FC7 item.minutes \u8BBE\u7F6E\u4EC5\u672C\u8F6E\u4E13\u6CE8\u65F6\u957F\uFF081\u2013180 \u6574\u6570\uFF0C\u4E0D\u6539\u53D8\u9ED8\u8BA4\uFF09\u3002\u4FEE\u6539\u9ED8\u8BA4\u7528 settings item.focusMinutes\uFF0C\u4E0D\u5F71\u54CD\u8FD0\u884C\u4E2D\u8BA1\u65F6\uFF1Bsettings.timerFace \u53EF\u4E3A digital/ring/flip/hourglass\u3002\u5176\u4F59\u8BA1\u65F6\u64CD\u4F5C\u9700\u8981 timerId\u3002\u63D0\u524D finish \u53EF\u4F20\u4FEE\u6B63 seconds\u3002",
@@ -36797,7 +37320,7 @@ async function apply(ctx) {
       hasGlobal: true,
       layout: "single"
     });
-    const currentVersion = true ? "0.8.1" : "0.0.0";
+    const currentVersion = true ? "0.9.0" : "0.0.0";
     updateService = createUpdateService({
       unit: updateUnit,
       currentVersion,
@@ -36821,7 +37344,7 @@ async function apply(ctx) {
     });
     upgradeService = createUpgradeService({
       unit: upgradeUnit,
-      currentVersion: true ? "0.8.1" : null,
+      currentVersion: true ? "0.9.0" : null,
       isBusy: async () => !!(spiritService && (await spiritService.operate({ action: "read" })).busy || reviewSpiritService && (await reviewSpiritService.operate({ action: "read" })).busy),
       readState: () => service.operate({ action: "read" }),
       restoreState: (a) => service.operate({
@@ -36889,7 +37412,7 @@ async function apply(ctx) {
   ctx.effect(
     () => ctx.tools.register({
       name: "life_desk",
-      description: "\u7BA1\u7406\u65F6\u95F4\u5DE5\u4F5C\u53F0\uFF1A\u9879\u76EE\u3001\u751F\u6D3B\u5F85\u529E\u3001\u516C\u5386/\u519C\u5386\u91CD\u590D\u3001\u6570\u91CF/\u5468\u6B21\u6570\u4E60\u60EF\u3001\u590D\u76D8\u548C\u756A\u8304\u949F\u3002\u9996\u6B21\u8C03\u7528 help \u83B7\u53D6\u5B57\u6BB5\u89C4\u8303\uFF1B\u4FEE\u6539\u524D read \u83B7\u53D6 revision \u548C\u8BB0\u5F55 ID\u3002",
+      description: "\u7BA1\u7406\u65F6\u95F4\u5DE5\u4F5C\u53F0\uFF1A\u9879\u76EE\u3001\u751F\u6D3B\u5F85\u529E\u3001\u516C\u5386/\u519C\u5386\u91CD\u590D\u3001\u6570\u91CF/\u5468\u6B21\u6570\u4E60\u60EF\u3001\u8BFE\u7A0B\u4E0E\u8BFE\u65F6\u8D26\u672C\u3001\u590D\u76D8\u548C\u756A\u8304\u949F\u3002\u9996\u6B21\u8C03\u7528 help \u83B7\u53D6\u5B57\u6BB5\u89C4\u8303\uFF1B\u4FEE\u6539\u524D read \u83B7\u53D6 revision \u548C\u8BB0\u5F55 ID\u3002",
       parameters: {
         type: "object",
         properties: {
@@ -36950,6 +37473,11 @@ async function apply(ctx) {
           confirm: { type: "boolean" },
           autoCheck: { type: "boolean" },
           keys: { type: "array", items: { type: "string" } },
+          term: { type: "object", additionalProperties: true },
+          sessionId: { type: "string" },
+          deduction: { type: "number" },
+          confirmShort: { type: "boolean" },
+          confirmConflict: { type: "boolean" },
           offset: { type: "integer" },
           limit: { type: "integer" }
         },
@@ -36996,6 +37524,10 @@ async function apply(ctx) {
               projects: external_exports.toJSONSchema(ProjectInput),
               tasks: external_exports.toJSONSchema(TaskInput),
               habits: external_exports.toJSONSchema(HabitInput),
+              lessons: external_exports.toJSONSchema(LessonInput),
+              lessonTerms: external_exports.toJSONSchema(LessonTermInput),
+              lessonSessions: external_exports.toJSONSchema(LessonSessionInput),
+              lessonCharges: external_exports.toJSONSchema(LessonChargeInput),
               settings: external_exports.toJSONSchema(Settings)
             }
           };
@@ -37005,6 +37537,10 @@ async function apply(ctx) {
             "projects",
             "tasks",
             "habits",
+            "lessons",
+            "lessonTerms",
+            "lessonSessions",
+            "lessonCharges",
             "occurrences",
             "habitLogs",
             "reviews",
@@ -37034,9 +37570,15 @@ async function apply(ctx) {
             ok: true,
             revision: value.revision,
             counts: Object.fromEntries(
-              ["projects", "tasks", "habits", "habitLogs", "focusLogs"].map(
-                (k) => [k, value[k].filter((x) => !x.deletedAt).length]
-              )
+              [
+                "projects",
+                "tasks",
+                "habits",
+                "lessons",
+                "lessonSessions",
+                "habitLogs",
+                "focusLogs"
+              ].map((k) => [k, value[k].filter((x) => !x.deletedAt).length])
             ),
             lastRecord: a.action === "save" ? value[a.collection].find((x) => x.id === a.id) || value[a.collection].at(-1) : void 0
           };
