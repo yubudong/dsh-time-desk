@@ -90,7 +90,6 @@ export const HabitRule = z.object({
 export const HabitInput = z.object({
   title: str().min(1),
   note: str(3000).default(""),
-  period: z.enum(["any", "morning", "evening"]).default("any"),
   reviewLinked: z.boolean().default(false),
   plannedDates: z.array(day).max(5000).default([]),
   rules: z.array(HabitRule).min(1).max(1000),

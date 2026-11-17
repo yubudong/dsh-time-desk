@@ -11,7 +11,7 @@ test("every template produces a valid habit without saving it", () => {
     const habit = habitFromTemplate(tpl, day, t);
     assert.doesNotThrow(() => HabitInput.parse(habit), tpl.id);
     assert.equal(habit.rules[0].effective, day);
-    assert.equal(habit.period, "any");
+    assert.equal("period" in habit, false);
     assert.deepEqual(habit.plannedDates, []);
     assert.equal(habit.id, undefined);
   }
@@ -87,11 +87,7 @@ test("completion modes stay distinct and only daily habits can link the review",
   );
   assert.equal(reviewState.habitLogs[0].habitId, state.habits[0].id);
 });
-test("habit groups no longer depend on a time of day", () => {
-  const groups = ["any", "morning", "evening"];
-  const shapes = HABIT_TEMPLATES.map(
-    (x) => habitFromTemplate(x, day, t).period,
-  );
-  assert.deepEqual([...new Set(shapes)], ["any"]);
-  assert.ok(groups.includes("any"));
+test("templates no longer carry a time-of-day label", () => {
+  for (const template of HABIT_TEMPLATES)
+    assert.equal("period" in habitFromTemplate(template, day, t), false);
 });

@@ -17101,10 +17101,6 @@ var copy = {
   unit: ["\u5355\u4F4D", "Unit"],
   effective: ["\u89C4\u5219\u751F\u6548\u65E5\u671F", "Effective date"],
   days: ["\u6BCF\u5468\u6267\u884C\u65E5", "Days of week"],
-  period: ["\u65F6\u6BB5", "Time of day"],
-  any: ["\u4E0D\u9650", "Any"],
-  morning: ["\u65E9\u6668", "Morning"],
-  evening: ["\u665A\u4E0A", "Evening"],
   reviewLinked: ["\u4FDD\u5B58\u65E5\u590D\u76D8\u65F6\u81EA\u52A8\u6253\u5361", "Check in when daily review is saved"],
   habitHint: [
     "\u4FEE\u6539\u76EE\u6807\u4ECE\u751F\u6548\u65E5\u8D77\u91C7\u7528\u65B0\u89C4\u5219\uFF0C\u8FC7\u53BB\u7684\u8BB0\u5F55\u4FDD\u7559\u3002",
@@ -30344,7 +30340,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.7.2",
+        "data-reader-version": "0.7.3",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -30436,7 +30432,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.7.2")))
+      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.7.3")))
     );
   }
   return {
@@ -30820,7 +30816,6 @@ function habitFromTemplate(template, effective, t3) {
   return {
     title: t3(template.titleKey),
     note: t3(template.noteKey),
-    period: "any",
     reviewLinked: !!template.reviewLinked,
     plannedDates: [],
     rules: [
@@ -32249,7 +32244,7 @@ function apply(ctx) {
     const [error, setError] = useState4("");
     const [showNotes, setShowNotes] = useState4(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.7.2";
+    const current = v3.currentVersion || "0.7.3";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -32657,7 +32652,6 @@ function apply(ctx) {
       item: item || {
         title: "",
         note: "",
-        period: "any",
         reviewLinked: false,
         rules: [
           {
@@ -33289,7 +33283,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React8.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.7.2", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React8.createElement(
+        /* @__PURE__ */ React8.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.7.3", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React8.createElement(
           "button",
           {
             className: "ld-update-badge",

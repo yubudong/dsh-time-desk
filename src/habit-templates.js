@@ -47,7 +47,6 @@ export function habitFromTemplate(template, effective, t) {
   return {
     title: t(template.titleKey),
     note: t(template.noteKey),
-    period: "any",
     reviewLinked: !!template.reviewLinked,
     plannedDates: [],
     rules: [

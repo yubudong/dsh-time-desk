@@ -496,6 +496,12 @@ export function validateState(input) {
 export async function createService(unit, clock = () => Date.now()) {
   const initial = (await unit.loadAll()).global;
   let current = initial ? validateState(initial) : blankState(randomUUID());
+  // Habits no longer carry a time-of-day label. Old rows are normalized by the
+  // schema; persist that once so the field does not linger in storage.
+  if (initial && initial.habits?.some((h) => h && "period" in h)) {
+    current.revision = initial.revision + 1;
+    await unit.setGlobal(current);
+  }
   let queue = Promise.resolve();
   let previous = null;
   return {

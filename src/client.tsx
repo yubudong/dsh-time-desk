@@ -1619,7 +1619,6 @@ export function apply(ctx: any) {
         item: item || {
           title: "",
           note: "",
-          period: "any",
           reviewLinked: false,
           rules: [
             {

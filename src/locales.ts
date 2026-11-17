@@ -540,10 +540,6 @@ export const copy = {
   unit: ["单位", "Unit"],
   effective: ["规则生效日期", "Effective date"],
   days: ["每周执行日", "Days of week"],
-  period: ["时段", "Time of day"],
-  any: ["不限", "Any"],
-  morning: ["早晨", "Morning"],
-  evening: ["晚上", "Evening"],
   reviewLinked: ["保存日复盘时自动打卡", "Check in when daily review is saved"],
   habitHint: [
     "修改目标从生效日起采用新规则，过去的记录保留。",

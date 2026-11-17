@@ -35015,7 +35015,6 @@ var HabitRule = external_exports.object({
 var HabitInput = external_exports.object({
   title: str().min(1),
   note: str(3e3).default(""),
-  period: external_exports.enum(["any", "morning", "evening"]).default("any"),
   reviewLinked: external_exports.boolean().default(false),
   plannedDates: external_exports.array(day).max(5e3).default([]),
   rules: external_exports.array(HabitRule).min(1).max(1e3)
@@ -35542,6 +35541,10 @@ function validateState(input2) {
 async function createService(unit, clock = () => Date.now()) {
   const initial = (await unit.loadAll()).global;
   let current = initial ? validateState(initial) : blankState(randomUUID());
+  if (initial && initial.habits?.some((h) => h && "period" in h)) {
+    current.revision = initial.revision + 1;
+    await unit.setGlobal(current);
+  }
   let queue = Promise.resolve();
   let previous = null;
   return {
@@ -36557,7 +36560,7 @@ async function apply(ctx) {
       hasGlobal: true,
       layout: "single"
     });
-    const currentVersion = true ? "0.7.2" : "0.0.0";
+    const currentVersion = true ? "0.7.3" : "0.0.0";
     updateService = createUpdateService({
       unit: updateUnit,
       currentVersion,
@@ -36581,7 +36584,7 @@ async function apply(ctx) {
     });
     upgradeService = createUpgradeService({
       unit: upgradeUnit,
-      currentVersion: true ? "0.7.2" : null,
+      currentVersion: true ? "0.7.3" : null,
       isBusy: async () => !!(spiritService && (await spiritService.operate({ action: "read" })).busy),
       readState: () => service.operate({ action: "read" }),
       restoreState: (a) => service.operate({
