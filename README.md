@@ -83,6 +83,8 @@ DSH 原生个人时间工作台：在侧栏管理项目、待办、习惯、公�
 
 ## 开发
 
+后续开发先阅读 [本地版完善清单与同步路线](docs/DEVELOPMENT-ROADMAP.md)：当前先完善本地版；同步服务与用户自备存储属于未来可选路线。文档中的未完成项不能视为已经实现。
+
 ```sh
 npm ci --ignore-scripts --no-audit --no-fund
 npm run privacy
