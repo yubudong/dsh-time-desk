@@ -28,6 +28,12 @@ export function lessonTermAt(lesson, terms, date) {
     ) || null
   );
 }
+export function lessonTimeFor(lesson, date) {
+  const per = (lesson.weekdayTimes || []).find(
+    (x) => x.weekday === weekday(date) && x.time,
+  );
+  return per?.time || lesson.time;
+}
 function occurrenceOf(state, lesson, originalDate, row) {
   const base = {
     lessonId: lesson.id,
@@ -35,7 +41,7 @@ function occurrenceOf(state, lesson, originalDate, row) {
     participant: lesson.participant,
     originalDate,
     date: row?.date || originalDate,
-    time: row?.time ?? lesson.time,
+    time: row?.time ?? lessonTimeFor(lesson, originalDate),
     durationMinutes: lesson.durationMinutes,
     place: row?.place ?? lesson.place,
     status: row?.status || "scheduled",
@@ -276,6 +282,21 @@ export function lessonScheduleLabel(lesson, t) {
     .slice()
     .sort((a, b) => ((a + 6) % 7) - ((b + 6) % 7))
     .map((d) => t("weekdayShort" + d))
+    .join(" · ");
+}
+export function lessonWeeklyLabel(lesson, t) {
+  if (!lesson.weekdays.length)
+    return t("lessonOnce") + (lesson.time ? " " + lesson.time : "");
+  return lesson.weekdays
+    .slice()
+    .sort((a, b) => ((a + 6) % 7) - ((b + 6) % 7))
+    .map((d) => {
+      const per = (lesson.weekdayTimes || []).find(
+        (x) => x.weekday === d && x.time,
+      );
+      const time = per?.time || lesson.time;
+      return t("weekdayShort" + d) + (time ? " " + time : "");
+    })
     .join(" · ");
 }
 export function lessonRangeLabel(lesson, terms, t) {

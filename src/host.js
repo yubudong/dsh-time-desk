@@ -30,7 +30,7 @@ const guide = {
   splitSeries:
     "修改这次及以后：id、originalDate、item 为新任务字段，必须先展示范围并得到用户同意。",
   lesson:
-    "课程：action=lesson，item 按 lessons schema（title、participant、weekdays、time、durationMinutes、effective、mode=none/credit/term、reminderMinutes、defaultDeduction、balanceWarnAt），带 id 修改需 version；新建课时包可传 opening=现有剩余课时，自动生成首次余额流水。期限课程必须同时提供 term={start,end,purchased,amount,note}；已有 term 继续修改时带上 term.id。删除用 trash collection=lessons。",
+    "课程：action=lesson，item 按 lessons schema（title、participant、weekdays、time、durationMinutes、effective、mode=none/credit/term、reminderMinutes、defaultDeduction、balanceWarnAt），带 id 修改需 version；不同星期不同时间用 weekdayTimes=[{weekday,time}]，weekday 必须在 weekdays 内，未填的星期沿用 time。新建课时包可传 opening=现有剩余课时，自动生成首次余额流水。期限课程必须同时提供 term={start,end,purchased,amount,note}；已有 term 继续修改时带上 term.id。删除用 trash collection=lessons。",
   lessonTerm:
     "有效期：id=lessonId，command=renew 从上一周期结束次日起新增周期，item={start,end,purchased,amount,note}；command=remove 加 removeId 仅删除无上课记录的周期。有效期不能排除已上课日期，不能重叠。",
   lessonSession:

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { blankState, State } from "../src/schema.js";
+import { blankState, State, LessonInput } from "../src/schema.js";
 import {
   lessonOccurrences,
   lessonAccount,
@@ -9,6 +9,7 @@ import {
   lessonExpiring,
   lessonReminders,
   lessonTermAt,
+  lessonWeeklyLabel,
 } from "../src/lessons.js";
 import { shift } from "../src/dates.js";
 const iso = "2026-11-01T00:00:00.000Z";
@@ -349,4 +350,35 @@ test("legacy state defaults the new collections and home layout", () => {
     order: [],
     folded: [],
   });
+});
+
+test("weekdays can carry different start times", () => {
+  const s = base();
+  const l = addLesson(s, {
+    weekdays: [3, 0],
+    time: "19:00",
+    weekdayTimes: [{ weekday: 0, time: "10:00" }],
+  });
+  const list = lessonOccurrences(s, l, "2026-11-16", "2026-11-22");
+  assert.equal(byDate(list, "2026-11-18")[0].time, "19:00");
+  assert.equal(byDate(list, "2026-11-22")[0].time, "10:00");
+  const t = (k) =>
+    ({
+      weekdayShort3: "周三",
+      weekdayShort0: "周日",
+      lessonOnce: "单次",
+    })[k] || k;
+  assert.equal(lessonWeeklyLabel(l, t), "周三 19:00 · 周日 10:00");
+});
+test("a per-weekday time must belong to a selected weekday", () => {
+  assert.throws(
+    () =>
+      LessonInput.parse({
+        title: "x",
+        effective: "2026-11-01",
+        weekdays: [3],
+        weekdayTimes: [{ weekday: 0, time: "10:00" }],
+      }),
+    /分星期/,
+  );
 });

@@ -10,6 +10,7 @@ import {
   lessonTermAt,
   lessonTerms,
   lessonTimeLabel,
+  lessonWeeklyLabel,
 } from "./lessons.js";
 const { useState, useEffect } = React;
 export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
@@ -69,6 +70,7 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
       note: "",
       mode: "none",
       weekdays: [],
+      weekdayTimes: [],
       time: "",
       durationMinutes: 60,
       effective: env.day,
@@ -90,6 +92,24 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
     const [opening, setOpening] = useState<any>("");
     const change = (k: string, v: any) =>
       setItem((x: any) => ({ ...x, [k]: v }));
+    const toggleWeekday = (d: number) => {
+      setItem((x: any) => {
+        const on = x.weekdays.includes(d);
+        const weekdays = on
+          ? x.weekdays.filter((v: number) => v !== d)
+          : [...x.weekdays, d];
+        const weekdayTimes = (x.weekdayTimes || []).filter((v: any) =>
+          weekdays.includes(v.weekday),
+        );
+        if (
+          !on &&
+          d !== undefined &&
+          !weekdayTimes.some((v: any) => v.weekday === d)
+        )
+          weekdayTimes.push({ weekday: d, time: "" });
+        return { ...x, weekdays, weekdayTimes };
+      });
+    };
     const participants = [
       ...new Set([
         ...live(env.data, "lessons")
@@ -108,6 +128,12 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
         (!Number.isFinite(Number(opening)) || Number(opening) < 0)
       )
         return setError(t("lessonOpeningInvalid"));
+      const payload = {
+        ...item,
+        weekdayTimes: (item.weekdayTimes || []).filter(
+          (x: any) => x.time && item.weekdays.includes(x.weekday),
+        ),
+      };
       try {
         await env.act({
           action: "lesson",
@@ -116,7 +142,7 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
             : {}),
           id: item.id,
           version: item.version,
-          item,
+          item: payload,
           ...(item.mode === "term"
             ? {
                 term: {
@@ -185,14 +211,7 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
                   type="button"
                   key={d}
                   aria-pressed={item.weekdays.includes(d)}
-                  onClick={() =>
-                    change(
-                      "weekdays",
-                      item.weekdays.includes(d)
-                        ? item.weekdays.filter((x: number) => x !== d)
-                        : [...item.weekdays, d],
-                    )
-                  }
+                  onClick={() => toggleWeekday(d)}
                 >
                   {t("weekdayShort" + d)}
                 </button>
@@ -204,7 +223,55 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
                 : t("lessonOnceHint")}
             </p>
           </Field>
-          <Field label={t("lessonTime")}>
+          {item.weekdays.length > 1 && (
+            <Field label={t("lessonWeekdayTimes")} wide>
+              <div className="ld-weekday-times">
+                {[1, 2, 3, 4, 5, 6, 0]
+                  .filter((d) => item.weekdays.includes(d))
+                  .map((d) => {
+                    const current = (item.weekdayTimes || []).find(
+                      (x: any) => x.weekday === d,
+                    );
+                    return (
+                      <label className="ld-weekday-time" key={d}>
+                        <span>{t("weekdayShort" + d)}</span>
+                        <input
+                          type="time"
+                          value={current?.time || ""}
+                          placeholder={item.time || ""}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setItem((x: any) => ({
+                              ...x,
+                              weekdayTimes: [
+                                ...(x.weekdayTimes || []).filter(
+                                  (v: any) => v.weekday !== d,
+                                ),
+                                { weekday: d, time: value },
+                              ],
+                            }));
+                          }}
+                        />
+                        <small>
+                          {item.time
+                            ? t("lessonUseDefaultTime").replace(
+                                "{n}",
+                                item.time,
+                              )
+                            : t("lessonNoDefaultTime")}
+                        </small>
+                      </label>
+                    );
+                  })}
+              </div>
+              <p className="ld-help">{t("lessonWeekdayTimesHint")}</p>
+            </Field>
+          )}
+          <Field
+            label={t(
+              item.weekdays.length > 1 ? "lessonDefaultTime" : "lessonTime",
+            )}
+          >
             <input
               type="time"
               value={item.time}
@@ -875,10 +942,7 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
         </p>
         <div className="ld-lesson-summary">
           <span>{modeText(lesson.mode)}</span>
-          <span>
-            {lessonScheduleLabel(lesson, t)} · {lessonTimeLabel(lesson)}
-          </span>
-          <span>{lessonTimeLabel(lesson) ? "" : "全天"}</span>
+          <span>{lessonWeeklyLabel(lesson, t)}</span>
         </div>
         {lesson.mode === "credit" && account && (
           <div className="ld-lesson-money">
@@ -1454,8 +1518,7 @@ export function createLessonsUI({ t, Btn, Modal, Field, Icon }: any) {
                         {l.participant ? " · " + l.participant : ""}
                       </span>
                       <span className="ld-task-meta">
-                        {lessonScheduleLabel(l, t)}
-                        {l.time ? " · " + lessonTimeLabel(l) : ""}
+                        {lessonWeeklyLabel(l, t)}
                         {l.place ? " · " + l.place : ""}
                       </span>
                       <span className="ld-task-meta">

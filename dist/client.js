@@ -16602,6 +16602,14 @@ var copy = {
     "With no weekday selected this is a one-off course; extra sessions can be added."
   ],
   lessonTime: ["\u4E0A\u8BFE\u65F6\u95F4", "Start time"],
+  lessonDefaultTime: ["\u9ED8\u8BA4\u4E0A\u8BFE\u65F6\u95F4", "Default start time"],
+  lessonWeekdayTimes: ["\u5206\u661F\u671F\u4E0A\u8BFE\u65F6\u95F4", "Times by weekday"],
+  lessonWeekdayTimesHint: [
+    "\u4E0D\u540C\u661F\u671F\u53EF\u4EE5\u5355\u72EC\u586B\u5199\u65F6\u95F4\uFF1B\u7559\u7A7A\u7684\u661F\u671F\u4F7F\u7528\u9ED8\u8BA4\u65F6\u95F4\u3002",
+    "Give a weekday its own start time; empty rows use the default time."
+  ],
+  lessonUseDefaultTime: ["\u9ED8\u8BA4 {n}", "Default {n}"],
+  lessonNoDefaultTime: ["\u9ED8\u8BA4\u65F6\u95F4\u672A\u8BBE\u7F6E", "No default time"],
   lessonDuration: ["\u65F6\u957F\uFF08\u5206\u949F\uFF09", "Minutes"],
   lessonEffective: ["\u5F00\u59CB\u65E5\u671F", "Starts"],
   lessonUntil: ["\u7ED3\u675F\u65E5\u671F\uFF08\u53EF\u9009\uFF09", "Ends (optional)"],
@@ -30717,7 +30725,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.9.4",
+        "data-reader-version": "0.9.5",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -30809,7 +30817,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.9.4")))
+      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.9.5")))
     );
   }
   return {
@@ -30854,6 +30862,12 @@ function lessonBounds(lesson, terms) {
   return [{ start: lesson.effective, end: lesson.until || "" }];
 }
 var inBounds = (bounds, date) => bounds.some((b3) => date >= b3.start && (!b3.end || date <= b3.end));
+function lessonTimeFor(lesson, date) {
+  const per = (lesson.weekdayTimes || []).find(
+    (x4) => x4.weekday === weekday(date) && x4.time
+  );
+  return per?.time || lesson.time;
+}
 function occurrenceOf(state, lesson, originalDate, row) {
   const base = {
     lessonId: lesson.id,
@@ -30861,7 +30875,7 @@ function occurrenceOf(state, lesson, originalDate, row) {
     participant: lesson.participant,
     originalDate,
     date: row?.date || originalDate,
-    time: row?.time ?? lesson.time,
+    time: row?.time ?? lessonTimeFor(lesson, originalDate),
     durationMinutes: lesson.durationMinutes,
     place: row?.place ?? lesson.place,
     status: row?.status || "scheduled",
@@ -31026,9 +31040,16 @@ function fmtTime(minutes) {
   const dayMinutes = (minutes % 1440 + 1440) % 1440;
   return String(Math.floor(dayMinutes / 60)).padStart(2, "0") + ":" + String(dayMinutes % 60).padStart(2, "0");
 }
-function lessonScheduleLabel(lesson, t3) {
-  if (!lesson.weekdays.length) return t3("lessonOnce");
-  return lesson.weekdays.slice().sort((a3, b3) => (a3 + 6) % 7 - (b3 + 6) % 7).map((d2) => t3("weekdayShort" + d2)).join(" \xB7 ");
+function lessonWeeklyLabel(lesson, t3) {
+  if (!lesson.weekdays.length)
+    return t3("lessonOnce") + (lesson.time ? " " + lesson.time : "");
+  return lesson.weekdays.slice().sort((a3, b3) => (a3 + 6) % 7 - (b3 + 6) % 7).map((d2) => {
+    const per = (lesson.weekdayTimes || []).find(
+      (x4) => x4.weekday === d2 && x4.time
+    );
+    const time = per?.time || lesson.time;
+    return t3("weekdayShort" + d2) + (time ? " " + time : "");
+  }).join(" \xB7 ");
 }
 
 // src/planning.js
@@ -31911,6 +31932,7 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
       note: "",
       mode: "none",
       weekdays: [],
+      weekdayTimes: [],
       time: "",
       durationMinutes: 60,
       effective: env.day,
@@ -31931,6 +31953,18 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
     const [error, setError] = useState5("");
     const [opening, setOpening] = useState5("");
     const change = (k3, v3) => setItem((x4) => ({ ...x4, [k3]: v3 }));
+    const toggleWeekday = (d2) => {
+      setItem((x4) => {
+        const on = x4.weekdays.includes(d2);
+        const weekdays = on ? x4.weekdays.filter((v3) => v3 !== d2) : [...x4.weekdays, d2];
+        const weekdayTimes = (x4.weekdayTimes || []).filter(
+          (v3) => weekdays.includes(v3.weekday)
+        );
+        if (!on && d2 !== void 0 && !weekdayTimes.some((v3) => v3.weekday === d2))
+          weekdayTimes.push({ weekday: d2, time: "" });
+        return { ...x4, weekdays, weekdayTimes };
+      });
+    };
     const participants = [
       .../* @__PURE__ */ new Set([
         ...live2(env.data, "lessons").map((x4) => x4.participant).filter(Boolean),
@@ -31944,13 +31978,19 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
         return setError(t3("lessonTermRequired"));
       if (opening !== "" && (!Number.isFinite(Number(opening)) || Number(opening) < 0))
         return setError(t3("lessonOpeningInvalid"));
+      const payload = {
+        ...item,
+        weekdayTimes: (item.weekdayTimes || []).filter(
+          (x4) => x4.time && item.weekdays.includes(x4.weekday)
+        )
+      };
       try {
         await env.act({
           action: "lesson",
           ...item.mode === "credit" && opening !== "" ? { opening: Number(opening) } : {},
           id: item.id,
           version: item.version,
-          item,
+          item: payload,
           ...item.mode === "term" ? {
             term: {
               ...term,
@@ -32000,20 +32040,52 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
         type: "button",
         key: d2,
         "aria-pressed": item.weekdays.includes(d2),
-        onClick: () => change(
-          "weekdays",
-          item.weekdays.includes(d2) ? item.weekdays.filter((x4) => x4 !== d2) : [...item.weekdays, d2]
-        )
+        onClick: () => toggleWeekday(d2)
       },
       t3("weekdayShort" + d2)
-    ))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, item.weekdays.length ? t3("lessonWeekdaysHint") : t3("lessonOnceHint"))), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonTime") }, /* @__PURE__ */ React9.createElement(
-      "input",
+    ))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, item.weekdays.length ? t3("lessonWeekdaysHint") : t3("lessonOnceHint"))), item.weekdays.length > 1 && /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonWeekdayTimes"), wide: true }, /* @__PURE__ */ React9.createElement("div", { className: "ld-weekday-times" }, [1, 2, 3, 4, 5, 6, 0].filter((d2) => item.weekdays.includes(d2)).map((d2) => {
+      const current = (item.weekdayTimes || []).find(
+        (x4) => x4.weekday === d2
+      );
+      return /* @__PURE__ */ React9.createElement("label", { className: "ld-weekday-time", key: d2 }, /* @__PURE__ */ React9.createElement("span", null, t3("weekdayShort" + d2)), /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "time",
+          value: current?.time || "",
+          placeholder: item.time || "",
+          onChange: (e3) => {
+            const value = e3.target.value;
+            setItem((x4) => ({
+              ...x4,
+              weekdayTimes: [
+                ...(x4.weekdayTimes || []).filter(
+                  (v3) => v3.weekday !== d2
+                ),
+                { weekday: d2, time: value }
+              ]
+            }));
+          }
+        }
+      ), /* @__PURE__ */ React9.createElement("small", null, item.time ? t3("lessonUseDefaultTime").replace(
+        "{n}",
+        item.time
+      ) : t3("lessonNoDefaultTime")));
+    })), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("lessonWeekdayTimesHint"))), /* @__PURE__ */ React9.createElement(
+      Field,
       {
-        type: "time",
-        value: item.time,
-        onChange: (e3) => change("time", e3.target.value)
-      }
-    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDuration") }, /* @__PURE__ */ React9.createElement(
+        label: t3(
+          item.weekdays.length > 1 ? "lessonDefaultTime" : "lessonTime"
+        )
+      },
+      /* @__PURE__ */ React9.createElement(
+        "input",
+        {
+          type: "time",
+          value: item.time,
+          onChange: (e3) => change("time", e3.target.value)
+        }
+      )
+    ), /* @__PURE__ */ React9.createElement(Field, { label: t3("lessonDuration") }, /* @__PURE__ */ React9.createElement(
       "input",
       {
         type: "number",
@@ -32517,7 +32589,7 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
         setError(e3.message);
       }
     };
-    return /* @__PURE__ */ React9.createElement(Modal, { title: lesson.title, onClose: close }, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, lesson.participant || t3("lessonNoParticipant"), lesson.place ? " \xB7 " + lesson.place : ""), /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-summary" }, /* @__PURE__ */ React9.createElement("span", null, modeText(lesson.mode)), /* @__PURE__ */ React9.createElement("span", null, lessonScheduleLabel(lesson, t3), " \xB7 ", lessonTimeLabel(lesson)), /* @__PURE__ */ React9.createElement("span", null, lessonTimeLabel(lesson) ? "" : "\u5168\u5929")), lesson.mode === "credit" && account && /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-money" }, /* @__PURE__ */ React9.createElement("strong", null, account.balance), " ", t3("lessonUnit"), /* @__PURE__ */ React9.createElement("small", null, t3("lessonPurchased"), " ", account.purchased, " \xB7 ", t3("lessonGifted"), " ", account.gifted, " \xB7 ", t3("lessonUsed"), " ", account.used)), lesson.mode === "term" && /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-money" }, summary.currentTerm ? /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("strong", null, summary.endsIn), " ", t3("lessonDaysLeft"), /* @__PURE__ */ React9.createElement("small", null, summary.currentTerm.start, " \u2013 ", summary.currentTerm.end)) : /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("strong", null, t3("lessonExpired")), /* @__PURE__ */ React9.createElement("small", null, summary.terms.length ? summary.terms.at(-1).end : "")), summary.stats && /* @__PURE__ */ React9.createElement("small", null, t3("lessonTermUsed").replace("{n}", String(summary.stats.sessions)).replace("{u}", String(summary.stats.units)))), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+    return /* @__PURE__ */ React9.createElement(Modal, { title: lesson.title, onClose: close }, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, lesson.participant || t3("lessonNoParticipant"), lesson.place ? " \xB7 " + lesson.place : ""), /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-summary" }, /* @__PURE__ */ React9.createElement("span", null, modeText(lesson.mode)), /* @__PURE__ */ React9.createElement("span", null, lessonWeeklyLabel(lesson, t3))), lesson.mode === "credit" && account && /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-money" }, /* @__PURE__ */ React9.createElement("strong", null, account.balance), " ", t3("lessonUnit"), /* @__PURE__ */ React9.createElement("small", null, t3("lessonPurchased"), " ", account.purchased, " \xB7 ", t3("lessonGifted"), " ", account.gifted, " \xB7 ", t3("lessonUsed"), " ", account.used)), lesson.mode === "term" && /* @__PURE__ */ React9.createElement("div", { className: "ld-lesson-money" }, summary.currentTerm ? /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("strong", null, summary.endsIn), " ", t3("lessonDaysLeft"), /* @__PURE__ */ React9.createElement("small", null, summary.currentTerm.start, " \u2013 ", summary.currentTerm.end)) : /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("strong", null, t3("lessonExpired")), /* @__PURE__ */ React9.createElement("small", null, summary.terms.length ? summary.terms.at(-1).end : "")), summary.stats && /* @__PURE__ */ React9.createElement("small", null, t3("lessonTermUsed").replace("{n}", String(summary.stats.sessions)).replace("{u}", String(summary.stats.units)))), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
       Btn,
       {
         onClick: () => open({ type: "session", mode: "complete", lessonId: lesson.id })
@@ -32802,7 +32874,7 @@ function createLessonsUI({ t: t3, Btn, Modal, Field, Icon: Icon2 }) {
           onClick: () => open({ type: "detail", lessonId: l3.id })
         },
         /* @__PURE__ */ React9.createElement("span", { className: "ld-task-title" }, l3.title, l3.participant ? " \xB7 " + l3.participant : ""),
-        /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, lessonScheduleLabel(l3, t3), l3.time ? " \xB7 " + lessonTimeLabel(l3) : "", l3.place ? " \xB7 " + l3.place : ""),
+        /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, lessonWeeklyLabel(l3, t3), l3.place ? " \xB7 " + l3.place : ""),
         /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, modeText(l3.mode), accountLine(data, l3, env.day) ? " \xB7 " + accountLine(data, l3, env.day) : ""),
         next && /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, t3("lessonNext"), " ", next.date, " ", next.time)
       ), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
@@ -33593,7 +33665,7 @@ var planning_default = "/* Resident toolbar with a bounded capture sheet; the pa
 var review_default = '/* Review content and templates remain separate; all text is rendered inertly. */\n.ld-review-editor {\n  min-width: 0;\n}\n.ld-review-options {\n  flex-wrap: wrap;\n  margin: 10px 0;\n}\n.ld-review-options .ld-btn {\n  font-size: 11px;\n}\n.ld-review-editor .ld-field {\n  margin: 12px 0;\n}\n.ld-review-text {\n  width: 100%;\n  box-sizing: border-box;\n}\n.ld-review-assistant {\n  margin: 20px 0 10px;\n  padding: 16px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  background: var(--dsw-alias-bg-layer-1);\n}\n.ld-review-assistant h3 {\n  margin: 0;\n  font-size: 13px;\n}\n.ld-review-chat {\n  max-height: 260px;\n  overflow: auto;\n  margin: 12px 0;\n}\n.ld-review-chat-message {\n  margin-bottom: 12px;\n  font-size: 12px;\n}\n.ld-review-chat-message strong {\n  font-size: 10px;\n  color: var(--ld-muted);\n  font-weight: 500;\n}\n.ld-review-chat-message p,\n.ld-review-chat > p,\n.ld-review-candidate > p {\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  line-height: 1.7;\n}\n.ld-review-candidate {\n  margin-top: 15px;\n  padding-top: 14px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-review-assistant textarea {\n  min-height: 65px;\n}\n.ld-previous-habits {\n  margin-bottom: 22px;\n  padding: 12px 14px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n}\n.ld-previous-habits h3 {\n  margin: 0 0 8px;\n}\n.ld-week-dots > .ld-habit-late {\n  outline: 1px dashed var(--ld-accent);\n  outline-offset: 2px;\n}\n.ld-root[data-reduce-motion="true"] .ld-fold-chevron {\n  transition: none;\n}\n@container life-desk (max-width: 530px) {\n  .ld-review-assistant {\n    padding: 12px;\n  }\n}\n';
 
 // src/lessons.css
-var lessons_default = '/* Courses stay compact: schedule, attendance and credit balance share a row. */\n.ld-today-grid.ld-single-col {\n  grid-template-columns: minmax(0, 1fr);\n}\n.ld-lessons-page {\n  min-width: 0;\n}\n.ld-lesson-today,\n.ld-lesson-card {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 9px 0;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-lesson-today:first-of-type,\n.ld-lesson-card:first-of-type {\n  border-top: 0;\n}\n.ld-lesson-today.is-done {\n  opacity: 0.72;\n}\n.ld-lesson-today > .ld-task-body {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  text-align: left;\n}\n.ld-lesson-today .ld-task-title,\n.ld-lesson-card .ld-task-title {\n  display: flex;\n  gap: 8px;\n  align-items: baseline;\n  flex-wrap: wrap;\n}\n.ld-lesson-time {\n  flex: none;\n  min-width: 42px;\n  font-size: 11px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-today > .ld-btn {\n  flex: none;\n  font-size: 11px;\n}\n.ld-lesson-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 10px;\n}\n.ld-lesson-card {\n  align-items: flex-start;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  padding: 12px;\n  background: var(--dsw-alias-bg-layer-1);\n}\n.ld-lesson-card .ld-actions {\n  flex-wrap: wrap;\n  margin-top: 6px;\n}\n.ld-week-grid {\n  display: grid;\n  grid-template-columns: repeat(7, minmax(0, 1fr));\n  gap: 6px;\n  margin-top: 10px;\n}\n.ld-week-cell {\n  min-width: 0;\n  padding: 8px 6px;\n  border: 1px solid var(--ld-line);\n  border-radius: 8px;\n  min-height: 74px;\n}\n.ld-week-cell h3 {\n  margin: 0 0 6px;\n  font-size: 11px;\n  font-weight: 500;\n  color: var(--ld-muted);\n  display: flex;\n  justify-content: space-between;\n  gap: 4px;\n}\n.ld-week-cell h3 small {\n  font-weight: 400;\n}\n.ld-week-lesson {\n  display: block;\n  width: 100%;\n  text-align: left;\n  padding: 5px 6px;\n  margin-bottom: 4px;\n  border-radius: 6px;\n  border: 1px solid var(--ld-line);\n  background: var(--dsw-alias-bg-layer-2);\n  font-size: 11px;\n  line-height: 1.45;\n  overflow-wrap: anywhere;\n}\n.ld-week-lesson span,\n.ld-week-lesson small {\n  display: block;\n  color: var(--ld-muted);\n  font-size: 10px;\n}\n.ld-week-lesson strong {\n  font-weight: 500;\n  color: var(--ld-fg);\n}\n.ld-week-lesson.is-done {\n  opacity: 0.62;\n}\n.ld-lesson-summary {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px 14px;\n  font-size: 12px;\n  color: var(--ld-muted);\n  margin-bottom: 10px;\n}\n.ld-lesson-money {\n  display: flex;\n  align-items: baseline;\n  gap: 8px;\n  flex-wrap: wrap;\n  margin: 8px 0 14px;\n  padding: 10px 12px;\n  border-radius: 8px;\n  background: color-mix(in srgb, var(--ld-accent) 7%, transparent);\n}\n.ld-lesson-money strong {\n  font-size: 24px;\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-money small {\n  color: var(--ld-muted);\n  font-size: 11px;\n  line-height: 1.6;\n}\n.ld-lesson-row {\n  display: flex;\n  align-items: center;\n  flex-wrap: wrap;\n  gap: 6px 12px;\n  padding: 7px 0;\n  border-top: 1px solid var(--ld-line);\n  font-size: 12px;\n}\n.ld-lesson-row:first-child {\n  border-top: 0;\n}\n.ld-lesson-row > span:first-child {\n  min-width: 116px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-row > strong {\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-row > .ld-btn {\n  margin-left: auto;\n  font-size: 11px;\n}\n.ld-home-module {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 10px;\n  padding: 7px 0;\n  border-top: 1px solid var(--ld-line);\n  border-radius: 8px;\n  transition:\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\n.ld-home-module.is-dragging {\n  opacity: 0.45;\n}\n.ld-home-module.is-drop {\n  background: color-mix(in srgb, var(--ld-accent) 8%, transparent);\n  box-shadow: inset 0 0 0 1px var(--ld-accent);\n}\n.ld-drag-handle {\n  flex: none;\n  cursor: grab;\n  color: var(--ld-muted);\n  font-size: 15px;\n  line-height: 1;\n  padding: 4px 2px;\n  user-select: none;\n}\n.ld-drag-handle:active {\n  cursor: grabbing;\n}\n.ld-home-module .ld-check-label {\n  flex: 1;\n  min-width: 0;\n}\n.ld-home-module:first-of-type {\n  border-top: 0;\n}\n.ld-home-module .ld-actions {\n  flex: none;\n}\n.ld-home-module .ld-btn {\n  min-width: 30px;\n  padding: 3px 8px;\n}\n.ld-event-lesson {\n  border-left: 3px solid var(--ld-accent) !important;\n}\n.ld-root[data-reduce-motion="true"] .ld-week-lesson {\n  transition: none;\n}\n@container life-desk (max-width: 760px) {\n  .ld-week-grid {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n}\n@container life-desk (max-width: 430px) {\n  .ld-week-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n  .ld-lesson-cards {\n    grid-template-columns: minmax(0, 1fr);\n  }\n}\n\n.ld-heading-title {\n  display: flex;\n  align-items: baseline;\n  gap: 12px;\n  flex-wrap: wrap;\n}\n.ld-heading-title .ld-btn {\n  font-size: 11px;\n  white-space: nowrap;\n}\n';
+var lessons_default = '/* Courses stay compact: schedule, attendance and credit balance share a row. */\n.ld-today-grid.ld-single-col {\n  grid-template-columns: minmax(0, 1fr);\n}\n.ld-lessons-page {\n  min-width: 0;\n}\n.ld-lesson-today,\n.ld-lesson-card {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 9px 0;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-lesson-today:first-of-type,\n.ld-lesson-card:first-of-type {\n  border-top: 0;\n}\n.ld-lesson-today.is-done {\n  opacity: 0.72;\n}\n.ld-lesson-today > .ld-task-body {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  text-align: left;\n}\n.ld-lesson-today .ld-task-title,\n.ld-lesson-card .ld-task-title {\n  display: flex;\n  gap: 8px;\n  align-items: baseline;\n  flex-wrap: wrap;\n}\n.ld-lesson-time {\n  flex: none;\n  min-width: 42px;\n  font-size: 11px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-today > .ld-btn {\n  flex: none;\n  font-size: 11px;\n}\n.ld-lesson-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 10px;\n}\n.ld-lesson-card {\n  align-items: flex-start;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  padding: 12px;\n  background: var(--dsw-alias-bg-layer-1);\n}\n.ld-lesson-card .ld-actions {\n  flex-wrap: wrap;\n  margin-top: 6px;\n}\n.ld-week-grid {\n  display: grid;\n  grid-template-columns: repeat(7, minmax(0, 1fr));\n  gap: 6px;\n  margin-top: 10px;\n}\n.ld-week-cell {\n  min-width: 0;\n  padding: 8px 6px;\n  border: 1px solid var(--ld-line);\n  border-radius: 8px;\n  min-height: 74px;\n}\n.ld-week-cell h3 {\n  margin: 0 0 6px;\n  font-size: 11px;\n  font-weight: 500;\n  color: var(--ld-muted);\n  display: flex;\n  justify-content: space-between;\n  gap: 4px;\n}\n.ld-week-cell h3 small {\n  font-weight: 400;\n}\n.ld-week-lesson {\n  display: block;\n  width: 100%;\n  text-align: left;\n  padding: 5px 6px;\n  margin-bottom: 4px;\n  border-radius: 6px;\n  border: 1px solid var(--ld-line);\n  background: var(--dsw-alias-bg-layer-2);\n  font-size: 11px;\n  line-height: 1.45;\n  overflow-wrap: anywhere;\n}\n.ld-week-lesson span,\n.ld-week-lesson small {\n  display: block;\n  color: var(--ld-muted);\n  font-size: 10px;\n}\n.ld-week-lesson strong {\n  font-weight: 500;\n  color: var(--ld-fg);\n}\n.ld-week-lesson.is-done {\n  opacity: 0.62;\n}\n.ld-lesson-summary {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px 14px;\n  font-size: 12px;\n  color: var(--ld-muted);\n  margin-bottom: 10px;\n}\n.ld-lesson-money {\n  display: flex;\n  align-items: baseline;\n  gap: 8px;\n  flex-wrap: wrap;\n  margin: 8px 0 14px;\n  padding: 10px 12px;\n  border-radius: 8px;\n  background: color-mix(in srgb, var(--ld-accent) 7%, transparent);\n}\n.ld-lesson-money strong {\n  font-size: 24px;\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-money small {\n  color: var(--ld-muted);\n  font-size: 11px;\n  line-height: 1.6;\n}\n.ld-lesson-row {\n  display: flex;\n  align-items: center;\n  flex-wrap: wrap;\n  gap: 6px 12px;\n  padding: 7px 0;\n  border-top: 1px solid var(--ld-line);\n  font-size: 12px;\n}\n.ld-lesson-row:first-child {\n  border-top: 0;\n}\n.ld-lesson-row > span:first-child {\n  min-width: 116px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-row > strong {\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-row > .ld-btn {\n  margin-left: auto;\n  font-size: 11px;\n}\n.ld-home-module {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 10px;\n  padding: 7px 0;\n  border-top: 1px solid var(--ld-line);\n  border-radius: 8px;\n  transition:\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\n.ld-home-module.is-dragging {\n  opacity: 0.45;\n}\n.ld-home-module.is-drop {\n  background: color-mix(in srgb, var(--ld-accent) 8%, transparent);\n  box-shadow: inset 0 0 0 1px var(--ld-accent);\n}\n.ld-drag-handle {\n  flex: none;\n  cursor: grab;\n  color: var(--ld-muted);\n  font-size: 15px;\n  line-height: 1;\n  padding: 4px 2px;\n  user-select: none;\n}\n.ld-drag-handle:active {\n  cursor: grabbing;\n}\n.ld-home-module .ld-check-label {\n  flex: 1;\n  min-width: 0;\n}\n.ld-home-module:first-of-type {\n  border-top: 0;\n}\n.ld-home-module .ld-actions {\n  flex: none;\n}\n.ld-home-module .ld-btn {\n  min-width: 30px;\n  padding: 3px 8px;\n}\n.ld-event-lesson {\n  border-left: 3px solid var(--ld-accent) !important;\n}\n.ld-root[data-reduce-motion="true"] .ld-week-lesson {\n  transition: none;\n}\n@container life-desk (max-width: 760px) {\n  .ld-week-grid {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n}\n@container life-desk (max-width: 430px) {\n  .ld-week-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n  .ld-lesson-cards {\n    grid-template-columns: minmax(0, 1fr);\n  }\n}\n\n.ld-heading-title {\n  display: flex;\n  align-items: baseline;\n  gap: 12px;\n  flex-wrap: wrap;\n}\n.ld-heading-title .ld-btn {\n  font-size: 11px;\n  white-space: nowrap;\n}\n\n.ld-weekday-times {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));\n  gap: 8px 12px;\n}\n.ld-weekday-time {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  min-width: 0;\n}\n.ld-weekday-time > span {\n  flex: none;\n  min-width: 34px;\n  font-size: 12px;\n  color: var(--ld-muted);\n}\n.ld-weekday-time input {\n  flex: 1;\n  min-width: 0;\n}\n.ld-weekday-time small {\n  flex: none;\n  font-size: 10px;\n  color: var(--ld-muted);\n  white-space: nowrap;\n}\n';
 
 // src/client.tsx
 var css = style_default + spirit_default + today_default + focus_default + planning_default + review_default + lessons_default;
@@ -34369,7 +34441,7 @@ function apply(ctx) {
     const [error, setError] = useState6("");
     const [showNotes, setShowNotes] = useState6(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.9.4";
+    const current = v3.currentVersion || "0.9.5";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -35564,7 +35636,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React10.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.9.4", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React10.createElement(
+        /* @__PURE__ */ React10.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.9.5", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React10.createElement(
           "button",
           {
             className: "ld-update-badge",

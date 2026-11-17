@@ -93,6 +93,19 @@ export const LessonInput = z
       .default([])
       .refine((v) => new Set(v).size === v.length, "同一天只能安排一次"),
     time: clock,
+    weekdayTimes: z
+      .array(
+        z.object({
+          weekday: z.number().int().min(0).max(6),
+          time: clock,
+        }),
+      )
+      .max(7)
+      .default([])
+      .refine(
+        (v) => new Set(v.map((x) => x.weekday)).size === v.length,
+        "每个星期只能设置一个时间",
+      ),
     durationMinutes: z.number().int().min(0).max(1440).default(60),
     effective: day,
     until: optionalDay,
@@ -106,9 +119,10 @@ export const LessonInput = z
     defaultDeduction: z.number().positive().max(1000).default(1),
     balanceWarnAt: z.number().int().min(0).max(1000).nullable().default(null),
   })
+  .refine((v) => !v.until || v.until >= v.effective, "结束日期不能早于开始日期")
   .refine(
-    (v) => !v.until || v.until >= v.effective,
-    "结束日期不能早于开始日期",
+    (v) => v.weekdayTimes.every((x) => v.weekdays.includes(x.weekday)),
+    "分星期时间必须对应已选择的星期",
   );
 export const LessonTermInput = z
   .object({

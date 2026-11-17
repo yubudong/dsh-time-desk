@@ -239,3 +239,31 @@
   font-size: 11px;
   white-space: nowrap;
 }
+
+.ld-weekday-times {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 8px 12px;
+}
+.ld-weekday-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.ld-weekday-time > span {
+  flex: none;
+  min-width: 34px;
+  font-size: 12px;
+  color: var(--ld-muted);
+}
+.ld-weekday-time input {
+  flex: 1;
+  min-width: 0;
+}
+.ld-weekday-time small {
+  flex: none;
+  font-size: 10px;
+  color: var(--ld-muted);
+  white-space: nowrap;
+}
