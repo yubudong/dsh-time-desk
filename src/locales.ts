@@ -932,7 +932,11 @@ export const copy = {
   nowFocus: ["当前专注", "Current focus"],
   todayHabits: ["今日习惯", "Today’s habits"],
   weeklyHabits: ["本周习惯目标", "Weekly habit goals"],
-  upcoming: ["未来安排", "Coming up"],
+  upcoming: ["未来7天安排", "Next 7 days"],
+  upcomingRange: [
+    "{from} 至 {to}（不含所选当天）",
+    "{from} to {to} (after the selected day)",
+  ],
   noUpcoming: [
     "未来七天没有需要按时间参加的事项。",
     "Nothing scheduled in the next seven days.",

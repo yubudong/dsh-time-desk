@@ -2408,12 +2408,19 @@ export function apply(ctx: any) {
             );
           if (id === "upcoming") {
             const plans = upcomingPlans(data, day, 7);
+            const dateWithWeek = (date: string) =>
+              date + " " + t("weekdayShort" + weekday(date));
             return (
               <FoldSection
                 title={t("upcoming")}
                 count={plans.length}
                 {...foldProps("upcoming")}
               >
+                <p className="ld-help">
+                  {t("upcomingRange")
+                    .replace("{from}", dateWithWeek(shift(day, 1)))
+                    .replace("{to}", dateWithWeek(shift(day, 7)))}
+                </p>
                 <div className="ld-actions">
                   {plans.length > 0 && (
                     <Btn onClick={() => setTab("calendar")}>
@@ -2444,7 +2451,7 @@ export function apply(ctx: any) {
                       {p.participant ? " · " + p.participant : ""}
                     </strong>
                     <span>
-                      {p.date} {p.time || t("allDay")}
+                      {dateWithWeek(p.date)} {p.time || t("allDay")}
                       {p.kind === "lesson" ? " · " + t("lessons") : ""}
                     </span>
                   </button>

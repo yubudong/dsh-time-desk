@@ -113,10 +113,10 @@ var require_rrule = __commonJS({
           var Weekday = (
             /** @class */
             (function() {
-              function Weekday2(weekday3, n2) {
+              function Weekday2(weekday2, n2) {
                 if (n2 === 0)
                   throw new Error("Can't create weekday with n == 0");
-                this.weekday = weekday3;
+                this.weekday = weekday2;
                 this.n = n2;
               }
               Weekday2.fromStr = function(str) {
@@ -856,11 +856,11 @@ var require_rrule = __commonJS({
                   var byweekday = !isArray(this.origOptions.byweekday) ? [this.origOptions.byweekday] : this.origOptions.byweekday;
                   var days = String(byweekday);
                   this.byweekday = {
-                    allWeeks: byweekday.filter(function(weekday3) {
-                      return !weekday3.n;
+                    allWeeks: byweekday.filter(function(weekday2) {
+                      return !weekday2.n;
                     }),
-                    someWeeks: byweekday.filter(function(weekday3) {
-                      return Boolean(weekday3.n);
+                    someWeeks: byweekday.filter(function(weekday2) {
+                      return Boolean(weekday2.n);
                     }),
                     isWeekdays: days.indexOf("MO") !== -1 && days.indexOf("TU") !== -1 && days.indexOf("WE") !== -1 && days.indexOf("TH") !== -1 && days.indexOf("FR") !== -1 && days.indexOf("SA") === -1 && days.indexOf("SU") === -1,
                     isEveryDay: days.indexOf("MO") !== -1 && days.indexOf("TU") !== -1 && days.indexOf("WE") !== -1 && days.indexOf("TH") !== -1 && days.indexOf("FR") !== -1 && days.indexOf("SA") !== -1 && days.indexOf("SU") !== -1
@@ -1083,8 +1083,8 @@ var require_rrule = __commonJS({
                 return this.language.monthNames[m3 - 1];
               };
               ToText2.prototype.weekdaytext = function(wday) {
-                var weekday3 = isNumber(wday) ? (wday + 1) % 7 : wday.getJsWeekday();
-                return (wday.n ? this.nth(wday.n) + " " : "") + this.language.dayNames[weekday3];
+                var weekday2 = isNumber(wday) ? (wday + 1) % 7 : wday.getJsWeekday();
+                return (wday.n ? this.nth(wday.n) + " " : "") + this.language.dayNames[weekday2];
               };
               ToText2.prototype.plural = function(n2) {
                 return n2 % 100 !== 1;
@@ -17492,7 +17492,11 @@ var copy = {
   nowFocus: ["\u5F53\u524D\u4E13\u6CE8", "Current focus"],
   todayHabits: ["\u4ECA\u65E5\u4E60\u60EF", "Today\u2019s habits"],
   weeklyHabits: ["\u672C\u5468\u4E60\u60EF\u76EE\u6807", "Weekly habit goals"],
-  upcoming: ["\u672A\u6765\u5B89\u6392", "Coming up"],
+  upcoming: ["\u672A\u67657\u5929\u5B89\u6392", "Next 7 days"],
+  upcomingRange: [
+    "{from} \u81F3 {to}\uFF08\u4E0D\u542B\u6240\u9009\u5F53\u5929\uFF09",
+    "{from} to {to} (after the selected day)"
+  ],
   noUpcoming: [
     "\u672A\u6765\u4E03\u5929\u6CA1\u6709\u9700\u8981\u6309\u65F6\u95F4\u53C2\u52A0\u7684\u4E8B\u9879\u3002",
     "Nothing scheduled in the next seven days."
@@ -30800,7 +30804,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.10.0",
+        "data-reader-version": "0.10.1",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -30892,7 +30896,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.10.0")))
+      )), /* @__PURE__ */ React6.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React6.createElement("small", { className: "ld-reader-build" }, "v", "0.10.1")))
     );
   }
   return {
@@ -34997,7 +35001,7 @@ function apply(ctx) {
     const [error, setError] = useState6("");
     const [showNotes, setShowNotes] = useState6(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.10.0";
+    const current = v3.currentVersion || "0.10.1";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -35850,6 +35854,7 @@ function apply(ctx) {
             return /* @__PURE__ */ React10.createElement(FoldSection, { title: t3("weeklyHabits"), ...foldProps("weekly") }, /* @__PURE__ */ React10.createElement(HabitCards, { weeklyOnly: true, heading: false, env: viewEnv }));
           if (id === "upcoming") {
             const plans = upcomingPlans(data, day, 7);
+            const dateWithWeek = (date) => date + " " + t3("weekdayShort" + weekday(date));
             return /* @__PURE__ */ React10.createElement(
               FoldSection,
               {
@@ -35857,6 +35862,7 @@ function apply(ctx) {
                 count: plans.length,
                 ...foldProps("upcoming")
               },
+              /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("upcomingRange").replace("{from}", dateWithWeek(shift(day, 1))).replace("{to}", dateWithWeek(shift(day, 7)))),
               /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, plans.length > 0 && /* @__PURE__ */ React10.createElement(Btn, { onClick: () => setTab("calendar") }, t3("viewCalendar"))),
               plans.slice(0, 5).map((p3) => /* @__PURE__ */ React10.createElement(
                 "button",
@@ -35878,7 +35884,7 @@ function apply(ctx) {
                   }
                 },
                 /* @__PURE__ */ React10.createElement("strong", null, p3.title, p3.participant ? " \xB7 " + p3.participant : ""),
-                /* @__PURE__ */ React10.createElement("span", null, p3.date, " ", p3.time || t3("allDay"), p3.kind === "lesson" ? " \xB7 " + t3("lessons") : "")
+                /* @__PURE__ */ React10.createElement("span", null, dateWithWeek(p3.date), " ", p3.time || t3("allDay"), p3.kind === "lesson" ? " \xB7 " + t3("lessons") : "")
               )),
               plans.length > 5 && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("futureMore").replace("{n}", String(plans.length - 5))),
               !plans.length && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("noUpcoming"))
@@ -36219,7 +36225,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React10.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.10.0", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React10.createElement(
+        /* @__PURE__ */ React10.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.10.1", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React10.createElement(
           "button",
           {
             className: "ld-update-badge",
