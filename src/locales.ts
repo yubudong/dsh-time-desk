@@ -521,28 +521,7 @@ export const copy = {
     "预计番茄数（0 为未估算）",
     "Estimated focus rounds (0 = unknown)",
   ],
-  dailyPlan: ["今日计划", "Daily plan"],
-  estimatedMin: ["已估算分钟", "Estimated minutes"],
-  unestimatedTasks: ["件尚未估时", "without an estimate"],
-  recordedFocus: ["已记录专注分钟", "Recorded focus minutes"],
-  availableToday: ["这一天的可用分钟", "Available minutes for this day"],
   notSet: ["未设置", "Not set"],
-  capacityHint: [
-    "先设置可用时间，再判断是否安排过量",
-    "Set your available time to compare the workload",
-  ],
-  overCapacity: [
-    "已估算部分已超出可用时间",
-    "Known estimates exceed capacity by",
-  ],
-  withinCapacity: [
-    "已估算部分未超过可用时间",
-    "Known estimates fit within capacity",
-  ],
-  estimateHint: [
-    "分钟优先；否则按番茄数 × 默认专注时长，未估时不按零分钟计算",
-    "Minutes take precedence; otherwise rounds × default focus duration. Unknown estimates are not zero.",
-  ],
   organize: ["整理", "Organize"],
   awaitingTriage: ["待整理", "Needs organizing"],
   planToday: ["填入所选日期", "Use selected date"],

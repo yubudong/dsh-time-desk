@@ -54,70 +54,6 @@
 .ld-capture-fields {
   margin: 12px 0;
 }
-.ld-plan-panel {
-  margin-bottom: 26px;
-  padding: 18px 20px;
-  border: 1px solid var(--ld-line);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--ld-accent) 4%, var(--ld-base));
-}
-.ld-plan-heading {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: baseline;
-}
-.ld-plan-heading h2 {
-  margin: 0;
-}
-.ld-plan-heading > span {
-  font-size: 11px;
-  color: var(--ld-muted);
-}
-.ld-plan-stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  margin: 18px 0;
-}
-.ld-plan-stats > div {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.ld-plan-stats strong {
-  font-size: 26px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-.ld-plan-stats span {
-  font-size: 11px;
-  color: var(--ld-muted);
-}
-.ld-plan-capacity {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  gap: 10px;
-}
-.ld-plan-capacity label {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  font-size: 12px;
-}
-.ld-plan-capacity input {
-  width: 90px;
-  padding: 6px 8px;
-  border: 1px solid var(--ld-line);
-  border-radius: 6px;
-  background: var(--ld-base);
-  color: var(--ld-ink);
-}
-.ld-plan-over {
-  color: var(--ld-accent);
-  font-weight: 600;
-}
 .ld-inbox-item {
   border-bottom: 1px solid var(--ld-line);
   padding: 16px 0;
@@ -144,14 +80,5 @@
   }
   .ld-capture-title > input {
     flex-basis: 100%;
-  }
-  .ld-plan-panel {
-    padding: 15px;
-  }
-  .ld-plan-stats {
-    gap: 10px;
-  }
-  .ld-plan-stats strong {
-    font-size: 22px;
   }
 }

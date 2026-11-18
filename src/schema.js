@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { validDate } from "./dates.js";
-import { HOME_MODULE_IDS } from "./home-modules.js";
+import { HOME_MODULE_STORAGE_IDS } from "./home-modules.js";
 const day = z.string().refine(validDate, "日期应为 YYYY-MM-DD");
 const optionalDay = z.union([day, z.literal("")]).default("");
 const str = (n = 200) => z.string().trim().max(n);
@@ -201,9 +201,9 @@ export const LessonChargeInput = z.object({
 });
 export const HomeModules = z
   .object({
-    hidden: z.array(z.enum(HOME_MODULE_IDS)).max(50).default([]),
-    order: z.array(z.enum(HOME_MODULE_IDS)).max(50).default([]),
-    folded: z.array(z.enum(HOME_MODULE_IDS)).max(50).default([]),
+    hidden: z.array(z.enum(HOME_MODULE_STORAGE_IDS)).max(50).default([]),
+    order: z.array(z.enum(HOME_MODULE_STORAGE_IDS)).max(50).default([]),
+    folded: z.array(z.enum(HOME_MODULE_STORAGE_IDS)).max(50).default([]),
   })
   .default({ hidden: [], order: [], folded: [] });
 export const HabitRule = z

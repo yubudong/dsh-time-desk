@@ -1,5 +1,4 @@
 export const HOME_MODULES = [
-  { id: "plan", region: "main", titleKey: "dailyPlan" },
   { id: "priority", region: "main", titleKey: "priorities" },
   { id: "schedule", region: "main", titleKey: "schedule" },
   { id: "planned", region: "main", titleKey: "plannedTodos" },
@@ -15,6 +14,8 @@ export const HOME_MODULES = [
   { id: "upcoming", region: "support", titleKey: "upcoming" },
 ];
 export const HOME_MODULE_IDS = HOME_MODULES.map((x) => x.id);
+// Retired UI IDs remain valid in saved layouts and old backups, never in the registry.
+export const HOME_MODULE_STORAGE_IDS = [...HOME_MODULE_IDS, "plan"];
 export function homeModules(settings, region) {
   const home = settings?.homeModules || {};
   const hidden = new Set(home.hidden || []);

@@ -240,7 +240,7 @@ export function apply(ctx: any) {
       </button>
     );
   }
-  const { QuickCapture, PlanPanel, InboxItem } = createPlanningUI({
+  const { QuickCapture, InboxItem } = createPlanningUI({
     t,
     Btn,
     Field,
@@ -2410,16 +2410,6 @@ export function apply(ctx: any) {
         });
 
         const renderMain = (id: string) => {
-          if (id === "plan")
-            return (
-              <PlanPanel
-                plan={groups}
-                date={day}
-                act={act}
-                busy={busy}
-                {...foldProps("plan")}
-              />
-            );
           if (id === "lessons") {
             const rows = live("lessons").flatMap((l: any) =>
               lessonOccurrences(data, l, day, day),

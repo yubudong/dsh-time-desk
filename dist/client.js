@@ -29288,28 +29288,7 @@ var copy = {
     "\u9884\u8BA1\u756A\u8304\u6570\uFF080 \u4E3A\u672A\u4F30\u7B97\uFF09",
     "Estimated focus rounds (0 = unknown)"
   ],
-  dailyPlan: ["\u4ECA\u65E5\u8BA1\u5212", "Daily plan"],
-  estimatedMin: ["\u5DF2\u4F30\u7B97\u5206\u949F", "Estimated minutes"],
-  unestimatedTasks: ["\u4EF6\u5C1A\u672A\u4F30\u65F6", "without an estimate"],
-  recordedFocus: ["\u5DF2\u8BB0\u5F55\u4E13\u6CE8\u5206\u949F", "Recorded focus minutes"],
-  availableToday: ["\u8FD9\u4E00\u5929\u7684\u53EF\u7528\u5206\u949F", "Available minutes for this day"],
   notSet: ["\u672A\u8BBE\u7F6E", "Not set"],
-  capacityHint: [
-    "\u5148\u8BBE\u7F6E\u53EF\u7528\u65F6\u95F4\uFF0C\u518D\u5224\u65AD\u662F\u5426\u5B89\u6392\u8FC7\u91CF",
-    "Set your available time to compare the workload"
-  ],
-  overCapacity: [
-    "\u5DF2\u4F30\u7B97\u90E8\u5206\u5DF2\u8D85\u51FA\u53EF\u7528\u65F6\u95F4",
-    "Known estimates exceed capacity by"
-  ],
-  withinCapacity: [
-    "\u5DF2\u4F30\u7B97\u90E8\u5206\u672A\u8D85\u8FC7\u53EF\u7528\u65F6\u95F4",
-    "Known estimates fit within capacity"
-  ],
-  estimateHint: [
-    "\u5206\u949F\u4F18\u5148\uFF1B\u5426\u5219\u6309\u756A\u8304\u6570 \xD7 \u9ED8\u8BA4\u4E13\u6CE8\u65F6\u957F\uFF0C\u672A\u4F30\u65F6\u4E0D\u6309\u96F6\u5206\u949F\u8BA1\u7B97",
-    "Minutes take precedence; otherwise rounds \xD7 default focus duration. Unknown estimates are not zero."
-  ],
   organize: ["\u6574\u7406", "Organize"],
   awaitingTriage: ["\u5F85\u6574\u7406", "Needs organizing"],
   planToday: ["\u586B\u5165\u6240\u9009\u65E5\u671F", "Use selected date"],
@@ -31416,7 +31395,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.12.2",
+        "data-reader-version": "0.13.0",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -31508,7 +31487,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React8.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React8.createElement("small", { className: "ld-reader-build" }, "v", "0.12.2")))
+      )), /* @__PURE__ */ React8.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React8.createElement("small", { className: "ld-reader-build" }, "v", "0.13.0")))
     );
   }
   return {
@@ -32040,70 +32019,6 @@ function createPlanningUI({ t: t3, Btn, Field }) {
       )), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("captureHint")), error && /* @__PURE__ */ React9.createElement("p", { role: "alert", className: "ld-error" }, error))
     );
   }
-  function PlanPanel({
-    plan,
-    date,
-    act,
-    busy,
-    folded = false,
-    onFold = () => {
-    }
-  }) {
-    const capacity = plan.load.availableMinutes;
-    const [value, setValue] = useState4(
-      capacity === null ? "" : String(capacity)
-    ), [error, setError] = useState4("");
-    useEffect4(() => {
-      setValue(capacity === null ? "" : String(capacity));
-      setError("");
-    }, [date, capacity]);
-    async function save(e3) {
-      e3.preventDefault();
-      setError("");
-      try {
-        await act({
-          action: "plan",
-          command: "capacity",
-          date,
-          item: { availableMinutes: value === "" ? null : Number(value) }
-        });
-      } catch (e4) {
-        setError(e4.message);
-      }
-    }
-    const load = plan.load;
-    return /* @__PURE__ */ React9.createElement("section", { className: "ld-plan-panel", "aria-label": t3("dailyPlan") }, /* @__PURE__ */ React9.createElement("div", { className: "ld-plan-heading" }, /* @__PURE__ */ React9.createElement("h2", null, /* @__PURE__ */ React9.createElement(
-      "button",
-      {
-        type: "button",
-        className: "ld-fold-toggle",
-        "aria-expanded": !folded,
-        "aria-controls": "ld-plan-body",
-        onClick: onFold
-      },
-      /* @__PURE__ */ React9.createElement("span", { className: "ld-fold-chevron" }, "\u203A"),
-      t3("dailyPlan")
-    )), /* @__PURE__ */ React9.createElement("span", null, date)), /* @__PURE__ */ React9.createElement("div", { id: "ld-plan-body", hidden: folded }, /* @__PURE__ */ React9.createElement("div", { className: "ld-plan-stats" }, /* @__PURE__ */ React9.createElement("div", null, /* @__PURE__ */ React9.createElement("strong", null, load.knownMinutes), /* @__PURE__ */ React9.createElement("span", null, t3("estimatedMin"))), /* @__PURE__ */ React9.createElement("div", null, /* @__PURE__ */ React9.createElement("strong", null, load.unknownCount), /* @__PURE__ */ React9.createElement("span", null, t3("unestimatedTasks"))), /* @__PURE__ */ React9.createElement("div", null, /* @__PURE__ */ React9.createElement("strong", null, load.recordedFocusMinutes), /* @__PURE__ */ React9.createElement("span", null, t3("recordedFocus")))), /* @__PURE__ */ React9.createElement("form", { className: "ld-plan-capacity", onSubmit: save }, /* @__PURE__ */ React9.createElement("label", null, t3("availableToday"), /* @__PURE__ */ React9.createElement(
-      "input",
-      {
-        type: "number",
-        min: 0,
-        max: 1440,
-        step: 1,
-        value,
-        placeholder: t3("notSet"),
-        onChange: (e3) => setValue(e3.target.value)
-      }
-    )), /* @__PURE__ */ React9.createElement(Btn, { type: "submit", disabled: busy }, t3("save"))), /* @__PURE__ */ React9.createElement(
-      "p",
-      {
-        className: "ld-help " + (load.overMinutes > 0 ? "ld-plan-over" : "")
-      },
-      capacity === null ? t3("capacityHint") : load.overMinutes > 0 ? t3("overCapacity") + " " + load.overMinutes + " " + t3("min") : t3("withinCapacity"),
-      " \xB7 ",
-      t3("estimateHint")
-    ), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error)));
-  }
   function InboxItem({ task, projects, act, busy, onEdit, day }) {
     const [editing, setEditing] = useState4(false), [draft, setDraft] = useState4(null), [error, setError] = useState4("");
     const version = useRef4(task.version);
@@ -32145,7 +32060,7 @@ function createPlanningUI({ t: t3, Btn, Field }) {
       t3("planToday")
     ), /* @__PURE__ */ React9.createElement(Btn, { type: "submit", primary: true, disabled: busy }, t3("save")), /* @__PURE__ */ React9.createElement(Btn, { type: "button", onClick: () => setEditing(false) }, t3("cancel"))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("triageHint"))), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error));
   }
-  return { QuickCapture, PlanPanel, InboxItem };
+  return { QuickCapture, InboxItem };
 }
 
 // src/habit-templates.js
@@ -34046,7 +33961,6 @@ function createLessonsUI({
 
 // src/home-modules.js
 var HOME_MODULES = [
-  { id: "plan", region: "main", titleKey: "dailyPlan" },
   { id: "priority", region: "main", titleKey: "priorities" },
   { id: "schedule", region: "main", titleKey: "schedule" },
   { id: "planned", region: "main", titleKey: "plannedTodos" },
@@ -34062,6 +33976,7 @@ var HOME_MODULES = [
   { id: "upcoming", region: "support", titleKey: "upcoming" }
 ];
 var HOME_MODULE_IDS = HOME_MODULES.map((x4) => x4.id);
+var HOME_MODULE_STORAGE_IDS = [...HOME_MODULE_IDS, "plan"];
 function homeModules(settings, region) {
   const home = settings?.homeModules || {};
   const hidden = new Set(home.hidden || []);
@@ -34828,7 +34743,7 @@ var focus_default = `/* Quiet timer controls inherit DSH tokens. The reader's ex
 `;
 
 // src/planning.css
-var planning_default = "/* Resident toolbar with a bounded capture sheet; the page remains the scroller. */\n.ld-toolbar-wrap {\n  position: relative;\n  min-width: 0;\n  z-index: 21;\n}\n.ld-toolbar-wrap .ld-page-top {\n  flex-wrap: wrap;\n}\n.ld-toolbar-wrap .ld-search {\n  min-width: 120px;\n}\n.ld-quick-panel {\n  position: absolute;\n  inset-inline: var(--ld-page-inline);\n  top: 100%;\n  z-index: 25;\n  padding: 20px;\n  border: 1px solid var(--ld-line);\n  border-radius: 12px;\n  background: var(--ld-base);\n  box-shadow: 0 12px 34px color-mix(in srgb, var(--ld-muted) 18%, transparent);\n  max-height: min(70vh, 480px);\n  overflow: auto;\n  -webkit-app-region: no-drag;\n}\n.ld-quick-panel fieldset {\n  border: 0;\n  padding: 0;\n  margin: 0;\n  min-width: 0;\n}\n.ld-capture-title {\n  display: flex;\n  gap: 8px;\n  align-items: center;\n}\n.ld-capture-title > input {\n  flex: 1;\n  min-width: 80px;\n  padding: 9px;\n  border: 1px solid var(--ld-line);\n  border-radius: 6px;\n  background: var(--ld-base);\n  color: var(--ld-ink);\n  font: inherit;\n}\n.ld-quick-panel summary {\n  font-size: 12px;\n  color: var(--ld-muted);\n  margin: 14px 0 8px;\n  cursor: pointer;\n}\n.ld-capture-fields {\n  margin: 12px 0;\n}\n.ld-plan-panel {\n  margin-bottom: 26px;\n  padding: 18px 20px;\n  border: 1px solid var(--ld-line);\n  border-radius: 12px;\n  background: color-mix(in srgb, var(--ld-accent) 4%, var(--ld-base));\n}\n.ld-plan-heading {\n  display: flex;\n  justify-content: space-between;\n  gap: 12px;\n  align-items: baseline;\n}\n.ld-plan-heading h2 {\n  margin: 0;\n}\n.ld-plan-heading > span {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-plan-stats {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  gap: 16px;\n  margin: 18px 0;\n}\n.ld-plan-stats > div {\n  display: flex;\n  flex-direction: column;\n  gap: 5px;\n}\n.ld-plan-stats strong {\n  font-size: 26px;\n  font-weight: 500;\n  font-variant-numeric: tabular-nums;\n}\n.ld-plan-stats span {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-plan-capacity {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: end;\n  gap: 10px;\n}\n.ld-plan-capacity label {\n  display: flex;\n  gap: 10px;\n  align-items: center;\n  font-size: 12px;\n}\n.ld-plan-capacity input {\n  width: 90px;\n  padding: 6px 8px;\n  border: 1px solid var(--ld-line);\n  border-radius: 6px;\n  background: var(--ld-base);\n  color: var(--ld-ink);\n}\n.ld-plan-over {\n  color: var(--ld-accent);\n  font-weight: 600;\n}\n.ld-inbox-item {\n  border-bottom: 1px solid var(--ld-line);\n  padding: 16px 0;\n}\n.ld-inbox-heading {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\n.ld-inbox-heading .ld-task-body {\n  flex: 1;\n  min-width: 0;\n}\n.ld-task-tools {\n  flex-wrap: wrap;\n}\n@media (max-width: 600px) {\n  .ld-quick-panel {\n    inset-inline: 8px;\n    padding: 14px;\n  }\n  .ld-capture-title {\n    flex-wrap: wrap;\n  }\n  .ld-capture-title > input {\n    flex-basis: 100%;\n  }\n  .ld-plan-panel {\n    padding: 15px;\n  }\n  .ld-plan-stats {\n    gap: 10px;\n  }\n  .ld-plan-stats strong {\n    font-size: 22px;\n  }\n}\n";
+var planning_default = "/* Resident toolbar with a bounded capture sheet; the page remains the scroller. */\n.ld-toolbar-wrap {\n  position: relative;\n  min-width: 0;\n  z-index: 21;\n}\n.ld-toolbar-wrap .ld-page-top {\n  flex-wrap: wrap;\n}\n.ld-toolbar-wrap .ld-search {\n  min-width: 120px;\n}\n.ld-quick-panel {\n  position: absolute;\n  inset-inline: var(--ld-page-inline);\n  top: 100%;\n  z-index: 25;\n  padding: 20px;\n  border: 1px solid var(--ld-line);\n  border-radius: 12px;\n  background: var(--ld-base);\n  box-shadow: 0 12px 34px color-mix(in srgb, var(--ld-muted) 18%, transparent);\n  max-height: min(70vh, 480px);\n  overflow: auto;\n  -webkit-app-region: no-drag;\n}\n.ld-quick-panel fieldset {\n  border: 0;\n  padding: 0;\n  margin: 0;\n  min-width: 0;\n}\n.ld-capture-title {\n  display: flex;\n  gap: 8px;\n  align-items: center;\n}\n.ld-capture-title > input {\n  flex: 1;\n  min-width: 80px;\n  padding: 9px;\n  border: 1px solid var(--ld-line);\n  border-radius: 6px;\n  background: var(--ld-base);\n  color: var(--ld-ink);\n  font: inherit;\n}\n.ld-quick-panel summary {\n  font-size: 12px;\n  color: var(--ld-muted);\n  margin: 14px 0 8px;\n  cursor: pointer;\n}\n.ld-capture-fields {\n  margin: 12px 0;\n}\n.ld-inbox-item {\n  border-bottom: 1px solid var(--ld-line);\n  padding: 16px 0;\n}\n.ld-inbox-heading {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\n.ld-inbox-heading .ld-task-body {\n  flex: 1;\n  min-width: 0;\n}\n.ld-task-tools {\n  flex-wrap: wrap;\n}\n@media (max-width: 600px) {\n  .ld-quick-panel {\n    inset-inline: 8px;\n    padding: 14px;\n  }\n  .ld-capture-title {\n    flex-wrap: wrap;\n  }\n  .ld-capture-title > input {\n    flex-basis: 100%;\n  }\n}\n";
 
 // src/review.css
 var review_default = '/* Review content and templates remain separate; all text is rendered inertly. */\n.ld-review-editor {\n  min-width: 0;\n}\n.ld-review-options {\n  flex-wrap: wrap;\n  margin: 10px 0;\n}\n.ld-review-options .ld-btn {\n  font-size: 11px;\n}\n.ld-review-editor .ld-field {\n  margin: 12px 0;\n}\n.ld-review-text {\n  width: 100%;\n  box-sizing: border-box;\n}\n.ld-review-assistant {\n  margin: 20px 0 10px;\n  padding: 16px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  background: var(--dsw-alias-bg-layer-1);\n}\n.ld-review-assistant h3 {\n  margin: 0;\n  font-size: 13px;\n}\n.ld-review-chat {\n  max-height: 260px;\n  overflow: auto;\n  margin: 12px 0;\n}\n.ld-review-chat-message {\n  margin-bottom: 12px;\n  font-size: 12px;\n}\n.ld-review-chat-message strong {\n  font-size: 10px;\n  color: var(--ld-muted);\n  font-weight: 500;\n}\n.ld-review-chat-message p,\n.ld-review-chat > p,\n.ld-review-candidate > p {\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  line-height: 1.7;\n}\n.ld-review-candidate {\n  margin-top: 15px;\n  padding-top: 14px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-review-assistant textarea {\n  min-height: 65px;\n}\n.ld-previous-habits {\n  margin-bottom: 22px;\n  padding: 12px 14px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n}\n.ld-previous-habits h3 {\n  margin: 0 0 8px;\n}\n.ld-week-dots > .ld-habit-late {\n  outline: 1px dashed var(--ld-accent);\n  outline-offset: 2px;\n}\n.ld-root[data-reduce-motion="true"] .ld-fold-chevron {\n  transition: none;\n}\n@container life-desk (max-width: 530px) {\n  .ld-review-assistant {\n    padding: 12px;\n  }\n}\n';
@@ -35002,7 +34917,7 @@ function apply(ctx) {
       children
     );
   }
-  const { QuickCapture, PlanPanel, InboxItem } = createPlanningUI({
+  const { QuickCapture, InboxItem } = createPlanningUI({
     t: t3,
     Btn,
     Field
@@ -35689,7 +35604,7 @@ function apply(ctx) {
     const [error, setError] = useState7("");
     const [showNotes, setShowNotes] = useState7(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.12.2";
+    const current = v3.currentVersion || "0.13.0";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -36400,17 +36315,6 @@ function apply(ctx) {
           }
         });
         const renderMain = (id) => {
-          if (id === "plan")
-            return /* @__PURE__ */ React12.createElement(
-              PlanPanel,
-              {
-                plan: groups,
-                date: day,
-                act,
-                busy,
-                ...foldProps("plan")
-              }
-            );
           if (id === "lessons") {
             const rows = live2("lessons").flatMap(
               (l3) => lessonOccurrences(data, l3, day, day)
@@ -36951,7 +36855,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React12.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.12.2", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React12.createElement(
+        /* @__PURE__ */ React12.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.13.0", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React12.createElement(
           "button",
           {
             className: "ld-update-badge",

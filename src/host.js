@@ -49,7 +49,7 @@ const guide = {
     "公历 weekly.days:0=周日至6=周六。lunar.month/day 是农历，date 仍为首次生效公历日。leap=regular/only/both，missing=last/skip。preview 可检查未来三次日期。日期使用 settings.timeZone。普通未完成任务从安排日开始在后续日期持续待办，截止日是最晚期限；无需为今日显示而改期。range 是日历发生日查询，不等于包含延续任务的今日执行清单。",
   authority:
     "明确新增/打卡可直接执行；批量改期、删除项目、整组重复调整和备份覆盖前先展示影响范围并征得用户同意。勿推测金额、账期、习惯频率；仅使用用户提供的信息。请求重试复用 requestId。",
-  plan: "action=plan，date=目标日；command=read 返回完整的当日重点、安排、计划待办、延续待选、负荷和未估时数，优先用它查看今日而非 range。command=capacity，item.availableMinutes=0–1440 或 null 清除；pick/unpick 用 id 与 originalDate 选择/取消延续待办，不改变原日期。写入须最新 revision。批量安排先展示方案获确认，不猜可用时间。minutes 优先于 pomodoros×默认 focusMinutes，不重复计时；无估时不算零时长。收件箱整理是 save 到项目/领域或日期，勿凭空移动截止日；取消重点只清 priorityDate。",
+  plan: "action=plan，date=目标日；command=read 返回当日重点、安排、计划待办、延续待选等事项，优先用它查看今日而非 range。pick/unpick 用 id 与 originalDate 将延续待办加入所选日期或移回待选，不改变原日期或截止日；写入须最新 revision。批量安排先展示方案获确认。command=habits 只读查询每周习惯的实际进度、休息间隔、可安排次数和建议，不增加打卡。首页时间预算卡已移除，不再引导设置可用分钟；旧负荷与容量字段仅为历史数据/接口兼容保留。收件箱整理是 save 到项目/领域或日期，勿凭空移动截止日；取消重点只清 priorityDate。",
   ai: "时间精灵通过独立 DSH Agent 会话使用同一个 life_desk 工具；所有写入返回真实结果后再宣称完成。",
   assistant:
     "command=read/models 查看时间精灵状态或 DSH 模型目录；command=selectModel、item={provider,model} 设置精灵模型，省略 item 跟随 DSH 默认。此工具不能发送或伪造用户消息。",

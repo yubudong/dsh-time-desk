@@ -214,109 +214,6 @@ export function createPlanningUI({ t, Btn, Field }: any) {
       </section>
     );
   }
-  function PlanPanel({
-    plan,
-    date,
-    act,
-    busy,
-    folded = false,
-    onFold = () => {},
-  }: any) {
-    const capacity = plan.load.availableMinutes;
-    const [value, setValue] = useState(
-        capacity === null ? "" : String(capacity),
-      ),
-      [error, setError] = useState("");
-    useEffect(() => {
-      setValue(capacity === null ? "" : String(capacity));
-      setError("");
-    }, [date, capacity]);
-    async function save(e: any) {
-      e.preventDefault();
-      setError("");
-      try {
-        await act({
-          action: "plan",
-          command: "capacity",
-          date,
-          item: { availableMinutes: value === "" ? null : Number(value) },
-        });
-      } catch (e: any) {
-        setError(e.message);
-      }
-    }
-    const load = plan.load;
-    return (
-      <section className="ld-plan-panel" aria-label={t("dailyPlan")}>
-        <div className="ld-plan-heading">
-          <h2>
-            <button
-              type="button"
-              className="ld-fold-toggle"
-              aria-expanded={!folded}
-              aria-controls="ld-plan-body"
-              onClick={onFold}
-            >
-              <span className="ld-fold-chevron">›</span>
-              {t("dailyPlan")}
-            </button>
-          </h2>
-          <span>{date}</span>
-        </div>
-        <div id="ld-plan-body" hidden={folded}>
-          <div className="ld-plan-stats">
-            <div>
-              <strong>{load.knownMinutes}</strong>
-              <span>{t("estimatedMin")}</span>
-            </div>
-            <div>
-              <strong>{load.unknownCount}</strong>
-              <span>{t("unestimatedTasks")}</span>
-            </div>
-            <div>
-              <strong>{load.recordedFocusMinutes}</strong>
-              <span>{t("recordedFocus")}</span>
-            </div>
-          </div>
-          <form className="ld-plan-capacity" onSubmit={save}>
-            <label>
-              {t("availableToday")}
-              <input
-                type="number"
-                min={0}
-                max={1440}
-                step={1}
-                value={value}
-                placeholder={t("notSet")}
-                onChange={(e) => setValue(e.target.value)}
-              />
-            </label>
-            <Btn type="submit" disabled={busy}>
-              {t("save")}
-            </Btn>
-          </form>
-          <p
-            className={
-              "ld-help " + (load.overMinutes > 0 ? "ld-plan-over" : "")
-            }
-          >
-            {capacity === null
-              ? t("capacityHint")
-              : load.overMinutes > 0
-                ? t("overCapacity") + " " + load.overMinutes + " " + t("min")
-                : t("withinCapacity")}
-            {" · "}
-            {t("estimateHint")}
-          </p>
-          {error && (
-            <p className="ld-error" role="alert">
-              {error}
-            </p>
-          )}
-        </div>
-      </section>
-    );
-  }
   function InboxItem({ task, projects, act, busy, onEdit, day }: any) {
     const [editing, setEditing] = useState(false),
       [draft, setDraft] = useState<any>(null),
@@ -396,5 +293,5 @@ export function createPlanningUI({ t, Btn, Field }: any) {
       </article>
     );
   }
-  return { QuickCapture, PlanPanel, InboxItem };
+  return { QuickCapture, InboxItem };
 }
