@@ -653,13 +653,19 @@ export function apply(ctx: any) {
                     >
                       {h.title}
                     </button>
-                    <small>
-                      {p.completed}/{p.target}
-                      {t("weeklyTimes")}
-                      {p.restDays
-                        ? " · " +
-                          t("weeklyRestTag").replace("{n}", String(p.restDays))
-                        : ""}
+                    <small className="ld-weekly-facts">
+                      <span>
+                        {p.completed}/{p.target}
+                        {t("weeklyTimes")}
+                      </span>
+                      {p.restDays ? (
+                        <span>
+                          {t("weeklyRestTag").replace(
+                            "{n}",
+                            String(p.restDays),
+                          )}
+                        </span>
+                      ) : null}
                     </small>
                   </span>
                   {targetDate && p.applicable && p.risk !== "historical" && (

@@ -91,11 +91,26 @@
 .ld-weekly-row > span {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
   font-size: 12px;
+}
+/* Keep the weekly action on one line instead of splitting three-plus-one characters. */
+.ld-weekly-row > .ld-btn {
+  flex: none;
+  white-space: nowrap;
 }
 .ld-weekly-row small {
   color: var(--ld-muted);
   font-size: 11px;
+}
+.ld-weekly-row .ld-weekly-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 6px;
+}
+.ld-weekly-facts > span {
+  white-space: nowrap;
 }
 .ld-top-timer {
   display: none;
@@ -212,6 +227,7 @@
 .ld-weekly-plans .ld-btn {
   padding: 3px 7px;
   font-size: 11px;
+  white-space: nowrap;
 }
 .ld-weekly-period {
   margin: 0 0 6px;
