@@ -3269,6 +3269,9 @@ __export(client_exports, {
 });
 module.exports = __toCommonJS(client_exports);
 
+// src/header-timer.css
+var header_timer_default = "/* Timer belongs to the toolbar row, never to the scrolling page content. */\n.ld-workspace {\n  container: ld-workspace / inline-size;\n}\n.ld-toolbar-wrap {\n  position: relative;\n  z-index: 20;\n  min-width: 0;\n}\n.ld-page-top .ld-search {\n  flex: 1 1 120px;\n  min-width: 120px;\n}\n.ld-page-top .ld-search input {\n  flex: 1;\n  width: 100%;\n  max-width: 230px;\n  min-width: 0;\n}\n.ld-header-focus {\n  display: none;\n  flex: 1 1 420px;\n  min-width: 300px;\n  max-width: 600px;\n}\n.ld-spirit-open .ld-header-focus,\n.ld-header-focus.is-other-page {\n  display: block;\n}\n.ld-spirit-open .ld-side-timer-module {\n  display: none;\n}\n.ld-header-focus .ld-timer-v2.ld-timer-bar {\n  display: flex !important;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 12px;\n  position: relative;\n  min-width: 0;\n  background: transparent;\n}\n.ld-header-focus .ld-timer-overview {\n  display: flex;\n  align-items: center;\n  flex: 1;\n  gap: 12px;\n  min-width: 0;\n}\n.ld-header-focus .ld-timer-context {\n  min-width: 0;\n  flex: 1;\n  max-width: 170px;\n}\n.ld-header-focus .ld-timer-task-name {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  font-size: 11px;\n}\n.ld-header-focus .ld-timer-task-select {\n  max-width: 100%;\n  font-size: 11px;\n}\n.ld-header-focus .ld-timer-state {\n  font-size: 10px;\n  white-space: nowrap;\n}\n.ld-header-focus .ld-timer-time {\n  flex: none;\n}\n.ld-header-focus .ld-timer-time-label,\n.ld-header-focus .ld-timer-task-progress {\n  display: none;\n}\n.ld-header-focus .ld-clock-digits {\n  font-size: 24px;\n  line-height: 1.2;\n  letter-spacing: -0.5px;\n  white-space: nowrap;\n}\n.ld-header-focus .ld-timer-controls {\n  display: contents;\n}\n\n.ld-header-focus .ld-timer-buttons {\n  display: flex;\n  flex: none;\n  flex-wrap: nowrap;\n  gap: 6px;\n}\n.ld-header-focus .ld-timer-buttons .ld-btn {\n  white-space: nowrap;\n  min-height: 30px;\n  padding: 5px 9px;\n}\n.ld-header-focus .ld-timer-more {\n  min-width: 30px;\n  min-height: 30px;\n  padding: 4px 7px;\n  font-weight: 600;\n}\n.ld-header-focus .ld-timer-preferences {\n  position: absolute;\n  top: calc(100% + 8px);\n  right: 0;\n  z-index: 30;\n  display: flex;\n  flex-direction: column;\n  align-items: stretch;\n  gap: 4px;\n  width: min(240px, 100%);\n  margin: 0;\n  padding: 9px;\n  background: var(--ld-base);\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  box-shadow: 0 8px 22px color-mix(in srgb, var(--ld-ink) 8%, transparent);\n}\n.ld-header-focus .ld-timer-preferences > button {\n  padding: 7px 9px;\n  text-align: left;\n}\n.ld-header-focus .ld-timer-drawer {\n  position: absolute;\n  top: calc(100% + 8px);\n  right: 0;\n  left: auto;\n  width: min(390px, 100%);\n  max-height: min(65vh, 520px);\n  overflow: auto;\n  z-index: 31;\n  margin: 0;\n}\n.ld-header-focus .ld-timer-controls > .ld-error,\n.ld-header-focus .ld-timer-controls > .ld-help {\n  position: static;\n  flex: 1 0 100%;\n  width: 100%;\n  max-width: 100%;\n  margin: 0;\n  font-size: 11px;\n}\n\n@container life-desk (max-width:820px) {\n  .ld-header-focus {\n    display: block;\n  }\n  .ld-side-timer-module {\n    display: none;\n  }\n}\n@container ld-workspace (max-width:850px) {\n  .ld-page-top {\n    flex-wrap: wrap;\n    gap: 10px 14px;\n  }\n  .ld-page-top .ld-search {\n    min-width: 120px;\n  }\n  .ld-page-top .ld-search input {\n    width: 100%;\n    min-width: 0;\n  }\n  .ld-header-focus {\n    order: 3;\n    flex: 1 0 100%;\n    max-width: none;\n    min-width: 0;\n    border-top: 1px solid var(--ld-line);\n    padding-top: 9px;\n  }\n}\n@container ld-workspace (max-width:400px) {\n  .ld-header-focus .ld-timer-v2.ld-timer-bar {\n    flex-wrap: wrap;\n    gap: 7px 10px;\n  }\n  .ld-header-focus .ld-timer-overview {\n    flex-basis: 100%;\n  }\n  .ld-header-focus .ld-timer-buttons {\n    margin-left: auto;\n  }\n}\n";
+
 // src/PanelResize.tsx
 var React = __toESM(require("react"), 1);
 
@@ -28764,6 +28767,7 @@ var l77 = {
 
 // src/locales.ts
 var copy = {
+  timerMore: ["\u66F4\u591A\u4E13\u6CE8\u8BBE\u7F6E", "More focus settings"],
   resizeSupport: [
     "\u62D6\u52A8\u8C03\u6574\u526F\u5DE5\u4F5C\u53F0\u5BBD\u5EA6\uFF1B\u65B9\u5411\u952E\u5FAE\u8C03\uFF0C\u53CC\u51FB\u6216\u56DE\u8F66\u6062\u590D\u9ED8\u8BA4",
     "Drag to resize the support panel; arrow keys adjust, double-click or Enter resets"
@@ -30695,7 +30699,15 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
       ))
     );
   }
-  function Controls({ m: m3, reader = false, clockMode = false }) {
+  function Controls({
+    m: m3,
+    reader = false,
+    clockMode = false,
+    header = false
+  }) {
+    const [more, setMore] = useState3(false);
+    const toolbarControls = useRef3(null);
+    const moreButton = useRef3(null);
     const [panel, setPanel] = useState3(""), [minutes, setMinutes] = useState3(String(m3.nextMinutes)), [error, setError] = useState3(""), [adjust, setAdjust] = useState3(""), [ending, setEnding] = useState3(false), [pausedForReview, setPausedForReview] = useState3(false), [notice, setNotice] = useState3(""), [estimate, setEstimate] = useState3(String(m3.task?.pomodoros || 0));
     useEffect3(() => {
       setEnding(false);
@@ -30755,9 +30767,34 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
         setPanel("");
       }
     };
+    useEffect3(() => {
+      if (!header || !more && !panel) return;
+      const element = toolbarControls.current;
+      const focusTarget = element?.querySelector(
+        panel ? ".ld-timer-drawer input, .ld-timer-drawer button" : ".ld-timer-preferences button"
+      );
+      focusTarget?.focus();
+      const outside = (event) => {
+        if (element && !element.contains(event.target)) {
+          setMore(false);
+          setPanel("");
+        }
+      };
+      document.addEventListener("pointerdown", outside);
+      return () => document.removeEventListener("pointerdown", outside);
+    }, [header, more, panel]);
     return /* @__PURE__ */ React7.createElement(
       "div",
       {
+        ref: toolbarControls,
+        onKeyDown: (e3) => {
+          if (header && e3.key === "Escape") {
+            e3.preventDefault();
+            moreButton.current?.focus();
+            setMore(false);
+            setPanel("");
+          }
+        },
         className: "ld-timer-controls " + (reader ? "ld-reader-timer-controls" : "")
       },
       !clockMode && /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-buttons" }, !m3.timer ? /* @__PURE__ */ React7.createElement(
@@ -30769,7 +30806,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           onClick: () => void start()
         },
         t3("startFocus")
-      ) : /* @__PURE__ */ React7.createElement(React7.Fragment, null, /* @__PURE__ */ React7.createElement(
+      ) : /* @__PURE__ */ React7.createElement(React7.Fragment, null, (!header || m3.state !== "finished") && /* @__PURE__ */ React7.createElement(
         "button",
         {
           type: "button",
@@ -30799,6 +30836,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               setPausedForReview(true);
             }
             setEnding(true);
+            setMore(false);
             setPanel("");
             setNotice("");
           }
@@ -30814,12 +30852,30 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
         },
         t3("break")
       )),
-      /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-preferences" }, !clockMode && /* @__PURE__ */ React7.createElement(
+      header && /* @__PURE__ */ React7.createElement(
+        "button",
+        {
+          type: "button",
+          className: "ld-btn ld-timer-more",
+          ref: moreButton,
+          disabled: m3.busy || ending,
+          "aria-label": t3("timerMore"),
+          title: t3("timerMore"),
+          "aria-expanded": more,
+          onClick: () => {
+            setMore(!more);
+            setPanel("");
+          }
+        },
+        "\xB7\xB7\xB7"
+      ),
+      (!header || more) && /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-preferences" }, !clockMode && /* @__PURE__ */ React7.createElement(
         "button",
         {
           type: "button",
           "aria-expanded": panel === "duration",
           onClick: () => {
+            if (header) setMore(false);
             setMinutes(String(m3.nextMinutes));
             setError("");
             setPanel(panel === "duration" ? "" : "duration");
@@ -30836,16 +30892,33 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
         {
           type: "button",
           "aria-expanded": panel === "face",
-          onClick: () => setPanel(panel === "face" ? "" : "face")
+          onClick: () => {
+            if (header) setMore(false);
+            setPanel(panel === "face" ? "" : "face");
+          }
         },
         t3("clockFace"),
         " \u25BE"
-      ), !reader && /* @__PURE__ */ React7.createElement("button", { type: "button", onClick: () => setUI({ reader: true }) }, t3("fullscreenFocus"), " \u26F6"), !clockMode && /* @__PURE__ */ React7.createElement(
+      ), !reader && /* @__PURE__ */ React7.createElement(
+        "button",
+        {
+          type: "button",
+          onClick: () => {
+            if (header) setMore(false);
+            setUI({ reader: true });
+          }
+        },
+        t3("fullscreenFocus"),
+        " \u26F6"
+      ), !clockMode && /* @__PURE__ */ React7.createElement(
         "button",
         {
           type: "button",
           "aria-expanded": panel === "stats",
-          onClick: () => setPanel(panel === "stats" ? "" : "stats")
+          onClick: () => {
+            if (header) setMore(false);
+            setPanel(panel === "stats" ? "" : "stats");
+          }
         },
         t3(panel === "stats" ? "closeStats" : "moreFocus"),
         " ",
@@ -31012,7 +31085,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
       notice && /* @__PURE__ */ React7.createElement("p", { className: "ld-help", role: "status" }, notice)
     );
   }
-  function Timer({ compact = false, bar = false }) {
+  function Timer({ compact = false, bar = false, header = false }) {
     const m3 = useModel();
     if (!m3) return null;
     if (compact)
@@ -31044,7 +31117,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
         }
       ))),
       /* @__PURE__ */ React7.createElement(TaskProgress, { m: m3 }),
-      /* @__PURE__ */ React7.createElement(Controls, { m: m3 })
+      /* @__PURE__ */ React7.createElement(Controls, { m: m3, header })
     );
   }
   function Fullscreen() {
@@ -31197,7 +31270,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.12.0",
+        "data-reader-version": "0.12.1",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -31289,7 +31362,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React7.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React7.createElement("small", { className: "ld-reader-build" }, "v", "0.12.0")))
+      )), /* @__PURE__ */ React7.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React7.createElement("small", { className: "ld-reader-build" }, "v", "0.12.1")))
     );
   }
   return {
@@ -34618,7 +34691,7 @@ var review_default = '/* Review content and templates remain separate; all text 
 var lessons_default = '/* Courses stay compact: schedule, attendance and credit balance share a row. */\n.ld-today-grid.ld-single-col {\n  grid-template-columns: minmax(0, 1fr);\n}\n.ld-lessons-page {\n  min-width: 0;\n}\n.ld-lesson-today,\n.ld-lesson-card {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  padding: 9px 0;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-lesson-today:first-of-type,\n.ld-lesson-card:first-of-type {\n  border-top: 0;\n}\n.ld-lesson-today.is-done {\n  opacity: 0.72;\n}\n.ld-lesson-today > .ld-task-body {\n  flex: 1;\n  min-width: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  text-align: left;\n}\n.ld-lesson-today .ld-task-title,\n.ld-lesson-card .ld-task-title {\n  display: flex;\n  gap: 8px;\n  align-items: baseline;\n  flex-wrap: wrap;\n}\n.ld-lesson-time {\n  flex: none;\n  min-width: 42px;\n  font-size: 11px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-today > .ld-btn {\n  flex: none;\n  font-size: 11px;\n}\n.ld-lesson-cards {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));\n  gap: 10px;\n}\n.ld-lesson-card {\n  align-items: flex-start;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  padding: 12px;\n  background: var(--dsw-alias-bg-layer-1);\n}\n.ld-lesson-card .ld-actions {\n  flex-wrap: wrap;\n  margin-top: 6px;\n}\n.ld-week-grid {\n  display: grid;\n  grid-template-columns: repeat(7, minmax(0, 1fr));\n  gap: 6px;\n  margin-top: 10px;\n}\n.ld-week-cell {\n  min-width: 0;\n  padding: 8px 6px;\n  border: 1px solid var(--ld-line);\n  border-radius: 8px;\n  min-height: 74px;\n}\n.ld-week-cell h3 {\n  margin: 0 0 6px;\n  font-size: 11px;\n  font-weight: 500;\n  color: var(--ld-muted);\n  display: flex;\n  justify-content: space-between;\n  gap: 4px;\n}\n.ld-week-cell h3 small {\n  font-weight: 400;\n}\n.ld-week-lesson {\n  display: block;\n  width: 100%;\n  text-align: left;\n  padding: 5px 6px;\n  margin-bottom: 4px;\n  border-radius: 6px;\n  border: 1px solid var(--ld-line);\n  background: var(--dsw-alias-bg-layer-2);\n  font-size: 11px;\n  line-height: 1.45;\n  overflow-wrap: anywhere;\n}\n.ld-week-lesson span,\n.ld-week-lesson small {\n  display: block;\n  color: var(--ld-muted);\n  font-size: 10px;\n}\n.ld-week-lesson strong {\n  font-weight: 500;\n  color: var(--ld-fg);\n}\n.ld-week-lesson.is-done {\n  opacity: 0.62;\n}\n.ld-lesson-summary {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px 14px;\n  font-size: 12px;\n  color: var(--ld-muted);\n  margin-bottom: 10px;\n}\n.ld-lesson-money {\n  display: flex;\n  align-items: baseline;\n  gap: 8px;\n  flex-wrap: wrap;\n  margin: 8px 0 14px;\n  padding: 10px 12px;\n  border-radius: 8px;\n  background: color-mix(in srgb, var(--ld-accent) 7%, transparent);\n}\n.ld-lesson-money strong {\n  font-size: 24px;\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-money small {\n  color: var(--ld-muted);\n  font-size: 11px;\n  line-height: 1.6;\n}\n.ld-lesson-row {\n  display: flex;\n  align-items: center;\n  flex-wrap: wrap;\n  gap: 6px 12px;\n  padding: 7px 0;\n  border-top: 1px solid var(--ld-line);\n  font-size: 12px;\n}\n.ld-lesson-row:first-child {\n  border-top: 0;\n}\n.ld-lesson-row > span:first-child {\n  min-width: 116px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-row > strong {\n  font-variant-numeric: tabular-nums;\n}\n.ld-lesson-row > .ld-btn {\n  margin-left: auto;\n  font-size: 11px;\n}\n.ld-home-module {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 10px;\n  padding: 7px 0;\n  border-top: 1px solid var(--ld-line);\n  border-radius: 8px;\n  transition:\n    background 0.15s ease,\n    box-shadow 0.15s ease;\n}\n.ld-home-module.is-dragging {\n  opacity: 0.45;\n}\n.ld-home-module.is-drop {\n  background: color-mix(in srgb, var(--ld-accent) 8%, transparent);\n  box-shadow: inset 0 0 0 1px var(--ld-accent);\n}\n.ld-drag-handle {\n  flex: none;\n  cursor: grab;\n  color: var(--ld-muted);\n  font-size: 15px;\n  line-height: 1;\n  padding: 4px 2px;\n  user-select: none;\n}\n.ld-drag-handle:active {\n  cursor: grabbing;\n}\n.ld-home-module .ld-check-label {\n  flex: 1;\n  min-width: 0;\n}\n.ld-home-module:first-of-type {\n  border-top: 0;\n}\n.ld-home-module .ld-actions {\n  flex: none;\n}\n.ld-home-module .ld-btn {\n  min-width: 30px;\n  padding: 3px 8px;\n}\n.ld-event-lesson {\n  border-left: 3px solid var(--ld-accent) !important;\n}\n.ld-root[data-reduce-motion="true"] .ld-week-lesson {\n  transition: none;\n}\n@container life-desk (max-width: 760px) {\n  .ld-week-grid {\n    grid-template-columns: repeat(2, minmax(0, 1fr));\n  }\n}\n@container life-desk (max-width: 430px) {\n  .ld-week-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n  .ld-lesson-cards {\n    grid-template-columns: minmax(0, 1fr);\n  }\n}\n\n.ld-heading-title {\n  display: flex;\n  align-items: baseline;\n  gap: 12px;\n  flex-wrap: wrap;\n}\n.ld-heading-title .ld-btn {\n  font-size: 11px;\n  white-space: nowrap;\n}\n\n.ld-weekday-times {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));\n  gap: 8px 12px;\n}\n.ld-weekday-time {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  min-width: 0;\n}\n.ld-weekday-time > span {\n  flex: none;\n  min-width: 34px;\n  font-size: 12px;\n  color: var(--ld-muted);\n}\n.ld-weekday-time input {\n  flex: 1;\n  min-width: 0;\n}\n.ld-weekday-time small {\n  flex: none;\n  font-size: 10px;\n  color: var(--ld-muted);\n  white-space: nowrap;\n}\n\n.ld-lesson-form-lock {\n  border: 0;\n  margin: 0;\n  padding: 0;\n  min-width: 0;\n}\n.ld-lesson-draft-info {\n  margin-bottom: 10px;\n}\n.ld-lesson-draft-info > .ld-btn {\n  font-size: 11px;\n}\n.ld-history-filters {\n  align-items: flex-end;\n  flex-wrap: wrap;\n  margin: 10px 0;\n}\n.ld-history-filters > label {\n  display: grid;\n  gap: 4px;\n  min-width: 130px;\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-history-filters > select {\n  min-width: 130px;\n  max-width: 100%;\n}\n.ld-lesson-changes {\n  flex-basis: 100%;\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-lesson-row > small {\n  color: var(--ld-muted);\n}\n.ld-lesson-changes > summary {\n  cursor: pointer;\n}\n.ld-lesson-changes p {\n  overflow-wrap: anywhere;\n}\n.ld-lesson-history .ld-lesson-row {\n  gap: 6px 10px;\n}\n.ld-weekly-content {\n  margin: 0;\n}\n.ld-support .ld-fold-count:empty {\n  display: none;\n}\n';
 
 // src/client.tsx
-var css = style_default + spirit_default + today_default + focus_default + planning_default + review_default + lessons_default + panel_resize_default;
+var css = style_default + spirit_default + today_default + focus_default + planning_default + review_default + lessons_default + panel_resize_default + header_timer_default;
 var { useState: useState7, useEffect: useEffect7, useRef: useRef7, useSyncExternalStore: useSyncExternalStore2 } = React11;
 var NAV = [
   "today",
@@ -35470,7 +35543,7 @@ function apply(ctx) {
     const [error, setError] = useState7("");
     const [showNotes, setShowNotes] = useState7(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.12.0";
+    const current = v3.currentVersion || "0.12.1";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -36317,7 +36390,15 @@ function apply(ctx) {
         };
         const renderSupport = (id) => {
           if (id === "timer")
-            return /* @__PURE__ */ React11.createElement(FoldSection, { title: t3("focus"), ...foldProps("timer") }, /* @__PURE__ */ React11.createElement("div", { className: "ld-side-timer" }, /* @__PURE__ */ React11.createElement(Timer, null)));
+            return /* @__PURE__ */ React11.createElement(
+              FoldSection,
+              {
+                className: "ld-side-timer-module",
+                title: t3("focus"),
+                ...foldProps("timer")
+              },
+              /* @__PURE__ */ React11.createElement("div", { className: "ld-side-timer" }, /* @__PURE__ */ React11.createElement(Timer, null))
+            );
           if (id === "habits")
             return /* @__PURE__ */ React11.createElement(FoldSection, { title: t3("todayHabits"), ...foldProps("habits") }, /* @__PURE__ */ React11.createElement(HabitCards, { env: viewEnv, showWeekly: false }));
           if (id === "weekly")
@@ -36606,6 +36687,13 @@ function apply(ctx) {
             "aria-label": t3("search")
           }
         )),
+        (tab !== "today" || !data.settings.homeModules.hidden.includes("timer") && !isFolded(data.settings, "timer")) && /* @__PURE__ */ React11.createElement(
+          "div",
+          {
+            className: "ld-header-focus" + (tab !== "today" ? " is-other-page" : "")
+          },
+          /* @__PURE__ */ React11.createElement(Timer, { bar: true, header: true })
+        ),
         /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(
           "select",
           {
@@ -36655,7 +36743,6 @@ function apply(ctx) {
         {
           className: "ld-content " + (tab !== "today" ? "ld-not-today" : "")
         },
-        (tab !== "today" || !data.settings.homeModules.hidden.includes("timer") && !isFolded(data.settings, "timer")) && /* @__PURE__ */ React11.createElement("div", { className: "ld-top-timer" }, /* @__PURE__ */ React11.createElement(Timer, { bar: true })),
         /* @__PURE__ */ React11.createElement("header", { className: "ld-page-heading" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-heading-left" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-eyebrow" }, tab === "today" ? new Intl.DateTimeFormat(
           ctx.locale.getLocale().active.startsWith("zh") ? "zh-CN" : "en",
           {
@@ -36707,7 +36794,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React11.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.12.0", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React11.createElement(
+        /* @__PURE__ */ React11.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.12.1", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React11.createElement(
           "button",
           {
             className: "ld-update-badge",

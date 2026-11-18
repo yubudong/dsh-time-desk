@@ -1,0 +1,184 @@
+/* Timer belongs to the toolbar row, never to the scrolling page content. */
+.ld-workspace {
+  container: ld-workspace / inline-size;
+}
+.ld-toolbar-wrap {
+  position: relative;
+  z-index: 20;
+  min-width: 0;
+}
+.ld-page-top .ld-search {
+  flex: 1 1 120px;
+  min-width: 120px;
+}
+.ld-page-top .ld-search input {
+  flex: 1;
+  width: 100%;
+  max-width: 230px;
+  min-width: 0;
+}
+.ld-header-focus {
+  display: none;
+  flex: 1 1 420px;
+  min-width: 300px;
+  max-width: 600px;
+}
+.ld-spirit-open .ld-header-focus,
+.ld-header-focus.is-other-page {
+  display: block;
+}
+.ld-spirit-open .ld-side-timer-module {
+  display: none;
+}
+.ld-header-focus .ld-timer-v2.ld-timer-bar {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  min-width: 0;
+  background: transparent;
+}
+.ld-header-focus .ld-timer-overview {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 12px;
+  min-width: 0;
+}
+.ld-header-focus .ld-timer-context {
+  min-width: 0;
+  flex: 1;
+  max-width: 170px;
+}
+.ld-header-focus .ld-timer-task-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.ld-header-focus .ld-timer-task-select {
+  max-width: 100%;
+  font-size: 11px;
+}
+.ld-header-focus .ld-timer-state {
+  font-size: 10px;
+  white-space: nowrap;
+}
+.ld-header-focus .ld-timer-time {
+  flex: none;
+}
+.ld-header-focus .ld-timer-time-label,
+.ld-header-focus .ld-timer-task-progress {
+  display: none;
+}
+.ld-header-focus .ld-clock-digits {
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+.ld-header-focus .ld-timer-controls {
+  display: contents;
+}
+
+.ld-header-focus .ld-timer-buttons {
+  display: flex;
+  flex: none;
+  flex-wrap: nowrap;
+  gap: 6px;
+}
+.ld-header-focus .ld-timer-buttons .ld-btn {
+  white-space: nowrap;
+  min-height: 30px;
+  padding: 5px 9px;
+}
+.ld-header-focus .ld-timer-more {
+  min-width: 30px;
+  min-height: 30px;
+  padding: 4px 7px;
+  font-weight: 600;
+}
+.ld-header-focus .ld-timer-preferences {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  width: min(240px, 100%);
+  margin: 0;
+  padding: 9px;
+  background: var(--ld-base);
+  border: 1px solid var(--ld-line);
+  border-radius: 9px;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--ld-ink) 8%, transparent);
+}
+.ld-header-focus .ld-timer-preferences > button {
+  padding: 7px 9px;
+  text-align: left;
+}
+.ld-header-focus .ld-timer-drawer {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: auto;
+  width: min(390px, 100%);
+  max-height: min(65vh, 520px);
+  overflow: auto;
+  z-index: 31;
+  margin: 0;
+}
+.ld-header-focus .ld-timer-controls > .ld-error,
+.ld-header-focus .ld-timer-controls > .ld-help {
+  position: static;
+  flex: 1 0 100%;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  font-size: 11px;
+}
+
+@container life-desk (max-width:820px) {
+  .ld-header-focus {
+    display: block;
+  }
+  .ld-side-timer-module {
+    display: none;
+  }
+}
+@container ld-workspace (max-width:850px) {
+  .ld-page-top {
+    flex-wrap: wrap;
+    gap: 10px 14px;
+  }
+  .ld-page-top .ld-search {
+    min-width: 120px;
+  }
+  .ld-page-top .ld-search input {
+    width: 100%;
+    min-width: 0;
+  }
+  .ld-header-focus {
+    order: 3;
+    flex: 1 0 100%;
+    max-width: none;
+    min-width: 0;
+    border-top: 1px solid var(--ld-line);
+    padding-top: 9px;
+  }
+}
+@container ld-workspace (max-width:400px) {
+  .ld-header-focus .ld-timer-v2.ld-timer-bar {
+    flex-wrap: wrap;
+    gap: 7px 10px;
+  }
+  .ld-header-focus .ld-timer-overview {
+    flex-basis: 100%;
+  }
+  .ld-header-focus .ld-timer-buttons {
+    margin-left: auto;
+  }
+}

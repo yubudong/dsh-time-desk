@@ -181,7 +181,15 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
       </select>
     );
   }
-  function Controls({ m, reader = false, clockMode = false }: any) {
+  function Controls({
+    m,
+    reader = false,
+    clockMode = false,
+    header = false,
+  }: any) {
+    const [more, setMore] = useState(false);
+    const toolbarControls = useRef<HTMLDivElement>(null);
+    const moreButton = useRef<HTMLButtonElement>(null);
     const [panel, setPanel] = useState(""),
       [minutes, setMinutes] = useState(String(m.nextMinutes)),
       [error, setError] = useState(""),
@@ -254,8 +262,35 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
         setPanel("");
       }
     };
+    useEffect(() => {
+      if (!header || (!more && !panel)) return;
+      const element = toolbarControls.current;
+      const focusTarget = element?.querySelector<HTMLElement>(
+        panel
+          ? ".ld-timer-drawer input, .ld-timer-drawer button"
+          : ".ld-timer-preferences button",
+      );
+      focusTarget?.focus();
+      const outside = (event: PointerEvent) => {
+        if (element && !element.contains(event.target as Node)) {
+          setMore(false);
+          setPanel("");
+        }
+      };
+      document.addEventListener("pointerdown", outside);
+      return () => document.removeEventListener("pointerdown", outside);
+    }, [header, more, panel]);
     return (
       <div
+        ref={toolbarControls}
+        onKeyDown={(e) => {
+          if (header && e.key === "Escape") {
+            e.preventDefault();
+            moreButton.current?.focus();
+            setMore(false);
+            setPanel("");
+          }
+        }}
         className={
           "ld-timer-controls " + (reader ? "ld-reader-timer-controls" : "")
         }
@@ -273,20 +308,23 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
               </button>
             ) : (
               <>
-                <button
-                  type="button"
-                  className="ld-btn"
-                  disabled={m.busy || m.state === "finished"}
-                  onClick={() =>
-                    void call({
-                      action: "timer",
-                      command: m.timer.status === "paused" ? "resume" : "pause",
-                      timerId: m.timer.id,
-                    })
-                  }
-                >
-                  {t(m.timer.status === "paused" ? "resume" : "pause")}
-                </button>
+                {(!header || m.state !== "finished") && (
+                  <button
+                    type="button"
+                    className="ld-btn"
+                    disabled={m.busy || m.state === "finished"}
+                    onClick={() =>
+                      void call({
+                        action: "timer",
+                        command:
+                          m.timer.status === "paused" ? "resume" : "pause",
+                        timerId: m.timer.id,
+                      })
+                    }
+                  >
+                    {t(m.timer.status === "paused" ? "resume" : "pause")}
+                  </button>
+                )}
                 <button
                   type="button"
                   className="ld-btn ld-primary"
@@ -307,6 +345,7 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
                       setPausedForReview(true);
                     }
                     setEnding(true);
+                    setMore(false);
                     setPanel("");
                     setNotice("");
                   }}
@@ -327,44 +366,76 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
             )}
           </div>
         )}
-        <div className="ld-timer-preferences">
-          {!clockMode && (
-            <button
-              type="button"
-              aria-expanded={panel === "duration"}
-              onClick={() => {
-                setMinutes(String(m.nextMinutes));
-                setError("");
-                setPanel(panel === "duration" ? "" : "duration");
-              }}
-            >
-              {t(m.timer ? "nextDuration" : "focusDuration")} {m.nextMinutes}{" "}
-              {t("min")} ▾
-            </button>
-          )}
+        {header && (
           <button
             type="button"
-            aria-expanded={panel === "face"}
-            onClick={() => setPanel(panel === "face" ? "" : "face")}
+            className="ld-btn ld-timer-more"
+            ref={moreButton}
+            disabled={m.busy || ending}
+            aria-label={t("timerMore")}
+            title={t("timerMore")}
+            aria-expanded={more}
+            onClick={() => {
+              setMore(!more);
+              setPanel("");
+            }}
           >
-            {t("clockFace")} ▾
+            ···
           </button>
-          {!reader && (
-            <button type="button" onClick={() => setUI({ reader: true })}>
-              {t("fullscreenFocus")} ⛶
-            </button>
-          )}
-          {!clockMode && (
+        )}
+        {(!header || more) && (
+          <div className="ld-timer-preferences">
+            {!clockMode && (
+              <button
+                type="button"
+                aria-expanded={panel === "duration"}
+                onClick={() => {
+                  if (header) setMore(false);
+                  setMinutes(String(m.nextMinutes));
+                  setError("");
+                  setPanel(panel === "duration" ? "" : "duration");
+                }}
+              >
+                {t(m.timer ? "nextDuration" : "focusDuration")} {m.nextMinutes}{" "}
+                {t("min")} ▾
+              </button>
+            )}
             <button
               type="button"
-              aria-expanded={panel === "stats"}
-              onClick={() => setPanel(panel === "stats" ? "" : "stats")}
+              aria-expanded={panel === "face"}
+              onClick={() => {
+                if (header) setMore(false);
+                setPanel(panel === "face" ? "" : "face");
+              }}
             >
-              {t(panel === "stats" ? "closeStats" : "moreFocus")}{" "}
-              {panel === "stats" ? "⌃" : "⌄"}
+              {t("clockFace")} ▾
             </button>
-          )}
-        </div>
+            {!reader && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (header) setMore(false);
+                  setUI({ reader: true });
+                }}
+              >
+                {t("fullscreenFocus")} ⛶
+              </button>
+            )}
+            {!clockMode && (
+              <button
+                type="button"
+                aria-expanded={panel === "stats"}
+                onClick={() => {
+                  if (header) setMore(false);
+                  setPanel(panel === "stats" ? "" : "stats");
+                }}
+              >
+                {t(panel === "stats" ? "closeStats" : "moreFocus")}{" "}
+                {panel === "stats" ? "⌃" : "⌄"}
+              </button>
+            )}
+          </div>
+        )}
         {!clockMode && panel === "duration" && (
           <div className="ld-timer-drawer">
             <strong>{t("setFocusDuration")}</strong>
@@ -604,7 +675,7 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
       </div>
     );
   }
-  function Timer({ compact = false, bar = false }: any) {
+  function Timer({ compact = false, bar = false, header = false }: any) {
     const m = useModel();
     if (!m) return null;
     if (compact)
@@ -645,7 +716,7 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
           </div>
         </div>
         <TaskProgress m={m} />
-        <Controls m={m} />
+        <Controls m={m} header={header} />
       </section>
     );
   }

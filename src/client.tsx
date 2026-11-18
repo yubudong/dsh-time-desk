@@ -1,3 +1,4 @@
+import headerTimerCss from "./header-timer.css";
 import { PanelResize, usePanelWidths } from "./PanelResize";
 import panelResizeCss from "./panel-resize.css";
 import { habitRestInfo, weeklyHabitStatus } from "./weekly-habits.js";
@@ -63,7 +64,8 @@ const css =
   planningCss +
   reviewCss +
   lessonsCss +
-  panelResizeCss;
+  panelResizeCss +
+  headerTimerCss;
 const { useState, useEffect, useRef, useSyncExternalStore } = React;
 const NAV = [
   "today",
@@ -2572,7 +2574,11 @@ export function apply(ctx: any) {
         const renderSupport = (id: string) => {
           if (id === "timer")
             return (
-              <FoldSection title={t("focus")} {...foldProps("timer")}>
+              <FoldSection
+                className="ld-side-timer-module"
+                title={t("focus")}
+                {...foldProps("timer")}
+              >
                 <div className="ld-side-timer">
                   <Timer />
                 </div>
@@ -3112,6 +3118,18 @@ export function apply(ctx: any) {
                     aria-label={t("search")}
                   />
                 </div>
+                {(tab !== "today" ||
+                  (!data.settings.homeModules.hidden.includes("timer") &&
+                    !isFolded(data.settings, "timer"))) && (
+                  <div
+                    className={
+                      "ld-header-focus" +
+                      (tab !== "today" ? " is-other-page" : "")
+                    }
+                  >
+                    <Timer bar header />
+                  </div>
+                )}
                 <div className="ld-actions">
                   <select
                     className="ld-mood"
@@ -3177,13 +3195,6 @@ export function apply(ctx: any) {
                 "ld-content " + (tab !== "today" ? "ld-not-today" : "")
               }
             >
-              {(tab !== "today" ||
-                (!data.settings.homeModules.hidden.includes("timer") &&
-                  !isFolded(data.settings, "timer"))) && (
-                <div className="ld-top-timer">
-                  <Timer bar />
-                </div>
-              )}
               <header className="ld-page-heading">
                 <div className="ld-heading-left">
                   <div className="ld-eyebrow">

@@ -1,4 +1,5 @@
 export const copy = {
+  timerMore: ["更多专注设置", "More focus settings"],
   resizeSupport: [
     "拖动调整副工作台宽度；方向键微调，双击或回车恢复默认",
     "Drag to resize the support panel; arrow keys adjust, double-click or Enter resets",
