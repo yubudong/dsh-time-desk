@@ -1,4 +1,12 @@
 export const copy = {
+  resizeSupport: [
+    "拖动调整副工作台宽度；方向键微调，双击或回车恢复默认",
+    "Drag to resize the support panel; arrow keys adjust, double-click or Enter resets",
+  ],
+  resizeSpirit: [
+    "拖动调整时间精灵宽度；方向键微调，双击或回车恢复默认",
+    "Drag to resize Time Spirit; arrow keys adjust, double-click or Enter resets",
+  ],
   weeklyRuleChanges: [
     "本周有规则变更，建议已按各日期的生效规则计算。",
     "Rules change this week; suggestions use each date’s effective rule.",
@@ -761,12 +769,12 @@ export const copy = {
 
   spirit: ["时间精灵", "Time spirit"],
   spiritWelcome: [
-    "说说你的安排，剩下的我来整理。",
-    "Tell me your plans. I’ll help organize them.",
+    "有问题一起想，有安排一起做。",
+    "Think things through and make plans together.",
   ],
   spiritIntro: [
-    "项目、习惯、生活待办和日历，都可以在这里边聊边改。实际修改会同步到工作台。",
-    "Talk through projects, habits, life tasks and your calendar. Changes appear in your workspace.",
+    "可以讨论问题、分析方案，也能管理项目、习惯和日历。你明确要求修改时，再写入工作台。",
+    "Discuss questions, explore ideas, and manage projects, habits and your calendar. Workspace changes follow your instructions.",
   ],
   spiritModel: ["选择 DSH 模型", "Choose a DSH model"],
   spiritFollow: ["跟随 DSH 默认模型", "Follow the DSH default"],
@@ -776,7 +784,10 @@ export const copy = {
     "开始新对话？现有对话仍保存在 DSH 中，工作台数据不变。",
     "Start a new conversation? Existing history remains in DSH and workspace data is unchanged.",
   ],
-  spiritPlaceholder: ["想安排什么，直接说……", "Tell me what you want to plan…"],
+  spiritPlaceholder: [
+    "想聊什么，或需要我做什么……",
+    "What would you like to discuss or do?",
+  ],
   spiritEnterHint: [
     "Enter 发送 · Shift+Enter 换行",
     "Enter to send · Shift+Enter for a new line",

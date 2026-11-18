@@ -1,3 +1,5 @@
+import { PanelResize, usePanelWidths } from "./PanelResize";
+import panelResizeCss from "./panel-resize.css";
 import { habitRestInfo, weeklyHabitStatus } from "./weekly-habits.js";
 import * as React from "react";
 import FullCalendar from "@fullcalendar/react";
@@ -60,7 +62,8 @@ const css =
   focusCss +
   planningCss +
   reviewCss +
-  lessonsCss;
+  lessonsCss +
+  panelResizeCss;
 const { useState, useEffect, useRef, useSyncExternalStore } = React;
 const NAV = [
   "today",
@@ -1916,6 +1919,7 @@ export function apply(ctx: any) {
   }
   function App() {
     const { data, error, busy } = useStore();
+    const panelLayout = usePanelWidths();
     const [tab, setTab] = useState("today"),
       [project, setProject] = useState(""),
       [selectedDay, setDay] = useState(""),
@@ -2664,38 +2668,46 @@ export function apply(ctx: any) {
                 </div>
               </div>
             )}
-            <div
-              className={
-                "ld-today-grid" + (support.length ? "" : " ld-single-col")
-              }
-            >
-              <div className="ld-main-col">
-                {main.length ? (
-                  main.map((m: any) => (
-                    <React.Fragment key={m.id}>
-                      {renderMain(m.id)}
-                    </React.Fragment>
-                  ))
-                ) : (
-                  <div className="ld-welcome">
-                    <Icon name="today" size={28} />
-                    <h2>{t("homeAllHidden")}</h2>
-                    <p>{t("homeAllHiddenHint")}</p>
-                    <Btn primary onClick={() => setHomeOpen(true)}>
-                      {t("homeCustomize")}
-                    </Btn>
-                  </div>
+            <div className="ld-home-columns">
+              <div
+                className={
+                  "ld-today-grid" + (support.length ? "" : " ld-single-col")
+                }
+              >
+                <div className="ld-main-col">
+                  {main.length ? (
+                    main.map((m: any) => (
+                      <React.Fragment key={m.id}>
+                        {renderMain(m.id)}
+                      </React.Fragment>
+                    ))
+                  ) : (
+                    <div className="ld-welcome">
+                      <Icon name="today" size={28} />
+                      <h2>{t("homeAllHidden")}</h2>
+                      <p>{t("homeAllHiddenHint")}</p>
+                      <Btn primary onClick={() => setHomeOpen(true)}>
+                        {t("homeCustomize")}
+                      </Btn>
+                    </div>
+                  )}
+                </div>
+                {!!support.length && (
+                  <aside className="ld-support">
+                    <PanelResize
+                      kind="support"
+                      label={t("resizeSupport")}
+                      value={panelLayout.widths.support}
+                      onChange={panelLayout.change}
+                    />
+                    {support.map((m: any) => (
+                      <React.Fragment key={m.id}>
+                        {renderSupport(m.id)}
+                      </React.Fragment>
+                    ))}
+                  </aside>
                 )}
               </div>
-              {!!support.length && (
-                <aside className="ld-support">
-                  {support.map((m: any) => (
-                    <React.Fragment key={m.id}>
-                      {renderSupport(m.id)}
-                    </React.Fragment>
-                  ))}
-                </aside>
-              )}
             </div>
           </>
         );
@@ -2986,6 +2998,16 @@ export function apply(ctx: any) {
             (collapsed ? "ld-collapsed " : "") +
             (ai ? "ld-spirit-open" : "")
           }
+          style={
+            {
+              "--ld-support-width": panelLayout.widths.support
+                ? panelLayout.widths.support + "px"
+                : undefined,
+              "--ld-spirit-width": panelLayout.widths.spirit
+                ? panelLayout.widths.spirit + "px"
+                : undefined,
+            } as React.CSSProperties
+          }
           tabIndex={-1}
           onKeyDown={(e) => {
             if (
@@ -3271,14 +3293,24 @@ export function apply(ctx: any) {
               </footer>
             </main>
           </div>
-          <SpiritPanel
-            open={ai}
-            onClose={() => setAi(false)}
-            reducedMotion={data.settings.reduceMotion}
-            onBusyChange={(value: boolean) => {
-              spiritBusyRef.current = value;
-            }}
-          />
+          <div className="ld-spirit-dock" hidden={!ai}>
+            {ai && (
+              <PanelResize
+                kind="spirit"
+                label={t("resizeSpirit")}
+                value={panelLayout.widths.spirit}
+                onChange={panelLayout.change}
+              />
+            )}
+            <SpiritPanel
+              open={ai}
+              onClose={() => setAi(false)}
+              reducedMotion={data.settings.reduceMotion}
+              onBusyChange={(value: boolean) => {
+                spiritBusyRef.current = value;
+              }}
+            />
+          </div>
         </div>
         {homeOpen && (
           <Modal title={t("homeCustomize")} onClose={() => setHomeOpen(false)}>

@@ -5,6 +5,7 @@ import { createSpirit, transcriptRow, SPIRIT_PROMPT } from "../src/spirit.js";
 
 function fixture({ reviewOnly = false } = {}) {
   let scopedTool;
+  const restrictions = [];
   let global = null,
     currentDefault = { provider: "mock", model: "one" },
     configCalls = [],
@@ -79,6 +80,7 @@ function fixture({ reviewOnly = false } = {}) {
           return () => {};
         },
         restrict(value) {
+          restrictions.push(value);
           assert.deepEqual(value, { allow: ["life_desk"] });
           return () => {};
         },
@@ -166,6 +168,9 @@ function fixture({ reviewOnly = false } = {}) {
   return {
     ctx,
     unit,
+    get restrictions() {
+      return restrictions;
+    },
     get scopedTool() {
       return scopedTool;
     },
@@ -199,6 +204,7 @@ test("opening creates one scoped DSH conversation without a model prompt", async
   assert.ok(a.sessionId);
   assert.equal(f.created, 1);
   assert.equal(f.prompts, 0);
+  assert.deepEqual(f.restrictions, []);
   assert.equal(a.busy, false);
   await s.close();
   assert.equal(f.disposed, 1);
@@ -333,8 +339,11 @@ test("watch wakes from committed events and aborting a watch is harmless", async
   assert.equal((await second).sessionId, current.sessionId);
   await s.close();
 });
-test("prompt scope is restricted and error transcript stays explicit", () => {
-  assert.match(SPIRIT_PROMPT, /唯一业务工具/);
+test("ordinary assistant permits general analysis and actual available tools, keeping honest operation receipts", () => {
+  assert.match(SPIRIT_PROMPT, /通用个人助手/);
+  assert.match(SPIRIT_PROMPT, /肌群分析/);
+  assert.match(SPIRIT_PROMPT, /实际向你提供的工具/);
+  assert.doesNotMatch(SPIRIT_PROMPT, /只处理时间工作台|唯一业务工具/);
   assert.match(SPIRIT_PROMPT, /先展示影响范围/);
   assert.equal(
     transcriptRow({
@@ -366,6 +375,7 @@ test("guided review uses a scoped draft-only tool and cannot write workspace rec
   });
   assert.equal(started.review.date, "2026-11-16");
   assert.equal(f.prompts, 1);
+  assert.deepEqual(f.restrictions, [{ allow: ["life_desk"] }]);
   assert.equal(f.scopedTool.name, "life_desk");
   assert.deepEqual(f.scopedTool.parameters.properties.action.enum, ["draft"]);
   await assert.rejects(

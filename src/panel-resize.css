@@ -1,0 +1,130 @@
+/* Width preferences are local UI state, independent from workbench records. */
+.ld-shell {
+  --ld-nav-width: 188px;
+}
+.ld-shell.ld-collapsed {
+  --ld-nav-width: 66px;
+}
+.ld-shell.ld-spirit-open,
+.ld-shell.ld-collapsed.ld-spirit-open {
+  grid-template-columns: var(--ld-nav-width) minmax(0, 1fr) clamp(
+      280px,
+      var(--ld-spirit-width, 370px),
+      min(800px, calc(100% - var(--ld-nav-width) - 320px))
+    );
+}
+.ld-spirit-dock {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+.ld-spirit-dock[hidden] {
+  display: none;
+}
+.ld-spirit-dock > .ld-spirit-panel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.ld-home-columns {
+  container: ld-home / inline-size;
+  min-width: 0;
+}
+.ld-home-columns > .ld-today-grid,
+.ld-spirit-open .ld-home-columns > .ld-today-grid {
+  grid-template-columns: minmax(0, 1fr) clamp(
+      220px,
+      var(--ld-support-width, 248px),
+      min(640px, calc(100% - 360px))
+    );
+  gap: 40px;
+}
+.ld-home-columns > .ld-today-grid.ld-single-col {
+  grid-template-columns: minmax(0, 1fr);
+}
+.ld-home-columns .ld-support,
+.ld-spirit-open .ld-home-columns .ld-support {
+  position: relative;
+  display: block;
+  border-left: 1px solid var(--ld-line);
+  border-top: 0;
+  padding: 0 0 0 28px;
+  min-width: 0;
+}
+.ld-panel-resizer {
+  position: absolute;
+  inset: 0 auto 0 -6px;
+  width: 12px;
+  z-index: 5;
+  cursor: col-resize;
+  touch-action: none;
+  outline: none;
+}
+.ld-panel-resizer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 5px;
+  width: 2px;
+  background: transparent;
+  transition: background 0.12s;
+}
+.ld-panel-resizer:hover::after,
+.ld-panel-resizer:focus-visible::after,
+.ld-panel-resizer.is-resizing::after {
+  background: var(--ld-accent);
+}
+.ld-panel-resizer:focus-visible {
+  outline: 1px solid var(--ld-accent);
+  outline-offset: -3px;
+}
+@container life-desk (max-width:1050px) {
+  .ld-shell {
+    --ld-nav-width: 160px;
+  }
+  .ld-shell.ld-collapsed {
+    --ld-nav-width: 66px;
+  }
+}
+@container life-desk (max-width:950px) {
+  .ld-shell.ld-spirit-open,
+  .ld-shell.ld-collapsed.ld-spirit-open {
+    grid-template-columns: 60px minmax(0, 1fr);
+  }
+  .ld-spirit-dock {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: min(var(--ld-spirit-width, 370px), calc(100% - 60px));
+    z-index: 30;
+    box-shadow: -12px 0 35px color-mix(in srgb, var(--ld-ink) 6%, transparent);
+  }
+  .ld-spirit-dock > .ld-spirit-panel {
+    position: relative;
+    box-shadow: none;
+  }
+}
+@container ld-home (max-width:600px) {
+  .ld-home-columns > .ld-today-grid,
+  .ld-spirit-open .ld-home-columns > .ld-today-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 25px;
+  }
+  .ld-home-columns .ld-support,
+  .ld-spirit-open .ld-home-columns .ld-support {
+    border-left: 0;
+    border-top: 1px solid var(--ld-line);
+    padding: 22px 0 0;
+  }
+  .ld-resize-support {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ld-panel-resizer::after {
+    transition: none;
+  }
+}
