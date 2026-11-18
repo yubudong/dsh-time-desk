@@ -3130,41 +3130,52 @@ export function apply(ctx: any) {
                     <Timer bar header />
                   </div>
                 )}
-                <div className="ld-actions">
-                  <select
-                    className="ld-mood"
-                    aria-label={t("mood")}
-                    value={
-                      data.settings.moodUntil &&
-                      data.settings.moodUntil < today(timeZone)
-                        ? "daily"
-                        : data.settings.mood
-                    }
-                    onChange={(e) =>
-                      run({
-                        action: "settings",
-                        item: { mood: e.target.value },
-                      })
-                    }
+                <div className="ld-actions ld-header-actions">
+                  <label className="ld-theme-control" title={t("themeHint")}>
+                    <span className="ld-theme-label">{t("theme")}</span>
+                    <select
+                      className="ld-mood"
+                      aria-label={t("theme")}
+                      title={t("themeHint")}
+                      value={
+                        data.settings.moodUntil &&
+                        data.settings.moodUntil < today(timeZone)
+                          ? "daily"
+                          : data.settings.mood
+                      }
+                      onChange={(e) =>
+                        run({
+                          action: "settings",
+                          item: { mood: e.target.value },
+                        })
+                      }
+                    >
+                      {["daily", "bright", "focus", "calm"].map((m) => (
+                        <option key={m} value={m}>
+                          {t(
+                            m === "daily"
+                              ? "moodDaily"
+                              : m === "focus"
+                                ? "moodFocus"
+                                : m,
+                          )}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <Btn
+                    className="ld-btn ld-spirit-toggle"
+                    aria-label={t("spirit")}
+                    aria-pressed={ai}
+                    onClick={() => setAi(!ai)}
                   >
-                    {["daily", "bright", "focus", "calm"].map((m) => (
-                      <option key={m} value={m}>
-                        {t(
-                          m === "daily"
-                            ? "moodDaily"
-                            : m === "focus"
-                              ? "moodFocus"
-                              : m,
-                        )}
-                      </option>
-                    ))}
-                  </select>
-                  <Btn aria-pressed={ai} onClick={() => setAi(!ai)}>
                     <SpiritIcon
-                      size={32}
+                      size={24}
                       reducedMotion={data.settings.reduceMotion}
                     />
-                    {t("spirit")}
+                    <span className="ld-spirit-toggle-label">
+                      {t("spirit")}
+                    </span>
                   </Btn>
                 </div>
               </div>

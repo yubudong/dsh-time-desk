@@ -1,6 +1,7 @@
 import * as React from "react";
 import { ClockFace } from "./ClockFace";
 import { Tomatoes } from "./Tomatoes";
+import { TomatoIcon } from "./TomatoIcon";
 import { taskFocus } from "./today-view.js";
 import { focusView, prepareTimerStart } from "./focus-state.js";
 import { today, occurrences } from "./dates.js";
@@ -186,6 +187,8 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
     reader = false,
     clockMode = false,
     header = false,
+    onHeaderOpen = () => {},
+    onReviewChange = () => {},
   }: any) {
     const [more, setMore] = useState(false);
     const toolbarControls = useRef<HTMLDivElement>(null);
@@ -206,6 +209,14 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
     useEffect(() => {
       setPanel("");
     }, [clockMode]);
+    useEffect(() => {
+      if (!header || !notice) return;
+      const timeout = setTimeout(() => setNotice(""), 3500);
+      return () => clearTimeout(timeout);
+    }, [header, notice]);
+    useEffect(() => {
+      if (header) onReviewChange(ending);
+    }, [header, ending, onReviewChange]);
     const start = async (phase = "focus") => {
       const task =
         phase === "focus" && m.task && m.task.status !== "done"
@@ -218,6 +229,24 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
         round: m.round,
         ...task,
       });
+    };
+    const reviewEnd = async () => {
+      if (header) onHeaderOpen();
+      if (m.timer.status === "running" && m.state !== "finished") {
+        if (
+          !(await call({
+            action: "timer",
+            command: "pause",
+            timerId: m.timer.id,
+          }))
+        )
+          return;
+        setPausedForReview(true);
+      }
+      setEnding(true);
+      setMore(false);
+      setPanel("");
+      setNotice("");
     };
     const finish = async (save: boolean, rest = false) => {
       if (!m.timer) return;
@@ -327,28 +356,14 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
                 )}
                 <button
                   type="button"
-                  className="ld-btn ld-primary"
+                  className={
+                    "ld-btn ld-primary" +
+                    (header && m.state !== "finished"
+                      ? " ld-timer-end-action"
+                      : "")
+                  }
                   disabled={m.busy}
-                  onClick={async () => {
-                    if (
-                      m.timer.status === "running" &&
-                      m.state !== "finished"
-                    ) {
-                      if (
-                        !(await call({
-                          action: "timer",
-                          command: "pause",
-                          timerId: m.timer.id,
-                        }))
-                      )
-                        return;
-                      setPausedForReview(true);
-                    }
-                    setEnding(true);
-                    setMore(false);
-                    setPanel("");
-                    setNotice("");
-                  }}
+                  onClick={() => void reviewEnd()}
                 >
                   {t(m.state === "finished" ? "confirmRound" : "endRound")}
                 </button>
@@ -357,7 +372,7 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
             {!m.timer && m.round > 0 && (
               <button
                 type="button"
-                className="ld-btn"
+                className={"ld-btn" + (header ? " ld-timer-break-action" : "")}
                 disabled={m.busy}
                 onClick={() => void start(m.round % 4 === 0 ? "long" : "short")}
               >
@@ -376,6 +391,7 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
             title={t("timerMore")}
             aria-expanded={more}
             onClick={() => {
+              onHeaderOpen();
               setMore(!more);
               setPanel("");
             }}
@@ -385,6 +401,28 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
         )}
         {(!header || more) && (
           <div className="ld-timer-preferences">
+            {header && !m.timer && m.round > 0 && (
+              <button
+                type="button"
+                disabled={m.busy}
+                onClick={() => {
+                  setMore(false);
+                  void start(m.round % 4 === 0 ? "long" : "short");
+                }}
+              >
+                {t("break")}
+              </button>
+            )}
+
+            {header && m.timer && m.state !== "finished" && (
+              <button
+                type="button"
+                disabled={m.busy}
+                onClick={() => void reviewEnd()}
+              >
+                {t("endRound")}
+              </button>
+            )}
             {!clockMode && (
               <button
                 type="button"
@@ -493,6 +531,7 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
         {panel === "face" && (
           <div className="ld-timer-drawer">
             <strong>{t("clockFace")}</strong>
+            {header && <p className="ld-help">{t("toolbarClockFaceHint")}</p>}
             <div className="ld-face-options">
               {FACES.map((face) => (
                 <button
@@ -677,6 +716,22 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
   }
   function Timer({ compact = false, bar = false, header = false }: any) {
     const m = useModel();
+    const [details, setDetails] = useState(false);
+    const [reviewing, setReviewing] = useState(false);
+    const headerRoot = useRef<HTMLElement>(null);
+    const tomatoButton = useRef<HTMLButtonElement>(null);
+    useEffect(() => {
+      if (!header || !details) return;
+      const close = (event: PointerEvent) => {
+        if (
+          headerRoot.current &&
+          !headerRoot.current.contains(event.target as Node)
+        )
+          setDetails(false);
+      };
+      document.addEventListener("pointerdown", close);
+      return () => document.removeEventListener("pointerdown", close);
+    }, [header, details]);
     if (!m) return null;
     if (compact)
       return m.timer ? (
@@ -690,6 +745,85 @@ export function createTimerUI({ useStore, act, t, ctx }: any) {
           <span>{m.display}</span>
         </button>
       ) : null;
+    if (header) {
+      const description = t("focus") + " · " + status(m) + " · " + caption(m);
+      const relatedTask = (!m.timer || m.timer.phase === "focus") && m.task;
+      return (
+        <section
+          className="ld-pomodoro-toolbar"
+          aria-label={t("focus")}
+          data-state={m.state}
+          ref={headerRoot}
+          onKeyDown={(e) => {
+            if (e.key === "Escape" && details) {
+              e.preventDefault();
+              setDetails(false);
+              tomatoButton.current?.focus();
+            }
+          }}
+        >
+          <div className="ld-pomodoro-summary">
+            <button
+              type="button"
+              ref={tomatoButton}
+              className="ld-tomato-trigger"
+              aria-label={t("tomatoDetails") + " · " + description}
+              title={description + " · " + t("tomatoDetails")}
+              aria-expanded={details}
+              disabled={reviewing}
+              onClick={() => setDetails((v) => !v)}
+            >
+              <TomatoIcon />
+            </button>
+            <span
+              className="ld-pomodoro-time"
+              role="timer"
+              aria-label={
+                t(m.state === "ready" ? "plannedDuration" : "timeRemaining") +
+                " " +
+                m.display
+              }
+            >
+              {m.display}
+            </span>
+            {relatedTask && (
+              <span className="ld-pomodoro-task" title={caption(m)}>
+                {caption(m)}
+              </span>
+            )}
+          </div>
+          <Controls
+            m={m}
+            header
+            onHeaderOpen={() => setDetails(false)}
+            onReviewChange={setReviewing}
+          />
+          {details && (
+            <div className="ld-pomodoro-details">
+              <strong>
+                {t("focus")} · {status(m)}
+              </strong>
+              <label className="ld-field">
+                <span>{t("selectTask")}</span>
+                <TaskSelector m={m} />
+              </label>
+              <p className="ld-help">
+                {t(m.state === "ready" ? "plannedDuration" : "timeRemaining")}
+              </p>
+              <div className="ld-pomodoro-detail-clock">
+                <ClockFace
+                  face={m.data.settings.timerFace}
+                  display={m.display}
+                  ratio={m.ratio}
+                  reduceMotion={m.data.settings.reduceMotion}
+                />
+              </div>
+              <TaskProgress m={m} />
+            </div>
+          )}
+        </section>
+      );
+    }
     return (
       <section
         className={"ld-focus-card ld-timer-v2 " + (bar ? "ld-timer-bar" : "")}

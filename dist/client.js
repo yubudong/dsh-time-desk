@@ -3270,7 +3270,7 @@ __export(client_exports, {
 module.exports = __toCommonJS(client_exports);
 
 // src/header-timer.css
-var header_timer_default = "/* Timer belongs to the toolbar row, never to the scrolling page content. */\n.ld-workspace {\n  container: ld-workspace / inline-size;\n}\n.ld-toolbar-wrap {\n  position: relative;\n  z-index: 20;\n  min-width: 0;\n}\n.ld-page-top .ld-search {\n  flex: 1 1 120px;\n  min-width: 120px;\n}\n.ld-page-top .ld-search input {\n  flex: 1;\n  width: 100%;\n  max-width: 230px;\n  min-width: 0;\n}\n.ld-header-focus {\n  display: none;\n  flex: 1 1 420px;\n  min-width: 300px;\n  max-width: 600px;\n}\n.ld-spirit-open .ld-header-focus,\n.ld-header-focus.is-other-page {\n  display: block;\n}\n.ld-spirit-open .ld-side-timer-module {\n  display: none;\n}\n.ld-header-focus .ld-timer-v2.ld-timer-bar {\n  display: flex !important;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 12px;\n  position: relative;\n  min-width: 0;\n  background: transparent;\n}\n.ld-header-focus .ld-timer-overview {\n  display: flex;\n  align-items: center;\n  flex: 1;\n  gap: 12px;\n  min-width: 0;\n}\n.ld-header-focus .ld-timer-context {\n  min-width: 0;\n  flex: 1;\n  max-width: 170px;\n}\n.ld-header-focus .ld-timer-task-name {\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  font-size: 11px;\n}\n.ld-header-focus .ld-timer-task-select {\n  max-width: 100%;\n  font-size: 11px;\n}\n.ld-header-focus .ld-timer-state {\n  font-size: 10px;\n  white-space: nowrap;\n}\n.ld-header-focus .ld-timer-time {\n  flex: none;\n}\n.ld-header-focus .ld-timer-time-label,\n.ld-header-focus .ld-timer-task-progress {\n  display: none;\n}\n.ld-header-focus .ld-clock-digits {\n  font-size: 24px;\n  line-height: 1.2;\n  letter-spacing: -0.5px;\n  white-space: nowrap;\n}\n.ld-header-focus .ld-timer-controls {\n  display: contents;\n}\n\n.ld-header-focus .ld-timer-buttons {\n  display: flex;\n  flex: none;\n  flex-wrap: nowrap;\n  gap: 6px;\n}\n.ld-header-focus .ld-timer-buttons .ld-btn {\n  white-space: nowrap;\n  min-height: 30px;\n  padding: 5px 9px;\n}\n.ld-header-focus .ld-timer-more {\n  min-width: 30px;\n  min-height: 30px;\n  padding: 4px 7px;\n  font-weight: 600;\n}\n.ld-header-focus .ld-timer-preferences {\n  position: absolute;\n  top: calc(100% + 8px);\n  right: 0;\n  z-index: 30;\n  display: flex;\n  flex-direction: column;\n  align-items: stretch;\n  gap: 4px;\n  width: min(240px, 100%);\n  margin: 0;\n  padding: 9px;\n  background: var(--ld-base);\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  box-shadow: 0 8px 22px color-mix(in srgb, var(--ld-ink) 8%, transparent);\n}\n.ld-header-focus .ld-timer-preferences > button {\n  padding: 7px 9px;\n  text-align: left;\n}\n.ld-header-focus .ld-timer-drawer {\n  position: absolute;\n  top: calc(100% + 8px);\n  right: 0;\n  left: auto;\n  width: min(390px, 100%);\n  max-height: min(65vh, 520px);\n  overflow: auto;\n  z-index: 31;\n  margin: 0;\n}\n.ld-header-focus .ld-timer-controls > .ld-error,\n.ld-header-focus .ld-timer-controls > .ld-help {\n  position: static;\n  flex: 1 0 100%;\n  width: 100%;\n  max-width: 100%;\n  margin: 0;\n  font-size: 11px;\n}\n\n@container life-desk (max-width:820px) {\n  .ld-header-focus {\n    display: block;\n  }\n  .ld-side-timer-module {\n    display: none;\n  }\n}\n@container ld-workspace (max-width:850px) {\n  .ld-page-top {\n    flex-wrap: wrap;\n    gap: 10px 14px;\n  }\n  .ld-page-top .ld-search {\n    min-width: 120px;\n  }\n  .ld-page-top .ld-search input {\n    width: 100%;\n    min-width: 0;\n  }\n  .ld-header-focus {\n    order: 3;\n    flex: 1 0 100%;\n    max-width: none;\n    min-width: 0;\n    border-top: 1px solid var(--ld-line);\n    padding-top: 9px;\n  }\n}\n@container ld-workspace (max-width:400px) {\n  .ld-header-focus .ld-timer-v2.ld-timer-bar {\n    flex-wrap: wrap;\n    gap: 7px 10px;\n  }\n  .ld-header-focus .ld-timer-overview {\n    flex-basis: 100%;\n  }\n  .ld-header-focus .ld-timer-buttons {\n    margin-left: auto;\n  }\n}\n";
+var header_timer_default = '/* One horizontal timer group, owned by the fixed toolbar, not the page scroller. */\n.ld-pomodoro-detail-clock {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  margin: 10px 0;\n}\n.ld-pomodoro-detail-clock .ld-clock-digits {\n  font-size: 34px;\n}\n.ld-pomodoro-detail-clock .ld-clock-ring {\n  width: 140px;\n  max-width: 100%;\n}\n.ld-pomodoro-detail-clock .ld-clock-flip {\n  font-size: 24px;\n}\n.ld-pomodoro-detail-clock .ld-clock-hourglass {\n  font-size: 22px;\n}\n.ld-pomodoro-detail-clock .ld-clock-hourglass svg {\n  height: 90px;\n}\n.ld-workspace {\n  container: ld-workspace / inline-size;\n}\n.ld-toolbar-wrap {\n  position: relative;\n  z-index: 20;\n  min-width: 0;\n}\n.ld-shell .ld-page-top {\n  display: flex;\n  align-items: center;\n  flex-wrap: nowrap;\n  gap: 14px;\n  min-height: 64px;\n  padding: 14px var(--ld-page-inline);\n}\n.ld-shell .ld-page-top > .ld-search {\n  flex: 1 1 120px;\n  min-width: 110px;\n}\n.ld-page-top .ld-search input {\n  flex: 1;\n  width: 100%;\n  max-width: 230px;\n  min-width: 0;\n}\n.ld-header-focus {\n  display: none;\n  flex: 0 0 auto;\n  min-width: 0;\n  max-width: 100%;\n}\n.ld-spirit-open .ld-header-focus,\n.ld-header-focus.is-other-page {\n  display: block;\n}\n.ld-spirit-open .ld-side-timer-module {\n  display: none;\n}\n.ld-shell .ld-page-top > .ld-header-actions {\n  display: flex;\n  align-items: center;\n  flex-wrap: nowrap;\n  gap: 12px;\n  flex: none;\n  margin-left: 0;\n}\n.ld-theme-control {\n  display: inline-flex;\n  align-items: center;\n  gap: 5px;\n  white-space: nowrap;\n}\n.ld-theme-label {\n  color: var(--ld-muted);\n  font-size: 11px;\n  line-height: 1;\n}\n.ld-theme-control .ld-mood {\n  max-width: 100px;\n  min-height: 34px;\n  padding: 4px 5px;\n  border: 0 !important;\n  background: transparent;\n}\n.ld-page-top .ld-spirit-toggle {\n  display: inline-flex;\n  align-items: center;\n  gap: 7px;\n  height: 36px;\n  min-height: 36px;\n  padding: 5px 10px;\n  font-size: 12px;\n  white-space: nowrap;\n}\n.ld-pomodoro-toolbar {\n  display: grid;\n  grid-template-columns: max-content max-content max-content;\n  align-items: center;\n  column-gap: 8px;\n  row-gap: 0;\n  position: relative;\n  width: max-content;\n  max-width: 100%;\n  margin: 0;\n  padding: 0;\n  border: 0;\n}\n.ld-pomodoro-summary {\n  grid-column: 1;\n  grid-row: 1;\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  min-width: 0;\n  white-space: nowrap;\n}\n.ld-root .ld-tomato-trigger {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  flex: none;\n  width: 32px;\n  height: 34px;\n  padding: 4px;\n  border: 0 !important;\n  border-radius: 5px;\n  background: transparent !important;\n}\n.ld-tomato-trigger:focus-visible {\n  outline: 2px solid var(--ld-accent);\n  outline-offset: 2px;\n}\n.ld-pomodoro-time {\n  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;\n  font-variant-numeric: tabular-nums;\n  font-size: 23px;\n  font-weight: 500;\n  line-height: 1;\n  letter-spacing: -0.6px;\n  white-space: nowrap;\n}\n.ld-pomodoro-toolbar[data-state="paused"] .ld-pomodoro-time {\n  color: var(--ld-muted);\n}\n.ld-pomodoro-task {\n  max-width: 116px;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-header-focus .ld-timer-controls {\n  display: contents;\n}\n.ld-header-focus .ld-timer-buttons {\n  grid-column: 2;\n  grid-row: 1;\n  display: flex;\n  align-items: center;\n  justify-content: flex-start;\n  flex-wrap: nowrap;\n  gap: 6px;\n  margin: 0;\n}\n.ld-header-focus .ld-timer-buttons .ld-btn {\n  min-height: 34px;\n  height: 34px;\n  padding: 5px 10px;\n  white-space: nowrap;\n}\n.ld-header-focus .ld-timer-more {\n  grid-column: 3;\n  grid-row: 1;\n  min-height: 34px;\n  height: 34px;\n  min-width: 30px;\n  padding: 4px 7px;\n  font-weight: 600;\n}\n.ld-header-focus .ld-timer-preferences,\n.ld-header-focus .ld-timer-drawer,\n.ld-pomodoro-details {\n  position: absolute;\n  top: calc(100% + 10px);\n  right: 0;\n  left: auto;\n  z-index: 30;\n  margin: 0;\n  background: var(--ld-base);\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  box-shadow: 0 8px 22px color-mix(in srgb, var(--ld-ink) 8%, transparent);\n  max-height: min(65vh, 520px);\n  overflow: auto;\n}\n.ld-header-focus .ld-timer-preferences {\n  display: flex;\n  flex-direction: column;\n  align-items: stretch;\n  gap: 4px;\n  width: min(240px, calc(100cqw - 32px));\n  padding: 9px;\n}\n.ld-header-focus .ld-timer-preferences > button {\n  padding: 7px 9px;\n  text-align: left;\n}\n.ld-header-focus .ld-timer-drawer,\n.ld-pomodoro-details {\n  width: min(360px, calc(100cqw - 32px));\n  padding: 14px;\n}\n.ld-pomodoro-details .ld-field {\n  display: flex;\n  flex-direction: column;\n  gap: 5px;\n  margin-top: 10px;\n}\n.ld-pomodoro-details .ld-timer-task-select {\n  width: 100%;\n  min-width: 0;\n}\n.ld-pomodoro-details .ld-timer-task-name {\n  overflow-wrap: anywhere;\n  white-space: normal;\n}\n.ld-pomodoro-details .ld-timer-task-progress {\n  margin-top: 8px;\n}\n.ld-header-focus .ld-timer-controls > .ld-error,\n.ld-header-focus .ld-timer-controls > .ld-help {\n  position: static;\n  grid-column: 1/-1;\n  max-width: 100%;\n  margin: 4px 0 0;\n  font-size: 11px;\n}\n@container life-desk (max-width:820px) {\n  .ld-header-focus {\n    display: block;\n  }\n  .ld-side-timer-module {\n    display: none;\n  }\n}\n@container ld-workspace (max-width:1050px) {\n  .ld-pomodoro-task {\n    display: none;\n  }\n}\n@container ld-workspace (max-width:800px) {\n  .ld-shell .ld-page-top {\n    flex-wrap: wrap;\n    gap: 8px 12px;\n  }\n  .ld-header-focus {\n    order: 3;\n    flex: 1 0 100%;\n    min-width: 0;\n    max-width: none;\n  }\n  .ld-header-focus .ld-timer-preferences,\n  .ld-header-focus .ld-timer-drawer,\n  .ld-pomodoro-details {\n    left: 0;\n    right: auto;\n  }\n}\n@container ld-workspace (max-width:520px) {\n  .ld-header-focus .ld-timer-buttons > .ld-timer-end-action,\n  .ld-header-focus .ld-timer-buttons > .ld-timer-break-action {\n    display: none;\n  }\n}\n@container ld-workspace (max-width:400px) {\n  .ld-shell .ld-page-top > .ld-search {\n    min-width: 65px;\n  }\n  .ld-page-top .ld-spirit-toggle-label {\n    display: none;\n  }\n  .ld-page-top .ld-spirit-toggle {\n    padding: 5px 7px;\n  }\n  .ld-shell .ld-page-top > .ld-header-actions {\n    gap: 7px;\n  }\n  .ld-pomodoro-time {\n    font-size: 22px;\n  }\n}\n';
 
 // src/PanelResize.tsx
 var React = __toESM(require("react"), 1);
@@ -15471,7 +15471,7 @@ function weeklyHabitStatus(state, habit, viewDate, now = Date.now()) {
 }
 
 // src/client.tsx
-var React11 = __toESM(require("react"), 1);
+var React12 = __toESM(require("react"), 1);
 
 // node_modules/@fullcalendar/react/dist/index.js
 var import_react = __toESM(require("react"), 1);
@@ -28767,6 +28767,16 @@ var l77 = {
 
 // src/locales.ts
 var copy = {
+  toolbarClockFaceHint: [
+    "\u9876\u90E8\u4FDD\u6301\u7D27\u51D1\u6570\u5B57\u663E\u793A\uFF1B\u9009\u5B9A\u8868\u76D8\u7528\u4E8E\u756A\u8304\u8BE6\u60C5\u3001\u4FA7\u680F\u548C\u5168\u5C4F\u3002",
+    "The toolbar stays digital; the selected face appears in timer details, the sidebar and fullscreen."
+  ],
+  theme: ["\u4E3B\u9898", "Theme"],
+  themeHint: [
+    "\u5207\u6362\u5DE5\u4F5C\u53F0\u914D\u8272\uFF0C\u4E0D\u5F71\u54CD\u4EFB\u52A1\u548C\u8BA1\u65F6\u3002",
+    "Change workspace colors without affecting tasks or timers."
+  ],
+  tomatoDetails: ["\u67E5\u770B\u756A\u8304\u949F\u8BE6\u60C5", "View focus timer details"],
   timerMore: ["\u66F4\u591A\u4E13\u6CE8\u8BBE\u7F6E", "More focus settings"],
   resizeSupport: [
     "\u62D6\u52A8\u8C03\u6574\u526F\u5DE5\u4F5C\u53F0\u5BBD\u5EA6\uFF1B\u65B9\u5411\u952E\u5FAE\u8C03\uFF0C\u53CC\u51FB\u6216\u56DE\u8F66\u6062\u590D\u9ED8\u8BA4",
@@ -30318,7 +30328,7 @@ function createSpiritPanel({ send, t: t3, refresh }) {
 }
 
 // src/TimerUI.tsx
-var React7 = __toESM(require("react"), 1);
+var React8 = __toESM(require("react"), 1);
 
 // src/ClockFace.tsx
 var React5 = __toESM(require("react"), 1);
@@ -30430,6 +30440,35 @@ function Tomatoes({
       /* @__PURE__ */ React6.createElement("path", { className: "leaf", d: "m12 9-5-3 4 1 1-4 1 4 5-1-5 3m-1-4 1-3" })
     )),
     /* @__PURE__ */ React6.createElement("span", null, completed, expected ? " / " + expected : "")
+  );
+}
+
+// src/TomatoIcon.tsx
+var React7 = __toESM(require("react"), 1);
+
+// assets/tomato-spirit.png
+var tomato_spirit_default = "data:image/png;base64,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";
+
+// src/TomatoIcon.tsx
+function TomatoIcon({ size = 24 }) {
+  return /* @__PURE__ */ React7.createElement(
+    "img",
+    {
+      src: tomato_spirit_default,
+      alt: "",
+      "aria-hidden": "true",
+      width: size,
+      height: size,
+      draggable: false,
+      decoding: "async",
+      style: {
+        display: "block",
+        width: size,
+        height: size,
+        objectFit: "contain",
+        flexShrink: 0
+      }
+    }
   );
 }
 
@@ -30575,7 +30614,7 @@ function readerView(mode, now, timeZone, focusDisplay, focusRatio) {
 }
 
 // src/TimerUI.tsx
-var { useState: useState3, useEffect: useEffect3, useRef: useRef3, useSyncExternalStore } = React7;
+var { useState: useState3, useEffect: useEffect3, useRef: useRef3, useSyncExternalStore } = React8;
 var FACES = ["digital", "ring", "flip", "hourglass"];
 function createTimerUI({ useStore, act, t: t3, ctx }) {
   let ui = {
@@ -30646,11 +30685,11 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
   }
   function TaskProgress({ m: m3 }) {
     if (!m3.task) return null;
-    return /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-task-progress" }, /* @__PURE__ */ React7.createElement("span", null, t3("taskProgressLabel")), m3.progress.expected > 0 ? /* @__PURE__ */ React7.createElement(React7.Fragment, null, /* @__PURE__ */ React7.createElement(Tomatoes, { ...m3.progress, label: t3("taskTomatoes") }), /* @__PURE__ */ React7.createElement("span", null, t3("roundsCompleted"), " ", m3.progress.completed, " /", " ", t3("roundsEstimated"), " ", m3.progress.expected)) : /* @__PURE__ */ React7.createElement("span", null, t3("roundsCompleted"), " ", m3.progress.completed, " ", t3("tomatoUnit"), " \xB7", " ", t3("estimateUnset")));
+    return /* @__PURE__ */ React8.createElement("div", { className: "ld-timer-task-progress" }, /* @__PURE__ */ React8.createElement("span", null, t3("taskProgressLabel")), m3.progress.expected > 0 ? /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement(Tomatoes, { ...m3.progress, label: t3("taskTomatoes") }), /* @__PURE__ */ React8.createElement("span", null, t3("roundsCompleted"), " ", m3.progress.completed, " /", " ", t3("roundsEstimated"), " ", m3.progress.expected)) : /* @__PURE__ */ React8.createElement("span", null, t3("roundsCompleted"), " ", m3.progress.completed, " ", t3("tomatoUnit"), " \xB7", " ", t3("estimateUnset")));
   }
   function TaskSelector({ m: m3 }) {
     if (m3.timer)
-      return /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-task-name", title: caption(m3) }, caption(m3));
+      return /* @__PURE__ */ React8.createElement("div", { className: "ld-timer-task-name", title: caption(m3) }, caption(m3));
     const d2 = today(m3.data.settings.timeZone, m3.now);
     const recurring2 = occurrences(m3.data, d2, d2).filter(
       (x4) => x4.repeat.kind !== "none" && !x4.event && !["done", "skipped", "cancelled"].includes(x4.status)
@@ -30672,7 +30711,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
     const current = options.find(
       (x4) => x4.taskId === m3.local.selection.taskId && x4.originalDate === m3.local.selection.originalDate
     );
-    return /* @__PURE__ */ React7.createElement(
+    return /* @__PURE__ */ React8.createElement(
       "select",
       {
         className: "ld-timer-task-select",
@@ -30685,8 +30724,8 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           selection: e3.target.value ? JSON.parse(e3.target.value) : { taskId: "", originalDate: "" }
         })
       },
-      /* @__PURE__ */ React7.createElement("option", { value: "" }, t3("directFocus")),
-      options.map((x4) => /* @__PURE__ */ React7.createElement(
+      /* @__PURE__ */ React8.createElement("option", { value: "" }, t3("directFocus")),
+      options.map((x4) => /* @__PURE__ */ React8.createElement(
         "option",
         {
           key: x4.taskId + x4.originalDate,
@@ -30703,7 +30742,11 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
     m: m3,
     reader = false,
     clockMode = false,
-    header = false
+    header = false,
+    onHeaderOpen = () => {
+    },
+    onReviewChange = () => {
+    }
   }) {
     const [more, setMore] = useState3(false);
     const toolbarControls = useRef3(null);
@@ -30717,6 +30760,14 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
     useEffect3(() => {
       setPanel("");
     }, [clockMode]);
+    useEffect3(() => {
+      if (!header || !notice) return;
+      const timeout = setTimeout(() => setNotice(""), 3500);
+      return () => clearTimeout(timeout);
+    }, [header, notice]);
+    useEffect3(() => {
+      if (header) onReviewChange(ending);
+    }, [header, ending, onReviewChange]);
     const start = async (phase = "focus") => {
       const task = phase === "focus" && m3.task && m3.task.status !== "done" ? m3.local.selection : { taskId: "", originalDate: "" };
       await call({
@@ -30726,6 +30777,22 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
         round: m3.round,
         ...task
       });
+    };
+    const reviewEnd = async () => {
+      if (header) onHeaderOpen();
+      if (m3.timer.status === "running" && m3.state !== "finished") {
+        if (!await call({
+          action: "timer",
+          command: "pause",
+          timerId: m3.timer.id
+        }))
+          return;
+        setPausedForReview(true);
+      }
+      setEnding(true);
+      setMore(false);
+      setPanel("");
+      setNotice("");
     };
     const finish = async (save, rest = false) => {
       if (!m3.timer) return;
@@ -30783,7 +30850,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
       document.addEventListener("pointerdown", outside);
       return () => document.removeEventListener("pointerdown", outside);
     }, [header, more, panel]);
-    return /* @__PURE__ */ React7.createElement(
+    return /* @__PURE__ */ React8.createElement(
       "div",
       {
         ref: toolbarControls,
@@ -30797,7 +30864,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
         },
         className: "ld-timer-controls " + (reader ? "ld-reader-timer-controls" : "")
       },
-      !clockMode && /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-buttons" }, !m3.timer ? /* @__PURE__ */ React7.createElement(
+      !clockMode && /* @__PURE__ */ React8.createElement("div", { className: "ld-timer-buttons" }, !m3.timer ? /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -30806,7 +30873,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           onClick: () => void start()
         },
         t3("startFocus")
-      ) : /* @__PURE__ */ React7.createElement(React7.Fragment, null, (!header || m3.state !== "finished") && /* @__PURE__ */ React7.createElement(
+      ) : /* @__PURE__ */ React8.createElement(React8.Fragment, null, (!header || m3.state !== "finished") && /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -30819,40 +30886,26 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           })
         },
         t3(m3.timer.status === "paused" ? "resume" : "pause")
-      ), /* @__PURE__ */ React7.createElement(
+      ), /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
-          className: "ld-btn ld-primary",
+          className: "ld-btn ld-primary" + (header && m3.state !== "finished" ? " ld-timer-end-action" : ""),
           disabled: m3.busy,
-          onClick: async () => {
-            if (m3.timer.status === "running" && m3.state !== "finished") {
-              if (!await call({
-                action: "timer",
-                command: "pause",
-                timerId: m3.timer.id
-              }))
-                return;
-              setPausedForReview(true);
-            }
-            setEnding(true);
-            setMore(false);
-            setPanel("");
-            setNotice("");
-          }
+          onClick: () => void reviewEnd()
         },
         t3(m3.state === "finished" ? "confirmRound" : "endRound")
-      )), !m3.timer && m3.round > 0 && /* @__PURE__ */ React7.createElement(
+      )), !m3.timer && m3.round > 0 && /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
-          className: "ld-btn",
+          className: "ld-btn" + (header ? " ld-timer-break-action" : ""),
           disabled: m3.busy,
           onClick: () => void start(m3.round % 4 === 0 ? "long" : "short")
         },
         t3("break")
       )),
-      header && /* @__PURE__ */ React7.createElement(
+      header && /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -30863,13 +30916,33 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           title: t3("timerMore"),
           "aria-expanded": more,
           onClick: () => {
+            onHeaderOpen();
             setMore(!more);
             setPanel("");
           }
         },
         "\xB7\xB7\xB7"
       ),
-      (!header || more) && /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-preferences" }, !clockMode && /* @__PURE__ */ React7.createElement(
+      (!header || more) && /* @__PURE__ */ React8.createElement("div", { className: "ld-timer-preferences" }, header && !m3.timer && m3.round > 0 && /* @__PURE__ */ React8.createElement(
+        "button",
+        {
+          type: "button",
+          disabled: m3.busy,
+          onClick: () => {
+            setMore(false);
+            void start(m3.round % 4 === 0 ? "long" : "short");
+          }
+        },
+        t3("break")
+      ), header && m3.timer && m3.state !== "finished" && /* @__PURE__ */ React8.createElement(
+        "button",
+        {
+          type: "button",
+          disabled: m3.busy,
+          onClick: () => void reviewEnd()
+        },
+        t3("endRound")
+      ), !clockMode && /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -30887,7 +30960,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
         " ",
         t3("min"),
         " \u25BE"
-      ), /* @__PURE__ */ React7.createElement(
+      ), /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -30899,7 +30972,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
         },
         t3("clockFace"),
         " \u25BE"
-      ), !reader && /* @__PURE__ */ React7.createElement(
+      ), !reader && /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -30910,7 +30983,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
         },
         t3("fullscreenFocus"),
         " \u26F6"
-      ), !clockMode && /* @__PURE__ */ React7.createElement(
+      ), !clockMode && /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -30924,7 +30997,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
         " ",
         panel === "stats" ? "\u2303" : "\u2304"
       )),
-      !clockMode && panel === "duration" && /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-drawer" }, /* @__PURE__ */ React7.createElement("strong", null, t3("setFocusDuration")), /* @__PURE__ */ React7.createElement("p", { className: "ld-help" }, t3(m3.timer ? "durationNextOnly" : "durationScopeHint")), /* @__PURE__ */ React7.createElement("div", { className: "ld-duration-presets" }, [10, 15, 25, 45, 60].map((n2) => /* @__PURE__ */ React7.createElement(
+      !clockMode && panel === "duration" && /* @__PURE__ */ React8.createElement("div", { className: "ld-timer-drawer" }, /* @__PURE__ */ React8.createElement("strong", null, t3("setFocusDuration")), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3(m3.timer ? "durationNextOnly" : "durationScopeHint")), /* @__PURE__ */ React8.createElement("div", { className: "ld-duration-presets" }, [10, 15, 25, 45, 60].map((n2) => /* @__PURE__ */ React8.createElement(
         "button",
         {
           key: n2,
@@ -30933,7 +31006,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           onClick: () => setMinutes(String(n2))
         },
         n2
-      ))), /* @__PURE__ */ React7.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React7.createElement("span", null, t3("customMinutes")), /* @__PURE__ */ React7.createElement(
+      ))), /* @__PURE__ */ React8.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React8.createElement("span", null, t3("customMinutes")), /* @__PURE__ */ React8.createElement(
         "input",
         {
           type: "number",
@@ -30943,7 +31016,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           value: minutes,
           onChange: (e3) => setMinutes(e3.target.value)
         }
-      )), error && /* @__PURE__ */ React7.createElement("p", { className: "ld-error", role: "alert" }, error), /* @__PURE__ */ React7.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React7.createElement(
+      )), error && /* @__PURE__ */ React8.createElement("p", { className: "ld-error", role: "alert" }, error), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -30952,7 +31025,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           onClick: () => void applyMinutes(false)
         },
         t3("useOnce")
-      ), /* @__PURE__ */ React7.createElement(
+      ), /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -30962,7 +31035,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
         },
         t3("setDefault")
       ))),
-      panel === "face" && /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-drawer" }, /* @__PURE__ */ React7.createElement("strong", null, t3("clockFace")), /* @__PURE__ */ React7.createElement("div", { className: "ld-face-options" }, FACES.map((face) => /* @__PURE__ */ React7.createElement(
+      panel === "face" && /* @__PURE__ */ React8.createElement("div", { className: "ld-timer-drawer" }, /* @__PURE__ */ React8.createElement("strong", null, t3("clockFace")), header && /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("toolbarClockFaceHint")), /* @__PURE__ */ React8.createElement("div", { className: "ld-face-options" }, FACES.map((face) => /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -30977,7 +31050,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               setPanel("");
           }
         },
-        /* @__PURE__ */ React7.createElement(
+        /* @__PURE__ */ React8.createElement(
           ClockFace,
           {
             face,
@@ -30986,8 +31059,8 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
             reduceMotion: true
           }
         ),
-        /* @__PURE__ */ React7.createElement("span", null, t3("face" + face))
-      ))), /* @__PURE__ */ React7.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React7.createElement(
+        /* @__PURE__ */ React8.createElement("span", null, t3("face" + face))
+      ))), /* @__PURE__ */ React8.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React8.createElement(
         "input",
         {
           type: "checkbox",
@@ -30999,7 +31072,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           })
         }
       ), t3("reduceClockMotion"))),
-      !clockMode && panel === "stats" && /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-drawer" }, /* @__PURE__ */ React7.createElement("div", { className: "ld-focus-stat" }, /* @__PURE__ */ React7.createElement("span", null, t3("todayTomatoes")), /* @__PURE__ */ React7.createElement("strong", null, m3.round, " ", t3("tomatoUnit"))), /* @__PURE__ */ React7.createElement("div", { className: "ld-focus-stat" }, /* @__PURE__ */ React7.createElement("span", null, t3("focused")), /* @__PURE__ */ React7.createElement("strong", null, m3.recordedMinutes, " ", t3("min"))), /* @__PURE__ */ React7.createElement("p", { className: "ld-help" }, m3.round > 0 && m3.round % 4 === 0 ? t3("longBreakReady") : t3("untilLongBreak") + " " + (4 - m3.round % 4) + " " + t3("roundUnit")), m3.task && /* @__PURE__ */ React7.createElement(React7.Fragment, null, /* @__PURE__ */ React7.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React7.createElement("span", null, t3("estimatedTomatoes")), /* @__PURE__ */ React7.createElement(
+      !clockMode && panel === "stats" && /* @__PURE__ */ React8.createElement("div", { className: "ld-timer-drawer" }, /* @__PURE__ */ React8.createElement("div", { className: "ld-focus-stat" }, /* @__PURE__ */ React8.createElement("span", null, t3("todayTomatoes")), /* @__PURE__ */ React8.createElement("strong", null, m3.round, " ", t3("tomatoUnit"))), /* @__PURE__ */ React8.createElement("div", { className: "ld-focus-stat" }, /* @__PURE__ */ React8.createElement("span", null, t3("focused")), /* @__PURE__ */ React8.createElement("strong", null, m3.recordedMinutes, " ", t3("min"))), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, m3.round > 0 && m3.round % 4 === 0 ? t3("longBreakReady") : t3("untilLongBreak") + " " + (4 - m3.round % 4) + " " + t3("roundUnit")), m3.task && /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React8.createElement("span", null, t3("estimatedTomatoes")), /* @__PURE__ */ React8.createElement(
         "input",
         {
           type: "number",
@@ -31008,7 +31081,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           value: estimate,
           onChange: (e3) => setEstimate(e3.target.value)
         }
-      )), /* @__PURE__ */ React7.createElement(
+      )), /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -31024,7 +31097,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
         },
         t3("save")
       ))),
-      !clockMode && ending && m3.timer && /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-drawer ld-end-review" }, /* @__PURE__ */ React7.createElement("strong", null, t3(m3.state === "finished" ? "roundComplete" : "endRound")), /* @__PURE__ */ React7.createElement("p", { className: "ld-help" }, t3(m3.state === "finished" ? "completeReviewHint" : "interrupted")), m3.timer.phase === "focus" && /* @__PURE__ */ React7.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React7.createElement("span", null, t3("seconds")), /* @__PURE__ */ React7.createElement(
+      !clockMode && ending && m3.timer && /* @__PURE__ */ React8.createElement("div", { className: "ld-timer-drawer ld-end-review" }, /* @__PURE__ */ React8.createElement("strong", null, t3(m3.state === "finished" ? "roundComplete" : "endRound")), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3(m3.state === "finished" ? "completeReviewHint" : "interrupted")), m3.timer.phase === "focus" && /* @__PURE__ */ React8.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React8.createElement("span", null, t3("seconds")), /* @__PURE__ */ React8.createElement(
         "input",
         {
           type: "number",
@@ -31034,7 +31107,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           placeholder: String(Math.floor(m3.elapsed)),
           onChange: (e3) => setAdjust(e3.target.value)
         }
-      )), /* @__PURE__ */ React7.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React7.createElement(
+      )), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -31043,7 +31116,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           onClick: () => void finish(true)
         },
         t3(m3.timer.phase === "focus" ? "finish" : "finishRest")
-      ), m3.timer.phase === "focus" && m3.state === "finished" && /* @__PURE__ */ React7.createElement(
+      ), m3.timer.phase === "focus" && m3.state === "finished" && /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -31052,7 +31125,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           onClick: () => void finish(true, true)
         },
         t3("saveAndRest")
-      ), /* @__PURE__ */ React7.createElement(
+      ), /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -31061,7 +31134,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           onClick: () => void finish(false)
         },
         t3(m3.timer.phase === "focus" ? "discard" : "skipRest")
-      ), /* @__PURE__ */ React7.createElement(
+      ), /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -31081,15 +31154,28 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
         },
         t3("cancel")
       ))),
-      m3.error && /* @__PURE__ */ React7.createElement("p", { className: "ld-error", role: "alert" }, m3.error),
-      notice && /* @__PURE__ */ React7.createElement("p", { className: "ld-help", role: "status" }, notice)
+      m3.error && /* @__PURE__ */ React8.createElement("p", { className: "ld-error", role: "alert" }, m3.error),
+      notice && /* @__PURE__ */ React8.createElement("p", { className: "ld-help", role: "status" }, notice)
     );
   }
   function Timer({ compact = false, bar = false, header = false }) {
     const m3 = useModel();
+    const [details, setDetails] = useState3(false);
+    const [reviewing, setReviewing] = useState3(false);
+    const headerRoot = useRef3(null);
+    const tomatoButton = useRef3(null);
+    useEffect3(() => {
+      if (!header || !details) return;
+      const close = (event) => {
+        if (headerRoot.current && !headerRoot.current.contains(event.target))
+          setDetails(false);
+      };
+      document.addEventListener("pointerdown", close);
+      return () => document.removeEventListener("pointerdown", close);
+    }, [header, details]);
     if (!m3) return null;
     if (compact)
-      return m3.timer ? /* @__PURE__ */ React7.createElement(
+      return m3.timer ? /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -31097,16 +31183,76 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           title: status(m3) + " \xB7 " + t3("timeRemaining") + " " + m3.display,
           onClick: () => ctx.layout.selectPanel("life-desk")
         },
-        /* @__PURE__ */ React7.createElement("span", { "aria-hidden": "true" }, "\u25F7"),
-        /* @__PURE__ */ React7.createElement("span", null, m3.display)
+        /* @__PURE__ */ React8.createElement("span", { "aria-hidden": "true" }, "\u25F7"),
+        /* @__PURE__ */ React8.createElement("span", null, m3.display)
       ) : null;
-    return /* @__PURE__ */ React7.createElement(
+    if (header) {
+      const description = t3("focus") + " \xB7 " + status(m3) + " \xB7 " + caption(m3);
+      const relatedTask = (!m3.timer || m3.timer.phase === "focus") && m3.task;
+      return /* @__PURE__ */ React8.createElement(
+        "section",
+        {
+          className: "ld-pomodoro-toolbar",
+          "aria-label": t3("focus"),
+          "data-state": m3.state,
+          ref: headerRoot,
+          onKeyDown: (e3) => {
+            if (e3.key === "Escape" && details) {
+              e3.preventDefault();
+              setDetails(false);
+              tomatoButton.current?.focus();
+            }
+          }
+        },
+        /* @__PURE__ */ React8.createElement("div", { className: "ld-pomodoro-summary" }, /* @__PURE__ */ React8.createElement(
+          "button",
+          {
+            type: "button",
+            ref: tomatoButton,
+            className: "ld-tomato-trigger",
+            "aria-label": t3("tomatoDetails") + " \xB7 " + description,
+            title: description + " \xB7 " + t3("tomatoDetails"),
+            "aria-expanded": details,
+            disabled: reviewing,
+            onClick: () => setDetails((v3) => !v3)
+          },
+          /* @__PURE__ */ React8.createElement(TomatoIcon, null)
+        ), /* @__PURE__ */ React8.createElement(
+          "span",
+          {
+            className: "ld-pomodoro-time",
+            role: "timer",
+            "aria-label": t3(m3.state === "ready" ? "plannedDuration" : "timeRemaining") + " " + m3.display
+          },
+          m3.display
+        ), relatedTask && /* @__PURE__ */ React8.createElement("span", { className: "ld-pomodoro-task", title: caption(m3) }, caption(m3))),
+        /* @__PURE__ */ React8.createElement(
+          Controls,
+          {
+            m: m3,
+            header: true,
+            onHeaderOpen: () => setDetails(false),
+            onReviewChange: setReviewing
+          }
+        ),
+        details && /* @__PURE__ */ React8.createElement("div", { className: "ld-pomodoro-details" }, /* @__PURE__ */ React8.createElement("strong", null, t3("focus"), " \xB7 ", status(m3)), /* @__PURE__ */ React8.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React8.createElement("span", null, t3("selectTask")), /* @__PURE__ */ React8.createElement(TaskSelector, { m: m3 })), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3(m3.state === "ready" ? "plannedDuration" : "timeRemaining")), /* @__PURE__ */ React8.createElement("div", { className: "ld-pomodoro-detail-clock" }, /* @__PURE__ */ React8.createElement(
+          ClockFace,
+          {
+            face: m3.data.settings.timerFace,
+            display: m3.display,
+            ratio: m3.ratio,
+            reduceMotion: m3.data.settings.reduceMotion
+          }
+        )), /* @__PURE__ */ React8.createElement(TaskProgress, { m: m3 }))
+      );
+    }
+    return /* @__PURE__ */ React8.createElement(
       "section",
       {
         className: "ld-focus-card ld-timer-v2 " + (bar ? "ld-timer-bar" : ""),
         "aria-label": t3("focus")
       },
-      /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-overview" }, /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-context" }, /* @__PURE__ */ React7.createElement("span", { className: "ld-timer-state state-" + m3.state }, status(m3)), /* @__PURE__ */ React7.createElement(TaskSelector, { m: m3 })), /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-time" }, /* @__PURE__ */ React7.createElement("span", { className: "ld-timer-time-label" }, t3(m3.state === "ready" ? "plannedDuration" : "timeRemaining")), /* @__PURE__ */ React7.createElement(
+      /* @__PURE__ */ React8.createElement("div", { className: "ld-timer-overview" }, /* @__PURE__ */ React8.createElement("div", { className: "ld-timer-context" }, /* @__PURE__ */ React8.createElement("span", { className: "ld-timer-state state-" + m3.state }, status(m3)), /* @__PURE__ */ React8.createElement(TaskSelector, { m: m3 })), /* @__PURE__ */ React8.createElement("div", { className: "ld-timer-time" }, /* @__PURE__ */ React8.createElement("span", { className: "ld-timer-time-label" }, t3(m3.state === "ready" ? "plannedDuration" : "timeRemaining")), /* @__PURE__ */ React8.createElement(
         ClockFace,
         {
           face: m3.data.settings.timerFace,
@@ -31116,8 +31262,8 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           reduceMotion: m3.data.settings.reduceMotion
         }
       ))),
-      /* @__PURE__ */ React7.createElement(TaskProgress, { m: m3 }),
-      /* @__PURE__ */ React7.createElement(Controls, { m: m3, header })
+      /* @__PURE__ */ React8.createElement(TaskProgress, { m: m3 }),
+      /* @__PURE__ */ React8.createElement(Controls, { m: m3, header })
     );
   }
   function Fullscreen() {
@@ -31260,7 +31406,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
     );
     const clock = displayView.isClock;
     const actualClock = displayView.wallTime;
-    return /* @__PURE__ */ React7.createElement(
+    return /* @__PURE__ */ React8.createElement(
       "section",
       {
         ref: root,
@@ -31270,13 +31416,13 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.12.1",
+        "data-reader-version": "0.12.2",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
         tabIndex: -1
       },
-      /* @__PURE__ */ React7.createElement("header", { className: "ld-reader-top ld-reader-auto-hide" }, /* @__PURE__ */ React7.createElement("div", { className: "ld-reader-mode" }, /* @__PURE__ */ React7.createElement(
+      /* @__PURE__ */ React8.createElement("header", { className: "ld-reader-top ld-reader-auto-hide" }, /* @__PURE__ */ React8.createElement("div", { className: "ld-reader-mode" }, /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -31289,7 +31435,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           }
         },
         t3("countdownMode")
-      ), /* @__PURE__ */ React7.createElement(
+      ), /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -31302,7 +31448,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           }
         },
         t3("wallClockMode")
-      )), /* @__PURE__ */ React7.createElement("div", null, /* @__PURE__ */ React7.createElement("span", null, t3(native ? "nativeFullscreen" : "appFullscreen")), !native && /* @__PURE__ */ React7.createElement(
+      )), /* @__PURE__ */ React8.createElement("div", null, /* @__PURE__ */ React8.createElement("span", null, t3(native ? "nativeFullscreen" : "appFullscreen")), !native && /* @__PURE__ */ React8.createElement(
         "button",
         {
           type: "button",
@@ -31314,8 +31460,8 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           }
         },
         t3("tryNativeFullscreen")
-      ), /* @__PURE__ */ React7.createElement("button", { type: "button", onClick: () => setUI({ reader: false }) }, t3("exitFullscreen"), " \u26F6"))),
-      /* @__PURE__ */ React7.createElement("div", { className: "ld-reader-display" }, /* @__PURE__ */ React7.createElement("div", { className: "ld-reader-caption" }, clock ? t3("wallClockMode") : caption(m3)), /* @__PURE__ */ React7.createElement("div", { className: "ld-timer-state state-" + m3.state }, clock ? m3.timer ? t3("timerContinues") : "" : status(m3)), /* @__PURE__ */ React7.createElement(
+      ), /* @__PURE__ */ React8.createElement("button", { type: "button", onClick: () => setUI({ reader: false }) }, t3("exitFullscreen"), " \u26F6"))),
+      /* @__PURE__ */ React8.createElement("div", { className: "ld-reader-display" }, /* @__PURE__ */ React8.createElement("div", { className: "ld-reader-caption" }, clock ? t3("wallClockMode") : caption(m3)), /* @__PURE__ */ React8.createElement("div", { className: "ld-timer-state state-" + m3.state }, clock ? m3.timer ? t3("timerContinues") : "" : status(m3)), /* @__PURE__ */ React8.createElement(
         ClockFace,
         {
           face: m3.data.settings.timerFace,
@@ -31323,10 +31469,10 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           ratio: displayView.ratio,
           reduceMotion: m3.data.settings.reduceMotion
         }
-      ), displayView.showFocus && /* @__PURE__ */ React7.createElement(React7.Fragment, null, /* @__PURE__ */ React7.createElement("span", { className: "ld-reader-remaining" }, t3(
+      ), displayView.showFocus && /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement("span", { className: "ld-reader-remaining" }, t3(
         m3.state === "ready" ? "plannedDuration" : m3.state === "finished" ? "roundComplete" : "timeRemaining"
-      )), /* @__PURE__ */ React7.createElement(TaskProgress, { m: m3 }), /* @__PURE__ */ React7.createElement("div", { className: "ld-reader-current" }, t3("currentWallTime"), " ", actualClock.slice(0, 5)))),
-      /* @__PURE__ */ React7.createElement("footer", { className: "ld-reader-bottom ld-reader-auto-hide" }, /* @__PURE__ */ React7.createElement(Controls, { m: m3, reader: true, clockMode: clock }), /* @__PURE__ */ React7.createElement("label", { className: "ld-reader-brightness" }, /* @__PURE__ */ React7.createElement("span", null, t3("displayBrightness")), /* @__PURE__ */ React7.createElement(
+      )), /* @__PURE__ */ React8.createElement(TaskProgress, { m: m3 }), /* @__PURE__ */ React8.createElement("div", { className: "ld-reader-current" }, t3("currentWallTime"), " ", actualClock.slice(0, 5)))),
+      /* @__PURE__ */ React8.createElement("footer", { className: "ld-reader-bottom ld-reader-auto-hide" }, /* @__PURE__ */ React8.createElement(Controls, { m: m3, reader: true, clockMode: clock }), /* @__PURE__ */ React8.createElement("label", { className: "ld-reader-brightness" }, /* @__PURE__ */ React8.createElement("span", null, t3("displayBrightness")), /* @__PURE__ */ React8.createElement(
         "input",
         {
           type: "range",
@@ -31362,7 +31508,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React7.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React7.createElement("small", { className: "ld-reader-build" }, "v", "0.12.1")))
+      )), /* @__PURE__ */ React8.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React8.createElement("small", { className: "ld-reader-build" }, "v", "0.12.2")))
     );
   }
   return {
@@ -31734,43 +31880,43 @@ function upcomingPlans(state, date, days = 7) {
 }
 
 // src/PlanningUI.tsx
-var React8 = __toESM(require("react"), 1);
-var { useState: useState4, useRef: useRef4, useEffect: useEffect4 } = React8;
+var React9 = __toESM(require("react"), 1);
+var { useState: useState4, useRef: useRef4, useEffect: useEffect4 } = React9;
 function createPlanningUI({ t: t3, Btn, Field }) {
   function TaskFields({ draft, setDraft, projects }) {
     const change = (key, value) => setDraft({ ...draft, [key]: value });
-    return /* @__PURE__ */ React8.createElement("div", { className: "ld-form ld-capture-fields" }, /* @__PURE__ */ React8.createElement(Field, { label: t3("projects") }, /* @__PURE__ */ React8.createElement(
+    return /* @__PURE__ */ React9.createElement("div", { className: "ld-form ld-capture-fields" }, /* @__PURE__ */ React9.createElement(Field, { label: t3("projects") }, /* @__PURE__ */ React9.createElement(
       "select",
       {
         value: draft.projectId,
         onChange: (e3) => change("projectId", e3.target.value)
       },
-      /* @__PURE__ */ React8.createElement("option", { value: "" }, t3("noProject")),
-      projects.map((p3) => /* @__PURE__ */ React8.createElement("option", { key: p3.id, value: p3.id }, p3.title))
-    )), /* @__PURE__ */ React8.createElement(Field, { label: t3("area") }, /* @__PURE__ */ React8.createElement(
+      /* @__PURE__ */ React9.createElement("option", { value: "" }, t3("noProject")),
+      projects.map((p3) => /* @__PURE__ */ React9.createElement("option", { key: p3.id, value: p3.id }, p3.title))
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("area") }, /* @__PURE__ */ React9.createElement(
       "select",
       {
         value: draft.area,
         onChange: (e3) => change("area", e3.target.value)
       },
-      ["inbox", "work", "life"].map((x4) => /* @__PURE__ */ React8.createElement("option", { key: x4, value: x4 }, t3(
+      ["inbox", "work", "life"].map((x4) => /* @__PURE__ */ React9.createElement("option", { key: x4, value: x4 }, t3(
         x4 === "inbox" ? "inboxArea" : x4 === "life" ? "lifeArea" : "work"
       )))
-    )), /* @__PURE__ */ React8.createElement(Field, { label: t3("planStart") }, /* @__PURE__ */ React8.createElement(
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("planStart") }, /* @__PURE__ */ React9.createElement(
       "input",
       {
         type: "date",
         value: draft.date,
         onChange: (e3) => change("date", e3.target.value)
       }
-    )), /* @__PURE__ */ React8.createElement(Field, { label: t3("deadline") }, /* @__PURE__ */ React8.createElement(
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("deadline") }, /* @__PURE__ */ React9.createElement(
       "input",
       {
         type: "date",
         value: draft.deadline,
         onChange: (e3) => change("deadline", e3.target.value)
       }
-    )), /* @__PURE__ */ React8.createElement(Field, { label: t3("estimateMinutes") }, /* @__PURE__ */ React8.createElement(
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("estimateMinutes") }, /* @__PURE__ */ React9.createElement(
       "input",
       {
         type: "number",
@@ -31779,7 +31925,7 @@ function createPlanningUI({ t: t3, Btn, Field }) {
         value: draft.minutes,
         onChange: (e3) => change("minutes", Number(e3.target.value))
       }
-    )), /* @__PURE__ */ React8.createElement(Field, { label: t3("estimatePomodoros") }, /* @__PURE__ */ React8.createElement(
+    )), /* @__PURE__ */ React9.createElement(Field, { label: t3("estimatePomodoros") }, /* @__PURE__ */ React9.createElement(
       "input",
       {
         type: "number",
@@ -31851,7 +31997,7 @@ function createPlanningUI({ t: t3, Btn, Field }) {
         locked.current = false;
       }
     }
-    return /* @__PURE__ */ React8.createElement(
+    return /* @__PURE__ */ React9.createElement(
       "section",
       {
         id: "ld-quick-capture",
@@ -31864,7 +32010,7 @@ function createPlanningUI({ t: t3, Btn, Field }) {
           }
         }
       },
-      /* @__PURE__ */ React8.createElement("form", { onSubmit: save }, /* @__PURE__ */ React8.createElement("fieldset", { disabled: busy }, /* @__PURE__ */ React8.createElement("div", { className: "ld-capture-title" }, /* @__PURE__ */ React8.createElement(
+      /* @__PURE__ */ React9.createElement("form", { onSubmit: save }, /* @__PURE__ */ React9.createElement("fieldset", { disabled: busy }, /* @__PURE__ */ React9.createElement("div", { className: "ld-capture-title" }, /* @__PURE__ */ React9.createElement(
         "input",
         {
           ref: input,
@@ -31874,14 +32020,14 @@ function createPlanningUI({ t: t3, Btn, Field }) {
           value: draft.title,
           onChange: (e3) => setDraft({ ...draft, title: e3.target.value })
         }
-      ), /* @__PURE__ */ React8.createElement(Btn, { type: "submit", primary: true, disabled: busy || !draft.title.trim() }, t3("captureSave")), /* @__PURE__ */ React8.createElement(Btn, { type: "button", onClick: onClose }, t3("close"))), /* @__PURE__ */ React8.createElement("details", null, /* @__PURE__ */ React8.createElement("summary", null, t3("captureOptions")), /* @__PURE__ */ React8.createElement(
+      ), /* @__PURE__ */ React9.createElement(Btn, { type: "submit", primary: true, disabled: busy || !draft.title.trim() }, t3("captureSave")), /* @__PURE__ */ React9.createElement(Btn, { type: "button", onClick: onClose }, t3("close"))), /* @__PURE__ */ React9.createElement("details", null, /* @__PURE__ */ React9.createElement("summary", null, t3("captureOptions")), /* @__PURE__ */ React9.createElement(
         TaskFields,
         {
           draft,
           setDraft,
           projects
         }
-      )), /* @__PURE__ */ React8.createElement(
+      )), /* @__PURE__ */ React9.createElement(
         Btn,
         {
           type: "button",
@@ -31891,7 +32037,7 @@ function createPlanningUI({ t: t3, Btn, Field }) {
           )
         },
         t3("captureDetails")
-      )), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("captureHint")), error && /* @__PURE__ */ React8.createElement("p", { role: "alert", className: "ld-error" }, error))
+      )), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("captureHint")), error && /* @__PURE__ */ React9.createElement("p", { role: "alert", className: "ld-error" }, error))
     );
   }
   function PlanPanel({
@@ -31926,7 +32072,7 @@ function createPlanningUI({ t: t3, Btn, Field }) {
       }
     }
     const load = plan.load;
-    return /* @__PURE__ */ React8.createElement("section", { className: "ld-plan-panel", "aria-label": t3("dailyPlan") }, /* @__PURE__ */ React8.createElement("div", { className: "ld-plan-heading" }, /* @__PURE__ */ React8.createElement("h2", null, /* @__PURE__ */ React8.createElement(
+    return /* @__PURE__ */ React9.createElement("section", { className: "ld-plan-panel", "aria-label": t3("dailyPlan") }, /* @__PURE__ */ React9.createElement("div", { className: "ld-plan-heading" }, /* @__PURE__ */ React9.createElement("h2", null, /* @__PURE__ */ React9.createElement(
       "button",
       {
         type: "button",
@@ -31935,9 +32081,9 @@ function createPlanningUI({ t: t3, Btn, Field }) {
         "aria-controls": "ld-plan-body",
         onClick: onFold
       },
-      /* @__PURE__ */ React8.createElement("span", { className: "ld-fold-chevron" }, "\u203A"),
+      /* @__PURE__ */ React9.createElement("span", { className: "ld-fold-chevron" }, "\u203A"),
       t3("dailyPlan")
-    )), /* @__PURE__ */ React8.createElement("span", null, date)), /* @__PURE__ */ React8.createElement("div", { id: "ld-plan-body", hidden: folded }, /* @__PURE__ */ React8.createElement("div", { className: "ld-plan-stats" }, /* @__PURE__ */ React8.createElement("div", null, /* @__PURE__ */ React8.createElement("strong", null, load.knownMinutes), /* @__PURE__ */ React8.createElement("span", null, t3("estimatedMin"))), /* @__PURE__ */ React8.createElement("div", null, /* @__PURE__ */ React8.createElement("strong", null, load.unknownCount), /* @__PURE__ */ React8.createElement("span", null, t3("unestimatedTasks"))), /* @__PURE__ */ React8.createElement("div", null, /* @__PURE__ */ React8.createElement("strong", null, load.recordedFocusMinutes), /* @__PURE__ */ React8.createElement("span", null, t3("recordedFocus")))), /* @__PURE__ */ React8.createElement("form", { className: "ld-plan-capacity", onSubmit: save }, /* @__PURE__ */ React8.createElement("label", null, t3("availableToday"), /* @__PURE__ */ React8.createElement(
+    )), /* @__PURE__ */ React9.createElement("span", null, date)), /* @__PURE__ */ React9.createElement("div", { id: "ld-plan-body", hidden: folded }, /* @__PURE__ */ React9.createElement("div", { className: "ld-plan-stats" }, /* @__PURE__ */ React9.createElement("div", null, /* @__PURE__ */ React9.createElement("strong", null, load.knownMinutes), /* @__PURE__ */ React9.createElement("span", null, t3("estimatedMin"))), /* @__PURE__ */ React9.createElement("div", null, /* @__PURE__ */ React9.createElement("strong", null, load.unknownCount), /* @__PURE__ */ React9.createElement("span", null, t3("unestimatedTasks"))), /* @__PURE__ */ React9.createElement("div", null, /* @__PURE__ */ React9.createElement("strong", null, load.recordedFocusMinutes), /* @__PURE__ */ React9.createElement("span", null, t3("recordedFocus")))), /* @__PURE__ */ React9.createElement("form", { className: "ld-plan-capacity", onSubmit: save }, /* @__PURE__ */ React9.createElement("label", null, t3("availableToday"), /* @__PURE__ */ React9.createElement(
       "input",
       {
         type: "number",
@@ -31948,7 +32094,7 @@ function createPlanningUI({ t: t3, Btn, Field }) {
         placeholder: t3("notSet"),
         onChange: (e3) => setValue(e3.target.value)
       }
-    )), /* @__PURE__ */ React8.createElement(Btn, { type: "submit", disabled: busy }, t3("save"))), /* @__PURE__ */ React8.createElement(
+    )), /* @__PURE__ */ React9.createElement(Btn, { type: "submit", disabled: busy }, t3("save"))), /* @__PURE__ */ React9.createElement(
       "p",
       {
         className: "ld-help " + (load.overMinutes > 0 ? "ld-plan-over" : "")
@@ -31956,7 +32102,7 @@ function createPlanningUI({ t: t3, Btn, Field }) {
       capacity === null ? t3("capacityHint") : load.overMinutes > 0 ? t3("overCapacity") + " " + load.overMinutes + " " + t3("min") : t3("withinCapacity"),
       " \xB7 ",
       t3("estimateHint")
-    ), error && /* @__PURE__ */ React8.createElement("p", { className: "ld-error", role: "alert" }, error)));
+    ), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error)));
   }
   function InboxItem({ task, projects, act, busy, onEdit, day }) {
     const [editing, setEditing] = useState4(false), [draft, setDraft] = useState4(null), [error, setError] = useState4("");
@@ -31990,14 +32136,14 @@ function createPlanningUI({ t: t3, Btn, Field }) {
         setError(e4.message);
       }
     }
-    return /* @__PURE__ */ React8.createElement("article", { className: "ld-inbox-item" }, /* @__PURE__ */ React8.createElement("div", { className: "ld-inbox-heading" }, /* @__PURE__ */ React8.createElement("button", { className: "ld-task-body", onClick: () => onEdit(task) }, /* @__PURE__ */ React8.createElement("span", { className: "ld-task-title" }, task.title), /* @__PURE__ */ React8.createElement("span", { className: "ld-task-meta" }, task.deadline ? t3("deadline") + " " + task.deadline : t3("awaitingTriage"))), !editing && /* @__PURE__ */ React8.createElement(Btn, { disabled: busy, onClick: edit }, t3("organize"))), editing && /* @__PURE__ */ React8.createElement("form", { onSubmit: save }, /* @__PURE__ */ React8.createElement(TaskFields, { draft, setDraft, projects }), /* @__PURE__ */ React8.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React8.createElement(
+    return /* @__PURE__ */ React9.createElement("article", { className: "ld-inbox-item" }, /* @__PURE__ */ React9.createElement("div", { className: "ld-inbox-heading" }, /* @__PURE__ */ React9.createElement("button", { className: "ld-task-body", onClick: () => onEdit(task) }, /* @__PURE__ */ React9.createElement("span", { className: "ld-task-title" }, task.title), /* @__PURE__ */ React9.createElement("span", { className: "ld-task-meta" }, task.deadline ? t3("deadline") + " " + task.deadline : t3("awaitingTriage"))), !editing && /* @__PURE__ */ React9.createElement(Btn, { disabled: busy, onClick: edit }, t3("organize"))), editing && /* @__PURE__ */ React9.createElement("form", { onSubmit: save }, /* @__PURE__ */ React9.createElement(TaskFields, { draft, setDraft, projects }), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
       Btn,
       {
         type: "button",
         onClick: () => setDraft({ ...draft, date: day })
       },
       t3("planToday")
-    ), /* @__PURE__ */ React8.createElement(Btn, { type: "submit", primary: true, disabled: busy }, t3("save")), /* @__PURE__ */ React8.createElement(Btn, { type: "button", onClick: () => setEditing(false) }, t3("cancel"))), /* @__PURE__ */ React8.createElement("p", { className: "ld-help" }, t3("triageHint"))), error && /* @__PURE__ */ React8.createElement("p", { className: "ld-error", role: "alert" }, error));
+    ), /* @__PURE__ */ React9.createElement(Btn, { type: "submit", primary: true, disabled: busy }, t3("save")), /* @__PURE__ */ React9.createElement(Btn, { type: "button", onClick: () => setEditing(false) }, t3("cancel"))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("triageHint"))), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error));
   }
   return { QuickCapture, PlanPanel, InboxItem };
 }
@@ -32067,7 +32213,7 @@ function habitFromTemplate(template, effective, t3) {
 }
 
 // src/ReviewUI.tsx
-var React9 = __toESM(require("react"), 1);
+var React10 = __toESM(require("react"), 1);
 
 // src/review-template.js
 var MAX_REVIEW_PROMPTS = 8;
@@ -32105,7 +32251,7 @@ function hasReviewContent(text, template = "", fallback = DEFAULT_REVIEW_TEMPLAT
 }
 
 // src/ReviewUI.tsx
-var { useState: useState5, useEffect: useEffect5, useRef: useRef5, useId: useId2 } = React9;
+var { useState: useState5, useEffect: useEffect5, useRef: useRef5, useId: useId2 } = React10;
 function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
   const versions = /* @__PURE__ */ new Map();
   const request = createRequest(send, t3, "api/life-desk-review-spirit", 45e3);
@@ -32146,7 +32292,7 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         setError(e3.message);
       }
     };
-    return /* @__PURE__ */ React9.createElement(Modal, { title: t3("reviewTemplateTitle"), onClose: closeSafely }, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("reviewTemplateHelp")), /* @__PURE__ */ React9.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React9.createElement("span", null, t3("reviewTemplateQuestions")), /* @__PURE__ */ React9.createElement(
+    return /* @__PURE__ */ React10.createElement(Modal, { title: t3("reviewTemplateTitle"), onClose: closeSafely }, /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("reviewTemplateHelp")), /* @__PURE__ */ React10.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React10.createElement("span", null, t3("reviewTemplateQuestions")), /* @__PURE__ */ React10.createElement(
       "textarea",
       {
         className: "ld-review-text",
@@ -32159,7 +32305,7 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
           setDefault(false);
         }
       }
-    )), (data.settings.reviewTemplate || "") !== original && /* @__PURE__ */ React9.createElement("div", { className: "ld-review-conflict" }, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("reviewConflictHint")), /* @__PURE__ */ React9.createElement("pre", null, data.settings.reviewTemplate || t3("defaultReviewTemplate")), /* @__PURE__ */ React9.createElement(
+    )), (data.settings.reviewTemplate || "") !== original && /* @__PURE__ */ React10.createElement("div", { className: "ld-review-conflict" }, /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("reviewConflictHint")), /* @__PURE__ */ React10.createElement("pre", null, data.settings.reviewTemplate || t3("defaultReviewTemplate")), /* @__PURE__ */ React10.createElement(
       Btn,
       {
         disabled: busy,
@@ -32169,7 +32315,7 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         }
       },
       t3("reviewTemplateKeep")
-    )), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(Btn, { primary: true, disabled: busy, onClick: save }, t3("saveTemplate")), /* @__PURE__ */ React9.createElement(
+    )), error && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, error), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { primary: true, disabled: busy, onClick: save }, t3("saveTemplate")), /* @__PURE__ */ React10.createElement(
       Btn,
       {
         disabled: busy,
@@ -32179,7 +32325,7 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         }
       },
       t3("restoreDefaultTemplate")
-    ), /* @__PURE__ */ React9.createElement(Btn, { disabled: busy, onClick: closeSafely }, t3("cancel"))));
+    ), /* @__PURE__ */ React10.createElement(Btn, { disabled: busy, onClick: closeSafely }, t3("cancel"))));
   }
   function ReviewAssistant({ date, text, version, onUse, close }) {
     const initial = useRef5({
@@ -32242,9 +32388,9 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         setError(e3.message);
       }
     };
-    return /* @__PURE__ */ React9.createElement("section", { className: "ld-review-assistant", "aria-label": t3("reviewAI") }, /* @__PURE__ */ React9.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React9.createElement("h3", null, t3("reviewAI"), " \xB7 ", date), /* @__PURE__ */ React9.createElement(Btn, { onClick: close }, t3("close"))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("reviewAIHint")), /* @__PURE__ */ React9.createElement("div", { className: "ld-review-chat", "aria-live": "polite" }, view?.messages?.filter(
+    return /* @__PURE__ */ React10.createElement("section", { className: "ld-review-assistant", "aria-label": t3("reviewAI") }, /* @__PURE__ */ React10.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React10.createElement("h3", null, t3("reviewAI"), " \xB7 ", date), /* @__PURE__ */ React10.createElement(Btn, { onClick: close }, t3("close"))), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("reviewAIHint")), /* @__PURE__ */ React10.createElement("div", { className: "ld-review-chat", "aria-live": "polite" }, view?.messages?.filter(
       (m3) => ["user", "assistant", "error"].includes(m3.role)
-    ).map((m3, i3) => /* @__PURE__ */ React9.createElement("div", { key: m3.id, className: "ld-review-chat-message" }, /* @__PURE__ */ React9.createElement("strong", null, m3.role === "assistant" ? t3("spirit") : m3.role === "error" ? t3("reviewAIError") : t3("reviewYou")), /* @__PURE__ */ React9.createElement("p", null, i3 === 0 && m3.role === "user" ? t3("reviewAIStarted") : m3.text))), view?.liveText && /* @__PURE__ */ React9.createElement("p", null, view.liveText)), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error, " ", /* @__PURE__ */ React9.createElement(Btn, { onClick: () => setAttempt((x4) => x4 + 1) }, t3("retry"))), /* @__PURE__ */ React9.createElement("form", { onSubmit: sendAnswer }, /* @__PURE__ */ React9.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React9.createElement("span", null, t3("reviewAnswer")), /* @__PURE__ */ React9.createElement(
+    ).map((m3, i3) => /* @__PURE__ */ React10.createElement("div", { key: m3.id, className: "ld-review-chat-message" }, /* @__PURE__ */ React10.createElement("strong", null, m3.role === "assistant" ? t3("spirit") : m3.role === "error" ? t3("reviewAIError") : t3("reviewYou")), /* @__PURE__ */ React10.createElement("p", null, i3 === 0 && m3.role === "user" ? t3("reviewAIStarted") : m3.text))), view?.liveText && /* @__PURE__ */ React10.createElement("p", null, view.liveText)), error && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, error, " ", /* @__PURE__ */ React10.createElement(Btn, { onClick: () => setAttempt((x4) => x4 + 1) }, t3("retry"))), /* @__PURE__ */ React10.createElement("form", { onSubmit: sendAnswer }, /* @__PURE__ */ React10.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React10.createElement("span", null, t3("reviewAnswer")), /* @__PURE__ */ React10.createElement(
       "textarea",
       {
         value: answer,
@@ -32256,14 +32402,14 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         },
         disabled: pending
       }
-    )), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+    )), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
       Btn,
       {
         type: "submit",
         disabled: pending || !view || view.busy || !answer.trim()
       },
       t3("reviewSend")
-    ), view?.busy && /* @__PURE__ */ React9.createElement(Btn, { onClick: stop }, t3("reviewStop")))), view?.review?.draft && /* @__PURE__ */ React9.createElement("div", { className: "ld-review-candidate" }, /* @__PURE__ */ React9.createElement("h3", null, t3("reviewCandidate")), /* @__PURE__ */ React9.createElement("p", null, view.review.draft), /* @__PURE__ */ React9.createElement(
+    ), view?.busy && /* @__PURE__ */ React10.createElement(Btn, { onClick: stop }, t3("reviewStop")))), view?.review?.draft && /* @__PURE__ */ React10.createElement("div", { className: "ld-review-candidate" }, /* @__PURE__ */ React10.createElement("h3", null, t3("reviewCandidate")), /* @__PURE__ */ React10.createElement("p", null, view.review.draft), /* @__PURE__ */ React10.createElement(
       Btn,
       {
         primary: true,
@@ -32271,7 +32417,7 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         onClick: () => onUse(view.review.draft)
       },
       t3("reviewUseDraft")
-    ), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("reviewCandidateHint"))));
+    ), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("reviewCandidateHint"))));
   }
   function ReviewEditor({
     data,
@@ -32340,10 +32486,10 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
       data.settings.reviewTemplate,
       t3("defaultReviewTemplate")
     );
-    return /* @__PURE__ */ React9.createElement("div", { className: "ld-review-editor" }, kind === "day" && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("div", { className: "ld-actions ld-review-options" }, /* @__PURE__ */ React9.createElement(Btn, { disabled: busy, onClick: () => setPrompts(!showPrompts) }, t3(showPrompts ? "reviewFreeWrite" : "reviewShowPrompts")), /* @__PURE__ */ React9.createElement(Btn, { disabled: busy, onClick: () => setTemplateOpen(true) }, t3("reviewTemplateButton"))), showPrompts && /* @__PURE__ */ React9.createElement(React9.Fragment, null, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("reviewPromptsHint")), /* @__PURE__ */ React9.createElement("ul", { className: "ld-review-prompts" }, reviewPrompts(
+    return /* @__PURE__ */ React10.createElement("div", { className: "ld-review-editor" }, kind === "day" && /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("div", { className: "ld-actions ld-review-options" }, /* @__PURE__ */ React10.createElement(Btn, { disabled: busy, onClick: () => setPrompts(!showPrompts) }, t3(showPrompts ? "reviewFreeWrite" : "reviewShowPrompts")), /* @__PURE__ */ React10.createElement(Btn, { disabled: busy, onClick: () => setTemplateOpen(true) }, t3("reviewTemplateButton"))), showPrompts && /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("reviewPromptsHint")), /* @__PURE__ */ React10.createElement("ul", { className: "ld-review-prompts" }, reviewPrompts(
       data.settings.reviewTemplate,
       t3("defaultReviewTemplate")
-    ).map((p3) => /* @__PURE__ */ React9.createElement("li", { key: p3 }, p3))))), /* @__PURE__ */ React9.createElement("label", { className: "ld-field", htmlFor: textareaId }, /* @__PURE__ */ React9.createElement("span", null, date, " \xB7 ", t3("reviewContent")), /* @__PURE__ */ React9.createElement(
+    ).map((p3) => /* @__PURE__ */ React10.createElement("li", { key: p3 }, p3))))), /* @__PURE__ */ React10.createElement("label", { className: "ld-field", htmlFor: textareaId }, /* @__PURE__ */ React10.createElement("span", null, date, " \xB7 ", t3("reviewContent")), /* @__PURE__ */ React10.createElement(
       "textarea",
       {
         id: textareaId,
@@ -32354,7 +32500,7 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         maxLength: 2e4,
         disabled: busy
       }
-    )), (record?.version || 0) !== baseVersion && /* @__PURE__ */ React9.createElement("div", { className: "ld-review-conflict" }, /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("reviewConflictHint")), /* @__PURE__ */ React9.createElement("pre", null, record?.text || ""), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+    )), (record?.version || 0) !== baseVersion && /* @__PURE__ */ React10.createElement("div", { className: "ld-review-conflict" }, /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("reviewConflictHint")), /* @__PURE__ */ React10.createElement("pre", null, record?.text || ""), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
       Btn,
       {
         disabled: busy,
@@ -32366,7 +32512,7 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         }
       },
       t3("reviewKeepDraft")
-    ), /* @__PURE__ */ React9.createElement(
+    ), /* @__PURE__ */ React10.createElement(
       Btn,
       {
         disabled: busy,
@@ -32380,7 +32526,7 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         }
       },
       t3("reviewLoadLatest")
-    ))), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error), saved && /* @__PURE__ */ React9.createElement("p", { className: "ld-update-ok", role: "status" }, t3("reviewSavedFor"), " \xB7 ", date), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+    ))), error && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, error), saved && /* @__PURE__ */ React10.createElement("p", { className: "ld-update-ok", role: "status" }, t3("reviewSavedFor"), " \xB7 ", date), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
       Btn,
       {
         primary: true,
@@ -32388,7 +32534,7 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         onClick: save
       },
       t3(habitId ? "saveReviewComplete" : "save")
-    ), kind === "day" && !assistantOpen && /* @__PURE__ */ React9.createElement(Btn, { disabled: busy, onClick: () => setAssistantOpen(true) }, t3("reviewAI"))), !valid && !!text.trim() && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("reviewEmpty")), assistantOpen && /* @__PURE__ */ React9.createElement(
+    ), kind === "day" && !assistantOpen && /* @__PURE__ */ React10.createElement(Btn, { disabled: busy, onClick: () => setAssistantOpen(true) }, t3("reviewAI"))), !valid && !!text.trim() && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("reviewEmpty")), assistantOpen && /* @__PURE__ */ React10.createElement(
       ReviewAssistant,
       {
         date,
@@ -32402,7 +32548,7 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
           setAssistantOpen(false);
         }
       }
-    ), templateOpen && /* @__PURE__ */ React9.createElement(
+    ), templateOpen && /* @__PURE__ */ React10.createElement(
       TemplateModal,
       {
         data,
@@ -32453,7 +32599,7 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         setError(e3.message);
       }
     };
-    return /* @__PURE__ */ React9.createElement(Modal, { title: habit.title + " \xB7 " + date, onClose: close }, /* @__PURE__ */ React9.createElement("div", { className: "ld-actions ld-review-date" }, /* @__PURE__ */ React9.createElement(
+    return /* @__PURE__ */ React10.createElement(Modal, { title: habit.title + " \xB7 " + date, onClose: close }, /* @__PURE__ */ React10.createElement("div", { className: "ld-actions ld-review-date" }, /* @__PURE__ */ React10.createElement(
       Btn,
       {
         disabled: busy || !habitDue(currentHabit, yesterday),
@@ -32463,7 +32609,7 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
       t3("reviewYesterday"),
       " \xB7 ",
       yesterday
-    ), /* @__PURE__ */ React9.createElement(
+    ), /* @__PURE__ */ React10.createElement(
       Btn,
       {
         disabled: busy || !habitDue(currentHabit, current),
@@ -32473,7 +32619,7 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
       t3("reviewToday"),
       " \xB7 ",
       current
-    ), ![current, yesterday].includes(base) && /* @__PURE__ */ React9.createElement(
+    ), ![current, yesterday].includes(base) && /* @__PURE__ */ React10.createElement(
       Btn,
       {
         disabled: busy,
@@ -32481,9 +32627,9 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         onClick: () => setDate(base)
       },
       base
-    )), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("reviewDraftRetention")), (progress.skipped || progress.missed) && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("reviewClearFlagHint"), " ", /* @__PURE__ */ React9.createElement(Btn, { disabled: busy, onClick: undoFlags }, t3("undo"))), progress.done && /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3(progress.status === "late" ? "habitLate" : "habitOnTime"), " \xB7", " ", date, " \xB7 ", t3("completedAt"), " ", new Date(progress.completedAt).toLocaleString(void 0, {
+    )), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("reviewDraftRetention")), (progress.skipped || progress.missed) && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("reviewClearFlagHint"), " ", /* @__PURE__ */ React10.createElement(Btn, { disabled: busy, onClick: undoFlags }, t3("undo"))), progress.done && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3(progress.status === "late" ? "habitLate" : "habitOnTime"), " \xB7", " ", date, " \xB7 ", t3("completedAt"), " ", new Date(progress.completedAt).toLocaleString(void 0, {
       timeZone: data.settings.timeZone
-    })), /* @__PURE__ */ React9.createElement(
+    })), /* @__PURE__ */ React10.createElement(
       ReviewEditor,
       {
         key: date,
@@ -32493,27 +32639,27 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         busy,
         onSaved: close
       }
-    ), /* @__PURE__ */ React9.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React9.createElement("summary", null, t3("reviewOtherActions")), /* @__PURE__ */ React9.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React9.createElement(
+    ), /* @__PURE__ */ React10.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React10.createElement("summary", null, t3("reviewOtherActions")), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
       Btn,
       {
         disabled: busy || progress.done || date > current,
         onClick: () => flag("skip")
       },
       t3("reviewSkipDate")
-    ), /* @__PURE__ */ React9.createElement(
+    ), /* @__PURE__ */ React10.createElement(
       Btn,
       {
         disabled: busy || progress.done || date > current,
         onClick: () => flag("missed")
       },
       t3("reviewMissDate")
-    ))), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error));
+    ))), error && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, error));
   }
   return { ReviewEditor, ReviewCheckIn };
 }
 
 // src/LessonsUI.tsx
-var React10 = __toESM(require("react"), 1);
+var React11 = __toESM(require("react"), 1);
 
 // src/lesson-drafts.js
 function createLessonDraftStore(storage) {
@@ -32554,7 +32700,7 @@ function createLessonDraftStore(storage) {
 }
 
 // src/LessonsUI.tsx
-var { useState: useState6, useEffect: useEffect6, useRef: useRef6 } = React10;
+var { useState: useState6, useEffect: useEffect6, useRef: useRef6 } = React11;
 function createLessonsUI({
   t: t3,
   Btn,
@@ -32706,11 +32852,11 @@ function createLessonsUI({
     const latestTerm = env.data.lessonTerms.find(
       (x4) => x4.id === modal.term?.id && !x4.deletedAt
     );
-    return /* @__PURE__ */ React10.createElement("div", { className: "ld-lesson-draft-info" }, /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3(
+    return /* @__PURE__ */ React11.createElement("div", { className: "ld-lesson-draft-info" }, /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3(
       form.dirty ? form.durable ? "lessonDraftKept" : "lessonDraftMemoryOnly" : "lessonDraftIntro"
-    )), form.conflict && /* @__PURE__ */ React10.createElement("div", { className: "ld-review-conflict" }, /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("lessonConflictDraft")), latest && /* @__PURE__ */ React10.createElement("p", null, latest.title, " \xB7 ", lessonWeeklyLabel(latest, t3), " \xB7 ", latest.place), latestSession && /* @__PURE__ */ React10.createElement("p", null, latestSession.date, " ", latestSession.time, " \xB7", " ", t3(
+    )), form.conflict && /* @__PURE__ */ React11.createElement("div", { className: "ld-review-conflict" }, /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("lessonConflictDraft")), latest && /* @__PURE__ */ React11.createElement("p", null, latest.title, " \xB7 ", lessonWeeklyLabel(latest, t3), " \xB7 ", latest.place), latestSession && /* @__PURE__ */ React11.createElement("p", null, latestSession.date, " ", latestSession.time, " \xB7", " ", t3(
       "lessonStatus" + (latestSession.status === "done" ? "Done" : latestSession.status === "skipped" ? "Skipped" : "Scheduled")
-    ), " ", "\xB7 ", latestSession.deduction, " ", t3("lessonUnit")), latestTerm && /* @__PURE__ */ React10.createElement("p", null, latestTerm.start, " \u2013 ", latestTerm.end, " \xB7 ", latestTerm.note), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { disabled: env.busy, onClick: form.rebase }, t3("reviewKeepDraft")), /* @__PURE__ */ React10.createElement(Btn, { disabled: env.busy, onClick: form.discard }, t3("lessonDiscardDraft")))), form.dirty && !form.conflict && /* @__PURE__ */ React10.createElement(Btn, { disabled: env.busy, onClick: form.discard }, t3("lessonDiscardDraft")));
+    ), " ", "\xB7 ", latestSession.deduction, " ", t3("lessonUnit")), latestTerm && /* @__PURE__ */ React11.createElement("p", null, latestTerm.start, " \u2013 ", latestTerm.end, " \xB7 ", latestTerm.note), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(Btn, { disabled: env.busy, onClick: form.rebase }, t3("reviewKeepDraft")), /* @__PURE__ */ React11.createElement(Btn, { disabled: env.busy, onClick: form.discard }, t3("lessonDiscardDraft")))), form.dirty && !form.conflict && /* @__PURE__ */ React11.createElement(Btn, { disabled: env.busy, onClick: form.discard }, t3("lessonDiscardDraft")));
   }
   const live2 = (data, key) => data[key].filter((x4) => !x4.deletedAt);
   const lessonOf = (data, id) => live2(data, "lessons").find((x4) => x4.id === id);
@@ -32837,14 +32983,14 @@ function createLessonsUI({
         setError(e3.message);
       }
     };
-    return /* @__PURE__ */ React10.createElement(
+    return /* @__PURE__ */ React11.createElement(
       Modal,
       {
         title: item.id ? t3("lessonEdit") : t3("lessonAdd"),
         onClose: draft.close
       },
-      /* @__PURE__ */ React10.createElement(DraftNotice, { form: draft, modal, env }),
-      /* @__PURE__ */ React10.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonTitle") }, /* @__PURE__ */ React10.createElement(
+      /* @__PURE__ */ React11.createElement(DraftNotice, { form: draft, modal, env }),
+      /* @__PURE__ */ React11.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonTitle") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           value: item.title,
@@ -32852,7 +32998,7 @@ function createLessonsUI({
           autoFocus: true,
           onChange: (e3) => change("title", e3.target.value)
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonParticipant") }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonParticipant") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           list: "ld-lesson-people",
@@ -32860,14 +33006,14 @@ function createLessonsUI({
           maxLength: 40,
           onChange: (e3) => change("participant", e3.target.value)
         }
-      ), /* @__PURE__ */ React10.createElement("datalist", { id: "ld-lesson-people" }, participants.map((p3) => /* @__PURE__ */ React10.createElement("option", { key: p3, value: p3 })))), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonPlace") }, /* @__PURE__ */ React10.createElement(
+      ), /* @__PURE__ */ React11.createElement("datalist", { id: "ld-lesson-people" }, participants.map((p3) => /* @__PURE__ */ React11.createElement("option", { key: p3, value: p3 })))), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonPlace") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           value: item.place,
           maxLength: 200,
           onChange: (e3) => change("place", e3.target.value)
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonMode") }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonMode") }, /* @__PURE__ */ React11.createElement(
         "select",
         {
           disabled: !!lesson && ["lessonCharges", "lessonSessions", "lessonTerms"].some(
@@ -32876,8 +33022,8 @@ function createLessonsUI({
           value: item.mode,
           onChange: (e3) => change("mode", e3.target.value)
         },
-        ["none", "credit", "term"].map((m3) => /* @__PURE__ */ React10.createElement("option", { key: m3, value: m3 }, modeText(m3)))
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonWeekdays"), wide: true }, /* @__PURE__ */ React10.createElement("div", { className: "ld-days" }, [1, 2, 3, 4, 5, 6, 0].map((d2) => /* @__PURE__ */ React10.createElement(
+        ["none", "credit", "term"].map((m3) => /* @__PURE__ */ React11.createElement("option", { key: m3, value: m3 }, modeText(m3)))
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonWeekdays"), wide: true }, /* @__PURE__ */ React11.createElement("div", { className: "ld-days" }, [1, 2, 3, 4, 5, 6, 0].map((d2) => /* @__PURE__ */ React11.createElement(
         "button",
         {
           type: "button",
@@ -32886,13 +33032,13 @@ function createLessonsUI({
           onClick: () => toggleWeekday(d2)
         },
         t3("weekdayShort" + d2)
-      ))), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, item.weekdays.length ? t3("lessonWeekdaysHint") : t3("lessonOnceHint"))), (item.weekdays.length > 1 || (item.weekdayTimes || []).some(
+      ))), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, item.weekdays.length ? t3("lessonWeekdaysHint") : t3("lessonOnceHint"))), (item.weekdays.length > 1 || (item.weekdayTimes || []).some(
         (x4) => x4.time && item.weekdays.includes(x4.weekday)
-      )) && /* @__PURE__ */ React10.createElement("div", { className: "ld-field ld-wide" }, /* @__PURE__ */ React10.createElement("span", null, t3("lessonWeekdayTimes")), /* @__PURE__ */ React10.createElement("div", { className: "ld-weekday-times" }, [1, 2, 3, 4, 5, 6, 0].filter((d2) => item.weekdays.includes(d2)).map((d2) => {
+      )) && /* @__PURE__ */ React11.createElement("div", { className: "ld-field ld-wide" }, /* @__PURE__ */ React11.createElement("span", null, t3("lessonWeekdayTimes")), /* @__PURE__ */ React11.createElement("div", { className: "ld-weekday-times" }, [1, 2, 3, 4, 5, 6, 0].filter((d2) => item.weekdays.includes(d2)).map((d2) => {
         const current = (item.weekdayTimes || []).find(
           (x4) => x4.weekday === d2
         );
-        return /* @__PURE__ */ React10.createElement("label", { className: "ld-weekday-time", key: d2 }, /* @__PURE__ */ React10.createElement("span", null, t3("weekdayShort" + d2)), /* @__PURE__ */ React10.createElement(
+        return /* @__PURE__ */ React11.createElement("label", { className: "ld-weekday-time", key: d2 }, /* @__PURE__ */ React11.createElement("span", null, t3("weekdayShort" + d2)), /* @__PURE__ */ React11.createElement(
           "input",
           {
             type: "time",
@@ -32911,11 +33057,11 @@ function createLessonsUI({
               }));
             }
           }
-        ), /* @__PURE__ */ React10.createElement("small", null, item.time ? t3("lessonUseDefaultTime").replace(
+        ), /* @__PURE__ */ React11.createElement("small", null, item.time ? t3("lessonUseDefaultTime").replace(
           "{n}",
           item.time
         ) : t3("lessonNoDefaultTime")));
-      })), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("lessonWeekdayTimesHint"))), /* @__PURE__ */ React10.createElement(
+      })), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("lessonWeekdayTimesHint"))), /* @__PURE__ */ React11.createElement(
         Field,
         {
           label: t3(
@@ -32924,7 +33070,7 @@ function createLessonsUI({
             ) ? "lessonDefaultTime" : "lessonTime"
           )
         },
-        /* @__PURE__ */ React10.createElement(
+        /* @__PURE__ */ React11.createElement(
           "input",
           {
             type: "time",
@@ -32932,7 +33078,7 @@ function createLessonsUI({
             onChange: (e3) => change("time", e3.target.value)
           }
         )
-      ), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonDuration") }, /* @__PURE__ */ React10.createElement(
+      ), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonDuration") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "number",
@@ -32941,7 +33087,7 @@ function createLessonsUI({
           value: item.durationMinutes,
           onChange: (e3) => change("durationMinutes", Number(e3.target.value))
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonEffective") }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonEffective") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "date",
@@ -32949,7 +33095,7 @@ function createLessonsUI({
           disabled: !!lesson,
           onChange: (e3) => change("effective", e3.target.value)
         }
-      )), lesson && scheduleChanged && /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonScheduleFrom"), wide: true }, /* @__PURE__ */ React10.createElement(
+      )), lesson && scheduleChanged && /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonScheduleFrom"), wide: true }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "date",
@@ -32957,7 +33103,7 @@ function createLessonsUI({
           min: currentDay > lesson.effective ? currentDay : lesson.effective,
           onChange: (e3) => setScheduleFrom(e3.target.value)
         }
-      ), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("lessonSchedulePreserve"), " ", lessonWeeklyLabel(lesson, t3))), item.mode !== "none" && /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonExpiryWarn") }, /* @__PURE__ */ React10.createElement(
+      ), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("lessonSchedulePreserve"), " ", lessonWeeklyLabel(lesson, t3))), item.mode !== "none" && /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonExpiryWarn") }, /* @__PURE__ */ React11.createElement(
         "select",
         {
           value: item.expiryWarnDays ?? "off",
@@ -32966,16 +33112,16 @@ function createLessonsUI({
             e3.target.value === "off" ? null : Number(e3.target.value)
           )
         },
-        /* @__PURE__ */ React10.createElement("option", { value: "off" }, t3("lessonReminderOff")),
-        [0, 7, 14, 30, 60, 90].map((n2) => /* @__PURE__ */ React10.createElement("option", { key: n2, value: n2 }, t3("lessonExpiryBefore").replace("{n}", String(n2))))
-      )), item.mode !== "term" && /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonUntil") }, /* @__PURE__ */ React10.createElement(
+        /* @__PURE__ */ React11.createElement("option", { value: "off" }, t3("lessonReminderOff")),
+        [0, 7, 14, 30, 60, 90].map((n2) => /* @__PURE__ */ React11.createElement("option", { key: n2, value: n2 }, t3("lessonExpiryBefore").replace("{n}", String(n2))))
+      )), item.mode !== "term" && /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonUntil") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "date",
           value: item.until || "",
           onChange: (e3) => change("until", e3.target.value)
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonReminder") }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonReminder") }, /* @__PURE__ */ React11.createElement(
         "select",
         {
           value: item.reminderMinutes ?? "off",
@@ -32984,9 +33130,9 @@ function createLessonsUI({
             e3.target.value === "off" ? null : Number(e3.target.value)
           )
         },
-        /* @__PURE__ */ React10.createElement("option", { value: "off" }, t3("lessonReminderOff")),
-        [0, 10, 15, 30, 60, 120, 1440].map((n2) => /* @__PURE__ */ React10.createElement("option", { key: n2, value: n2 }, t3("lessonBefore").replace("{n}", String(n2))))
-      )), item.mode === "credit" && /* @__PURE__ */ React10.createElement(React10.Fragment, null, !(item.id && lessonAccount(env.data, lesson).entries.length > 0) && /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonOpening") }, /* @__PURE__ */ React10.createElement(
+        /* @__PURE__ */ React11.createElement("option", { value: "off" }, t3("lessonReminderOff")),
+        [0, 10, 15, 30, 60, 120, 1440].map((n2) => /* @__PURE__ */ React11.createElement("option", { key: n2, value: n2 }, t3("lessonBefore").replace("{n}", String(n2))))
+      )), item.mode === "credit" && /* @__PURE__ */ React11.createElement(React11.Fragment, null, !(item.id && lessonAccount(env.data, lesson).entries.length > 0) && /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonOpening") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "number",
@@ -32997,7 +33143,7 @@ function createLessonsUI({
           placeholder: "0",
           onChange: (e3) => setOpening(e3.target.value)
         }
-      ), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("lessonOpeningHint"))), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonDefaultDeduction") }, /* @__PURE__ */ React10.createElement(
+      ), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("lessonOpeningHint"))), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonDefaultDeduction") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "number",
@@ -33007,7 +33153,7 @@ function createLessonsUI({
           value: item.defaultDeduction,
           onChange: (e3) => change("defaultDeduction", Number(e3.target.value))
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonBalanceWarn") }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonBalanceWarn") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "number",
@@ -33019,21 +33165,21 @@ function createLessonsUI({
             e3.target.value === "" ? null : Number(e3.target.value)
           )
         }
-      ))), item.mode === "term" && /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonTermStart") }, /* @__PURE__ */ React10.createElement(
+      ))), item.mode === "term" && /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonTermStart") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "date",
           value: term.start,
           onChange: (e3) => setTerm({ ...term, start: e3.target.value })
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonTermEnd") }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonTermEnd") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "date",
           value: term.end,
           onChange: (e3) => setTerm({ ...term, end: e3.target.value })
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonTermPurchased") }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonTermPurchased") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "number",
@@ -33042,7 +33188,7 @@ function createLessonsUI({
           value: term.purchased,
           onChange: (e3) => setTerm({ ...term, purchased: Number(e3.target.value) })
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonTermAmount") }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonTermAmount") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "number",
@@ -33053,14 +33199,14 @@ function createLessonsUI({
             amount: e3.target.value === "" ? "" : Number(e3.target.value)
           })
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonTermNote"), wide: true }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonTermNote"), wide: true }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           value: term.note,
           maxLength: 3e3,
           onChange: (e3) => setTerm({ ...term, note: e3.target.value })
         }
-      )), /* @__PURE__ */ React10.createElement("p", { className: "ld-help ld-wide" }, t3("lessonTermHint"))), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonNote"), wide: true }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement("p", { className: "ld-help ld-wide" }, t3("lessonTermHint"))), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonNote"), wide: true }, /* @__PURE__ */ React11.createElement(
         "textarea",
         {
           rows: 2,
@@ -33069,8 +33215,8 @@ function createLessonsUI({
           onChange: (e3) => change("note", e3.target.value)
         }
       ))),
-      error && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, error),
-      /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React10.createElement(Btn, { onClick: draft.close }, t3("cancel")))
+      error && /* @__PURE__ */ React11.createElement("p", { className: "ld-error", role: "alert" }, error),
+      /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React11.createElement(Btn, { onClick: draft.close }, t3("cancel")))
     );
   }
   function SessionModal({ modal, env, close }) {
@@ -33165,7 +33311,7 @@ function createLessonsUI({
       }
     };
     if (mode === "undo" || mode === "restore" || mode === "unskip")
-      return /* @__PURE__ */ React10.createElement(
+      return /* @__PURE__ */ React11.createElement(
         Modal,
         {
           title: t3(
@@ -33173,54 +33319,54 @@ function createLessonsUI({
           ),
           onClose: draft.close
         },
-        /* @__PURE__ */ React10.createElement(DraftNotice, { form: draft, modal, env }),
-        /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3(
+        /* @__PURE__ */ React11.createElement(DraftNotice, { form: draft, modal, env }),
+        /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3(
           mode === "undo" ? "lessonUndoHint" : mode === "unskip" ? "lessonUnskipHint" : "lessonRestoreHint"
         )),
-        error && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, error),
-        /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { primary: true, onClick: submit }, t3(
+        error && /* @__PURE__ */ React11.createElement("p", { className: "ld-error", role: "alert" }, error),
+        /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(Btn, { primary: true, onClick: submit }, t3(
           mode === "undo" ? "lessonUndoComplete" : mode === "unskip" ? "lessonUnskip" : "lessonRestore"
-        )), /* @__PURE__ */ React10.createElement(Btn, { onClick: draft.close }, t3("cancel")))
+        )), /* @__PURE__ */ React11.createElement(Btn, { onClick: draft.close }, t3("cancel")))
       );
-    return /* @__PURE__ */ React10.createElement(
+    return /* @__PURE__ */ React11.createElement(
       Modal,
       {
         title: lesson.title + " \xB7 " + (occ0?.date || date),
         onClose: draft.close
       },
-      /* @__PURE__ */ React10.createElement(DraftNotice, { form: draft, modal, env }),
-      /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3(
+      /* @__PURE__ */ React11.createElement(DraftNotice, { form: draft, modal, env }),
+      /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3(
         mode === "complete" ? "lessonCompleteHint" : mode === "skip" ? "lessonSkipHint" : mode === "extra" ? "lessonExtraHint" : "lessonRescheduleHint"
       )),
-      (mode === "complete" || mode === "move" || mode === "extra") && /* @__PURE__ */ React10.createElement("div", { className: "ld-form" }, (mode === "move" || mode === "extra") && /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonDate") }, /* @__PURE__ */ React10.createElement(
+      (mode === "complete" || mode === "move" || mode === "extra") && /* @__PURE__ */ React11.createElement("div", { className: "ld-form" }, (mode === "move" || mode === "extra") && /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonDate") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "date",
           value: date,
           onChange: (e3) => setDate(e3.target.value)
         }
-      )), (mode === "move" || mode === "extra") && /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonTime") }, /* @__PURE__ */ React10.createElement(
+      )), (mode === "move" || mode === "extra") && /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonTime") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "time",
           value: time,
           onChange: (e3) => setTime(e3.target.value)
         }
-      )), (mode === "move" || mode === "extra") && /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonPlace") }, /* @__PURE__ */ React10.createElement(
+      )), (mode === "move" || mode === "extra") && /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonPlace") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           value: place,
           maxLength: 200,
           onChange: (e3) => setPlace(e3.target.value)
         }
-      )), mode === "complete" && /* @__PURE__ */ React10.createElement(
+      )), mode === "complete" && /* @__PURE__ */ React11.createElement(
         Field,
         {
           label: t3(
             lesson.mode === "credit" ? "lessonDeduction" : "lessonRecordedUnits"
           )
         },
-        /* @__PURE__ */ React10.createElement(
+        /* @__PURE__ */ React11.createElement(
           "input",
           {
             type: "number",
@@ -33231,7 +33377,7 @@ function createLessonsUI({
             onChange: (e3) => setDeduction(Number(e3.target.value))
           }
         )
-      ), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonNote"), wide: true }, /* @__PURE__ */ React10.createElement(
+      ), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonNote"), wide: true }, /* @__PURE__ */ React11.createElement(
         "textarea",
         {
           rows: 2,
@@ -33240,8 +33386,8 @@ function createLessonsUI({
           onChange: (e3) => setNote(e3.target.value)
         }
       ))),
-      mode === "complete" && account && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("lessonRemaining"), " ", account.balance, " \xB7", " ", t3("lessonThisCost").replace("{n}", String(deduction))),
-      mode === "complete" && account && account.balance < deduction && /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React10.createElement(
+      mode === "complete" && account && /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("lessonRemaining"), " ", account.balance, " \xB7", " ", t3("lessonThisCost").replace("{n}", String(deduction))),
+      mode === "complete" && account && account.balance < deduction && /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "checkbox",
@@ -33249,7 +33395,7 @@ function createLessonsUI({
           onChange: (e3) => setShort(e3.target.checked)
         }
       ), t3("lessonShortConfirm")),
-      (mode === "move" || mode === "extra") && /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React10.createElement(
+      (mode === "move" || mode === "extra") && /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "checkbox",
@@ -33257,14 +33403,14 @@ function createLessonsUI({
           onChange: (e3) => setConflict(e3.target.checked)
         }
       ), t3("lessonConflictConfirm")),
-      mode === "skip" && lesson.mode === "credit" && /* @__PURE__ */ React10.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label ld-wide" }, /* @__PURE__ */ React10.createElement(
+      mode === "skip" && lesson.mode === "credit" && /* @__PURE__ */ React11.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label ld-wide" }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "checkbox",
           checked: skipCharged,
           onChange: (e3) => setSkipCharged(e3.target.checked)
         }
-      ), t3("lessonChargeOnSkip")), skipCharged && /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonDeduction") }, /* @__PURE__ */ React10.createElement(
+      ), t3("lessonChargeOnSkip")), skipCharged && /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonDeduction") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "number",
@@ -33274,7 +33420,7 @@ function createLessonsUI({
           value: deduction,
           onChange: (e3) => setDeduction(Number(e3.target.value))
         }
-      )), skipCharged && account && account.balance < deduction && /* @__PURE__ */ React10.createElement("label", { className: "ld-check-label ld-wide" }, /* @__PURE__ */ React10.createElement(
+      )), skipCharged && account && account.balance < deduction && /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label ld-wide" }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "checkbox",
@@ -33282,7 +33428,7 @@ function createLessonsUI({
           onChange: (e3) => setShort(e3.target.checked)
         }
       ), t3("lessonShortConfirm"))),
-      mode === "skip" && /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonNote"), wide: true }, /* @__PURE__ */ React10.createElement(
+      mode === "skip" && /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonNote"), wide: true }, /* @__PURE__ */ React11.createElement(
         "textarea",
         {
           rows: 2,
@@ -33291,10 +33437,10 @@ function createLessonsUI({
           onChange: (e3) => setNote(e3.target.value)
         }
       )),
-      error && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, error),
-      /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { primary: true, onClick: submit, disabled: env.busy }, t3(
+      error && /* @__PURE__ */ React11.createElement("p", { className: "ld-error", role: "alert" }, error),
+      /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(Btn, { primary: true, onClick: submit, disabled: env.busy }, t3(
         mode === "complete" ? "lessonComplete" : mode === "skip" ? "lessonSkip" : "save"
-      )), /* @__PURE__ */ React10.createElement(Btn, { onClick: draft.close }, t3("cancel")))
+      )), /* @__PURE__ */ React11.createElement(Btn, { onClick: draft.close }, t3("cancel")))
     );
   }
   function ChargeModal({ modal, env, close }) {
@@ -33330,21 +33476,21 @@ function createLessonsUI({
         setError(e3.message);
       }
     };
-    return /* @__PURE__ */ React10.createElement(
+    return /* @__PURE__ */ React11.createElement(
       Modal,
       {
         title: t3("lessonAddCharge") + " \xB7 " + lesson.title,
         onClose: draft.close
       },
-      /* @__PURE__ */ React10.createElement(DraftNotice, { form: draft, modal, env }),
-      /* @__PURE__ */ React10.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonChargeKind") }, /* @__PURE__ */ React10.createElement("select", { value: kind, onChange: (e3) => setKind(e3.target.value) }, ["purchase", "gift", "opening", "adjust"].map((k3) => /* @__PURE__ */ React10.createElement("option", { key: k3, value: k3 }, t3("lessonCharge" + k3[0].toUpperCase() + k3.slice(1)))))), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonDate") }, /* @__PURE__ */ React10.createElement(
+      /* @__PURE__ */ React11.createElement(DraftNotice, { form: draft, modal, env }),
+      /* @__PURE__ */ React11.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonChargeKind") }, /* @__PURE__ */ React11.createElement("select", { value: kind, onChange: (e3) => setKind(e3.target.value) }, ["purchase", "gift", "opening", "adjust"].map((k3) => /* @__PURE__ */ React11.createElement("option", { key: k3, value: k3 }, t3("lessonCharge" + k3[0].toUpperCase() + k3.slice(1)))))), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonDate") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "date",
           value: date,
           onChange: (e3) => setDate(e3.target.value)
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonChargeDelta") }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonChargeDelta") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "number",
@@ -33352,7 +33498,7 @@ function createLessonsUI({
           value: delta,
           onChange: (e3) => setDelta(e3.target.value)
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonChargeAmount") }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonChargeAmount") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "number",
@@ -33360,14 +33506,14 @@ function createLessonsUI({
           value: amount,
           onChange: (e3) => setAmount(e3.target.value)
         }
-      )), (kind === "purchase" || kind === "gift") && /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonChargeExpires") }, /* @__PURE__ */ React10.createElement(
+      )), (kind === "purchase" || kind === "gift") && /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonChargeExpires") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "date",
           value: expiresOn,
           onChange: (e3) => setExpiry(e3.target.value)
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonChargeNote"), wide: true }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonChargeNote"), wide: true }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           value: note,
@@ -33375,9 +33521,9 @@ function createLessonsUI({
           onChange: (e3) => setNote(e3.target.value)
         }
       ))),
-      /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("lessonChargeHint")),
-      error && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, error),
-      /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React10.createElement(Btn, { onClick: draft.close }, t3("cancel")))
+      /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("lessonChargeHint")),
+      error && /* @__PURE__ */ React11.createElement("p", { className: "ld-error", role: "alert" }, error),
+      /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React11.createElement(Btn, { onClick: draft.close }, t3("cancel")))
     );
   }
   function TermModal({ modal, env, close }) {
@@ -33421,29 +33567,29 @@ function createLessonsUI({
         setError(e3.message);
       }
     };
-    return /* @__PURE__ */ React10.createElement(
+    return /* @__PURE__ */ React11.createElement(
       Modal,
       {
         title: t3("lessonRenew") + " \xB7 " + lesson.title,
         onClose: draft.close
       },
-      /* @__PURE__ */ React10.createElement(DraftNotice, { form: draft, modal, env }),
-      /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("lessonRenewHint")),
-      /* @__PURE__ */ React10.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonTermStart") }, /* @__PURE__ */ React10.createElement(
+      /* @__PURE__ */ React11.createElement(DraftNotice, { form: draft, modal, env }),
+      /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("lessonRenewHint")),
+      /* @__PURE__ */ React11.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonTermStart") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "date",
           value: start,
           onChange: (e3) => setStart(e3.target.value)
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonTermEnd") }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonTermEnd") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "date",
           value: end,
           onChange: (e3) => setEnd(e3.target.value)
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonTermPurchased") }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonTermPurchased") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "number",
@@ -33451,7 +33597,7 @@ function createLessonsUI({
           value: purchased,
           onChange: (e3) => setPurchased(Number(e3.target.value))
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonTermAmount") }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonTermAmount") }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           type: "number",
@@ -33459,7 +33605,7 @@ function createLessonsUI({
           value: amount,
           onChange: (e3) => setAmount(e3.target.value)
         }
-      )), /* @__PURE__ */ React10.createElement(Field, { label: t3("lessonTermNote"), wide: true }, /* @__PURE__ */ React10.createElement(
+      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("lessonTermNote"), wide: true }, /* @__PURE__ */ React11.createElement(
         "input",
         {
           value: note,
@@ -33467,8 +33613,8 @@ function createLessonsUI({
           onChange: (e3) => setNote(e3.target.value)
         }
       ))),
-      error && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, error),
-      /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React10.createElement(Btn, { onClick: draft.close }, t3("cancel")))
+      error && /* @__PURE__ */ React11.createElement("p", { className: "ld-error", role: "alert" }, error),
+      /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(Btn, { primary: true, onClick: save, disabled: env.busy }, t3("save")), /* @__PURE__ */ React11.createElement(Btn, { onClick: draft.close }, t3("cancel")))
     );
   }
   function LessonDetail({ modal, env, close }) {
@@ -33533,7 +33679,7 @@ function createLessonsUI({
         setError(e3.message);
       }
     };
-    const renderRows = (rows) => rows.map((x4) => /* @__PURE__ */ React10.createElement("div", { className: "ld-lesson-row", key: x4.key }, /* @__PURE__ */ React10.createElement("span", null, x4.date, " ", x4.time), /* @__PURE__ */ React10.createElement("span", null, statusText(x4.status), x4.movedFrom ? " \xB7 " + t3("lessonMovedFrom") + " " + x4.movedFrom : ""), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, (x4.status === "scheduled" || x4.status === "skipped") && /* @__PURE__ */ React10.createElement(
+    const renderRows = (rows) => rows.map((x4) => /* @__PURE__ */ React11.createElement("div", { className: "ld-lesson-row", key: x4.key }, /* @__PURE__ */ React11.createElement("span", null, x4.date, " ", x4.time), /* @__PURE__ */ React11.createElement("span", null, statusText(x4.status), x4.movedFrom ? " \xB7 " + t3("lessonMovedFrom") + " " + x4.movedFrom : ""), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, (x4.status === "scheduled" || x4.status === "skipped") && /* @__PURE__ */ React11.createElement(
       Btn,
       {
         disabled: env.busy || x4.date > today(env.data.settings.timeZone) || x4.charged,
@@ -33548,7 +33694,7 @@ function createLessonsUI({
         })
       },
       t3("lessonComplete")
-    ), x4.status === "scheduled" && /* @__PURE__ */ React10.createElement(
+    ), x4.status === "scheduled" && /* @__PURE__ */ React11.createElement(
       Btn,
       {
         onClick: () => open({
@@ -33564,7 +33710,7 @@ function createLessonsUI({
         })
       },
       t3("lessonReschedule")
-    ), x4.status === "scheduled" && /* @__PURE__ */ React10.createElement(
+    ), x4.status === "scheduled" && /* @__PURE__ */ React11.createElement(
       Btn,
       {
         onClick: () => open({
@@ -33577,7 +33723,7 @@ function createLessonsUI({
         })
       },
       t3("lessonSkip")
-    ), x4.status === "skipped" && !x4.charged && /* @__PURE__ */ React10.createElement(
+    ), x4.status === "skipped" && !x4.charged && /* @__PURE__ */ React11.createElement(
       Btn,
       {
         onClick: () => open({
@@ -33590,7 +33736,7 @@ function createLessonsUI({
         })
       },
       t3("lessonUnskip")
-    ), x4.movedFrom && x4.status !== "done" && /* @__PURE__ */ React10.createElement(
+    ), x4.movedFrom && x4.status !== "done" && /* @__PURE__ */ React11.createElement(
       Btn,
       {
         onClick: () => open({
@@ -33602,7 +33748,7 @@ function createLessonsUI({
         })
       },
       t3("lessonRestore")
-    ), x4.extra && x4.status !== "done" && /* @__PURE__ */ React10.createElement(Btn, { onClick: () => removeExtra(x4.sessionId) }, t3("delete")), (x4.status === "done" || x4.charged) && /* @__PURE__ */ React10.createElement(
+    ), x4.extra && x4.status !== "done" && /* @__PURE__ */ React11.createElement(Btn, { onClick: () => removeExtra(x4.sessionId) }, t3("delete")), (x4.status === "done" || x4.charged) && /* @__PURE__ */ React11.createElement(
       Btn,
       {
         onClick: () => open({
@@ -33613,13 +33759,13 @@ function createLessonsUI({
         })
       },
       t3("lessonUndoComplete")
-    )), x4.status === "done" && /* @__PURE__ */ React10.createElement("small", null, t3("lessonAttendanceUnits").replace("{n}", String(x4.deduction))), x4.status === "skipped" && x4.charged && /* @__PURE__ */ React10.createElement("small", null, t3("lessonSkippedCharge").replace("{n}", String(x4.deduction))), !!x4.changes?.length && /* @__PURE__ */ React10.createElement("details", { className: "ld-lesson-changes" }, /* @__PURE__ */ React10.createElement("summary", null, t3("lessonChangeHistory"), " \xB7 ", x4.changes.length), x4.changes.map((event, i3) => /* @__PURE__ */ React10.createElement("p", { className: "ld-help", key: event.at + i3 }, event.at.slice(0, 10), " \xB7 ", t3("lessonAction" + event.action), " \xB7", " ", event.fromDate, " ", event.fromTime, " \u2192 ", event.date, " ", event.time, event.note ? " \xB7 " + event.note : "")))));
+    )), x4.status === "done" && /* @__PURE__ */ React11.createElement("small", null, t3("lessonAttendanceUnits").replace("{n}", String(x4.deduction))), x4.status === "skipped" && x4.charged && /* @__PURE__ */ React11.createElement("small", null, t3("lessonSkippedCharge").replace("{n}", String(x4.deduction))), !!x4.changes?.length && /* @__PURE__ */ React11.createElement("details", { className: "ld-lesson-changes" }, /* @__PURE__ */ React11.createElement("summary", null, t3("lessonChangeHistory"), " \xB7 ", x4.changes.length), x4.changes.map((event, i3) => /* @__PURE__ */ React11.createElement("p", { className: "ld-help", key: event.at + i3 }, event.at.slice(0, 10), " \xB7 ", t3("lessonAction" + event.action), " \xB7", " ", event.fromDate, " ", event.fromTime, " \u2192 ", event.date, " ", event.time, event.note ? " \xB7 " + event.note : "")))));
     const span = (Date.parse(historyTo + "T00:00:00Z") - Date.parse(historyFrom + "T00:00:00Z")) / 864e5;
     const validHistory = Number.isFinite(span) && span >= 0 && span <= 3660;
     const historyRows = validHistory ? lessonOccurrences(env.data, lesson, historyFrom, historyTo).filter(
       (x4) => historyStatus === "all" || historyStatus === "pending" ? historyStatus === "all" || x4.status === "scheduled" && x4.date <= today(env.data.settings.timeZone) : x4.status === historyStatus
     ) : [];
-    return /* @__PURE__ */ React10.createElement(Modal, { title: lesson.title, onClose: close }, /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, lesson.participant || t3("lessonNoParticipant"), lesson.place ? " \xB7 " + lesson.place : ""), /* @__PURE__ */ React10.createElement("div", { className: "ld-lesson-summary" }, /* @__PURE__ */ React10.createElement("span", null, modeText(lesson.mode)), /* @__PURE__ */ React10.createElement("span", null, lessonWeeklyLabel(lesson, t3))), lesson.mode === "credit" && account && /* @__PURE__ */ React10.createElement("div", { className: "ld-lesson-money" }, /* @__PURE__ */ React10.createElement("strong", null, account.balance), " ", t3("lessonUnit"), /* @__PURE__ */ React10.createElement("small", null, t3("lessonPurchased"), " ", account.purchased, " \xB7 ", t3("lessonGifted"), " ", account.gifted, " \xB7 ", t3("lessonUsed"), " ", account.netUsed)), lesson.mode === "term" && /* @__PURE__ */ React10.createElement("div", { className: "ld-lesson-money" }, summary.termStatus === "upcoming" ? /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("strong", null, t3("lessonTermNotStarted")), /* @__PURE__ */ React10.createElement("small", null, summary.currentTerm.start, " \u2013 ", summary.currentTerm.end)) : summary.currentTerm ? /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("strong", null, summary.endsIn), " ", t3("lessonDaysLeft"), /* @__PURE__ */ React10.createElement("small", null, summary.currentTerm.start, " \u2013 ", summary.currentTerm.end)) : /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("strong", null, t3("lessonExpired")), /* @__PURE__ */ React10.createElement("small", null, summary.terms.length ? summary.terms.at(-1).end : "")), summary.stats && /* @__PURE__ */ React10.createElement("small", null, t3("lessonTermUsed").replace("{n}", String(summary.stats.sessions)).replace("{u}", String(summary.stats.units)))), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
+    return /* @__PURE__ */ React11.createElement(Modal, { title: lesson.title, onClose: close }, /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, lesson.participant || t3("lessonNoParticipant"), lesson.place ? " \xB7 " + lesson.place : ""), /* @__PURE__ */ React11.createElement("div", { className: "ld-lesson-summary" }, /* @__PURE__ */ React11.createElement("span", null, modeText(lesson.mode)), /* @__PURE__ */ React11.createElement("span", null, lessonWeeklyLabel(lesson, t3))), lesson.mode === "credit" && account && /* @__PURE__ */ React11.createElement("div", { className: "ld-lesson-money" }, /* @__PURE__ */ React11.createElement("strong", null, account.balance), " ", t3("lessonUnit"), /* @__PURE__ */ React11.createElement("small", null, t3("lessonPurchased"), " ", account.purchased, " \xB7 ", t3("lessonGifted"), " ", account.gifted, " \xB7 ", t3("lessonUsed"), " ", account.netUsed)), lesson.mode === "term" && /* @__PURE__ */ React11.createElement("div", { className: "ld-lesson-money" }, summary.termStatus === "upcoming" ? /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement("strong", null, t3("lessonTermNotStarted")), /* @__PURE__ */ React11.createElement("small", null, summary.currentTerm.start, " \u2013 ", summary.currentTerm.end)) : summary.currentTerm ? /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement("strong", null, summary.endsIn), " ", t3("lessonDaysLeft"), /* @__PURE__ */ React11.createElement("small", null, summary.currentTerm.start, " \u2013 ", summary.currentTerm.end)) : /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement("strong", null, t3("lessonExpired")), /* @__PURE__ */ React11.createElement("small", null, summary.terms.length ? summary.terms.at(-1).end : "")), summary.stats && /* @__PURE__ */ React11.createElement("small", null, t3("lessonTermUsed").replace("{n}", String(summary.stats.sessions)).replace("{u}", String(summary.stats.units)))), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(
       Btn,
       {
         onClick: () => open({
@@ -33630,29 +33776,29 @@ function createLessonsUI({
         })
       },
       t3("lessonAddExtra")
-    ), /* @__PURE__ */ React10.createElement(Btn, { onClick: () => open({ type: "editor", lesson }) }, t3("edit"))), /* @__PURE__ */ React10.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React10.createElement("h3", null, t3("lessonSchedule")), next.length ? renderRows(next) : /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("lessonNoUpcoming"))), /* @__PURE__ */ React10.createElement("section", { className: "ld-section ld-lesson-history" }, /* @__PURE__ */ React10.createElement("h3", null, t3("lessonAttendanceHistory")), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions ld-history-filters" }, /* @__PURE__ */ React10.createElement("label", null, t3("lessonHistoryFrom"), /* @__PURE__ */ React10.createElement(
+    ), /* @__PURE__ */ React11.createElement(Btn, { onClick: () => open({ type: "editor", lesson }) }, t3("edit"))), /* @__PURE__ */ React11.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React11.createElement("h3", null, t3("lessonSchedule")), next.length ? renderRows(next) : /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("lessonNoUpcoming"))), /* @__PURE__ */ React11.createElement("section", { className: "ld-section ld-lesson-history" }, /* @__PURE__ */ React11.createElement("h3", null, t3("lessonAttendanceHistory")), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions ld-history-filters" }, /* @__PURE__ */ React11.createElement("label", null, t3("lessonHistoryFrom"), /* @__PURE__ */ React11.createElement(
       "input",
       {
         type: "date",
         value: historyFrom,
         onChange: (e3) => setHistoryFrom(e3.target.value)
       }
-    )), /* @__PURE__ */ React10.createElement("label", null, t3("lessonHistoryTo"), /* @__PURE__ */ React10.createElement(
+    )), /* @__PURE__ */ React11.createElement("label", null, t3("lessonHistoryTo"), /* @__PURE__ */ React11.createElement(
       "input",
       {
         type: "date",
         value: historyTo,
         onChange: (e3) => setHistoryTo(e3.target.value)
       }
-    )), /* @__PURE__ */ React10.createElement(
+    )), /* @__PURE__ */ React11.createElement(
       "select",
       {
         "aria-label": t3("lessonHistoryStatus"),
         value: historyStatus,
         onChange: (e3) => setHistoryStatus(e3.target.value)
       },
-      ["all", "done", "pending", "skipped"].map((k3) => /* @__PURE__ */ React10.createElement("option", { key: k3, value: k3 }, t3("lessonHistory" + k3)))
-    ), !!summary.terms.length && /* @__PURE__ */ React10.createElement(
+      ["all", "done", "pending", "skipped"].map((k3) => /* @__PURE__ */ React11.createElement("option", { key: k3, value: k3 }, t3("lessonHistory" + k3)))
+    ), !!summary.terms.length && /* @__PURE__ */ React11.createElement(
       "select",
       {
         "aria-label": t3("lessonTerms"),
@@ -33667,33 +33813,33 @@ function createLessonsUI({
           }
         }
       },
-      /* @__PURE__ */ React10.createElement("option", { value: "" }, t3("lessonSelectTerm")),
-      summary.terms.map((term) => /* @__PURE__ */ React10.createElement("option", { key: term.id, value: term.id }, term.start, " \u2013 ", term.end))
-    )), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("lessonHistoryHint")), !validHistory ? /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("lessonHistoryRange")) : /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, historyRows.length, " ", t3("lessonSessionCount"), " \xB7", " ", lessonStats(env.data, lesson, historyFrom, historyTo).units, " ", t3("lessonUnit")), renderRows(
+      /* @__PURE__ */ React11.createElement("option", { value: "" }, t3("lessonSelectTerm")),
+      summary.terms.map((term) => /* @__PURE__ */ React11.createElement("option", { key: term.id, value: term.id }, term.start, " \u2013 ", term.end))
+    )), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("lessonHistoryHint")), !validHistory ? /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("lessonHistoryRange")) : /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, historyRows.length, " ", t3("lessonSessionCount"), " \xB7", " ", lessonStats(env.data, lesson, historyFrom, historyTo).units, " ", t3("lessonUnit")), renderRows(
       historyRows.slice(historyPage * 25, (historyPage + 1) * 25)
-    ), !historyRows.length && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("lessonNoHistory")), historyRows.length > 25 && /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
+    ), !historyRows.length && /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("lessonNoHistory")), historyRows.length > 25 && /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(
       Btn,
       {
         disabled: historyPage === 0,
         onClick: () => setHistoryPage((p3) => p3 - 1)
       },
       t3("lessonPrevPage")
-    ), /* @__PURE__ */ React10.createElement("span", null, historyPage + 1, "/", Math.ceil(historyRows.length / 25)), /* @__PURE__ */ React10.createElement(
+    ), /* @__PURE__ */ React11.createElement("span", null, historyPage + 1, "/", Math.ceil(historyRows.length / 25)), /* @__PURE__ */ React11.createElement(
       Btn,
       {
         disabled: (historyPage + 1) * 25 >= historyRows.length,
         onClick: () => setHistoryPage((p3) => p3 + 1)
       },
       t3("lessonNextPage")
-    )))), !!lesson.scheduleHistory?.length && /* @__PURE__ */ React10.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React10.createElement("h3", null, t3("lessonScheduleVersions")), lesson.scheduleHistory.map((rule) => /* @__PURE__ */ React10.createElement("p", { className: "ld-help", key: rule.from }, rule.from, " \xB7 ", lessonWeeklyLabel({ ...lesson, ...rule }, t3)))), lesson.mode === "credit" && account && /* @__PURE__ */ React10.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React10.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React10.createElement("h3", null, t3("lessonLedger")), /* @__PURE__ */ React10.createElement(
+    )))), !!lesson.scheduleHistory?.length && /* @__PURE__ */ React11.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React11.createElement("h3", null, t3("lessonScheduleVersions")), lesson.scheduleHistory.map((rule) => /* @__PURE__ */ React11.createElement("p", { className: "ld-help", key: rule.from }, rule.from, " \xB7 ", lessonWeeklyLabel({ ...lesson, ...rule }, t3)))), lesson.mode === "credit" && account && /* @__PURE__ */ React11.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React11.createElement("h3", null, t3("lessonLedger")), /* @__PURE__ */ React11.createElement(
       Btn,
       {
         onClick: () => open({ type: "charge", lessonId: lesson.id })
       },
       t3("lessonAddCharge")
-    )), account.entries.length ? account.entries.map((x4) => /* @__PURE__ */ React10.createElement("div", { className: "ld-lesson-row", key: x4.id }, /* @__PURE__ */ React10.createElement("span", null, x4.date), /* @__PURE__ */ React10.createElement("span", null, t3(
+    )), account.entries.length ? account.entries.map((x4) => /* @__PURE__ */ React11.createElement("div", { className: "ld-lesson-row", key: x4.id }, /* @__PURE__ */ React11.createElement("span", null, x4.date), /* @__PURE__ */ React11.createElement("span", null, t3(
       "lessonCharge" + x4.kind[0].toUpperCase() + x4.kind.slice(1)
-    )), /* @__PURE__ */ React10.createElement("strong", null, x4.delta > 0 ? "+" : "", x4.delta), /* @__PURE__ */ React10.createElement("span", null, x4.note), x4.kind !== "use" && /* @__PURE__ */ React10.createElement(Btn, { onClick: () => removeCharge(x4.id) }, t3("lessonChargeRemove")))) : /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("lessonNoLedger"))), lesson.mode === "term" && /* @__PURE__ */ React10.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React10.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React10.createElement("h3", null, t3("lessonTerms")), /* @__PURE__ */ React10.createElement(Btn, { onClick: () => open({ type: "term", lessonId: lesson.id }) }, t3("lessonRenew"))), summary.terms.map((x4) => /* @__PURE__ */ React10.createElement("div", { className: "ld-lesson-row", key: x4.id }, /* @__PURE__ */ React10.createElement("span", null, x4.start, " \u2013 ", x4.end), /* @__PURE__ */ React10.createElement("span", null, t3("lessonTermUsed").replace(
+    )), /* @__PURE__ */ React11.createElement("strong", null, x4.delta > 0 ? "+" : "", x4.delta), /* @__PURE__ */ React11.createElement("span", null, x4.note), x4.kind !== "use" && /* @__PURE__ */ React11.createElement(Btn, { onClick: () => removeCharge(x4.id) }, t3("lessonChargeRemove")))) : /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("lessonNoLedger"))), lesson.mode === "term" && /* @__PURE__ */ React11.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React11.createElement("h3", null, t3("lessonTerms")), /* @__PURE__ */ React11.createElement(Btn, { onClick: () => open({ type: "term", lessonId: lesson.id }) }, t3("lessonRenew"))), summary.terms.map((x4) => /* @__PURE__ */ React11.createElement("div", { className: "ld-lesson-row", key: x4.id }, /* @__PURE__ */ React11.createElement("span", null, x4.start, " \u2013 ", x4.end), /* @__PURE__ */ React11.createElement("span", null, t3("lessonTermUsed").replace(
       "{n}",
       String(
         lessonStats(env.data, lesson, x4.start, x4.end).sessions
@@ -33703,28 +33849,28 @@ function createLessonsUI({
       String(
         lessonStats(env.data, lesson, x4.start, x4.end).units
       )
-    )), /* @__PURE__ */ React10.createElement(
+    )), /* @__PURE__ */ React11.createElement(
       Btn,
       {
         onClick: () => open({ type: "term", lessonId: lesson.id, term: x4 })
       },
       t3("edit")
-    )))), error && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, error), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { onClick: removeLesson }, t3("delete")), /* @__PURE__ */ React10.createElement(Btn, { onClick: close }, t3("close"))));
+    )))), error && /* @__PURE__ */ React11.createElement("p", { className: "ld-error", role: "alert" }, error), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(Btn, { onClick: removeLesson }, t3("delete")), /* @__PURE__ */ React11.createElement(Btn, { onClick: close }, t3("close"))));
   }
   function LessonHub({ modal, env, close }) {
     if (!modal) return null;
     let body;
     if (modal.type === "editor")
-      body = /* @__PURE__ */ React10.createElement(LessonEditor, { modal, env, close });
+      body = /* @__PURE__ */ React11.createElement(LessonEditor, { modal, env, close });
     if (modal.type === "session")
-      body = /* @__PURE__ */ React10.createElement(SessionModal, { modal, env, close });
+      body = /* @__PURE__ */ React11.createElement(SessionModal, { modal, env, close });
     if (modal.type === "charge")
-      body = /* @__PURE__ */ React10.createElement(ChargeModal, { modal, env, close });
+      body = /* @__PURE__ */ React11.createElement(ChargeModal, { modal, env, close });
     if (modal.type === "term")
-      body = /* @__PURE__ */ React10.createElement(TermModal, { modal, env, close });
+      body = /* @__PURE__ */ React11.createElement(TermModal, { modal, env, close });
     if (modal.type === "detail")
-      body = /* @__PURE__ */ React10.createElement(LessonDetail, { modal, env, close });
-    return /* @__PURE__ */ React10.createElement(
+      body = /* @__PURE__ */ React11.createElement(LessonDetail, { modal, env, close });
+    return /* @__PURE__ */ React11.createElement(
       "fieldset",
       {
         className: "ld-lesson-form-lock",
@@ -33740,26 +33886,26 @@ function createLessonsUI({
     const rows = lessons.flatMap(
       (l3) => lessonOccurrences(data, l3, day, day)
     );
-    return /* @__PURE__ */ React10.createElement(React10.Fragment, null, rows.length ? rows.sort(
+    return /* @__PURE__ */ React11.createElement(React11.Fragment, null, rows.length ? rows.sort(
       (a3, b3) => (a3.time || "99:99").localeCompare(b3.time || "99:99")
     ).map((x4) => {
       const l3 = lessons.find((q3) => q3.id === x4.lessonId);
-      return /* @__PURE__ */ React10.createElement(
+      return /* @__PURE__ */ React11.createElement(
         "div",
         {
           className: "ld-lesson-today " + (x4.status === "done" ? "is-done" : ""),
           key: x4.key
         },
-        /* @__PURE__ */ React10.createElement(
+        /* @__PURE__ */ React11.createElement(
           "button",
           {
             className: "ld-task-body",
             onClick: () => env.openLesson({ type: "detail", lessonId: x4.lessonId })
           },
-          /* @__PURE__ */ React10.createElement("span", { className: "ld-task-title" }, /* @__PURE__ */ React10.createElement("span", { className: "ld-lesson-time" }, x4.time || t3("allDay")), x4.title, x4.participant ? " \xB7 " + x4.participant : ""),
-          /* @__PURE__ */ React10.createElement("span", { className: "ld-task-meta" }, statusText(x4.status), x4.movedFrom ? " \xB7 " + t3("lessonMovedFrom") + " " + x4.movedFrom : "", " ", accountLine(data, l3, day))
+          /* @__PURE__ */ React11.createElement("span", { className: "ld-task-title" }, /* @__PURE__ */ React11.createElement("span", { className: "ld-lesson-time" }, x4.time || t3("allDay")), x4.title, x4.participant ? " \xB7 " + x4.participant : ""),
+          /* @__PURE__ */ React11.createElement("span", { className: "ld-task-meta" }, statusText(x4.status), x4.movedFrom ? " \xB7 " + t3("lessonMovedFrom") + " " + x4.movedFrom : "", " ", accountLine(data, l3, day))
         ),
-        x4.status === "scheduled" && /* @__PURE__ */ React10.createElement(
+        x4.status === "scheduled" && /* @__PURE__ */ React11.createElement(
           Btn,
           {
             disabled: env.busy,
@@ -33776,7 +33922,7 @@ function createLessonsUI({
           t3("lessonComplete")
         )
       );
-    }) : /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("lessonTodayEmpty")), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
+    }) : /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("lessonTodayEmpty")), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(
       Btn,
       {
         disabled: env.busy,
@@ -33804,7 +33950,7 @@ function createLessonsUI({
     const nextFor = (l3) => lessonOccurrences(data, l3, env.day, shift(env.day, 45)).find(
       (x4) => x4.status === "scheduled"
     );
-    return /* @__PURE__ */ React10.createElement("div", { className: "ld-lessons-page" }, /* @__PURE__ */ React10.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(Btn, { primary: true, icon: "plus", onClick: () => open({ type: "editor" }) }, t3("lessonAdd"))), !!people.length && /* @__PURE__ */ React10.createElement("select", { value: person, onChange: (e3) => setPerson(e3.target.value) }, /* @__PURE__ */ React10.createElement("option", { value: "" }, t3("lessonAllPeople")), people.map((p3) => /* @__PURE__ */ React10.createElement("option", { key: p3, value: p3 }, p3)))), (() => {
+    return /* @__PURE__ */ React11.createElement("div", { className: "ld-lessons-page" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(Btn, { primary: true, icon: "plus", onClick: () => open({ type: "editor" }) }, t3("lessonAdd"))), !!people.length && /* @__PURE__ */ React11.createElement("select", { value: person, onChange: (e3) => setPerson(e3.target.value) }, /* @__PURE__ */ React11.createElement("option", { value: "" }, t3("lessonAllPeople")), people.map((p3) => /* @__PURE__ */ React11.createElement("option", { key: p3, value: p3 }, p3)))), (() => {
       const warnings = lessonExpiring(data, env.day);
       const low = lessons.filter(
         (l3) => l3.mode === "credit" && l3.balanceWarnAt !== null && lessonAccount(data, l3).balance <= l3.balanceWarnAt
@@ -33816,38 +33962,38 @@ function createLessonsUI({
         date: env.day
       }));
       const list = [...low, ...warnings];
-      return list.length ? /* @__PURE__ */ React10.createElement("section", { className: "ld-section ld-lesson-alerts" }, /* @__PURE__ */ React10.createElement("h2", null, t3("lessonAlerts")), list.map((x4, i3) => /* @__PURE__ */ React10.createElement(
+      return list.length ? /* @__PURE__ */ React11.createElement("section", { className: "ld-section ld-lesson-alerts" }, /* @__PURE__ */ React11.createElement("h2", null, t3("lessonAlerts")), list.map((x4, i3) => /* @__PURE__ */ React11.createElement(
         "button",
         {
           className: "ld-time-index",
           key: x4.kind + x4.lessonId + x4.date + i3,
           onClick: () => open({ type: "detail", lessonId: x4.lessonId })
         },
-        /* @__PURE__ */ React10.createElement("span", null, x4.date),
-        /* @__PURE__ */ React10.createElement("span", null, x4.title),
-        /* @__PURE__ */ React10.createElement("small", null, x4.kind === "low" ? t3("lessonLowBalance").replace("{n}", String(x4.balance)) : x4.kind === "term" ? t3("lessonTermExpiring").replace("{n}", String(x4.days)) : t3("lessonCreditExpiring").replace(
+        /* @__PURE__ */ React11.createElement("span", null, x4.date),
+        /* @__PURE__ */ React11.createElement("span", null, x4.title),
+        /* @__PURE__ */ React11.createElement("small", null, x4.kind === "low" ? t3("lessonLowBalance").replace("{n}", String(x4.balance)) : x4.kind === "term" ? t3("lessonTermExpiring").replace("{n}", String(x4.days)) : t3("lessonCreditExpiring").replace(
           "{n}",
           String(x4.days)
         ))
       ))) : null;
-    })(), /* @__PURE__ */ React10.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React10.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React10.createElement("h2", null, t3("lessonDay")), /* @__PURE__ */ React10.createElement("span", { className: "ld-fold-count" }, dayRows.length)), dayRows.length ? dayRows.sort(
+    })(), /* @__PURE__ */ React11.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React11.createElement("h2", null, t3("lessonDay")), /* @__PURE__ */ React11.createElement("span", { className: "ld-fold-count" }, dayRows.length)), dayRows.length ? dayRows.sort(
       (a3, b3) => (a3.time || "99:99").localeCompare(b3.time || "99:99")
-    ).map((x4) => /* @__PURE__ */ React10.createElement(
+    ).map((x4) => /* @__PURE__ */ React11.createElement(
       "div",
       {
         className: "ld-lesson-today " + (x4.status === "done" ? "is-done" : ""),
         key: x4.key
       },
-      /* @__PURE__ */ React10.createElement(
+      /* @__PURE__ */ React11.createElement(
         "button",
         {
           className: "ld-task-body",
           onClick: () => open({ type: "detail", lessonId: x4.lessonId })
         },
-        /* @__PURE__ */ React10.createElement("span", { className: "ld-task-title" }, /* @__PURE__ */ React10.createElement("span", { className: "ld-lesson-time" }, x4.time || t3("allDay")), x4.title, x4.participant ? " \xB7 " + x4.participant : ""),
-        /* @__PURE__ */ React10.createElement("span", { className: "ld-task-meta" }, statusText(x4.status), x4.place ? " \xB7 " + x4.place : "", x4.movedFrom ? " \xB7 " + t3("lessonMovedFrom") + " " + x4.movedFrom : "")
+        /* @__PURE__ */ React11.createElement("span", { className: "ld-task-title" }, /* @__PURE__ */ React11.createElement("span", { className: "ld-lesson-time" }, x4.time || t3("allDay")), x4.title, x4.participant ? " \xB7 " + x4.participant : ""),
+        /* @__PURE__ */ React11.createElement("span", { className: "ld-task-meta" }, statusText(x4.status), x4.place ? " \xB7 " + x4.place : "", x4.movedFrom ? " \xB7 " + t3("lessonMovedFrom") + " " + x4.movedFrom : "")
       ),
-      x4.status === "scheduled" && /* @__PURE__ */ React10.createElement(
+      x4.status === "scheduled" && /* @__PURE__ */ React11.createElement(
         Btn,
         {
           onClick: () => open({
@@ -33862,38 +34008,38 @@ function createLessonsUI({
         },
         t3("lessonComplete")
       )
-    )) : /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("lessonDayEmpty"))), /* @__PURE__ */ React10.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React10.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React10.createElement("h2", null, t3("lessonWeek")), /* @__PURE__ */ React10.createElement("span", { className: "ld-help" }, start, " \u2013 ", shift(start, 6))), /* @__PURE__ */ React10.createElement("div", { className: "ld-week-grid" }, dates.map((d2) => /* @__PURE__ */ React10.createElement("div", { className: "ld-week-cell", key: d2 }, /* @__PURE__ */ React10.createElement("h3", null, t3("weekdayShort" + weekday(d2)), " ", /* @__PURE__ */ React10.createElement("small", null, d2.slice(5))), weekRows.filter((x4) => x4.date === d2).sort(
+    )) : /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("lessonDayEmpty"))), /* @__PURE__ */ React11.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React11.createElement("h2", null, t3("lessonWeek")), /* @__PURE__ */ React11.createElement("span", { className: "ld-help" }, start, " \u2013 ", shift(start, 6))), /* @__PURE__ */ React11.createElement("div", { className: "ld-week-grid" }, dates.map((d2) => /* @__PURE__ */ React11.createElement("div", { className: "ld-week-cell", key: d2 }, /* @__PURE__ */ React11.createElement("h3", null, t3("weekdayShort" + weekday(d2)), " ", /* @__PURE__ */ React11.createElement("small", null, d2.slice(5))), weekRows.filter((x4) => x4.date === d2).sort(
       (a3, b3) => (a3.time || "99:99").localeCompare(b3.time || "99:99")
-    ).map((x4) => /* @__PURE__ */ React10.createElement(
+    ).map((x4) => /* @__PURE__ */ React11.createElement(
       "button",
       {
         key: x4.key,
         className: "ld-week-lesson " + (x4.status === "done" ? "is-done" : ""),
         onClick: () => open({ type: "detail", lessonId: x4.lessonId })
       },
-      /* @__PURE__ */ React10.createElement("span", null, x4.time),
-      /* @__PURE__ */ React10.createElement("strong", null, x4.title),
-      /* @__PURE__ */ React10.createElement("small", null, x4.participant || "", x4.status === "skipped" ? " \xB7 " + t3("lessonStatusSkipped") : "")
-    )))))), /* @__PURE__ */ React10.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React10.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React10.createElement("h2", null, t3("lessonCourses")), /* @__PURE__ */ React10.createElement("span", { className: "ld-fold-count" }, filtered.length)), filtered.length ? /* @__PURE__ */ React10.createElement("div", { className: "ld-lesson-cards" }, filtered.map((l3) => {
+      /* @__PURE__ */ React11.createElement("span", null, x4.time),
+      /* @__PURE__ */ React11.createElement("strong", null, x4.title),
+      /* @__PURE__ */ React11.createElement("small", null, x4.participant || "", x4.status === "skipped" ? " \xB7 " + t3("lessonStatusSkipped") : "")
+    )))))), /* @__PURE__ */ React11.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React11.createElement("h2", null, t3("lessonCourses")), /* @__PURE__ */ React11.createElement("span", { className: "ld-fold-count" }, filtered.length)), filtered.length ? /* @__PURE__ */ React11.createElement("div", { className: "ld-lesson-cards" }, filtered.map((l3) => {
       const next = nextFor(l3);
-      return /* @__PURE__ */ React10.createElement("div", { className: "ld-lesson-card", key: l3.id }, /* @__PURE__ */ React10.createElement(
+      return /* @__PURE__ */ React11.createElement("div", { className: "ld-lesson-card", key: l3.id }, /* @__PURE__ */ React11.createElement(
         "button",
         {
           className: "ld-task-body",
           onClick: () => open({ type: "detail", lessonId: l3.id })
         },
-        /* @__PURE__ */ React10.createElement("span", { className: "ld-task-title" }, l3.title, l3.participant ? " \xB7 " + l3.participant : ""),
-        /* @__PURE__ */ React10.createElement("span", { className: "ld-task-meta" }, lessonWeeklyLabel(l3, t3), l3.place ? " \xB7 " + l3.place : ""),
-        /* @__PURE__ */ React10.createElement("span", { className: "ld-task-meta" }, modeText(l3.mode), accountLine(data, l3, env.day) ? " \xB7 " + accountLine(data, l3, env.day) : ""),
-        next && /* @__PURE__ */ React10.createElement("span", { className: "ld-task-meta" }, t3("lessonNext"), " ", next.date, " ", next.time)
-      ), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
+        /* @__PURE__ */ React11.createElement("span", { className: "ld-task-title" }, l3.title, l3.participant ? " \xB7 " + l3.participant : ""),
+        /* @__PURE__ */ React11.createElement("span", { className: "ld-task-meta" }, lessonWeeklyLabel(l3, t3), l3.place ? " \xB7 " + l3.place : ""),
+        /* @__PURE__ */ React11.createElement("span", { className: "ld-task-meta" }, modeText(l3.mode), accountLine(data, l3, env.day) ? " \xB7 " + accountLine(data, l3, env.day) : ""),
+        next && /* @__PURE__ */ React11.createElement("span", { className: "ld-task-meta" }, t3("lessonNext"), " ", next.date, " ", next.time)
+      ), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(
         Btn,
         {
           onClick: () => open({ type: "detail", lessonId: l3.id })
         },
         t3("lessonDetail")
-      ), /* @__PURE__ */ React10.createElement(Btn, { onClick: () => open({ type: "editor", lesson: l3 }) }, t3("edit"))));
-    })) : /* @__PURE__ */ React10.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React10.createElement(Icon2, { name: "lessons", size: 28 }), /* @__PURE__ */ React10.createElement("h2", null, t3("lessonEmptyTitle")), /* @__PURE__ */ React10.createElement("p", null, t3("lessonEmptyText")), /* @__PURE__ */ React10.createElement(Btn, { primary: true, onClick: () => open({ type: "editor" }) }, t3("lessonAdd")))));
+      ), /* @__PURE__ */ React11.createElement(Btn, { onClick: () => open({ type: "editor", lesson: l3 }) }, t3("edit"))));
+    })) : /* @__PURE__ */ React11.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React11.createElement(Icon2, { name: "lessons", size: 28 }), /* @__PURE__ */ React11.createElement("h2", null, t3("lessonEmptyTitle")), /* @__PURE__ */ React11.createElement("p", null, t3("lessonEmptyText")), /* @__PURE__ */ React11.createElement(Btn, { primary: true, onClick: () => open({ type: "editor" }) }, t3("lessonAdd")))));
   }
   return { LessonHub, LessonsPage, TodayLessons };
 }
@@ -34692,7 +34838,7 @@ var lessons_default = '/* Courses stay compact: schedule, attendance and credit 
 
 // src/client.tsx
 var css = style_default + spirit_default + today_default + focus_default + planning_default + review_default + lessons_default + panel_resize_default + header_timer_default;
-var { useState: useState7, useEffect: useEffect7, useRef: useRef7, useSyncExternalStore: useSyncExternalStore2 } = React11;
+var { useState: useState7, useEffect: useEffect7, useRef: useRef7, useSyncExternalStore: useSyncExternalStore2 } = React12;
 var NAV = [
   "today",
   "projects",
@@ -34724,7 +34870,7 @@ var paths = {
   ai: "m12 3 2.3 6.7L21 12l-6.7 2.3L12 21l-2.3-6.7L3 12l6.7-2.3Z"
 };
 function Icon({ name = "focus", size = 20 }) {
-  return /* @__PURE__ */ React11.createElement(
+  return /* @__PURE__ */ React12.createElement(
     "svg",
     {
       width: size,
@@ -34737,7 +34883,7 @@ function Icon({ name = "focus", size = 20 }) {
       strokeLinejoin: "round",
       "aria-hidden": "true"
     },
-    /* @__PURE__ */ React11.createElement("path", { d: paths[name] || paths.focus })
+    /* @__PURE__ */ React12.createElement("path", { d: paths[name] || paths.focus })
   );
 }
 function uid() {
@@ -34843,7 +34989,7 @@ function apply(ctx) {
     icon = "",
     ...props
   }) {
-    return /* @__PURE__ */ React11.createElement(
+    return /* @__PURE__ */ React12.createElement(
       "button",
       {
         type: "button",
@@ -34851,7 +34997,7 @@ function apply(ctx) {
         onClick,
         ...props
       },
-      icon && /* @__PURE__ */ React11.createElement(Icon, { name: icon, size: 17 }),
+      icon && /* @__PURE__ */ React12.createElement(Icon, { name: icon, size: 17 }),
       " ",
       children
     );
@@ -34873,7 +35019,7 @@ function apply(ctx) {
     let mood = data?.settings?.mood || "daily";
     if (data?.settings?.moodUntil && data.settings.moodUntil < today(data.settings.timeZone))
       mood = "daily";
-    return /* @__PURE__ */ React11.createElement("div", { className: "ld-root ld-" + mood }, children);
+    return /* @__PURE__ */ React12.createElement("div", { className: "ld-root ld-" + mood }, children);
   }
   function Alerts() {
     const { data } = useStore();
@@ -34934,7 +35080,7 @@ function apply(ctx) {
         }
       }
     }, [data?.revision, Math.floor(now / 1e4)]);
-    return notices.length ? /* @__PURE__ */ React11.createElement("div", { className: "ld-global-notice", role: "status" }, /* @__PURE__ */ React11.createElement(Icon, { name: "today" }), /* @__PURE__ */ React11.createElement("span", null, notices[0].title, notices.length > 1 ? " +" + (notices.length - 1) : ""), /* @__PURE__ */ React11.createElement(
+    return notices.length ? /* @__PURE__ */ React12.createElement("div", { className: "ld-global-notice", role: "status" }, /* @__PURE__ */ React12.createElement(Icon, { name: "today" }), /* @__PURE__ */ React12.createElement("span", null, notices[0].title, notices.length > 1 ? " +" + (notices.length - 1) : ""), /* @__PURE__ */ React12.createElement(
       Btn,
       {
         onClick: () => {
@@ -34954,7 +35100,7 @@ function apply(ctx) {
       ref.current?.showModal();
       return () => before?.focus?.();
     }, []);
-    return /* @__PURE__ */ React11.createElement(
+    return /* @__PURE__ */ React12.createElement(
       "dialog",
       {
         ref,
@@ -34967,7 +35113,7 @@ function apply(ctx) {
           if (e3.target === e3.currentTarget) onClose();
         }
       },
-      /* @__PURE__ */ React11.createElement("header", null, /* @__PURE__ */ React11.createElement("h2", null, title), /* @__PURE__ */ React11.createElement(
+      /* @__PURE__ */ React12.createElement("header", null, /* @__PURE__ */ React12.createElement("h2", null, title), /* @__PURE__ */ React12.createElement(
         "button",
         {
           type: "button",
@@ -35007,7 +35153,7 @@ function apply(ctx) {
     children
   }) {
     const open = !folded;
-    return /* @__PURE__ */ React11.createElement("section", { className: "ld-section ld-fold " + className }, /* @__PURE__ */ React11.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React11.createElement("h2", null, /* @__PURE__ */ React11.createElement(
+    return /* @__PURE__ */ React12.createElement("section", { className: "ld-section ld-fold " + className }, /* @__PURE__ */ React12.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React12.createElement("h2", null, /* @__PURE__ */ React12.createElement(
       "button",
       {
         type: "button",
@@ -35016,12 +35162,12 @@ function apply(ctx) {
         "aria-controls": id,
         onClick: onFold
       },
-      /* @__PURE__ */ React11.createElement("span", { className: "ld-fold-chevron" }, /* @__PURE__ */ React11.createElement(Icon, { name: "chevron", size: 14 })),
+      /* @__PURE__ */ React12.createElement("span", { className: "ld-fold-chevron" }, /* @__PURE__ */ React12.createElement(Icon, { name: "chevron", size: 14 })),
       title
-    )), /* @__PURE__ */ React11.createElement("span", { className: "ld-fold-count" }, count)), open && /* @__PURE__ */ React11.createElement("div", { id }, children));
+    )), /* @__PURE__ */ React12.createElement("span", { className: "ld-fold-count" }, count)), open && /* @__PURE__ */ React12.createElement("div", { id }, children));
   }
   function Field({ label, children, wide = false }) {
-    return /* @__PURE__ */ React11.createElement("label", { className: "ld-field" + (wide ? " ld-wide" : "") }, /* @__PURE__ */ React11.createElement("span", null, label), children);
+    return /* @__PURE__ */ React12.createElement("label", { className: "ld-field" + (wide ? " ld-wide" : "") }, /* @__PURE__ */ React12.createElement("span", null, label), children);
   }
   function HabitCards({
     full = false,
@@ -35078,7 +35224,7 @@ function apply(ctx) {
       const count = weekDays.filter(
         (d2) => habitProgress(data, h3, d2).done
       ).length;
-      return /* @__PURE__ */ React11.createElement("div", { key: h3.id, className: "ld-habit" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-habit-main" }, /* @__PURE__ */ React11.createElement(
+      return /* @__PURE__ */ React12.createElement("div", { key: h3.id, className: "ld-habit" }, /* @__PURE__ */ React12.createElement("div", { className: "ld-habit-main" }, /* @__PURE__ */ React12.createElement(
         "button",
         {
           className: "ld-task-body",
@@ -35087,14 +35233,14 @@ function apply(ctx) {
             else openLog(h3, day);
           }
         },
-        /* @__PURE__ */ React11.createElement("span", { className: "ld-task-title" }, h3.title),
+        /* @__PURE__ */ React12.createElement("span", { className: "ld-task-title" }, h3.title),
         (() => {
           const meta = r3?.paused ? t3("paused") : p3.missed ? t3("missedHabit") : p3.skipped ? t3("skipped") : r3?.mode === "weekly" ? `${t3("weekly")} \xB7 ${count}/${r3.target}` : r3?.mode === "duration" ? `${p3.value}/${r3.target} ${t3("min")}` : r3?.mode === "quantity" ? `${p3.value}/${r3.target} ${r3.unit}` : p3.done ? t3(
             p3.status === "late" ? "habitLate" : "habitOnTime"
           ) : p3.status === "unrecorded" ? t3("habitUnrecorded") : "";
-          return meta ? /* @__PURE__ */ React11.createElement("span", { className: "ld-task-meta" }, meta, p3.done && ["quantity", "duration"].includes(r3?.mode) ? " \xB7 " + t3(p3.status === "late" ? "habitLate" : "habitOnTime") : "") : null;
+          return meta ? /* @__PURE__ */ React12.createElement("span", { className: "ld-task-meta" }, meta, p3.done && ["quantity", "duration"].includes(r3?.mode) ? " \xB7 " + t3(p3.status === "late" ? "habitLate" : "habitOnTime") : "") : null;
         })()
-      ), /* @__PURE__ */ React11.createElement(
+      ), /* @__PURE__ */ React12.createElement(
         "button",
         {
           className: "ld-habit-check " + (p3.done ? "checked" : ""),
@@ -35102,10 +35248,10 @@ function apply(ctx) {
           disabled: busy || !habitDue(h3, day) || day > today(timeZone),
           onClick: () => openLog(h3, day)
         },
-        /* @__PURE__ */ React11.createElement(Icon, { name: p3.done ? "check" : "plus", size: 17 })
-      )), full && /* @__PURE__ */ React11.createElement("div", { className: "ld-week-dots" }, weekDays.map((d2) => {
+        /* @__PURE__ */ React12.createElement(Icon, { name: p3.done ? "check" : "plus", size: 17 })
+      )), full && /* @__PURE__ */ React12.createElement("div", { className: "ld-week-dots" }, weekDays.map((d2) => {
         const q3 = habitProgress(data, h3, d2);
-        return /* @__PURE__ */ React11.createElement(
+        return /* @__PURE__ */ React12.createElement(
           "button",
           {
             key: d2,
@@ -35119,9 +35265,9 @@ function apply(ctx) {
           d2.slice(8),
           q3.done ? " \xB7" : ""
         );
-      }), /* @__PURE__ */ React11.createElement(Btn, { onClick: () => openHabit(h3) }, t3("edit"))));
+      }), /* @__PURE__ */ React12.createElement(Btn, { onClick: () => openHabit(h3) }, t3("edit"))));
     };
-    const weeklyBlock = groups.weekly.length > 0 ? /* @__PURE__ */ React11.createElement("section", { className: heading ? "ld-weekly-goals" : "ld-weekly-content" }, heading && /* @__PURE__ */ React11.createElement("h3", null, t3("weeklyHabits")), /* @__PURE__ */ React11.createElement("p", { className: "ld-help ld-weekly-period" }, t3("weeklyPeriod").replace("{from}", monday(day)).replace("{to}", shift(monday(day), 6))), groups.weekly.map((h3) => {
+    const weeklyBlock = groups.weekly.length > 0 ? /* @__PURE__ */ React12.createElement("section", { className: heading ? "ld-weekly-goals" : "ld-weekly-content" }, heading && /* @__PURE__ */ React12.createElement("h3", null, t3("weeklyHabits")), /* @__PURE__ */ React12.createElement("p", { className: "ld-help ld-weekly-period" }, t3("weeklyPeriod").replace("{from}", monday(day)).replace("{to}", shift(monday(day), 6))), groups.weekly.map((h3) => {
       const p3 = weeklyHabitStatus(data, h3, day, clock);
       const weekdayLabel = (date) => t3("weekdayShort" + weekday(date));
       const actualDay = today(timeZone, clock);
@@ -35139,7 +35285,7 @@ function apply(ctx) {
           confirmRest: info.violation && !remove
         });
       };
-      return /* @__PURE__ */ React11.createElement("div", { className: "ld-weekly-item", key: h3.id }, /* @__PURE__ */ React11.createElement("div", { className: "ld-weekly-row" }, /* @__PURE__ */ React11.createElement("span", null, /* @__PURE__ */ React11.createElement(
+      return /* @__PURE__ */ React12.createElement("div", { className: "ld-weekly-item", key: h3.id }, /* @__PURE__ */ React12.createElement("div", { className: "ld-weekly-row" }, /* @__PURE__ */ React12.createElement("span", null, /* @__PURE__ */ React12.createElement(
         "button",
         {
           type: "button",
@@ -35149,10 +35295,10 @@ function apply(ctx) {
           onClick: () => openLog(h3, day)
         },
         h3.title
-      ), /* @__PURE__ */ React11.createElement("small", { className: "ld-weekly-facts" }, /* @__PURE__ */ React11.createElement("span", null, p3.completed, "/", p3.target, t3("weeklyTimes")), p3.restDays ? /* @__PURE__ */ React11.createElement("span", null, t3("weeklyRestTag").replace(
+      ), /* @__PURE__ */ React12.createElement("small", { className: "ld-weekly-facts" }, /* @__PURE__ */ React12.createElement("span", null, p3.completed, "/", p3.target, t3("weeklyTimes")), p3.restDays ? /* @__PURE__ */ React12.createElement("span", null, t3("weeklyRestTag").replace(
         "{n}",
         String(p3.restDays)
-      )) : null)), targetDate && p3.applicable && p3.risk !== "historical" && /* @__PURE__ */ React11.createElement(
+      )) : null)), targetDate && p3.applicable && p3.risk !== "historical" && /* @__PURE__ */ React12.createElement(
         Btn,
         {
           disabled: busy,
@@ -35162,13 +35308,13 @@ function apply(ctx) {
           "{date}",
           weekdayLabel(targetDate)
         )
-      )), p3.risk === "complete" && /* @__PURE__ */ React11.createElement("p", { className: "ld-help ld-weekly-note" }, t3("weeklyComplete")), p3.showHints && p3.restToday && /* @__PURE__ */ React11.createElement("p", { className: "ld-help ld-weekly-note" }, t3("weeklyRestToday"), p3.nextEligible ? " \xB7 " + t3("weeklyEarliest").replace(
+      )), p3.risk === "complete" && /* @__PURE__ */ React12.createElement("p", { className: "ld-help ld-weekly-note" }, t3("weeklyComplete")), p3.showHints && p3.restToday && /* @__PURE__ */ React12.createElement("p", { className: "ld-help ld-weekly-note" }, t3("weeklyRestToday"), p3.nextEligible ? " \xB7 " + t3("weeklyEarliest").replace(
         "{date}",
         weekdayLabel(p3.nextEligible)
-      ) : ""), p3.showWarning && ["tight", "short"].includes(p3.risk) && /* @__PURE__ */ React11.createElement("p", { className: "ld-weekly-note ld-weekly-warning", role: "status" }, t3(p3.risk === "tight" ? "weeklyTight" : "weeklyShort").replace("{n}", String(p3.remaining)).replace("{m}", String(p3.capacity))), p3.showHints && !!p3.suggested.length && /* @__PURE__ */ React11.createElement("p", { className: "ld-help ld-weekly-note" }, t3("weeklySuggested").replace(
+      ) : ""), p3.showWarning && ["tight", "short"].includes(p3.risk) && /* @__PURE__ */ React12.createElement("p", { className: "ld-weekly-note ld-weekly-warning", role: "status" }, t3(p3.risk === "tight" ? "weeklyTight" : "weeklyShort").replace("{n}", String(p3.remaining)).replace("{m}", String(p3.capacity))), p3.showHints && !!p3.suggested.length && /* @__PURE__ */ React12.createElement("p", { className: "ld-help ld-weekly-note" }, t3("weeklySuggested").replace(
         "{dates}",
         p3.suggested.map(weekdayLabel).join("\u3001")
-      )), p3.showHints && p3.changesWithinWeek && /* @__PURE__ */ React11.createElement("p", { className: "ld-help ld-weekly-note" }, t3("weeklyRuleChanges")), p3.showHints && !!p3.plannedConflicts.length && /* @__PURE__ */ React11.createElement("p", { className: "ld-weekly-note ld-weekly-warning" }, t3("weeklyPlanReview")), (!!p3.plannedDates.length || p3.showHints && !!p3.suggested.length) && /* @__PURE__ */ React11.createElement("details", { className: "ld-weekly-plans" }, /* @__PURE__ */ React11.createElement("summary", null, t3("weeklyManagePlans"), p3.plannedDates.length ? " \xB7 " + p3.plannedDates.length : ""), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, p3.plannedDates.map((date) => /* @__PURE__ */ React11.createElement(
+      )), p3.showHints && p3.changesWithinWeek && /* @__PURE__ */ React12.createElement("p", { className: "ld-help ld-weekly-note" }, t3("weeklyRuleChanges")), p3.showHints && !!p3.plannedConflicts.length && /* @__PURE__ */ React12.createElement("p", { className: "ld-weekly-note ld-weekly-warning" }, t3("weeklyPlanReview")), (!!p3.plannedDates.length || p3.showHints && !!p3.suggested.length) && /* @__PURE__ */ React12.createElement("details", { className: "ld-weekly-plans" }, /* @__PURE__ */ React12.createElement("summary", null, t3("weeklyManagePlans"), p3.plannedDates.length ? " \xB7 " + p3.plannedDates.length : ""), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, p3.plannedDates.map((date) => /* @__PURE__ */ React12.createElement(
         Btn,
         {
           disabled: busy,
@@ -35180,7 +35326,7 @@ function apply(ctx) {
         " ",
         date.slice(5),
         " \xD7"
-      )), p3.showHints && p3.suggested.filter((date) => !p3.plannedDates.includes(date)).map((date) => /* @__PURE__ */ React11.createElement(
+      )), p3.showHints && p3.suggested.filter((date) => !p3.plannedDates.includes(date)).map((date) => /* @__PURE__ */ React12.createElement(
         Btn,
         {
           disabled: busy,
@@ -35191,19 +35337,19 @@ function apply(ctx) {
           "{date}",
           weekdayLabel(date)
         )
-      ))), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("weeklyPlanOnly"))));
+      ))), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("weeklyPlanOnly"))));
     })) : null;
     if (weeklyOnly)
-      return weeklyBlock || /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("noWeeklyHabits"));
-    return /* @__PURE__ */ React11.createElement(React11.Fragment, null, full ? /* @__PURE__ */ React11.createElement("div", { className: "ld-habit-list ld-habit-list-full" }, list.map(renderHabit)) : /* @__PURE__ */ React11.createElement(React11.Fragment, null, previous.length > 0 && /* @__PURE__ */ React11.createElement("section", { className: "ld-previous-habits" }, /* @__PURE__ */ React11.createElement("h3", null, t3("yesterdayPending"), " \xB7 ", previous.length), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("previousHabitHint")), previous.map(({ habit, date }) => /* @__PURE__ */ React11.createElement("div", { className: "ld-habit", key: habit.id + date }, /* @__PURE__ */ React11.createElement("div", { className: "ld-habit-main" }, /* @__PURE__ */ React11.createElement(
+      return weeklyBlock || /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("noWeeklyHabits"));
+    return /* @__PURE__ */ React12.createElement(React12.Fragment, null, full ? /* @__PURE__ */ React12.createElement("div", { className: "ld-habit-list ld-habit-list-full" }, list.map(renderHabit)) : /* @__PURE__ */ React12.createElement(React12.Fragment, null, previous.length > 0 && /* @__PURE__ */ React12.createElement("section", { className: "ld-previous-habits" }, /* @__PURE__ */ React12.createElement("h3", null, t3("yesterdayPending"), " \xB7 ", previous.length), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("previousHabitHint")), previous.map(({ habit, date }) => /* @__PURE__ */ React12.createElement("div", { className: "ld-habit", key: habit.id + date }, /* @__PURE__ */ React12.createElement("div", { className: "ld-habit-main" }, /* @__PURE__ */ React12.createElement(
       "button",
       {
         className: "ld-task-body",
         onClick: () => openLog(habit, date)
       },
-      /* @__PURE__ */ React11.createElement("span", { className: "ld-task-title" }, habit.title),
-      /* @__PURE__ */ React11.createElement("span", { className: "ld-task-meta" }, date)
-    ), /* @__PURE__ */ React11.createElement(Btn, { disabled: busy, onClick: () => openLog(habit, date) }, t3("log")))))), groups.pending.length > 0 && /* @__PURE__ */ React11.createElement("div", { className: "ld-habit-list" }, groups.pending.map(renderHabit)), !groups.pending.length && /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("noPendingHabits")), groups.done.length > 0 && /* @__PURE__ */ React11.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React11.createElement("summary", null, t3("doneHabits"), " \xB7 ", groups.done.length), groups.done.map(renderHabit)), groups.settled.length > 0 && /* @__PURE__ */ React11.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React11.createElement("summary", null, t3("settledHabits"), " \xB7 ", groups.settled.length), groups.settled.map(renderHabit)), showWeekly && weeklyBlock), review && /* @__PURE__ */ React11.createElement(
+      /* @__PURE__ */ React12.createElement("span", { className: "ld-task-title" }, habit.title),
+      /* @__PURE__ */ React12.createElement("span", { className: "ld-task-meta" }, date)
+    ), /* @__PURE__ */ React12.createElement(Btn, { disabled: busy, onClick: () => openLog(habit, date) }, t3("log")))))), groups.pending.length > 0 && /* @__PURE__ */ React12.createElement("div", { className: "ld-habit-list" }, groups.pending.map(renderHabit)), !groups.pending.length && /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("noPendingHabits")), groups.done.length > 0 && /* @__PURE__ */ React12.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React12.createElement("summary", null, t3("doneHabits"), " \xB7 ", groups.done.length), groups.done.map(renderHabit)), groups.settled.length > 0 && /* @__PURE__ */ React12.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React12.createElement("summary", null, t3("settledHabits"), " \xB7 ", groups.settled.length), groups.settled.map(renderHabit)), showWeekly && weeklyBlock), review && /* @__PURE__ */ React12.createElement(
       ReviewCheckIn,
       {
         habit: review.habit,
@@ -35212,17 +35358,17 @@ function apply(ctx) {
         busy,
         close: () => setReview(null)
       }
-    ), record && /* @__PURE__ */ React11.createElement(
+    ), record && /* @__PURE__ */ React12.createElement(
       Modal,
       {
         title: record.title + " \xB7 " + recordDate,
         onClose: () => setRecord(null)
       },
-      /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, (() => {
+      /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, (() => {
         const mode = habitRule(record, recordDate)?.mode;
         return mode === "duration" ? t3("durationHint") : mode === "quantity" ? t3("quantityHint") : t3("checkInHint");
       })()),
-      habitRule(currentRecord, recordDate)?.mode === "weekly" && recordRest?.violation && !habitProgress(data, currentRecord, recordDate).done && /* @__PURE__ */ React11.createElement("div", { className: "ld-rest-checkin" }, /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("weeklyRestRecordHint")), /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
+      habitRule(currentRecord, recordDate)?.mode === "weekly" && recordRest?.violation && !habitProgress(data, currentRecord, recordDate).done && /* @__PURE__ */ React12.createElement("div", { className: "ld-rest-checkin" }, /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("weeklyRestRecordHint")), /* @__PURE__ */ React12.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React12.createElement(
         "input",
         {
           type: "checkbox",
@@ -35230,14 +35376,14 @@ function apply(ctx) {
           onChange: (e3) => setConfirmRest(e3.target.checked)
         }
       ), t3("weeklyRestRecordConfirm"))),
-      /* @__PURE__ */ React11.createElement("div", { className: "ld-form" }, ["quantity", "duration"].includes(
+      /* @__PURE__ */ React12.createElement("div", { className: "ld-form" }, ["quantity", "duration"].includes(
         habitRule(record, recordDate)?.mode
-      ) && /* @__PURE__ */ React11.createElement(
+      ) && /* @__PURE__ */ React12.createElement(
         Field,
         {
           label: habitRule(record, recordDate)?.mode === "duration" ? t3("addMinutes") : t3("addValue")
         },
-        /* @__PURE__ */ React11.createElement(
+        /* @__PURE__ */ React12.createElement(
           "input",
           {
             type: "number",
@@ -35247,8 +35393,8 @@ function apply(ctx) {
             onChange: (e3) => setAmount(e3.target.value)
           }
         )
-      ), /* @__PURE__ */ React11.createElement(Field, { label: t3("note") }, /* @__PURE__ */ React11.createElement("input", { value: note, onChange: (e3) => setNote(e3.target.value) }))),
-      /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(
+      ), /* @__PURE__ */ React12.createElement(Field, { label: t3("note") }, /* @__PURE__ */ React12.createElement("input", { value: note, onChange: (e3) => setNote(e3.target.value) }))),
+      /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React12.createElement(
         Btn,
         {
           primary: true,
@@ -35270,7 +35416,7 @@ function apply(ctx) {
         t3(
           habitRule(record, recordDate)?.mode === "duration" ? "recordMinutes" : habitRule(record, recordDate)?.mode === "quantity" ? "recordQuantity" : "check"
         )
-      ), /* @__PURE__ */ React11.createElement(
+      ), /* @__PURE__ */ React12.createElement(
         Btn,
         {
           disabled: busy,
@@ -35286,7 +35432,7 @@ function apply(ctx) {
           }
         },
         t3("skip")
-      ), /* @__PURE__ */ React11.createElement(
+      ), /* @__PURE__ */ React12.createElement(
         Btn,
         {
           disabled: busy || recordDate > today(timeZone),
@@ -35303,10 +35449,10 @@ function apply(ctx) {
         },
         t3("missedHabit")
       )),
-      /* @__PURE__ */ React11.createElement("h3", null, t3("history")),
+      /* @__PURE__ */ React12.createElement("h3", null, t3("history")),
       live2("habitLogs").filter(
         (l3) => l3.habitId === record.id && l3.date === recordDate
-      ).map((l3) => /* @__PURE__ */ React11.createElement("div", { className: "ld-log", key: l3.id }, /* @__PURE__ */ React11.createElement("span", null, l3.missed ? t3("missedHabit") : l3.skipped ? t3("skipped") : l3.value + " " + (habitRule(record, recordDate)?.unit || ""), " ", l3.note), /* @__PURE__ */ React11.createElement(
+      ).map((l3) => /* @__PURE__ */ React12.createElement("div", { className: "ld-log", key: l3.id }, /* @__PURE__ */ React12.createElement("span", null, l3.missed ? t3("missedHabit") : l3.skipped ? t3("skipped") : l3.value + " " + (habitRule(record, recordDate)?.unit || ""), " ", l3.note), /* @__PURE__ */ React12.createElement(
         Btn,
         {
           disabled: busy,
@@ -35337,18 +35483,18 @@ function apply(ctx) {
         (o2) => o2.taskId === x4.id && o2.status === "done"
       ) && today(timeZone, Date.parse(x4.updatedAt)) >= from && today(timeZone, Date.parse(x4.updatedAt)) <= to
     ).length;
-    return /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(Btn, { onClick: () => switchKind("day"), "aria-pressed": kind === "day" }, t3("reviewDay")), /* @__PURE__ */ React11.createElement(
+    return /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React12.createElement(Btn, { onClick: () => switchKind("day"), "aria-pressed": kind === "day" }, t3("reviewDay")), /* @__PURE__ */ React12.createElement(
       Btn,
       {
         onClick: () => switchKind("week"),
         "aria-pressed": kind === "week"
       },
       t3("reviewWeek")
-    )), /* @__PURE__ */ React11.createElement("div", { className: "ld-review-stats" }, /* @__PURE__ */ React11.createElement("div", null, /* @__PURE__ */ React11.createElement("strong", null, completed), /* @__PURE__ */ React11.createElement("span", null, t3("completed"))), /* @__PURE__ */ React11.createElement("div", null, /* @__PURE__ */ React11.createElement("strong", null, Math.floor(
+    )), /* @__PURE__ */ React12.createElement("div", { className: "ld-review-stats" }, /* @__PURE__ */ React12.createElement("div", null, /* @__PURE__ */ React12.createElement("strong", null, completed), /* @__PURE__ */ React12.createElement("span", null, t3("completed"))), /* @__PURE__ */ React12.createElement("div", null, /* @__PURE__ */ React12.createElement("strong", null, Math.floor(
       records.reduce((s3, x4) => s3 + x4.seconds, 0) / 60
-    )), /* @__PURE__ */ React11.createElement("span", null, t3("focused"), " \xB7 ", t3("min"))), /* @__PURE__ */ React11.createElement("div", null, /* @__PURE__ */ React11.createElement("strong", null, live2("habitLogs").filter(
+    )), /* @__PURE__ */ React12.createElement("span", null, t3("focused"), " \xB7 ", t3("min"))), /* @__PURE__ */ React12.createElement("div", null, /* @__PURE__ */ React12.createElement("strong", null, live2("habitLogs").filter(
       (l3) => l3.date >= from && l3.date <= to && !l3.skipped
-    ).length), /* @__PURE__ */ React11.createElement("span", null, t3("check")))), /* @__PURE__ */ React11.createElement(
+    ).length), /* @__PURE__ */ React12.createElement("span", null, t3("check")))), /* @__PURE__ */ React12.createElement(
       ReviewEditor,
       {
         key: kind + ":" + date,
@@ -35357,7 +35503,7 @@ function apply(ctx) {
         kind,
         busy
       }
-    ), /* @__PURE__ */ React11.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React11.createElement("h2", null, t3("savedLogs")), records.length ? records.map((r3) => /* @__PURE__ */ React11.createElement("div", { className: "ld-log", key: r3.id }, /* @__PURE__ */ React11.createElement("span", null, r3.date, " \xB7 ", r3.title || t3("directFocus")), /* @__PURE__ */ React11.createElement("span", null, Math.floor(r3.seconds / 60), " ", t3("min")))) : /* @__PURE__ */ React11.createElement("p", { className: "ld-muted" }, t3("noRecord"))), /* @__PURE__ */ React11.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React11.createElement("h2", null, t3("projects")), projects.map((p3) => /* @__PURE__ */ React11.createElement("div", { className: "ld-log", key: p3.id }, /* @__PURE__ */ React11.createElement("span", null, p3.title), /* @__PURE__ */ React11.createElement("span", null, tasks.filter(
+    ), /* @__PURE__ */ React12.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React12.createElement("h2", null, t3("savedLogs")), records.length ? records.map((r3) => /* @__PURE__ */ React12.createElement("div", { className: "ld-log", key: r3.id }, /* @__PURE__ */ React12.createElement("span", null, r3.date, " \xB7 ", r3.title || t3("directFocus")), /* @__PURE__ */ React12.createElement("span", null, Math.floor(r3.seconds / 60), " ", t3("min")))) : /* @__PURE__ */ React12.createElement("p", { className: "ld-muted" }, t3("noRecord"))), /* @__PURE__ */ React12.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React12.createElement("h2", null, t3("projects")), projects.map((p3) => /* @__PURE__ */ React12.createElement("div", { className: "ld-log", key: p3.id }, /* @__PURE__ */ React12.createElement("span", null, p3.title), /* @__PURE__ */ React12.createElement("span", null, tasks.filter(
       (x4) => x4.projectId === p3.id && x4.status === "done"
     ).length, "/", tasks.filter((x4) => x4.projectId === p3.id).length)))));
   }
@@ -35421,11 +35567,11 @@ function apply(ctx) {
             });
     }
     const events = filter === "habits" ? habitEvents : filter === "lessons" ? lessonEvents : [...ev, ...habitEvents, ...lessonEvents];
-    return /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, [
+    return /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, [
       ["dayGridMonth", "monthView"],
       ["timeGridWeek", "weekView"],
       ["timeGridDay", "dayView"]
-    ].map(([v3, label]) => /* @__PURE__ */ React11.createElement(
+    ].map(([v3, label]) => /* @__PURE__ */ React12.createElement(
       Btn,
       {
         key: v3,
@@ -35436,15 +35582,15 @@ function apply(ctx) {
         }
       },
       t3(label)
-    ))), /* @__PURE__ */ React11.createElement(
+    ))), /* @__PURE__ */ React12.createElement(
       "select",
       {
         "aria-label": t3("all"),
         value: filter,
         onChange: (e3) => setFilter(e3.target.value)
       },
-      ["all", "work", "life", "habits", "lessons"].map((a3) => /* @__PURE__ */ React11.createElement("option", { key: a3, value: a3 }, t3(a3)))
-    )), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("calendarHint")), /* @__PURE__ */ React11.createElement(
+      ["all", "work", "life", "habits", "lessons"].map((a3) => /* @__PURE__ */ React12.createElement("option", { key: a3, value: a3 }, t3(a3)))
+    )), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("calendarHint")), /* @__PURE__ */ React12.createElement(
       FullCalendar,
       {
         ref,
@@ -35543,7 +35689,7 @@ function apply(ctx) {
     const [error, setError] = useState7("");
     const [showNotes, setShowNotes] = useState7(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.12.1";
+    const current = v3.currentVersion || "0.12.2";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -35662,8 +35808,8 @@ function apply(ctx) {
         setUpgradeError(e3?.message || t3("updateCheckFailed"));
       }
     };
-    const link = releaseUrl ? /* @__PURE__ */ React11.createElement("a", { className: "ld-btn", href: releaseUrl, target: "_blank", rel: "noreferrer" }, t3("viewRelease")) : null;
-    return /* @__PURE__ */ React11.createElement("section", { className: "ld-section ld-update", id: "ld-update" }, /* @__PURE__ */ React11.createElement("h2", null, t3("versionUpdate")), /* @__PURE__ */ React11.createElement("div", { className: "ld-update-meta" }, /* @__PURE__ */ React11.createElement("span", null, t3("currentVersion")), /* @__PURE__ */ React11.createElement("strong", null, "v", current), /* @__PURE__ */ React11.createElement("span", null, t3("installKindLabel")), /* @__PURE__ */ React11.createElement("strong", null, installText), /* @__PURE__ */ React11.createElement("span", null, t3("currentDsh")), /* @__PURE__ */ React11.createElement("strong", null, v3.dshVersion ? "v" + v3.dshVersion : t3("unknownValue")), /* @__PURE__ */ React11.createElement("span", null, t3("lastChecked")), /* @__PURE__ */ React11.createElement("strong", null, v3.lastCheck ? new Date(v3.lastCheck).toLocaleString() : t3("neverChecked"))), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions", style: { marginTop: 14 } }, /* @__PURE__ */ React11.createElement(Btn, { primary: true, disabled: busy, onClick: () => void check(true) }, busy ? t3("checkingUpdate") : t3("checkNow")), /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
+    const link = releaseUrl ? /* @__PURE__ */ React12.createElement("a", { className: "ld-btn", href: releaseUrl, target: "_blank", rel: "noreferrer" }, t3("viewRelease")) : null;
+    return /* @__PURE__ */ React12.createElement("section", { className: "ld-section ld-update", id: "ld-update" }, /* @__PURE__ */ React12.createElement("h2", null, t3("versionUpdate")), /* @__PURE__ */ React12.createElement("div", { className: "ld-update-meta" }, /* @__PURE__ */ React12.createElement("span", null, t3("currentVersion")), /* @__PURE__ */ React12.createElement("strong", null, "v", current), /* @__PURE__ */ React12.createElement("span", null, t3("installKindLabel")), /* @__PURE__ */ React12.createElement("strong", null, installText), /* @__PURE__ */ React12.createElement("span", null, t3("currentDsh")), /* @__PURE__ */ React12.createElement("strong", null, v3.dshVersion ? "v" + v3.dshVersion : t3("unknownValue")), /* @__PURE__ */ React12.createElement("span", null, t3("lastChecked")), /* @__PURE__ */ React12.createElement("strong", null, v3.lastCheck ? new Date(v3.lastCheck).toLocaleString() : t3("neverChecked"))), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions", style: { marginTop: 14 } }, /* @__PURE__ */ React12.createElement(Btn, { primary: true, disabled: busy, onClick: () => void check(true) }, busy ? t3("checkingUpdate") : t3("checkNow")), /* @__PURE__ */ React12.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React12.createElement(
       "input",
       {
         type: "checkbox",
@@ -35671,7 +35817,7 @@ function apply(ctx) {
         disabled: busy,
         onChange: (e3) => void setAuto(e3.target.checked)
       }
-    ), t3("autoCheckUpdate"))), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("autoCheckHint"), " ", t3("updateStableOnly")), v3.error && !error && /* @__PURE__ */ React11.createElement("p", { className: "ld-error", role: "alert" }, t3("updateCheckFailed"), "\uFF1A", v3.error.message), error && /* @__PURE__ */ React11.createElement("p", { className: "ld-error", role: "alert" }, error), v3.degraded === "feed" && /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("feedFallbackNote")), state.kind === "none" && /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("neverChecked")), state.kind === "latest" && /* @__PURE__ */ React11.createElement("p", { className: "ld-update-ok", role: "status" }, t3("upToDate"), " \xB7 v", state.version), (state.kind === "available" || state.kind === "unknown-compat") && /* @__PURE__ */ React11.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React11.createElement("strong", null, t3("updateFound"), " v", state.version), state.kind === "unknown-compat" && /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("updateUnknownCompat"), " ", state.dshRange ? t3("compatRange") + " " + state.dshRange + "\u3002" : "", " ", !v3.dshVersion && t3("compatUnknownNote")), cache?.notes && /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement(
+    ), t3("autoCheckUpdate"))), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("autoCheckHint"), " ", t3("updateStableOnly")), v3.error && !error && /* @__PURE__ */ React12.createElement("p", { className: "ld-error", role: "alert" }, t3("updateCheckFailed"), "\uFF1A", v3.error.message), error && /* @__PURE__ */ React12.createElement("p", { className: "ld-error", role: "alert" }, error), v3.degraded === "feed" && /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("feedFallbackNote")), state.kind === "none" && /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("neverChecked")), state.kind === "latest" && /* @__PURE__ */ React12.createElement("p", { className: "ld-update-ok", role: "status" }, t3("upToDate"), " \xB7 v", state.version), (state.kind === "available" || state.kind === "unknown-compat") && /* @__PURE__ */ React12.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React12.createElement("strong", null, t3("updateFound"), " v", state.version), state.kind === "unknown-compat" && /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("updateUnknownCompat"), " ", state.dshRange ? t3("compatRange") + " " + state.dshRange + "\u3002" : "", " ", !v3.dshVersion && t3("compatUnknownNote")), cache?.notes && /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement(
       "button",
       {
         type: "button",
@@ -35682,7 +35828,7 @@ function apply(ctx) {
       t3("releaseNotes"),
       " ",
       showNotes ? "\u2303" : "\u2304"
-    ), showNotes && /* @__PURE__ */ React11.createElement("pre", { className: "ld-release-notes" }, cache.notes)), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(
+    ), showNotes && /* @__PURE__ */ React12.createElement("pre", { className: "ld-release-notes" }, cache.notes)), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React12.createElement(
       Btn,
       {
         primary: true,
@@ -35690,7 +35836,7 @@ function apply(ctx) {
         onClick: () => void startUpgrade(state.version)
       },
       preparing ? t3("checkingUpdate") : t3("prepareUpgrade")
-    ), link, /* @__PURE__ */ React11.createElement(Btn, { onClick: openUpgradeManager }, t3("openPluginManager")), /* @__PURE__ */ React11.createElement(Btn, { onClick: () => void ignore(state.version) }, t3("ignoreVersion")))), state.kind === "incompatible" && /* @__PURE__ */ React11.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React11.createElement("strong", null, t3("updateIncompatible")), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("updateFound"), " v", state.version, " \xB7 ", t3("compatRange"), " ", state.dshRange, " \xB7 ", t3("currentDsh"), " v", state.dshVersion), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, link, /* @__PURE__ */ React11.createElement(Btn, { onClick: () => void ignore(state.version) }, t3("ignoreVersion")))), state.kind === "ignored" && /* @__PURE__ */ React11.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React11.createElement("strong", null, t3("updateIgnored"), " \xB7 v", state.version), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(Btn, { onClick: () => void ignore("") }, t3("restoreVersionAlert")))), blockers.length > 0 && /* @__PURE__ */ React11.createElement("div", { className: "ld-update-card", role: "alert" }, /* @__PURE__ */ React11.createElement("strong", null, t3("prepareUpgrade")), blockers.map((x4) => /* @__PURE__ */ React11.createElement("p", { className: "ld-help", key: x4 }, x4))), upgradeError && /* @__PURE__ */ React11.createElement("p", { className: "ld-error", role: "alert" }, upgradeError), restored && /* @__PURE__ */ React11.createElement("p", { className: "ld-update-ok", role: "status" }, restored), pending && /* @__PURE__ */ React11.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React11.createElement("strong", null, upgraded ? t3("upgradeDone") + " v" + current : t3("upgradePending") + " \xB7 v" + pending.targetVersion), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, upgraded ? t3("upgradeDone") + " v" + current + "\u3002" : t3("upgradePendingHint")), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, upgraded ? /* @__PURE__ */ React11.createElement(Btn, { onClick: () => void dismissPending() }, t3("upgradeClearPending")) : /* @__PURE__ */ React11.createElement(Btn, { onClick: openUpgradeManager }, t3("openPluginManagerAgain")))), snapshots.length > 0 && /* @__PURE__ */ React11.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React11.createElement("strong", null, t3("snapshotsTitle"), " \xB7 ", snapshots.length), snapshots.slice().reverse().map((snap) => /* @__PURE__ */ React11.createElement("div", { className: "ld-snapshot-row", key: snap.id }, /* @__PURE__ */ React11.createElement("span", null, "v", snap.fromVersion, " \u2192 v", snap.targetVersion), /* @__PURE__ */ React11.createElement("small", null, new Date(snap.createdAt).toLocaleString()), /* @__PURE__ */ React11.createElement(Btn, { onClick: () => void restore(snap) }, t3("snapshotRestore"))))), install === "development" && /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("updateDevHint")), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("updateNetworkNote")));
+    ), link, /* @__PURE__ */ React12.createElement(Btn, { onClick: openUpgradeManager }, t3("openPluginManager")), /* @__PURE__ */ React12.createElement(Btn, { onClick: () => void ignore(state.version) }, t3("ignoreVersion")))), state.kind === "incompatible" && /* @__PURE__ */ React12.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React12.createElement("strong", null, t3("updateIncompatible")), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("updateFound"), " v", state.version, " \xB7 ", t3("compatRange"), " ", state.dshRange, " \xB7 ", t3("currentDsh"), " v", state.dshVersion), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, link, /* @__PURE__ */ React12.createElement(Btn, { onClick: () => void ignore(state.version) }, t3("ignoreVersion")))), state.kind === "ignored" && /* @__PURE__ */ React12.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React12.createElement("strong", null, t3("updateIgnored"), " \xB7 v", state.version), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React12.createElement(Btn, { onClick: () => void ignore("") }, t3("restoreVersionAlert")))), blockers.length > 0 && /* @__PURE__ */ React12.createElement("div", { className: "ld-update-card", role: "alert" }, /* @__PURE__ */ React12.createElement("strong", null, t3("prepareUpgrade")), blockers.map((x4) => /* @__PURE__ */ React12.createElement("p", { className: "ld-help", key: x4 }, x4))), upgradeError && /* @__PURE__ */ React12.createElement("p", { className: "ld-error", role: "alert" }, upgradeError), restored && /* @__PURE__ */ React12.createElement("p", { className: "ld-update-ok", role: "status" }, restored), pending && /* @__PURE__ */ React12.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React12.createElement("strong", null, upgraded ? t3("upgradeDone") + " v" + current : t3("upgradePending") + " \xB7 v" + pending.targetVersion), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, upgraded ? t3("upgradeDone") + " v" + current + "\u3002" : t3("upgradePendingHint")), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, upgraded ? /* @__PURE__ */ React12.createElement(Btn, { onClick: () => void dismissPending() }, t3("upgradeClearPending")) : /* @__PURE__ */ React12.createElement(Btn, { onClick: openUpgradeManager }, t3("openPluginManagerAgain")))), snapshots.length > 0 && /* @__PURE__ */ React12.createElement("div", { className: "ld-update-card" }, /* @__PURE__ */ React12.createElement("strong", null, t3("snapshotsTitle"), " \xB7 ", snapshots.length), snapshots.slice().reverse().map((snap) => /* @__PURE__ */ React12.createElement("div", { className: "ld-snapshot-row", key: snap.id }, /* @__PURE__ */ React12.createElement("span", null, "v", snap.fromVersion, " \u2192 v", snap.targetVersion), /* @__PURE__ */ React12.createElement("small", null, new Date(snap.createdAt).toLocaleString()), /* @__PURE__ */ React12.createElement(Btn, { onClick: () => void restore(snap) }, t3("snapshotRestore"))))), install === "development" && /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("updateDevHint")), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("updateNetworkNote")));
   }
   function SettingsView({ env }) {
     const {
@@ -35722,19 +35868,19 @@ function apply(ctx) {
       a3.click();
       setTimeout(() => URL.revokeObjectURL(url), 1e3);
     };
-    return /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React11.createElement(Field, { label: t3("zone"), wide: true }, /* @__PURE__ */ React11.createElement(
+    return /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React12.createElement(Field, { label: t3("zone"), wide: true }, /* @__PURE__ */ React12.createElement(
       "input",
       {
         value: v3.timeZone,
         onChange: (e3) => setV({ ...v3, timeZone: e3.target.value })
       }
-    )), ["focusMinutes", "shortBreak", "longBreak"].map((k3, i3) => /* @__PURE__ */ React11.createElement(
+    )), ["focusMinutes", "shortBreak", "longBreak"].map((k3, i3) => /* @__PURE__ */ React12.createElement(
       Field,
       {
         key: k3,
         label: t3(["focusMinutes", "shortMinutes", "longMinutes"][i3])
       },
-      /* @__PURE__ */ React11.createElement(
+      /* @__PURE__ */ React12.createElement(
         "input",
         {
           type: "number",
@@ -35744,16 +35890,16 @@ function apply(ctx) {
           onChange: (e3) => setV({ ...v3, [k3]: Number(e3.target.value) })
         }
       )
-    )), /* @__PURE__ */ React11.createElement(Field, { label: t3("mood") }, /* @__PURE__ */ React11.createElement(
+    )), /* @__PURE__ */ React12.createElement(Field, { label: t3("mood") }, /* @__PURE__ */ React12.createElement(
       "select",
       {
         value: v3.mood,
         onChange: (e3) => setV({ ...v3, mood: e3.target.value })
       },
-      ["daily", "bright", "focus", "calm"].map((m3) => /* @__PURE__ */ React11.createElement("option", { key: m3, value: m3 }, t3(
+      ["daily", "bright", "focus", "calm"].map((m3) => /* @__PURE__ */ React12.createElement("option", { key: m3, value: m3 }, t3(
         m3 === "daily" ? "moodDaily" : m3 === "focus" ? "moodFocus" : m3
       )))
-    )), /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
+    )), /* @__PURE__ */ React12.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React12.createElement(
       "input",
       {
         type: "checkbox",
@@ -35763,21 +35909,21 @@ function apply(ctx) {
           moodUntil: e3.target.checked ? today(timeZone) : ""
         })
       }
-    ), t3("moodOnlyToday")), /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
+    ), t3("moodOnlyToday")), /* @__PURE__ */ React12.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React12.createElement(
       "input",
       {
         type: "checkbox",
         checked: v3.sound,
         onChange: (e3) => setV({ ...v3, sound: e3.target.checked })
       }
-    ), t3("sound")), /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
+    ), t3("sound")), /* @__PURE__ */ React12.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React12.createElement(
       "input",
       {
         type: "checkbox",
         checked: v3.notifications,
         onChange: (e3) => setV({ ...v3, notifications: e3.target.checked })
       }
-    ), t3("notifications"))), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("notifyHint"), " ", t3("soundsHelp")), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(
+    ), t3("notifications"))), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("notifyHint"), " ", t3("soundsHelp")), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React12.createElement(
       Btn,
       {
         primary: true,
@@ -35799,7 +35945,7 @@ function apply(ctx) {
         })
       },
       t3("save")
-    ), /* @__PURE__ */ React11.createElement(
+    ), /* @__PURE__ */ React12.createElement(
       Btn,
       {
         onClick: async () => {
@@ -35815,7 +35961,7 @@ function apply(ctx) {
         }
       },
       t3("permission")
-    )), /* @__PURE__ */ React11.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React11.createElement("h2", null, t3("export"), " / ", t3("import")), /* @__PURE__ */ React11.createElement("p", { className: "ld-muted" }, t3("beforeRestore")), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(
+    )), /* @__PURE__ */ React12.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React12.createElement("h2", null, t3("export"), " / ", t3("import")), /* @__PURE__ */ React12.createElement("p", { className: "ld-muted" }, t3("beforeRestore")), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React12.createElement(
       Btn,
       {
         onClick: async () => {
@@ -35824,7 +35970,7 @@ function apply(ctx) {
         }
       },
       t3("export")
-    ), /* @__PURE__ */ React11.createElement("label", { className: "ld-btn ld-file" }, t3("import"), /* @__PURE__ */ React11.createElement(
+    ), /* @__PURE__ */ React12.createElement("label", { className: "ld-btn ld-file" }, t3("import"), /* @__PURE__ */ React12.createElement(
       "input",
       {
         type: "file",
@@ -35842,7 +35988,7 @@ function apply(ctx) {
           e3.target.value = "";
         }
       }
-    )), /* @__PURE__ */ React11.createElement(
+    )), /* @__PURE__ */ React12.createElement(
       Btn,
       {
         onClick: () => {
@@ -35851,7 +35997,7 @@ function apply(ctx) {
         }
       },
       t3("restorePrevious")
-    )), backup && /* @__PURE__ */ React11.createElement("div", { className: "ld-restore" }, /* @__PURE__ */ React11.createElement("p", null, t3("confirmRestore"), " \xB7 ", backup.exportedAt), /* @__PURE__ */ React11.createElement(
+    )), backup && /* @__PURE__ */ React12.createElement("div", { className: "ld-restore" }, /* @__PURE__ */ React12.createElement("p", null, t3("confirmRestore"), " \xB7 ", backup.exportedAt), /* @__PURE__ */ React12.createElement(
       Btn,
       {
         primary: true,
@@ -35866,7 +36012,7 @@ function apply(ctx) {
         }
       },
       t3("confirm")
-    ), /* @__PURE__ */ React11.createElement(Btn, { onClick: () => setBackup(null) }, t3("cancel")))), /* @__PURE__ */ React11.createElement(
+    ), /* @__PURE__ */ React12.createElement(Btn, { onClick: () => setBackup(null) }, t3("cancel")))), /* @__PURE__ */ React12.createElement(
       UpdateSection,
       {
         update,
@@ -36015,7 +36161,7 @@ function apply(ctx) {
       });
     }, [updateView?.prefs?.autoCheck, updateView?.lastCheck]);
     if (!data)
-      return /* @__PURE__ */ React11.createElement("div", { className: "ld-root" }, /* @__PURE__ */ React11.createElement("style", null, css), /* @__PURE__ */ React11.createElement("div", { className: "ld-loading" }, error || t3("loading"), " ", /* @__PURE__ */ React11.createElement(Btn, { onClick: () => void refresh() }, t3("retry"))));
+      return /* @__PURE__ */ React12.createElement("div", { className: "ld-root" }, /* @__PURE__ */ React12.createElement("style", null, css), /* @__PURE__ */ React12.createElement("div", { className: "ld-loading" }, error || t3("loading"), " ", /* @__PURE__ */ React12.createElement(Btn, { onClick: () => void refresh() }, t3("retry"))));
     const live2 = (c3) => data[c3].filter((x4) => !x4.deletedAt);
     const projects = live2("projects");
     const query = search.trim().toLocaleLowerCase();
@@ -36057,7 +36203,7 @@ function apply(ctx) {
       refresh
     };
     function taskRows(items, empty = true) {
-      return items.length ? /* @__PURE__ */ React11.createElement("div", { className: "ld-task-list" }, items.map((x4) => {
+      return items.length ? /* @__PURE__ */ React12.createElement("div", { className: "ld-task-list" }, items.map((x4) => {
         const isOccurrence = !!x4.originalDate;
         const done = x4.status === "done";
         const p3 = projects.find((p4) => p4.id === x4.projectId);
@@ -36080,13 +36226,13 @@ function apply(ctx) {
             item: { status: done ? "todo" : "done" }
           });
         };
-        return /* @__PURE__ */ React11.createElement(
+        return /* @__PURE__ */ React12.createElement(
           "div",
           {
             className: "ld-task " + (done ? "ld-task-done" : ""),
             key: x4.id + "@" + (x4.originalDate || "")
           },
-          x4.event ? /* @__PURE__ */ React11.createElement("span", { className: "ld-event-dot" }, /* @__PURE__ */ React11.createElement(Icon, { name: "calendar", size: 17 })) : /* @__PURE__ */ React11.createElement(
+          x4.event ? /* @__PURE__ */ React12.createElement("span", { className: "ld-event-dot" }, /* @__PURE__ */ React12.createElement(Icon, { name: "calendar", size: 17 })) : /* @__PURE__ */ React12.createElement(
             "button",
             {
               className: "ld-check",
@@ -36096,9 +36242,9 @@ function apply(ctx) {
               disabled: busy,
               onClick: complete
             },
-            done && /* @__PURE__ */ React11.createElement(Icon, { name: "check", size: 14 })
+            done && /* @__PURE__ */ React12.createElement(Icon, { name: "check", size: 14 })
           ),
-          /* @__PURE__ */ React11.createElement(
+          /* @__PURE__ */ React12.createElement(
             "button",
             {
               className: "ld-task-body",
@@ -36107,8 +36253,8 @@ function apply(ctx) {
                 isOccurrence ? { occurrence: x4 } : {}
               )
             },
-            /* @__PURE__ */ React11.createElement("span", { className: "ld-task-title" }, x4.priorityDate === day && /* @__PURE__ */ React11.createElement("span", { className: "ld-star" }, "\u2727 "), x4.title),
-            /* @__PURE__ */ React11.createElement("span", { className: "ld-task-meta" }, [
+            /* @__PURE__ */ React12.createElement("span", { className: "ld-task-title" }, x4.priorityDate === day && /* @__PURE__ */ React12.createElement("span", { className: "ld-star" }, "\u2727 "), x4.title),
+            /* @__PURE__ */ React12.createElement("span", { className: "ld-task-meta" }, [
               p3?.title,
               x4.carriedFrom ? t3("carriedFrom") + " " + x4.carriedFrom + (x4.time ? " " + x4.time : "") : x4.date,
               x4.carriedFrom ? "" : x4.time,
@@ -36118,7 +36264,7 @@ function apply(ctx) {
               x4.repeat.kind === "lunar" && x4.date ? lunarLabel(x4.date) : "",
               x4.tag
             ].filter(Boolean).join(" \xB7 ")),
-            !x4.event && (x4.pomodoros || taskFocus(data, x4).completed) ? /* @__PURE__ */ React11.createElement(
+            !x4.event && (x4.pomodoros || taskFocus(data, x4).completed) ? /* @__PURE__ */ React12.createElement(
               Tomatoes,
               {
                 ...taskFocus(data, x4),
@@ -36126,7 +36272,7 @@ function apply(ctx) {
               }
             ) : null
           ),
-          /* @__PURE__ */ React11.createElement("div", { className: "ld-task-tools" }, tab === "today" && !done && !x4.event && /* @__PURE__ */ React11.createElement(React11.Fragment, null, x4.carriedFrom && x4.priorityDate !== day && /* @__PURE__ */ React11.createElement(
+          /* @__PURE__ */ React12.createElement("div", { className: "ld-task-tools" }, tab === "today" && !done && !x4.event && /* @__PURE__ */ React12.createElement(React12.Fragment, null, x4.carriedFrom && x4.priorityDate !== day && /* @__PURE__ */ React12.createElement(
             "button",
             {
               className: "ld-icon-btn",
@@ -36154,7 +36300,7 @@ function apply(ctx) {
             planForDay.backlog.some(
               (q3) => planKey(q3) === planKey(x4)
             ) ? "+" : "\u2212"
-          ), /* @__PURE__ */ React11.createElement(
+          ), /* @__PURE__ */ React12.createElement(
             "button",
             {
               className: "ld-icon-btn",
@@ -36174,7 +36320,7 @@ function apply(ctx) {
               })
             },
             "\u2727"
-          )), !done && !x4.event && /* @__PURE__ */ React11.createElement(
+          )), !done && !x4.event && /* @__PURE__ */ React12.createElement(
             "button",
             {
               className: "ld-icon-btn",
@@ -36188,8 +36334,8 @@ function apply(ctx) {
                 originalDate: x4.originalDate || x4.date
               })
             },
-            /* @__PURE__ */ React11.createElement(Icon, { name: "focus", size: 17 })
-          ), /* @__PURE__ */ React11.createElement(
+            /* @__PURE__ */ React12.createElement(Icon, { name: "focus", size: 17 })
+          ), /* @__PURE__ */ React12.createElement(
             "button",
             {
               className: "ld-icon-btn",
@@ -36200,22 +36346,22 @@ function apply(ctx) {
                 isOccurrence ? { occurrence: x4 } : {}
               )
             },
-            /* @__PURE__ */ React11.createElement(Icon, { name: "more", size: 18 })
+            /* @__PURE__ */ React12.createElement(Icon, { name: "more", size: 18 })
           ))
         );
-      })) : empty ? /* @__PURE__ */ React11.createElement("div", { className: "ld-empty" }, t3("empty")) : null;
+      })) : empty ? /* @__PURE__ */ React12.createElement("div", { className: "ld-empty" }, t3("empty")) : null;
     }
     function section(title2, items, extra) {
-      return /* @__PURE__ */ React11.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React11.createElement("h2", null, title2), extra), taskRows(items));
+      return /* @__PURE__ */ React12.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React12.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React12.createElement("h2", null, title2), extra), taskRows(items));
     }
     function Body() {
       if (query) {
         const filtered = tasks.filter(
           (x4) => (x4.title + " " + x4.note).toLocaleLowerCase().includes(query)
         );
-        return /* @__PURE__ */ React11.createElement(React11.Fragment, null, taskRows(filtered), /* @__PURE__ */ React11.createElement("section", { className: "ld-section" }, projects.filter(
+        return /* @__PURE__ */ React12.createElement(React12.Fragment, null, taskRows(filtered), /* @__PURE__ */ React12.createElement("section", { className: "ld-section" }, projects.filter(
           (p3) => (p3.title + " " + p3.goal).toLocaleLowerCase().includes(query)
-        ).map((p3) => /* @__PURE__ */ React11.createElement(
+        ).map((p3) => /* @__PURE__ */ React12.createElement(
           "button",
           {
             key: p3.id,
@@ -36226,7 +36372,7 @@ function apply(ctx) {
               setProject(p3.id);
             }
           },
-          /* @__PURE__ */ React11.createElement(Icon, { name: "projects" }),
+          /* @__PURE__ */ React12.createElement(Icon, { name: "projects" }),
           p3.title
         ))));
       }
@@ -36255,7 +36401,7 @@ function apply(ctx) {
         });
         const renderMain = (id) => {
           if (id === "plan")
-            return /* @__PURE__ */ React11.createElement(
+            return /* @__PURE__ */ React12.createElement(
               PlanPanel,
               {
                 plan: groups,
@@ -36269,28 +36415,28 @@ function apply(ctx) {
             const rows = live2("lessons").flatMap(
               (l3) => lessonOccurrences(data, l3, day, day)
             );
-            return /* @__PURE__ */ React11.createElement(
+            return /* @__PURE__ */ React12.createElement(
               FoldSection,
               {
                 title: t3("todayLessons"),
                 count: rows.length,
                 ...foldProps("lessons")
               },
-              /* @__PURE__ */ React11.createElement(TodayLessons, { env: viewEnv })
+              /* @__PURE__ */ React12.createElement(TodayLessons, { env: viewEnv })
             );
           }
           if (id === "priority")
-            return /* @__PURE__ */ React11.createElement(
+            return /* @__PURE__ */ React12.createElement(
               FoldSection,
               {
                 title: t3("priorities"),
                 count: priority.length + "/3",
                 ...foldProps("priority")
               },
-              priority.length ? taskRows(priority) : /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("prioritiesEmpty"))
+              priority.length ? taskRows(priority) : /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("prioritiesEmpty"))
             );
           if (id === "schedule")
-            return /* @__PURE__ */ React11.createElement(
+            return /* @__PURE__ */ React12.createElement(
               FoldSection,
               {
                 title: t3("schedule"),
@@ -36298,7 +36444,7 @@ function apply(ctx) {
                 ...foldProps("schedule")
               },
               groups.schedule.map(
-                (x4) => priority.some((p3) => p3.id === x4.id) ? /* @__PURE__ */ React11.createElement(
+                (x4) => priority.some((p3) => p3.id === x4.id) ? /* @__PURE__ */ React12.createElement(
                   "button",
                   {
                     className: "ld-time-index",
@@ -36308,14 +36454,14 @@ function apply(ctx) {
                       { occurrence: x4 }
                     )
                   },
-                  /* @__PURE__ */ React11.createElement("span", null, x4.time || t3("noTime")),
-                  /* @__PURE__ */ React11.createElement("span", null, x4.title),
-                  /* @__PURE__ */ React11.createElement("small", null, t3("priorities"))
-                ) : /* @__PURE__ */ React11.createElement(React11.Fragment, { key: x4.id + x4.originalDate }, taskRows([x4], false))
+                  /* @__PURE__ */ React12.createElement("span", null, x4.time || t3("noTime")),
+                  /* @__PURE__ */ React12.createElement("span", null, x4.title),
+                  /* @__PURE__ */ React12.createElement("small", null, t3("priorities"))
+                ) : /* @__PURE__ */ React12.createElement(React12.Fragment, { key: x4.id + x4.originalDate }, taskRows([x4], false))
               )
             );
           if (id === "planned")
-            return /* @__PURE__ */ React11.createElement(
+            return /* @__PURE__ */ React12.createElement(
               FoldSection,
               {
                 title: t3("plannedTodos"),
@@ -36325,18 +36471,18 @@ function apply(ctx) {
               taskRows(groups.todos)
             );
           if (id === "carry")
-            return /* @__PURE__ */ React11.createElement(
+            return /* @__PURE__ */ React12.createElement(
               FoldSection,
               {
                 title: t3("carryBacklog"),
                 count: groups.backlog.length,
                 ...foldProps("carry")
               },
-              /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("carryHint")),
+              /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("carryHint")),
               taskRows(groups.backlog)
             );
           if (id === "due")
-            return groups.due.length ? /* @__PURE__ */ React11.createElement(
+            return groups.due.length ? /* @__PURE__ */ React12.createElement(
               FoldSection,
               {
                 title: t3("deadlineWatch"),
@@ -36344,20 +36490,20 @@ function apply(ctx) {
                 className: "ld-deadlines",
                 ...foldProps("due")
               },
-              groups.due.map((x4) => /* @__PURE__ */ React11.createElement(
+              groups.due.map((x4) => /* @__PURE__ */ React12.createElement(
                 "button",
                 {
                   className: "ld-time-index",
                   key: x4.id,
                   onClick: () => openTask(x4)
                 },
-                /* @__PURE__ */ React11.createElement("span", null, x4.deadline === day ? t3("dueToday") : x4.deadline < day ? t3("pastDeadline") : x4.deadline),
-                /* @__PURE__ */ React11.createElement("span", null, x4.title),
-                /* @__PURE__ */ React11.createElement("small", null, x4.date ? t3("originalPlan") + " " + x4.date : t3("noneDate"))
+                /* @__PURE__ */ React12.createElement("span", null, x4.deadline === day ? t3("dueToday") : x4.deadline < day ? t3("pastDeadline") : x4.deadline),
+                /* @__PURE__ */ React12.createElement("span", null, x4.title),
+                /* @__PURE__ */ React12.createElement("small", null, x4.date ? t3("originalPlan") + " " + x4.date : t3("noneDate"))
               ))
             ) : null;
           if (id === "previous")
-            return groups.previousRecurring.length ? /* @__PURE__ */ React11.createElement(
+            return groups.previousRecurring.length ? /* @__PURE__ */ React12.createElement(
               FoldSection,
               {
                 title: t3("earlierRecurring"),
@@ -36367,55 +36513,55 @@ function apply(ctx) {
               taskRows(groups.previousRecurring)
             ) : null;
           if (id === "done")
-            return /* @__PURE__ */ React11.createElement(
+            return /* @__PURE__ */ React12.createElement(
               FoldSection,
               {
                 title: t3("done"),
                 count: groups.completed.length,
                 ...foldProps("done")
               },
-              groups.completed.length ? taskRows(groups.completed, false) : /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("noneDone"))
+              groups.completed.length ? taskRows(groups.completed, false) : /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("noneDone"))
             );
           if (id === "inbox")
-            return /* @__PURE__ */ React11.createElement(
+            return /* @__PURE__ */ React12.createElement(
               FoldSection,
               {
                 title: t3("inbox"),
                 count: inboxTasks(data).length,
                 ...foldProps("inbox")
               },
-              inboxTasks(data).length ? taskRows(inboxTasks(data)) : /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("inboxEmpty"))
+              inboxTasks(data).length ? taskRows(inboxTasks(data)) : /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("inboxEmpty"))
             );
           return null;
         };
         const renderSupport = (id) => {
           if (id === "timer")
-            return /* @__PURE__ */ React11.createElement(
+            return /* @__PURE__ */ React12.createElement(
               FoldSection,
               {
                 className: "ld-side-timer-module",
                 title: t3("focus"),
                 ...foldProps("timer")
               },
-              /* @__PURE__ */ React11.createElement("div", { className: "ld-side-timer" }, /* @__PURE__ */ React11.createElement(Timer, null))
+              /* @__PURE__ */ React12.createElement("div", { className: "ld-side-timer" }, /* @__PURE__ */ React12.createElement(Timer, null))
             );
           if (id === "habits")
-            return /* @__PURE__ */ React11.createElement(FoldSection, { title: t3("todayHabits"), ...foldProps("habits") }, /* @__PURE__ */ React11.createElement(HabitCards, { env: viewEnv, showWeekly: false }));
+            return /* @__PURE__ */ React12.createElement(FoldSection, { title: t3("todayHabits"), ...foldProps("habits") }, /* @__PURE__ */ React12.createElement(HabitCards, { env: viewEnv, showWeekly: false }));
           if (id === "weekly")
-            return /* @__PURE__ */ React11.createElement(FoldSection, { title: t3("weeklyHabits"), ...foldProps("weekly") }, /* @__PURE__ */ React11.createElement(HabitCards, { weeklyOnly: true, heading: false, env: viewEnv }));
+            return /* @__PURE__ */ React12.createElement(FoldSection, { title: t3("weeklyHabits"), ...foldProps("weekly") }, /* @__PURE__ */ React12.createElement(HabitCards, { weeklyOnly: true, heading: false, env: viewEnv }));
           if (id === "upcoming") {
             const plans = upcomingPlans(data, day, 7);
             const dateWithWeek = (date) => date + " " + t3("weekdayShort" + weekday(date));
-            return /* @__PURE__ */ React11.createElement(
+            return /* @__PURE__ */ React12.createElement(
               FoldSection,
               {
                 title: t3("upcoming"),
                 count: plans.length,
                 ...foldProps("upcoming")
               },
-              /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("upcomingRange").replace("{from}", dateWithWeek(shift(day, 1))).replace("{to}", dateWithWeek(shift(day, 7)))),
-              /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, plans.length > 0 && /* @__PURE__ */ React11.createElement(Btn, { onClick: () => setTab("calendar") }, t3("viewCalendar"))),
-              plans.slice(0, 5).map((p3) => /* @__PURE__ */ React11.createElement(
+              /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("upcomingRange").replace("{from}", dateWithWeek(shift(day, 1))).replace("{to}", dateWithWeek(shift(day, 7)))),
+              /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, plans.length > 0 && /* @__PURE__ */ React12.createElement(Btn, { onClick: () => setTab("calendar") }, t3("viewCalendar"))),
+              plans.slice(0, 5).map((p3) => /* @__PURE__ */ React12.createElement(
                 "button",
                 {
                   key: p3.kind + ":" + (p3.task?.id || p3.lesson?.key) + p3.date,
@@ -36434,22 +36580,22 @@ function apply(ctx) {
                     );
                   }
                 },
-                /* @__PURE__ */ React11.createElement("strong", null, p3.title, p3.participant ? " \xB7 " + p3.participant : ""),
-                /* @__PURE__ */ React11.createElement("span", null, dateWithWeek(p3.date), " ", p3.time || t3("allDay"), p3.kind === "lesson" ? " \xB7 " + t3("lessons") : "")
+                /* @__PURE__ */ React12.createElement("strong", null, p3.title, p3.participant ? " \xB7 " + p3.participant : ""),
+                /* @__PURE__ */ React12.createElement("span", null, dateWithWeek(p3.date), " ", p3.time || t3("allDay"), p3.kind === "lesson" ? " \xB7 " + t3("lessons") : "")
               )),
-              plans.length > 5 && /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("futureMore").replace("{n}", String(plans.length - 5))),
-              !plans.length && /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("noUpcoming"))
+              plans.length > 5 && /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("futureMore").replace("{n}", String(plans.length - 5))),
+              !plans.length && /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("noUpcoming"))
             );
           }
           return null;
         };
-        return /* @__PURE__ */ React11.createElement(React11.Fragment, null, !tasks.length && !habits.length && !projects.length && /* @__PURE__ */ React11.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React11.createElement(Icon, { name: "today", size: 30 }), /* @__PURE__ */ React11.createElement("h2", null, t3("startTitle")), /* @__PURE__ */ React11.createElement("p", null, t3("startText")), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(Btn, { primary: true, onClick: () => openTask() }, t3("addTask")), /* @__PURE__ */ React11.createElement(Btn, { onClick: () => setTemplateOpen(true) }, t3("addHabit")))), /* @__PURE__ */ React11.createElement("div", { className: "ld-home-columns" }, /* @__PURE__ */ React11.createElement(
+        return /* @__PURE__ */ React12.createElement(React12.Fragment, null, !tasks.length && !habits.length && !projects.length && /* @__PURE__ */ React12.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React12.createElement(Icon, { name: "today", size: 30 }), /* @__PURE__ */ React12.createElement("h2", null, t3("startTitle")), /* @__PURE__ */ React12.createElement("p", null, t3("startText")), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React12.createElement(Btn, { primary: true, onClick: () => openTask() }, t3("addTask")), /* @__PURE__ */ React12.createElement(Btn, { onClick: () => setTemplateOpen(true) }, t3("addHabit")))), /* @__PURE__ */ React12.createElement("div", { className: "ld-home-columns" }, /* @__PURE__ */ React12.createElement(
           "div",
           {
             className: "ld-today-grid" + (support.length ? "" : " ld-single-col")
           },
-          /* @__PURE__ */ React11.createElement("div", { className: "ld-main-col" }, main.length ? main.map((m3) => /* @__PURE__ */ React11.createElement(React11.Fragment, { key: m3.id }, renderMain(m3.id))) : /* @__PURE__ */ React11.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React11.createElement(Icon, { name: "today", size: 28 }), /* @__PURE__ */ React11.createElement("h2", null, t3("homeAllHidden")), /* @__PURE__ */ React11.createElement("p", null, t3("homeAllHiddenHint")), /* @__PURE__ */ React11.createElement(Btn, { primary: true, onClick: () => setHomeOpen(true) }, t3("homeCustomize")))),
-          !!support.length && /* @__PURE__ */ React11.createElement("aside", { className: "ld-support" }, /* @__PURE__ */ React11.createElement(
+          /* @__PURE__ */ React12.createElement("div", { className: "ld-main-col" }, main.length ? main.map((m3) => /* @__PURE__ */ React12.createElement(React12.Fragment, { key: m3.id }, renderMain(m3.id))) : /* @__PURE__ */ React12.createElement("div", { className: "ld-welcome" }, /* @__PURE__ */ React12.createElement(Icon, { name: "today", size: 28 }), /* @__PURE__ */ React12.createElement("h2", null, t3("homeAllHidden")), /* @__PURE__ */ React12.createElement("p", null, t3("homeAllHiddenHint")), /* @__PURE__ */ React12.createElement(Btn, { primary: true, onClick: () => setHomeOpen(true) }, t3("homeCustomize")))),
+          !!support.length && /* @__PURE__ */ React12.createElement("aside", { className: "ld-support" }, /* @__PURE__ */ React12.createElement(
             PanelResize,
             {
               kind: "support",
@@ -36457,12 +36603,12 @@ function apply(ctx) {
               value: panelLayout.widths.support,
               onChange: panelLayout.change
             }
-          ), support.map((m3) => /* @__PURE__ */ React11.createElement(React11.Fragment, { key: m3.id }, renderSupport(m3.id))))
+          ), support.map((m3) => /* @__PURE__ */ React12.createElement(React12.Fragment, { key: m3.id }, renderSupport(m3.id))))
         )));
       }
       if (tab === "projects") {
         if (!project)
-          return /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(
+          return /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React12.createElement(
             Btn,
             {
               primary: true,
@@ -36481,36 +36627,36 @@ function apply(ctx) {
             t3("addProject")
           )), projects.length ? Array.from(
             new Set(projects.map((p3) => p3.group || t3("projects")))
-          ).map((group) => /* @__PURE__ */ React11.createElement("section", { key: group, className: "ld-section" }, /* @__PURE__ */ React11.createElement("h2", null, group), projects.filter((p3) => (p3.group || t3("projects")) === group).map((p3) => {
+          ).map((group) => /* @__PURE__ */ React12.createElement("section", { key: group, className: "ld-section" }, /* @__PURE__ */ React12.createElement("h2", null, group), projects.filter((p3) => (p3.group || t3("projects")) === group).map((p3) => {
             const list2 = tasks.filter(
               (x4) => x4.projectId === p3.id
             );
-            return /* @__PURE__ */ React11.createElement(
+            return /* @__PURE__ */ React12.createElement(
               "button",
               {
                 key: p3.id,
                 className: "ld-project-row",
                 onClick: () => setProject(p3.id)
               },
-              /* @__PURE__ */ React11.createElement(Icon, { name: "projects" }),
-              /* @__PURE__ */ React11.createElement("span", null, /* @__PURE__ */ React11.createElement("strong", null, p3.title), /* @__PURE__ */ React11.createElement("small", null, t3(p3.status), p3.deadline ? " \xB7 " + p3.deadline : "")),
-              /* @__PURE__ */ React11.createElement("span", { className: "ld-muted" }, list2.filter((x4) => x4.status === "done").length, "/", list2.length),
-              /* @__PURE__ */ React11.createElement(Icon, { name: "chevron", size: 16 })
+              /* @__PURE__ */ React12.createElement(Icon, { name: "projects" }),
+              /* @__PURE__ */ React12.createElement("span", null, /* @__PURE__ */ React12.createElement("strong", null, p3.title), /* @__PURE__ */ React12.createElement("small", null, t3(p3.status), p3.deadline ? " \xB7 " + p3.deadline : "")),
+              /* @__PURE__ */ React12.createElement("span", { className: "ld-muted" }, list2.filter((x4) => x4.status === "done").length, "/", list2.length),
+              /* @__PURE__ */ React12.createElement(Icon, { name: "chevron", size: 16 })
             );
-          }))) : /* @__PURE__ */ React11.createElement("p", { className: "ld-empty" }, t3("empty")));
+          }))) : /* @__PURE__ */ React12.createElement("p", { className: "ld-empty" }, t3("empty")));
         const list = tasks.filter((x4) => x4.projectId === project);
-        return /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React11.createElement(Btn, { onClick: () => setProject("") }, "\u2190 ", t3("projects")), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(Btn, { "aria-pressed": !board, onClick: () => setBoard(false) }, t3("list")), /* @__PURE__ */ React11.createElement(Btn, { "aria-pressed": board, onClick: () => setBoard(true) }, t3("board")), /* @__PURE__ */ React11.createElement(
+        return /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React12.createElement(Btn, { onClick: () => setProject("") }, "\u2190 ", t3("projects")), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React12.createElement(Btn, { "aria-pressed": !board, onClick: () => setBoard(false) }, t3("list")), /* @__PURE__ */ React12.createElement(Btn, { "aria-pressed": board, onClick: () => setBoard(true) }, t3("board")), /* @__PURE__ */ React12.createElement(
           Btn,
           {
             onClick: () => setEditor({ type: "project", item: projectItem })
           },
           t3("edit")
-        ))), /* @__PURE__ */ React11.createElement("p", { className: "ld-project-goal" }, projectItem?.goal), /* @__PURE__ */ React11.createElement(Btn, { primary: true, icon: "plus", onClick: () => openTask() }, t3("addTask")), board ? /* @__PURE__ */ React11.createElement("div", { className: "ld-board" }, ["todo", "doing", "done"].map((status) => /* @__PURE__ */ React11.createElement("section", { key: status }, /* @__PURE__ */ React11.createElement("h3", null, t3(status), " \xB7", " ", list.filter((x4) => x4.status === status).length), taskRows(list.filter((x4) => x4.status === status))))) : taskRows(list));
+        ))), /* @__PURE__ */ React12.createElement("p", { className: "ld-project-goal" }, projectItem?.goal), /* @__PURE__ */ React12.createElement(Btn, { primary: true, icon: "plus", onClick: () => openTask() }, t3("addTask")), board ? /* @__PURE__ */ React12.createElement("div", { className: "ld-board" }, ["todo", "doing", "done"].map((status) => /* @__PURE__ */ React12.createElement("section", { key: status }, /* @__PURE__ */ React12.createElement("h3", null, t3(status), " \xB7", " ", list.filter((x4) => x4.status === status).length), taskRows(list.filter((x4) => x4.status === status))))) : taskRows(list));
       }
       if (tab === "habits")
-        return /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(Btn, { primary: true, icon: "plus", onClick: () => setTemplateOpen(true) }, t3("addHabit"))), /* @__PURE__ */ React11.createElement(HabitCards, { full: true, env: viewEnv }));
+        return /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React12.createElement(Btn, { primary: true, icon: "plus", onClick: () => setTemplateOpen(true) }, t3("addHabit"))), /* @__PURE__ */ React12.createElement(HabitCards, { full: true, env: viewEnv }));
       if (tab === "life")
-        return /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React11.createElement(
+        return /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React12.createElement(
           Btn,
           {
             primary: true,
@@ -36518,8 +36664,8 @@ function apply(ctx) {
             onClick: () => openTask({ area: "life", tag: lifeCategory })
           },
           t3("addLife")
-        )), /* @__PURE__ */ React11.createElement("p", { className: "ld-help ld-life-template-help" }, t3("lifeTemplateHelp")), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions ld-life-templates" }, ["subscription", "payment", "shopping", "anniversary"].map(
-          (k3) => /* @__PURE__ */ React11.createElement(
+        )), /* @__PURE__ */ React12.createElement("p", { className: "ld-help ld-life-template-help" }, t3("lifeTemplateHelp")), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions ld-life-templates" }, ["subscription", "payment", "shopping", "anniversary"].map(
+          (k3) => /* @__PURE__ */ React12.createElement(
             Btn,
             {
               key: k3,
@@ -36540,7 +36686,7 @@ function apply(ctx) {
             },
             t3(k3)
           )
-        )), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions ld-life-filters" }, /* @__PURE__ */ React11.createElement(
+        )), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions ld-life-filters" }, /* @__PURE__ */ React12.createElement(
           Btn,
           {
             "aria-pressed": !lifeCategory,
@@ -36551,7 +36697,7 @@ function apply(ctx) {
           ...new Set(
             tasks.filter((x4) => x4.area === "life" && x4.tag).map((x4) => x4.tag)
           )
-        ].map((tag) => /* @__PURE__ */ React11.createElement(
+        ].map((tag) => /* @__PURE__ */ React12.createElement(
           Btn,
           {
             key: tag,
@@ -36565,12 +36711,12 @@ function apply(ctx) {
             (x4) => x4.area === "life" && (!lifeCategory || x4.tag === lifeCategory)
           )
         ));
-      if (tab === "lessons") return /* @__PURE__ */ React11.createElement(LessonsPage, { env: viewEnv });
-      if (tab === "calendar") return /* @__PURE__ */ React11.createElement(Calendar2, { env: viewEnv });
-      if (tab === "review") return /* @__PURE__ */ React11.createElement(Review, { env: viewEnv });
-      if (tab === "settings") return /* @__PURE__ */ React11.createElement(SettingsView, { env: viewEnv });
+      if (tab === "lessons") return /* @__PURE__ */ React12.createElement(LessonsPage, { env: viewEnv });
+      if (tab === "calendar") return /* @__PURE__ */ React12.createElement(Calendar2, { env: viewEnv });
+      if (tab === "review") return /* @__PURE__ */ React12.createElement(Review, { env: viewEnv });
+      if (tab === "settings") return /* @__PURE__ */ React12.createElement(SettingsView, { env: viewEnv });
       if (tab === "trash")
-        return /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement("p", { className: "ld-muted" }, t3("recover")), [
+        return /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement("p", { className: "ld-muted" }, t3("recover")), [
           "projects",
           "tasks",
           "habits",
@@ -36578,7 +36724,7 @@ function apply(ctx) {
           "reviews",
           "focusLogs"
         ].flatMap(
-          (c3) => data[c3].filter((x4) => x4.deletedAt).map((x4) => /* @__PURE__ */ React11.createElement("div", { className: "ld-log", key: x4.id }, /* @__PURE__ */ React11.createElement("span", null, x4.title || x4.date, " \xB7 ", t3(c3 === "tasks" ? "todos" : c3)), /* @__PURE__ */ React11.createElement(
+          (c3) => data[c3].filter((x4) => x4.deletedAt).map((x4) => /* @__PURE__ */ React12.createElement("div", { className: "ld-log", key: x4.id }, /* @__PURE__ */ React12.createElement("span", null, x4.title || x4.date, " \xB7 ", t3(c3 === "tasks" ? "todos" : c3)), /* @__PURE__ */ React12.createElement(
             Btn,
             {
               disabled: busy,
@@ -36587,7 +36733,7 @@ function apply(ctx) {
             t3("restore")
           )))
         ));
-      return /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("inboxHelp")), /* @__PURE__ */ React11.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React11.createElement("h2", null, t3("awaitingTriage"), " \xB7 ", inboxTasks(data).length), inboxTasks(data).map((task) => /* @__PURE__ */ React11.createElement(
+      return /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("inboxHelp")), /* @__PURE__ */ React12.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React12.createElement("h2", null, t3("awaitingTriage"), " \xB7 ", inboxTasks(data).length), inboxTasks(data).map((task) => /* @__PURE__ */ React12.createElement(
         InboxItem,
         {
           key: task.id,
@@ -36598,7 +36744,7 @@ function apply(ctx) {
           onEdit: openTask,
           day
         }
-      )), !inboxTasks(data).length && /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("empty"))), section(
+      )), !inboxTasks(data).length && /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("empty"))), section(
         t3("organizedUnscheduled"),
         tasks.filter(
           (x4) => !x4.date && x4.status !== "done" && !inboxTasks(data).some((q3) => q3.id === x4.id)
@@ -36606,7 +36752,7 @@ function apply(ctx) {
       ));
     }
     const title = projectItem && tab === "projects" ? projectItem.title : tab === "today" && day !== today(timeZone) ? day : t3(tab);
-    return /* @__PURE__ */ React11.createElement(Ambient, { data }, /* @__PURE__ */ React11.createElement("style", null, css), /* @__PURE__ */ React11.createElement(
+    return /* @__PURE__ */ React12.createElement(Ambient, { data }, /* @__PURE__ */ React12.createElement("style", null, css), /* @__PURE__ */ React12.createElement(
       "div",
       {
         className: "ld-shell " + (collapsed ? "ld-collapsed " : "") + (ai ? "ld-spirit-open" : ""),
@@ -36622,7 +36768,7 @@ function apply(ctx) {
           }
         }
       },
-      /* @__PURE__ */ React11.createElement("nav", { className: "ld-nav", "aria-label": t3("title") }, /* @__PURE__ */ React11.createElement("div", { className: "ld-brand" }, /* @__PURE__ */ React11.createElement(Icon, { name: "timeDesk", size: 22 }), !collapsed && /* @__PURE__ */ React11.createElement("span", null, t3("title"))), /* @__PURE__ */ React11.createElement(
+      /* @__PURE__ */ React12.createElement("nav", { className: "ld-nav", "aria-label": t3("title") }, /* @__PURE__ */ React12.createElement("div", { className: "ld-brand" }, /* @__PURE__ */ React12.createElement(Icon, { name: "timeDesk", size: 22 }), !collapsed && /* @__PURE__ */ React12.createElement("span", null, t3("title"))), /* @__PURE__ */ React12.createElement(
         "button",
         {
           className: "ld-nav-add",
@@ -36634,9 +36780,9 @@ function apply(ctx) {
           title: t3("quickCapture") + " \xB7 \u2318/Ctrl+Shift+K",
           onClick: () => setCaptureOpen(!captureOpen)
         },
-        /* @__PURE__ */ React11.createElement(Icon, { name: "plus" }),
+        /* @__PURE__ */ React12.createElement(Icon, { name: "plus" }),
         !collapsed && t3("quickCapture")
-      ), /* @__PURE__ */ React11.createElement("div", { className: "ld-nav-items" }, [...NAV, "inbox"].map((n2) => /* @__PURE__ */ React11.createElement(
+      ), /* @__PURE__ */ React12.createElement("div", { className: "ld-nav-items" }, [...NAV, "inbox"].map((n2) => /* @__PURE__ */ React12.createElement(
         "button",
         {
           key: n2,
@@ -36645,11 +36791,11 @@ function apply(ctx) {
           "aria-current": tab === n2 ? "page" : void 0,
           onClick: () => go(n2)
         },
-        /* @__PURE__ */ React11.createElement(Icon, { name: n2 }),
-        !collapsed && /* @__PURE__ */ React11.createElement("span", null, t3(n2), n2 === "inbox" && inboxTasks(data).length > 0 ? " \xB7 " + inboxTasks(data).length : "")
+        /* @__PURE__ */ React12.createElement(Icon, { name: n2 }),
+        !collapsed && /* @__PURE__ */ React12.createElement("span", null, t3(n2), n2 === "inbox" && inboxTasks(data).length > 0 ? " \xB7 " + inboxTasks(data).length : "")
       ))), !collapsed && projects.filter(
         (p3) => p3.status !== "done" && p3.status !== "paused"
-      ).slice(0, 6).map((p3) => /* @__PURE__ */ React11.createElement(
+      ).slice(0, 6).map((p3) => /* @__PURE__ */ React12.createElement(
         "button",
         {
           key: p3.id,
@@ -36660,25 +36806,25 @@ function apply(ctx) {
             setSearch("");
           }
         },
-        /* @__PURE__ */ React11.createElement("span", { className: "ld-project-bullet" }),
+        /* @__PURE__ */ React12.createElement("span", { className: "ld-project-bullet" }),
         p3.title
-      )), /* @__PURE__ */ React11.createElement("div", { className: "ld-nav-bottom" }, ["settings", "trash"].map((n2) => /* @__PURE__ */ React11.createElement("button", { key: n2, title: t3(n2), onClick: () => go(n2) }, /* @__PURE__ */ React11.createElement(Icon, { name: n2 }), !collapsed && t3(n2))), /* @__PURE__ */ React11.createElement(
+      )), /* @__PURE__ */ React12.createElement("div", { className: "ld-nav-bottom" }, ["settings", "trash"].map((n2) => /* @__PURE__ */ React12.createElement("button", { key: n2, title: t3(n2), onClick: () => go(n2) }, /* @__PURE__ */ React12.createElement(Icon, { name: n2 }), !collapsed && t3(n2))), /* @__PURE__ */ React12.createElement(
         "button",
         {
           onClick: () => setCollapsed(!collapsed),
           title: t3(collapsed ? "expand" : "collapse")
         },
-        /* @__PURE__ */ React11.createElement(Icon, { name: "chevron", size: 18 }),
+        /* @__PURE__ */ React12.createElement(Icon, { name: "chevron", size: 18 }),
         !collapsed && t3("collapse")
       ))),
-      /* @__PURE__ */ React11.createElement("div", { className: "ld-workspace" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-toolbar-wrap" }, /* @__PURE__ */ React11.createElement(
+      /* @__PURE__ */ React12.createElement("div", { className: "ld-workspace" }, /* @__PURE__ */ React12.createElement("div", { className: "ld-toolbar-wrap" }, /* @__PURE__ */ React12.createElement(
         "div",
         {
           className: "ld-page-top",
           role: "region",
           "aria-label": t3("workspaceActions")
         },
-        /* @__PURE__ */ React11.createElement("div", { className: "ld-search" }, /* @__PURE__ */ React11.createElement(Icon, { name: "search", size: 17 }), /* @__PURE__ */ React11.createElement(
+        /* @__PURE__ */ React12.createElement("div", { className: "ld-search" }, /* @__PURE__ */ React12.createElement(Icon, { name: "search", size: 17 }), /* @__PURE__ */ React12.createElement(
           "input",
           {
             value: search,
@@ -36687,35 +36833,46 @@ function apply(ctx) {
             "aria-label": t3("search")
           }
         )),
-        (tab !== "today" || !data.settings.homeModules.hidden.includes("timer") && !isFolded(data.settings, "timer")) && /* @__PURE__ */ React11.createElement(
+        (tab !== "today" || !data.settings.homeModules.hidden.includes("timer") && !isFolded(data.settings, "timer")) && /* @__PURE__ */ React12.createElement(
           "div",
           {
             className: "ld-header-focus" + (tab !== "today" ? " is-other-page" : "")
           },
-          /* @__PURE__ */ React11.createElement(Timer, { bar: true, header: true })
+          /* @__PURE__ */ React12.createElement(Timer, { bar: true, header: true })
         ),
-        /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(
+        /* @__PURE__ */ React12.createElement("div", { className: "ld-actions ld-header-actions" }, /* @__PURE__ */ React12.createElement("label", { className: "ld-theme-control", title: t3("themeHint") }, /* @__PURE__ */ React12.createElement("span", { className: "ld-theme-label" }, t3("theme")), /* @__PURE__ */ React12.createElement(
           "select",
           {
             className: "ld-mood",
-            "aria-label": t3("mood"),
+            "aria-label": t3("theme"),
+            title: t3("themeHint"),
             value: data.settings.moodUntil && data.settings.moodUntil < today(timeZone) ? "daily" : data.settings.mood,
             onChange: (e3) => run({
               action: "settings",
               item: { mood: e3.target.value }
             })
           },
-          ["daily", "bright", "focus", "calm"].map((m3) => /* @__PURE__ */ React11.createElement("option", { key: m3, value: m3 }, t3(
+          ["daily", "bright", "focus", "calm"].map((m3) => /* @__PURE__ */ React12.createElement("option", { key: m3, value: m3 }, t3(
             m3 === "daily" ? "moodDaily" : m3 === "focus" ? "moodFocus" : m3
           )))
-        ), /* @__PURE__ */ React11.createElement(Btn, { "aria-pressed": ai, onClick: () => setAi(!ai) }, /* @__PURE__ */ React11.createElement(
-          SpiritIcon,
+        )), /* @__PURE__ */ React12.createElement(
+          Btn,
           {
-            size: 32,
-            reducedMotion: data.settings.reduceMotion
-          }
-        ), t3("spirit")))
-      ), /* @__PURE__ */ React11.createElement(
+            className: "ld-btn ld-spirit-toggle",
+            "aria-label": t3("spirit"),
+            "aria-pressed": ai,
+            onClick: () => setAi(!ai)
+          },
+          /* @__PURE__ */ React12.createElement(
+            SpiritIcon,
+            {
+              size: 24,
+              reducedMotion: data.settings.reduceMotion
+            }
+          ),
+          /* @__PURE__ */ React12.createElement("span", { className: "ld-spirit-toggle-label" }, t3("spirit"))
+        ))
+      ), /* @__PURE__ */ React12.createElement(
         QuickCapture,
         {
           open: captureOpen,
@@ -36738,12 +36895,12 @@ function apply(ctx) {
             else reviewDrafts.delete("quick-capture");
           }
         }
-      )), /* @__PURE__ */ React11.createElement(
+      )), /* @__PURE__ */ React12.createElement(
         "main",
         {
           className: "ld-content " + (tab !== "today" ? "ld-not-today" : "")
         },
-        /* @__PURE__ */ React11.createElement("header", { className: "ld-page-heading" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-heading-left" }, /* @__PURE__ */ React11.createElement("div", { className: "ld-eyebrow" }, tab === "today" ? new Intl.DateTimeFormat(
+        /* @__PURE__ */ React12.createElement("header", { className: "ld-page-heading" }, /* @__PURE__ */ React12.createElement("div", { className: "ld-heading-left" }, /* @__PURE__ */ React12.createElement("div", { className: "ld-eyebrow" }, tab === "today" ? new Intl.DateTimeFormat(
           ctx.locale.getLocale().active.startsWith("zh") ? "zh-CN" : "en",
           {
             weekday: "long",
@@ -36751,14 +36908,14 @@ function apply(ctx) {
             day: "numeric",
             timeZone: "UTC"
           }
-        ).format(/* @__PURE__ */ new Date(day + "T12:00:00Z")) : t3("appSubtitle")), /* @__PURE__ */ React11.createElement("div", { className: "ld-heading-title" }, /* @__PURE__ */ React11.createElement("h1", null, title), tab === "today" && /* @__PURE__ */ React11.createElement(Btn, { onClick: () => setHomeOpen(true) }, t3("homeCustomize")))), /* @__PURE__ */ React11.createElement("div", { className: "ld-day-nav" }, /* @__PURE__ */ React11.createElement(
+        ).format(/* @__PURE__ */ new Date(day + "T12:00:00Z")) : t3("appSubtitle")), /* @__PURE__ */ React12.createElement("div", { className: "ld-heading-title" }, /* @__PURE__ */ React12.createElement("h1", null, title), tab === "today" && /* @__PURE__ */ React12.createElement(Btn, { onClick: () => setHomeOpen(true) }, t3("homeCustomize")))), /* @__PURE__ */ React12.createElement("div", { className: "ld-day-nav" }, /* @__PURE__ */ React12.createElement(
           "button",
           {
             "aria-label": "Previous day",
             onClick: () => setDay(shift(day, tab === "review" ? -7 : -1))
           },
           "\u2039"
-        ), /* @__PURE__ */ React11.createElement(
+        ), /* @__PURE__ */ React12.createElement(
           "input",
           {
             type: "date",
@@ -36768,24 +36925,24 @@ function apply(ctx) {
               if (e3.target.value) setDay(e3.target.value);
             }
           }
-        ), /* @__PURE__ */ React11.createElement(
+        ), /* @__PURE__ */ React12.createElement(
           "button",
           {
             "aria-label": "Next day",
             onClick: () => setDay(shift(day, tab === "review" ? 7 : 1))
           },
           "\u203A"
-        ), /* @__PURE__ */ React11.createElement(Btn, { onClick: () => setDay(today(timeZone)) }, t3("backToday")))),
-        error && /* @__PURE__ */ React11.createElement("div", { className: "ld-error", role: "alert" }, error, " ", /* @__PURE__ */ React11.createElement(Btn, { onClick: () => void refresh() }, t3("retry"))),
-        message && /* @__PURE__ */ React11.createElement("div", { className: "ld-status", role: "status" }, message, /* @__PURE__ */ React11.createElement(
+        ), /* @__PURE__ */ React12.createElement(Btn, { onClick: () => setDay(today(timeZone)) }, t3("backToday")))),
+        error && /* @__PURE__ */ React12.createElement("div", { className: "ld-error", role: "alert" }, error, " ", /* @__PURE__ */ React12.createElement(Btn, { onClick: () => void refresh() }, t3("retry"))),
+        message && /* @__PURE__ */ React12.createElement("div", { className: "ld-status", role: "status" }, message, /* @__PURE__ */ React12.createElement(
           "button",
           {
             "aria-label": t3("close"),
             onClick: () => setMessage("")
           },
           "\xD7"
-        ), /* @__PURE__ */ React11.createElement("button", { onClick: () => run({ action: "undo" }) }, t3("undo"))),
-        updateNotice && /* @__PURE__ */ React11.createElement("div", { className: "ld-status", role: "status" }, updateNotice, /* @__PURE__ */ React11.createElement(
+        ), /* @__PURE__ */ React12.createElement("button", { onClick: () => run({ action: "undo" }) }, t3("undo"))),
+        updateNotice && /* @__PURE__ */ React12.createElement("div", { className: "ld-status", role: "status" }, updateNotice, /* @__PURE__ */ React12.createElement(
           "button",
           {
             "aria-label": t3("close"),
@@ -36794,7 +36951,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React11.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.12.1", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React11.createElement(
+        /* @__PURE__ */ React12.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.12.2", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React12.createElement(
           "button",
           {
             className: "ld-update-badge",
@@ -36810,9 +36967,9 @@ function apply(ctx) {
             }
           },
           t3("updateAvailable")
-        ), /* @__PURE__ */ React11.createElement("button", { onClick: () => void refresh() }, t3("retry")))
+        ), /* @__PURE__ */ React12.createElement("button", { onClick: () => void refresh() }, t3("retry")))
       )),
-      /* @__PURE__ */ React11.createElement("div", { className: "ld-spirit-dock", hidden: !ai }, ai && /* @__PURE__ */ React11.createElement(
+      /* @__PURE__ */ React12.createElement("div", { className: "ld-spirit-dock", hidden: !ai }, ai && /* @__PURE__ */ React12.createElement(
         PanelResize,
         {
           kind: "spirit",
@@ -36820,7 +36977,7 @@ function apply(ctx) {
           value: panelLayout.widths.spirit,
           onChange: panelLayout.change
         }
-      ), /* @__PURE__ */ React11.createElement(
+      ), /* @__PURE__ */ React12.createElement(
         SpiritPanel,
         {
           open: ai,
@@ -36831,7 +36988,7 @@ function apply(ctx) {
           }
         }
       ))
-    ), homeOpen && /* @__PURE__ */ React11.createElement(Modal, { title: t3("homeCustomize"), onClose: () => setHomeOpen(false) }, /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("homeCustomizeHint")), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("homeDragHint")), ["main", "support"].map((region) => {
+    ), homeOpen && /* @__PURE__ */ React12.createElement(Modal, { title: t3("homeCustomize"), onClose: () => setHomeOpen(false) }, /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("homeCustomizeHint")), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("homeDragHint")), ["main", "support"].map((region) => {
       const rank = (id) => {
         const i3 = data.settings.homeModules.order.indexOf(id);
         if (i3 >= 0) return i3;
@@ -36843,7 +37000,7 @@ function apply(ctx) {
       const all = HOME_MODULES.filter(
         (m3) => m3.region === region
       ).sort((a3, b3) => rank(a3.id) - rank(b3.id));
-      return /* @__PURE__ */ React11.createElement("section", { className: "ld-section", key: region }, /* @__PURE__ */ React11.createElement("h3", null, t3(region === "main" ? "homeMain" : "homeSupport")), all.map((m3, i3) => {
+      return /* @__PURE__ */ React12.createElement("section", { className: "ld-section", key: region }, /* @__PURE__ */ React12.createElement("h3", null, t3(region === "main" ? "homeMain" : "homeSupport")), all.map((m3, i3) => {
         const hidden = data.settings.homeModules.hidden.includes(
           m3.id
         );
@@ -36871,7 +37028,7 @@ function apply(ctx) {
             order: reorderHomeRegion(data.settings, region, next)
           });
         };
-        return /* @__PURE__ */ React11.createElement(
+        return /* @__PURE__ */ React12.createElement(
           "div",
           {
             className: "ld-home-module" + (homeDrag === m3.id ? " is-dragging" : "") + (homeDrop === m3.id ? " is-drop" : ""),
@@ -36897,7 +37054,7 @@ function apply(ctx) {
               setHomeDrop("");
             }
           },
-          /* @__PURE__ */ React11.createElement(
+          /* @__PURE__ */ React12.createElement(
             "span",
             {
               className: "ld-drag-handle",
@@ -36921,7 +37078,7 @@ function apply(ctx) {
             },
             "\u283F"
           ),
-          /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
+          /* @__PURE__ */ React12.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React12.createElement(
             "input",
             {
               type: "checkbox",
@@ -36930,7 +37087,7 @@ function apply(ctx) {
               onChange: toggle
             }
           ), t3(m3.titleKey)),
-          /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(
+          /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React12.createElement(
             Btn,
             {
               disabled: busy || i3 === 0,
@@ -36938,7 +37095,7 @@ function apply(ctx) {
               onClick: () => move(-1)
             },
             "\u2191"
-          ), /* @__PURE__ */ React11.createElement(
+          ), /* @__PURE__ */ React12.createElement(
             Btn,
             {
               disabled: busy || i3 === all.length - 1,
@@ -36949,13 +37106,13 @@ function apply(ctx) {
           ))
         );
       }));
-    }), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(
+    }), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React12.createElement(
       Btn,
       {
         onClick: () => setHomeModules({ hidden: [], order: [], folded: [] })
       },
       t3("homeReset")
-    ), /* @__PURE__ */ React11.createElement(Btn, { primary: true, onClick: () => setHomeOpen(false) }, t3("close")))), lessonModal && /* @__PURE__ */ React11.createElement(
+    ), /* @__PURE__ */ React12.createElement(Btn, { primary: true, onClick: () => setHomeOpen(false) }, t3("close")))), lessonModal && /* @__PURE__ */ React12.createElement(
       LessonHub,
       {
         key: [
@@ -36968,7 +37125,7 @@ function apply(ctx) {
         env: viewEnv,
         close: () => setLessonModal(null)
       }
-    ), templateOpen && /* @__PURE__ */ React11.createElement(Modal, { title: t3("addHabit"), onClose: () => setTemplateOpen(false) }, /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("templateHeading")), /* @__PURE__ */ React11.createElement("div", { className: "ld-template-list" }, HABIT_TEMPLATES.map((tpl) => /* @__PURE__ */ React11.createElement(
+    ), templateOpen && /* @__PURE__ */ React12.createElement(Modal, { title: t3("addHabit"), onClose: () => setTemplateOpen(false) }, /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("templateHeading")), /* @__PURE__ */ React12.createElement("div", { className: "ld-template-list" }, HABIT_TEMPLATES.map((tpl) => /* @__PURE__ */ React12.createElement(
       "button",
       {
         key: tpl.id,
@@ -36978,9 +37135,9 @@ function apply(ctx) {
           openHabit(habitFromTemplate(tpl, today(timeZone), t3));
         }
       },
-      /* @__PURE__ */ React11.createElement("span", { className: "ld-template-title" }, t3(tpl.titleKey)),
-      /* @__PURE__ */ React11.createElement("span", { className: "ld-template-note" }, t3(tpl.noteKey))
-    ))), HABIT_TEMPLATES.some((x4) => x4.mode === "weekly") && /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("templateWeeklyHint")), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("templateSavedHint")), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(
+      /* @__PURE__ */ React12.createElement("span", { className: "ld-template-title" }, t3(tpl.titleKey)),
+      /* @__PURE__ */ React12.createElement("span", { className: "ld-template-note" }, t3(tpl.noteKey))
+    ))), HABIT_TEMPLATES.some((x4) => x4.mode === "weekly") && /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("templateWeeklyHint")), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("templateSavedHint")), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React12.createElement(
       Btn,
       {
         onClick: () => {
@@ -36989,7 +37146,7 @@ function apply(ctx) {
         }
       },
       t3("templateCustom")
-    ), /* @__PURE__ */ React11.createElement(Btn, { onClick: () => setTemplateOpen(false) }, t3("cancel"))), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("templateCustomHint"))), editor && /* @__PURE__ */ React11.createElement(
+    ), /* @__PURE__ */ React12.createElement(Btn, { onClick: () => setTemplateOpen(false) }, t3("cancel"))), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("templateCustomHint"))), editor && /* @__PURE__ */ React12.createElement(
       Editor,
       {
         editor,
@@ -37053,7 +37210,7 @@ function apply(ctx) {
     const onClose = () => {
       if (!dirty.current || window.confirm(t3("dirty"))) close();
     };
-    const input = (k3, kind = "text", props = {}) => /* @__PURE__ */ React11.createElement(
+    const input = (k3, kind = "text", props = {}) => /* @__PURE__ */ React12.createElement(
       "input",
       {
         type: kind,
@@ -37062,17 +37219,17 @@ function apply(ctx) {
         ...props
       }
     );
-    const options = (k3, values, labels) => /* @__PURE__ */ React11.createElement("select", { value: item[k3], onChange: (e3) => change(k3, e3.target.value) }, values.map((v3, i3) => /* @__PURE__ */ React11.createElement("option", { key: v3, value: v3 }, t3(labels?.[i3] || v3))));
+    const options = (k3, values, labels) => /* @__PURE__ */ React12.createElement("select", { value: item[k3], onChange: (e3) => change(k3, e3.target.value) }, values.map((v3, i3) => /* @__PURE__ */ React12.createElement("option", { key: v3, value: v3 }, t3(labels?.[i3] || v3))));
     const repeat = item.repeat || { kind: "none" };
-    const repeatField = (k3, values, labels) => /* @__PURE__ */ React11.createElement(
+    const repeatField = (k3, values, labels) => /* @__PURE__ */ React12.createElement(
       "select",
       {
         value: repeat[k3],
         onChange: (e3) => changeRepeat(k3, e3.target.value)
       },
-      values.map((v3, i3) => /* @__PURE__ */ React11.createElement("option", { key: v3, value: v3 }, t3(labels?.[i3] || v3)))
+      values.map((v3, i3) => /* @__PURE__ */ React12.createElement("option", { key: v3, value: v3 }, t3(labels?.[i3] || v3)))
     );
-    const weekdayButtons = (days, onChange) => /* @__PURE__ */ React11.createElement("div", { className: "ld-days" }, [1, 2, 3, 4, 5, 6, 0].map((d2) => /* @__PURE__ */ React11.createElement(
+    const weekdayButtons = (days, onChange) => /* @__PURE__ */ React12.createElement("div", { className: "ld-days" }, [1, 2, 3, 4, 5, 6, 0].map((d2) => /* @__PURE__ */ React12.createElement(
       "button",
       {
         type: "button",
@@ -37160,7 +37317,7 @@ function apply(ctx) {
         setLocalError(e4.message);
       }
     }
-    return /* @__PURE__ */ React11.createElement(
+    return /* @__PURE__ */ React12.createElement(
       Modal,
       {
         title: t3(
@@ -37168,7 +37325,7 @@ function apply(ctx) {
         ),
         onClose
       },
-      /* @__PURE__ */ React11.createElement("form", { onSubmit: submit }, editor.occurrence && /* @__PURE__ */ React11.createElement("div", { className: "ld-scope" }, /* @__PURE__ */ React11.createElement(Field, { label: t3("editSeries") }, /* @__PURE__ */ React11.createElement(
+      /* @__PURE__ */ React12.createElement("form", { onSubmit: submit }, editor.occurrence && /* @__PURE__ */ React12.createElement("div", { className: "ld-scope" }, /* @__PURE__ */ React12.createElement(Field, { label: t3("editSeries") }, /* @__PURE__ */ React12.createElement(
         "select",
         {
           value: scope,
@@ -37179,9 +37336,9 @@ function apply(ctx) {
             }
           }
         },
-        /* @__PURE__ */ React11.createElement("option", { value: "single" }, t3("single")),
-        item.repeat?.kind !== "none" && item.repeat?.kind !== "completion" && /* @__PURE__ */ React11.createElement("option", { value: "future" }, t3("future"))
-      )), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("originalDate"), " \xB7 ", editor.occurrence.originalDate)), editor.occurrence && scope === "single" ? /* @__PURE__ */ React11.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React11.createElement(Field, { label: t3("date") }, /* @__PURE__ */ React11.createElement(
+        /* @__PURE__ */ React12.createElement("option", { value: "single" }, t3("single")),
+        item.repeat?.kind !== "none" && item.repeat?.kind !== "completion" && /* @__PURE__ */ React12.createElement("option", { value: "future" }, t3("future"))
+      )), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("originalDate"), " \xB7 ", editor.occurrence.originalDate)), editor.occurrence && scope === "single" ? /* @__PURE__ */ React12.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React12.createElement(Field, { label: t3("date") }, /* @__PURE__ */ React12.createElement(
         "input",
         {
           type: "date",
@@ -37192,7 +37349,7 @@ function apply(ctx) {
             setOcc({ ...occ, date: e3.target.value });
           }
         }
-      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("time") }, /* @__PURE__ */ React11.createElement(
+      )), /* @__PURE__ */ React12.createElement(Field, { label: t3("time") }, /* @__PURE__ */ React12.createElement(
         "input",
         {
           type: "time",
@@ -37202,7 +37359,7 @@ function apply(ctx) {
             setOcc({ ...occ, time: e3.target.value });
           }
         }
-      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("status") }, /* @__PURE__ */ React11.createElement(
+      )), /* @__PURE__ */ React12.createElement(Field, { label: t3("status") }, /* @__PURE__ */ React12.createElement(
         "select",
         {
           value: occ.status,
@@ -37212,20 +37369,20 @@ function apply(ctx) {
           }
         },
         ["todo", "doing", "done", "skipped", "cancelled"].map(
-          (s3) => /* @__PURE__ */ React11.createElement("option", { key: s3, value: s3 }, t3(s3))
+          (s3) => /* @__PURE__ */ React12.createElement("option", { key: s3, value: s3 }, t3(s3))
         )
-      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("name") }, /* @__PURE__ */ React11.createElement("input", { value: item.title, readOnly: true }))) : /* @__PURE__ */ React11.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React11.createElement(Field, { label: t3("name"), wide: true }, input("title", "text", {
+      )), /* @__PURE__ */ React12.createElement(Field, { label: t3("name") }, /* @__PURE__ */ React12.createElement("input", { value: item.title, readOnly: true }))) : /* @__PURE__ */ React12.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React12.createElement(Field, { label: t3("name"), wide: true }, input("title", "text", {
         required: true,
         maxLength: 200,
         autoFocus: true
-      })), type === "project" && /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement(Field, { label: t3("group") }, input("group")), /* @__PURE__ */ React11.createElement(Field, { label: t3("deadline") }, input("deadline", "date")), /* @__PURE__ */ React11.createElement(Field, { label: t3("status") }, options("status", ["todo", "doing", "done", "paused"])), /* @__PURE__ */ React11.createElement(Field, { label: t3("goal"), wide: true }, /* @__PURE__ */ React11.createElement(
+      })), type === "project" && /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement(Field, { label: t3("group") }, input("group")), /* @__PURE__ */ React12.createElement(Field, { label: t3("deadline") }, input("deadline", "date")), /* @__PURE__ */ React12.createElement(Field, { label: t3("status") }, options("status", ["todo", "doing", "done", "paused"])), /* @__PURE__ */ React12.createElement(Field, { label: t3("goal"), wide: true }, /* @__PURE__ */ React12.createElement(
         "textarea",
         {
           value: item.goal,
           onChange: (e3) => change("goal", e3.target.value),
           rows: 4
         }
-      ))), type === "habit" && /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement(Field, { label: t3("habitMode") }, /* @__PURE__ */ React11.createElement(
+      ))), type === "habit" && /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement(Field, { label: t3("habitMode") }, /* @__PURE__ */ React12.createElement(
         "select",
         {
           value: rule.mode,
@@ -37247,8 +37404,8 @@ function apply(ctx) {
             }
           }
         },
-        ["daily", "quantity", "duration", "weekly"].map((m3) => /* @__PURE__ */ React11.createElement("option", { key: m3, value: m3 }, t3(m3 === "duration" ? "durationMode" : m3)))
-      )), /* @__PURE__ */ React11.createElement(Field, { label: t3("effective") }, /* @__PURE__ */ React11.createElement(
+        ["daily", "quantity", "duration", "weekly"].map((m3) => /* @__PURE__ */ React12.createElement("option", { key: m3, value: m3 }, t3(m3 === "duration" ? "durationMode" : m3)))
+      )), /* @__PURE__ */ React12.createElement(Field, { label: t3("effective") }, /* @__PURE__ */ React12.createElement(
         "input",
         {
           type: "date",
@@ -37257,12 +37414,12 @@ function apply(ctx) {
           min: item.id ? day : void 0,
           onChange: (e3) => changeRule("effective", e3.target.value)
         }
-      )), rule.mode !== "daily" && /* @__PURE__ */ React11.createElement(
+      )), rule.mode !== "daily" && /* @__PURE__ */ React12.createElement(
         Field,
         {
           label: rule.mode === "duration" ? t3("targetMinutes") : rule.mode === "weekly" ? t3("weeklyTarget") : t3("target")
         },
-        /* @__PURE__ */ React11.createElement(
+        /* @__PURE__ */ React12.createElement(
           "input",
           {
             type: "number",
@@ -37273,35 +37430,35 @@ function apply(ctx) {
             onChange: (e3) => changeRule("target", Number(e3.target.value))
           }
         )
-      ), rule.mode === "weekly" && /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement(Field, { label: t3("weeklyRestSetting") }, /* @__PURE__ */ React11.createElement(
+      ), rule.mode === "weekly" && /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement(Field, { label: t3("weeklyRestSetting") }, /* @__PURE__ */ React12.createElement(
         "select",
         {
           value: rule.restDays || 0,
           onChange: (e3) => changeRule("restDays", Number(e3.target.value))
         },
-        /* @__PURE__ */ React11.createElement("option", { value: 0 }, t3("weeklyNoRest")),
-        [1, 2, 3, 4, 5, 6].map((n2) => /* @__PURE__ */ React11.createElement("option", { key: n2, value: n2 }, t3("weeklyRestOption").replace("{n}", String(n2))))
-      )), /* @__PURE__ */ React11.createElement("p", { className: "ld-help ld-wide" }, t3("weeklyRestHelp")), /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label ld-wide" }, /* @__PURE__ */ React11.createElement(
+        /* @__PURE__ */ React12.createElement("option", { value: 0 }, t3("weeklyNoRest")),
+        [1, 2, 3, 4, 5, 6].map((n2) => /* @__PURE__ */ React12.createElement("option", { key: n2, value: n2 }, t3("weeklyRestOption").replace("{n}", String(n2))))
+      )), /* @__PURE__ */ React12.createElement("p", { className: "ld-help ld-wide" }, t3("weeklyRestHelp")), /* @__PURE__ */ React12.createElement("label", { className: "ld-check-label ld-wide" }, /* @__PURE__ */ React12.createElement(
         "input",
         {
           type: "checkbox",
           checked: rule.weeklyHints ?? true,
           onChange: (e3) => changeRule("weeklyHints", e3.target.checked)
         }
-      ), t3("weeklyHintsSetting"))), rule.mode === "quantity" && /* @__PURE__ */ React11.createElement(Field, { label: t3("unit") }, /* @__PURE__ */ React11.createElement(
+      ), t3("weeklyHintsSetting"))), rule.mode === "quantity" && /* @__PURE__ */ React12.createElement(Field, { label: t3("unit") }, /* @__PURE__ */ React12.createElement(
         "input",
         {
           value: rule.unit,
           onChange: (e3) => changeRule("unit", e3.target.value)
         }
-      )), rule.mode !== "weekly" && /* @__PURE__ */ React11.createElement(Field, { label: t3("days"), wide: true }, weekdayButtons(rule.days, (v3) => changeRule("days", v3))), /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
+      )), rule.mode !== "weekly" && /* @__PURE__ */ React12.createElement(Field, { label: t3("days"), wide: true }, weekdayButtons(rule.days, (v3) => changeRule("days", v3))), /* @__PURE__ */ React12.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React12.createElement(
         "input",
         {
           type: "checkbox",
           checked: rule.paused,
           onChange: (e3) => changeRule("paused", e3.target.checked)
         }
-      ), t3("pause")), /* @__PURE__ */ React11.createElement("fieldset", { className: "ld-wide ld-completion" }, /* @__PURE__ */ React11.createElement("legend", null, t3("completionLabel")), /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
+      ), t3("pause")), /* @__PURE__ */ React12.createElement("fieldset", { className: "ld-wide ld-completion" }, /* @__PURE__ */ React12.createElement("legend", null, t3("completionLabel")), /* @__PURE__ */ React12.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React12.createElement(
         "input",
         {
           type: "radio",
@@ -37309,7 +37466,7 @@ function apply(ctx) {
           checked: !item.reviewLinked,
           onChange: () => change("reviewLinked", false)
         }
-      ), t3("completionManual")), /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
+      ), t3("completionManual")), /* @__PURE__ */ React12.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React12.createElement(
         "input",
         {
           type: "radio",
@@ -37318,21 +37475,21 @@ function apply(ctx) {
           disabled: rule.mode !== "daily",
           onChange: () => change("reviewLinked", true)
         }
-      ), t3("completionReview")), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, rule.mode === "daily" ? t3("reviewLinkHelp") : t3("completionDailyOnly"))), rule.mode !== "weekly" && /* @__PURE__ */ React11.createElement("div", { className: "ld-wide" }, /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
+      ), t3("completionReview")), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, rule.mode === "daily" ? t3("reviewLinkHelp") : t3("completionDailyOnly"))), rule.mode !== "weekly" && /* @__PURE__ */ React12.createElement("div", { className: "ld-wide" }, /* @__PURE__ */ React12.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React12.createElement(
         "input",
         {
           type: "checkbox",
           checked: !!rule.allowNextDay,
           onChange: (e3) => changeRule("allowNextDay", e3.target.checked)
         }
-      ), t3("allowNextDay")), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("allowNextDayHint"))), /* @__PURE__ */ React11.createElement("p", { className: "ld-help ld-wide" }, t3("habitHint"))), type === "task" && /* @__PURE__ */ React11.createElement(
+      ), t3("allowNextDay")), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("allowNextDayHint"))), /* @__PURE__ */ React12.createElement("p", { className: "ld-help ld-wide" }, t3("habitHint"))), type === "task" && /* @__PURE__ */ React12.createElement(
         "details",
         {
           className: "ld-wide ld-advanced",
           open: !!item.id || repeat.kind !== "none" || !!item.date || !!item.projectId || item.area === "life"
         },
-        /* @__PURE__ */ React11.createElement("summary", null, t3("advanced")),
-        /* @__PURE__ */ React11.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React11.createElement(Field, { label: t3("projects") }, /* @__PURE__ */ React11.createElement(
+        /* @__PURE__ */ React12.createElement("summary", null, t3("advanced")),
+        /* @__PURE__ */ React12.createElement("div", { className: "ld-form" }, /* @__PURE__ */ React12.createElement(Field, { label: t3("projects") }, /* @__PURE__ */ React12.createElement(
           "select",
           {
             value: item.projectId,
@@ -37341,13 +37498,13 @@ function apply(ctx) {
               if (e3.target.value) change("area", "work");
             }
           },
-          /* @__PURE__ */ React11.createElement("option", { value: "" }, t3("noProject")),
-          data.projects.filter((x4) => !x4.deletedAt).map((p3) => /* @__PURE__ */ React11.createElement("option", { key: p3.id, value: p3.id }, p3.title))
-        )), /* @__PURE__ */ React11.createElement(Field, { label: t3("group") }, options(
+          /* @__PURE__ */ React12.createElement("option", { value: "" }, t3("noProject")),
+          data.projects.filter((x4) => !x4.deletedAt).map((p3) => /* @__PURE__ */ React12.createElement("option", { key: p3.id, value: p3.id }, p3.title))
+        )), /* @__PURE__ */ React12.createElement(Field, { label: t3("group") }, options(
           "area",
           ["inbox", "work", "life"],
           ["inboxArea", "work", "lifeArea"]
-        )), /* @__PURE__ */ React11.createElement(Field, { label: t3("date") }, input("date", "date")), /* @__PURE__ */ React11.createElement(Field, { label: t3("deadline") }, input("deadline", "date")), /* @__PURE__ */ React11.createElement(Field, { label: t3("time") }, input("time", "time")), /* @__PURE__ */ React11.createElement(Field, { label: t3("estimatedTomatoes") }, /* @__PURE__ */ React11.createElement(
+        )), /* @__PURE__ */ React12.createElement(Field, { label: t3("date") }, input("date", "date")), /* @__PURE__ */ React12.createElement(Field, { label: t3("deadline") }, input("deadline", "date")), /* @__PURE__ */ React12.createElement(Field, { label: t3("time") }, input("time", "time")), /* @__PURE__ */ React12.createElement(Field, { label: t3("estimatedTomatoes") }, /* @__PURE__ */ React12.createElement(
           "input",
           {
             type: "number",
@@ -37356,12 +37513,12 @@ function apply(ctx) {
             value: item.pomodoros || 0,
             onChange: (e3) => change("pomodoros", Number(e3.target.value))
           }
-        ), /* @__PURE__ */ React11.createElement("small", { className: "ld-help" }, t3("tomatoEstimateHint"))), /* @__PURE__ */ React11.createElement(Field, { label: t3("minutes") }, input("minutes", "number", { min: 0, max: 1440 })), /* @__PURE__ */ React11.createElement(Field, { label: t3("status") }, options("status", ["todo", "doing", "done"])), /* @__PURE__ */ React11.createElement(
+        ), /* @__PURE__ */ React12.createElement("small", { className: "ld-help" }, t3("tomatoEstimateHint"))), /* @__PURE__ */ React12.createElement(Field, { label: t3("minutes") }, input("minutes", "number", { min: 0, max: 1440 })), /* @__PURE__ */ React12.createElement(Field, { label: t3("status") }, options("status", ["todo", "doing", "done"])), /* @__PURE__ */ React12.createElement(
           Field,
           {
             label: t3(item.area === "life" ? "lifeCategory" : "tag")
           },
-          /* @__PURE__ */ React11.createElement(
+          /* @__PURE__ */ React12.createElement(
             "input",
             {
               value: item.tag,
@@ -37371,28 +37528,28 @@ function apply(ctx) {
               onChange: (e3) => change("tag", e3.target.value)
             }
           ),
-          /* @__PURE__ */ React11.createElement("datalist", { id: "ld-life-categories" }, [
+          /* @__PURE__ */ React12.createElement("datalist", { id: "ld-life-categories" }, [
             ...new Set(
               data.tasks.filter(
                 (x4) => !x4.deletedAt && x4.area === "life" && x4.tag
               ).map((x4) => x4.tag)
             )
-          ].map((tag) => /* @__PURE__ */ React11.createElement("option", { key: tag, value: tag })))
-        ), /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
+          ].map((tag) => /* @__PURE__ */ React12.createElement("option", { key: tag, value: tag })))
+        ), /* @__PURE__ */ React12.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React12.createElement(
           "input",
           {
             type: "checkbox",
             checked: !!item.priorityDate,
             onChange: (e3) => change("priorityDate", e3.target.checked ? day : "")
           }
-        ), t3("priority")), /* @__PURE__ */ React11.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
+        ), t3("priority")), /* @__PURE__ */ React12.createElement("label", { className: "ld-check-label" }, /* @__PURE__ */ React12.createElement(
           "input",
           {
             type: "checkbox",
             checked: item.event,
             onChange: (e3) => change("event", e3.target.checked)
           }
-        ), t3("event")), /* @__PURE__ */ React11.createElement(Field, { label: t3("steps"), wide: true }, /* @__PURE__ */ React11.createElement(
+        ), t3("event")), /* @__PURE__ */ React12.createElement(Field, { label: t3("steps"), wide: true }, /* @__PURE__ */ React12.createElement(
           "textarea",
           {
             rows: 3,
@@ -37402,7 +37559,7 @@ function apply(ctx) {
               setSteps(e3.target.value);
             }
           }
-        )), item.steps?.length > 0 && /* @__PURE__ */ React11.createElement("div", { className: "ld-wide" }, item.steps.map((step, i3) => /* @__PURE__ */ React11.createElement("label", { key: step.id, className: "ld-check-label" }, /* @__PURE__ */ React11.createElement(
+        )), item.steps?.length > 0 && /* @__PURE__ */ React12.createElement("div", { className: "ld-wide" }, item.steps.map((step, i3) => /* @__PURE__ */ React12.createElement("label", { key: step.id, className: "ld-check-label" }, /* @__PURE__ */ React12.createElement(
           "input",
           {
             type: "checkbox",
@@ -37414,7 +37571,7 @@ function apply(ctx) {
               )
             )
           }
-        ), step.title))), /* @__PURE__ */ React11.createElement(Field, { label: t3("repeats") }, /* @__PURE__ */ React11.createElement(
+        ), step.title))), /* @__PURE__ */ React12.createElement(Field, { label: t3("repeats") }, /* @__PURE__ */ React12.createElement(
           "select",
           {
             value: repeat.kind,
@@ -37428,10 +37585,10 @@ function apply(ctx) {
             "yearly",
             "lunar",
             "completion"
-          ].map((k3) => /* @__PURE__ */ React11.createElement("option", { key: k3, value: k3 }, t3(
+          ].map((k3) => /* @__PURE__ */ React12.createElement("option", { key: k3, value: k3 }, t3(
             k3 === "daily" ? "repeatDaily" : k3 === "weekly" ? "repeatWeekly" : k3
           )))
-        )), repeat.kind !== "none" && /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement(Field, { label: t3("interval") }, /* @__PURE__ */ React11.createElement(
+        )), repeat.kind !== "none" && /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement(Field, { label: t3("interval") }, /* @__PURE__ */ React12.createElement(
           "input",
           {
             type: "number",
@@ -37440,25 +37597,25 @@ function apply(ctx) {
             value: repeat.interval || 1,
             onChange: (e3) => changeRepeat("interval", Number(e3.target.value))
           }
-        )), /* @__PURE__ */ React11.createElement(Field, { label: t3("until") }, /* @__PURE__ */ React11.createElement(
+        )), /* @__PURE__ */ React12.createElement(Field, { label: t3("until") }, /* @__PURE__ */ React12.createElement(
           "input",
           {
             type: "date",
             value: repeat.until || "",
             onChange: (e3) => changeRepeat("until", e3.target.value)
           }
-        )), repeat.kind === "weekly" && /* @__PURE__ */ React11.createElement(Field, { label: t3("days"), wide: true }, weekdayButtons(
+        )), repeat.kind === "weekly" && /* @__PURE__ */ React12.createElement(Field, { label: t3("days"), wide: true }, weekdayButtons(
           repeat.days || [1],
           (v3) => changeRepeat("days", v3)
-        )), repeat.kind === "monthly" && /* @__PURE__ */ React11.createElement(Field, { label: t3("monthMode") }, repeatField(
+        )), repeat.kind === "monthly" && /* @__PURE__ */ React12.createElement(Field, { label: t3("monthMode") }, repeatField(
           "monthMode",
           ["date", "lastWeekday"],
           ["monthDate", "lastWeekday"]
-        )), repeat.kind === "completion" && /* @__PURE__ */ React11.createElement(Field, { label: t3("unit") }, repeatField(
+        )), repeat.kind === "completion" && /* @__PURE__ */ React12.createElement(Field, { label: t3("unit") }, repeatField(
           "unit",
           ["days", "months", "years"],
           ["daysUnit", "monthsUnit", "yearsUnit"]
-        )), repeat.kind === "lunar" && /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement(Field, { label: t3("month") }, /* @__PURE__ */ React11.createElement(
+        )), repeat.kind === "lunar" && /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement(Field, { label: t3("month") }, /* @__PURE__ */ React12.createElement(
           "input",
           {
             type: "number",
@@ -37467,7 +37624,7 @@ function apply(ctx) {
             value: repeat.month || 1,
             onChange: (e3) => changeRepeat("month", Number(e3.target.value))
           }
-        )), /* @__PURE__ */ React11.createElement(Field, { label: t3("day") }, /* @__PURE__ */ React11.createElement(
+        )), /* @__PURE__ */ React12.createElement(Field, { label: t3("day") }, /* @__PURE__ */ React12.createElement(
           "input",
           {
             type: "number",
@@ -37476,17 +37633,17 @@ function apply(ctx) {
             value: repeat.day || 1,
             onChange: (e3) => changeRepeat("day", Number(e3.target.value))
           }
-        )), /* @__PURE__ */ React11.createElement(Field, { label: t3("leap") }, repeatField("leap", ["regular", "only", "both"])), repeat.leap === "only" && /* @__PURE__ */ React11.createElement(Field, { label: t3("leapFallback") }, repeatField(
+        )), /* @__PURE__ */ React12.createElement(Field, { label: t3("leap") }, repeatField("leap", ["regular", "only", "both"])), repeat.leap === "only" && /* @__PURE__ */ React12.createElement(Field, { label: t3("leapFallback") }, repeatField(
           "leapFallback",
           ["regular", "skip"],
           ["fallbackRegular", "skipYear"]
         ))), ["monthly", "yearly", "lunar"].includes(
           repeat.kind
-        ) && /* @__PURE__ */ React11.createElement(Field, { label: t3("missing") }, repeatField(
+        ) && /* @__PURE__ */ React12.createElement(Field, { label: t3("missing") }, repeatField(
           "missing",
           ["last", "skip"],
           ["last", "skipYear"]
-        )), /* @__PURE__ */ React11.createElement("div", { className: "ld-wide" }, /* @__PURE__ */ React11.createElement(
+        )), /* @__PURE__ */ React12.createElement("div", { className: "ld-wide" }, /* @__PURE__ */ React12.createElement(
           Btn,
           {
             onClick: async () => {
@@ -37504,7 +37661,7 @@ function apply(ctx) {
             }
           },
           t3("preview")
-        ), preview.length > 0 && /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("previewDates"), " \xB7 ", preview.join(" \xB7 ")), /* @__PURE__ */ React11.createElement("p", { className: "ld-help" }, t3("repeatHint")))), /* @__PURE__ */ React11.createElement(Field, { label: t3("reminder") }, /* @__PURE__ */ React11.createElement(
+        ), preview.length > 0 && /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("previewDates"), " \xB7 ", preview.join(" \xB7 ")), /* @__PURE__ */ React12.createElement("p", { className: "ld-help" }, t3("repeatHint")))), /* @__PURE__ */ React12.createElement(Field, { label: t3("reminder") }, /* @__PURE__ */ React12.createElement(
           "input",
           {
             type: "number",
@@ -37516,8 +37673,8 @@ function apply(ctx) {
               e3.target.value === "" ? null : Number(e3.target.value)
             )
           }
-        )), /* @__PURE__ */ React11.createElement(Field, { label: t3("reminderTime") }, input("reminderTime", "time")), /* @__PURE__ */ React11.createElement("p", { className: "ld-help ld-wide" }, t3("notifyHint")))
-      ), type !== "project" && /* @__PURE__ */ React11.createElement(Field, { label: t3("note"), wide: true }, /* @__PURE__ */ React11.createElement(
+        )), /* @__PURE__ */ React12.createElement(Field, { label: t3("reminderTime") }, input("reminderTime", "time")), /* @__PURE__ */ React12.createElement("p", { className: "ld-help ld-wide" }, t3("notifyHint")))
+      ), type !== "project" && /* @__PURE__ */ React12.createElement(Field, { label: t3("note"), wide: true }, /* @__PURE__ */ React12.createElement(
         "textarea",
         {
           value: item.note,
@@ -37525,7 +37682,7 @@ function apply(ctx) {
           maxLength: 1e4,
           onChange: (e3) => change("note", e3.target.value)
         }
-      ))), (localError || snapshot.error) && /* @__PURE__ */ React11.createElement("p", { className: "ld-error", role: "alert" }, localError || snapshot.error), /* @__PURE__ */ React11.createElement("div", { className: "ld-modal-footer" }, /* @__PURE__ */ React11.createElement("div", null, item.id && /* @__PURE__ */ React11.createElement(
+      ))), (localError || snapshot.error) && /* @__PURE__ */ React12.createElement("p", { className: "ld-error", role: "alert" }, localError || snapshot.error), /* @__PURE__ */ React12.createElement("div", { className: "ld-modal-footer" }, /* @__PURE__ */ React12.createElement("div", null, item.id && /* @__PURE__ */ React12.createElement(
         Btn,
         {
           disabled: busy,
@@ -37542,7 +37699,7 @@ function apply(ctx) {
           }
         },
         t3("remove")
-      )), /* @__PURE__ */ React11.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React11.createElement(Btn, { onClick: onClose }, t3("cancel")), /* @__PURE__ */ React11.createElement(
+      )), /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React12.createElement(Btn, { onClick: onClose }, t3("cancel")), /* @__PURE__ */ React12.createElement(
         "button",
         {
           type: "submit",
@@ -37562,7 +37719,7 @@ function apply(ctx) {
         order: 7,
         label: () => t3("title")
       },
-      ({ size }) => /* @__PURE__ */ React11.createElement(Icon, { name: "timeDesk", size })
+      ({ size }) => /* @__PURE__ */ React12.createElement(Icon, { name: "timeDesk", size })
     )
   );
   ctx.slots.inject(
@@ -37580,7 +37737,7 @@ function apply(ctx) {
       },
       () => {
         const { data } = useStore();
-        return /* @__PURE__ */ React11.createElement(Ambient, { data }, /* @__PURE__ */ React11.createElement("style", null, css), /* @__PURE__ */ React11.createElement(Timer, { compact: true }));
+        return /* @__PURE__ */ React12.createElement(Ambient, { data }, /* @__PURE__ */ React12.createElement("style", null, css), /* @__PURE__ */ React12.createElement(Timer, { compact: true }));
       }
     )
   );
@@ -37590,7 +37747,7 @@ function apply(ctx) {
       { name: "shell.overlay", id: "life-desk-reminders", order: 20 },
       () => {
         const { data } = useStore();
-        return /* @__PURE__ */ React11.createElement(Ambient, { data }, /* @__PURE__ */ React11.createElement("style", null, css), /* @__PURE__ */ React11.createElement(Alerts, null), /* @__PURE__ */ React11.createElement(Fullscreen, null));
+        return /* @__PURE__ */ React12.createElement(Ambient, { data }, /* @__PURE__ */ React12.createElement("style", null, css), /* @__PURE__ */ React12.createElement(Alerts, null), /* @__PURE__ */ React12.createElement(Fullscreen, null));
       }
     )
   );

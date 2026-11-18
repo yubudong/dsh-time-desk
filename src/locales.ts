@@ -1,4 +1,14 @@
 export const copy = {
+  toolbarClockFaceHint: [
+    "顶部保持紧凑数字显示；选定表盘用于番茄详情、侧栏和全屏。",
+    "The toolbar stays digital; the selected face appears in timer details, the sidebar and fullscreen.",
+  ],
+  theme: ["主题", "Theme"],
+  themeHint: [
+    "切换工作台配色，不影响任务和计时。",
+    "Change workspace colors without affecting tasks or timers.",
+  ],
+  tomatoDetails: ["查看番茄钟详情", "View focus timer details"],
   timerMore: ["更多专注设置", "More focus settings"],
   resizeSupport: [
     "拖动调整副工作台宽度；方向键微调，双击或回车恢复默认",
