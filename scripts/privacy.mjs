@@ -89,6 +89,7 @@ export async function audit(root = process.cwd(), { worktree = false } = {}) {
       "market",
       "dist",
       "changes",
+      "docs",
     ]) {
       try {
         files.push(...(await walk(root, dir)));

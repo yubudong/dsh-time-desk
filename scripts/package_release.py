@@ -9,7 +9,7 @@ assert package=='dsh-time-desk'
 node=sys.argv[1] if len(sys.argv)>1 else 'node'
 archive=release/f'{package}-{version}.tgz'
 if not archive.is_file():raise SystemExit('Run npm pack --pack-destination release first')
-allowed=['src','assets','scripts','test','dist','locale','.github','changes','market','.gitignore','.gitattributes','package.json','package-lock.json','tsconfig.json','cordis.patch.yml','icon.svg','README.md','RELEASE.md','PRIVACY.md','PUBLISHING.md','LICENSE','THIRD_PARTY_NOTICES.md']
+allowed=['src','assets','scripts','test','dist','locale','.github','changes','docs','market','.gitignore','.gitattributes','package.json','package-lock.json','tsconfig.json','cordis.patch.yml','icon.svg','README.md','RELEASE.md','PRIVACY.md','PUBLISHING.md','LICENSE','THIRD_PARTY_NOTICES.md']
 try:
  tracked=subprocess.check_output(['git','ls-files','-z','--',*allowed],cwd=root,stderr=subprocess.DEVNULL).decode().split('\0')
  files=[root/n for n in tracked if n]
