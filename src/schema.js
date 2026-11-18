@@ -218,11 +218,21 @@ export const HabitRule = z
     unit: str(20).default("次"),
     paused: z.boolean().default(false),
     allowNextDay: z.boolean().default(false),
+    restDays: z.number().int().min(0).max(6).default(0),
+    weeklyHints: z.boolean().default(true),
   })
   .refine(
     (r) =>
       r.mode !== "duration" || (Number.isInteger(r.target) && r.target <= 1440),
     "时间目标应为 1–1440 的整数分钟",
+  )
+  .refine(
+    (r) => r.mode === "weekly" || r.restDays === 0,
+    "休息间隔仅用于每周次数习惯",
+  )
+  .refine(
+    (r) => r.mode !== "weekly" || (Number.isInteger(r.target) && r.target <= 7),
+    "每周目标应为 1–7 个不同日期",
   );
 export const HabitInput = z.object({
   title: str().min(1),

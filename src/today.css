@@ -172,3 +172,65 @@
     font-size: 10px;
   }
 }
+
+.ld-weekly-item {
+  padding-bottom: 10px;
+}
+.ld-weekly-item + .ld-weekly-item {
+  border-top: 1px solid var(--ld-line);
+}
+.ld-weekly-item .ld-weekly-row {
+  padding-bottom: 5px;
+  align-items: flex-start;
+}
+.ld-weekly-item .ld-weekly-row > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.ld-weekly-note {
+  margin: 3px 0;
+  font-size: 11px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.ld-weekly-warning {
+  color: var(--dsw-alias-state-warn-primary);
+}
+.ld-weekly-plans {
+  margin-top: 6px;
+  color: var(--ld-muted);
+  font-size: 11px;
+}
+.ld-weekly-plans > summary {
+  cursor: pointer;
+}
+.ld-weekly-plans .ld-actions {
+  margin-top: 6px;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.ld-weekly-plans .ld-btn {
+  padding: 3px 7px;
+  font-size: 11px;
+}
+.ld-weekly-period {
+  margin: 0 0 6px;
+}
+.ld-rest-checkin {
+  margin-bottom: 14px;
+}
+
+.ld-root .ld-weekly-title {
+  border: 0;
+  padding: 0;
+  background: none;
+  text-align: left;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--ld-ink);
+}
+.ld-weekly-title:focus-visible {
+  outline: 2px solid var(--ld-accent);
+  outline-offset: 3px;
+  border-radius: 3px;
+}

@@ -227,5 +227,26 @@ test("compiled distribution exposes one operation to both UI route and agent too
   });
   strictJson(refunded);
   assert.equal(refunded.lastRecord.status, "scheduled");
+  assert.equal(tool.parameters.properties.confirmRest.type, "boolean");
+  const weekly = await tool.execute({
+    action: "save",
+    revision: refunded.revision,
+    collection: "habits",
+    item: {
+      title: "Synthetic weekly tool",
+      rules: [
+        { effective: "2020-01-01", mode: "weekly", target: 3, restDays: 1 },
+      ],
+    },
+  });
+  strictJson(weekly);
+  const forecast = await tool.execute({
+    action: "plan",
+    command: "habits",
+    date: "2020-01-06",
+  });
+  strictJson(forecast);
+  assert.equal(forecast.revision, weekly.revision);
+  assert.equal(forecast.weekly[0].restDays, 1);
   for (const fn of disposers.reverse()) if (fn) await fn();
 });

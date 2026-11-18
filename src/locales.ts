@@ -1,4 +1,58 @@
 export const copy = {
+  weeklyRuleChanges: [
+    "本周有规则变更，建议已按各日期的生效规则计算。",
+    "Rules change this week; suggestions use each date’s effective rule.",
+  ],
+  weeklyPeriod: ["周一至周日 · {from}～{to}", "Monday–Sunday · {from}–{to}"],
+  weeklyTarget: ["每周完成次数", "Weekly completions"],
+  weeklyTimes: ["次", " times"],
+  weeklyRestTag: ["完成后休息{n}天", "Rest {n} days after completion"],
+  weeklyRestSetting: ["完成后至少休息", "Rest after completion"],
+  weeklyNoRest: ["不限制间隔", "No spacing requirement"],
+  weeklyRestOption: ["休息{n}天", "Rest {n} days"],
+  weeklyRestHelp: [
+    "次数按不同日期计数，周一开始、周日结束。休息按自然日且跨周延续，例如周一完成、休息1天，最早周三再安排。规则只辅助计划，不会自动打卡或标记未达成。",
+    "Count distinct dates, Monday through Sunday. Rest uses calendar days and extends across weeks: Monday plus one rest day means Wednesday is earliest. No automatic check-ins or missed records.",
+  ],
+  weeklyHintsSetting: [
+    "显示周进度建议与预警",
+    "Show weekly suggestions and progress warnings",
+  ],
+  weeklyPlanDate: ["安排{date}", "Plan {date}"],
+  weeklyComplete: ["本周目标已完成", "Weekly goal complete"],
+  weeklyRestToday: ["今天按规则休息", "Today is a rest day under this rule"],
+  weeklyEarliest: ["最早{date}可安排", "Next available: {date}"],
+  weeklyTight: [
+    "还差{n}次，按当前规则恰好还能安排{m}次。",
+    "{n} left; room for exactly {m} under the current rule.",
+  ],
+  weeklyShort: [
+    "还差{n}次，按当前规则本周最多再安排{m}次。",
+    "{n} left; room for at most {m} more this week under the current rule.",
+  ],
+  weeklySuggested: ["建议：{dates}", "Suggested: {dates}"],
+  weeklyPlanReview: [
+    "部分已有安排与休息间隔或可用日期冲突，可在本周安排里核对。",
+    "Some existing plans conflict with spacing or available dates. Review this week’s plans.",
+  ],
+  weeklyManagePlans: ["本周安排", "This week’s plans"],
+  weeklyCancelDate: ["取消{date}的安排", "Cancel the plan for {date}"],
+  weeklyPlanOnly: [
+    "安排不计为完成，实际完成后再打卡；建议不足时不会自动改目标或顺延欠次数。",
+    "Plans do not count as completion. Check in after finishing; shortfalls never change goals or carry over automatically.",
+  ],
+  weeklyPlanConflict: [
+    "该日期与休息间隔或已有计划冲突，仍要安排吗？也可先取消已有安排再调整。",
+    "This date conflicts with spacing or existing plans. Plan it anyway? You may cancel an existing plan first.",
+  ],
+  weeklyRestRecordHint: [
+    "这次记录与当前休息间隔不一致（包括补记前后已有的训练）。如果实际已经完成，仍可如实记录。",
+    "This record conflicts with the current rest spacing, including sessions around a backfill. You can still record what actually happened.",
+  ],
+  weeklyRestRecordConfirm: [
+    "我确认这天实际已完成，仍然记录",
+    "I confirm I actually completed it on this date; record it",
+  ],
   lessonOnce: ["单次课程", "One-off lesson"],
   lessonDraftIntro: [
     "关闭弹窗会保留草稿；保存后才写入课程和账目。",

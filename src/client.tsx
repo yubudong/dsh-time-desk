@@ -1,3 +1,4 @@
+import { habitRestInfo, weeklyHabitStatus } from "./weekly-habits.js";
 import * as React from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -454,6 +455,26 @@ export function apply(ctx: any) {
     const [amount, setAmount] = useState("1");
     const [note, setNote] = useState("");
     const [recordDate, setRecordDate] = useState(day);
+    const [confirmRest, setConfirmRest] = useState(false);
+    const [clock, setClock] = useState(Date.now());
+    useEffect(() => {
+      const timer = setInterval(() => setClock(Date.now()), 60000);
+      return () => clearInterval(timer);
+    }, []);
+    const currentRecord = record
+      ? data.habits.find((h: any) => h.id === record.id && !h.deletedAt) ||
+        record
+      : null;
+    const recordRest = currentRecord
+      ? habitRestInfo(data, currentRecord, recordDate, clock)
+      : null;
+    const restContext = JSON.stringify({
+      id: currentRecord?.id,
+      version: currentRecord?.version,
+      date: recordDate,
+      rest: recordRest,
+    });
+    useEffect(() => setConfirmRest(false), [restContext]);
     const previous = pendingPreviousHabits(data, day);
     const openLog = (h: any, date: string) => {
       const r = habitRule(h, date),
@@ -463,6 +484,7 @@ export function apply(ctx: any) {
         return;
       }
       setRecordDate(date);
+      setConfirmRest(false);
       setAmount(
         ["quantity", "duration"].includes(r?.mode)
           ? String(Math.max(1, r.target - p.value))
@@ -579,33 +601,157 @@ export function apply(ctx: any) {
       groups.weekly.length > 0 ? (
         <section className={heading ? "ld-weekly-goals" : "ld-weekly-content"}>
           {heading && <h3>{t("weeklyHabits")}</h3>}
+          <p className="ld-help ld-weekly-period">
+            {t("weeklyPeriod")
+              .replace("{from}", monday(day))
+              .replace("{to}", shift(monday(day), 6))}
+          </p>
           {groups.weekly.map((h: any) => {
-            const r = habitRule(h, day);
-            const count = Array.from({ length: 7 }, (_, i) =>
-              shift(monday(day), i),
-            ).filter((d) => habitProgress(data, h, d).done).length;
-            const planned = h.plannedDates?.includes(day);
+            const p = weeklyHabitStatus(data, h, day, clock);
+            const weekdayLabel = (date: string) =>
+              t("weekdayShort" + weekday(date));
+            const actualDay = today(timeZone, clock);
+            const plannedToday =
+              h.plannedDates.includes(day) && !p.todayDone && day >= actualDay;
+            const targetDate = plannedToday ? day : p.nextUnplanned;
+            const plan = async (date: string, remove = false) => {
+              const info = habitRestInfo(data, h, date, Date.now(), true);
+              const confirm =
+                remove ||
+                !info.violation ||
+                window.confirm(t("weeklyPlanConflict"));
+              if (!confirm) return;
+              await run({
+                action: "habitLog",
+                id: h.id,
+                date,
+                status: remove ? "unplanned" : "planned",
+                confirmRest: info.violation && !remove,
+              });
+            };
             return (
-              <div className="ld-weekly-row" key={h.id}>
-                <span>
-                  {h.title}
-                  <small>
-                    {count}/{r.target} {t("daysUnit")}
-                  </small>
-                </span>
-                <Btn
-                  disabled={busy || habitProgress(data, h, day).done}
-                  onClick={() =>
-                    run({
-                      action: "habitLog",
-                      id: h.id,
-                      date: day,
-                      status: planned ? "unplanned" : "planned",
-                    })
-                  }
-                >
-                  {t(planned ? "unplanHabit" : "planHabit")}
-                </Btn>
+              <div className="ld-weekly-item" key={h.id}>
+                <div className="ld-weekly-row">
+                  <span>
+                    <button
+                      type="button"
+                      className="ld-weekly-title"
+                      aria-label={t("log") + " " + h.title}
+                      disabled={
+                        busy ||
+                        day > today(timeZone, clock) ||
+                        !habitDue(h, day)
+                      }
+                      onClick={() => openLog(h, day)}
+                    >
+                      {h.title}
+                    </button>
+                    <small>
+                      {p.completed}/{p.target}
+                      {t("weeklyTimes")}
+                      {p.restDays
+                        ? " · " +
+                          t("weeklyRestTag").replace("{n}", String(p.restDays))
+                        : ""}
+                    </small>
+                  </span>
+                  {targetDate && p.applicable && p.risk !== "historical" && (
+                    <Btn
+                      disabled={busy}
+                      onClick={() => plan(targetDate, plannedToday)}
+                    >
+                      {plannedToday
+                        ? t("unplanHabit")
+                        : targetDate === day && day === actualDay
+                          ? t("planHabit")
+                          : t("weeklyPlanDate").replace(
+                              "{date}",
+                              weekdayLabel(targetDate),
+                            )}
+                    </Btn>
+                  )}
+                </div>
+                {p.risk === "complete" && (
+                  <p className="ld-help ld-weekly-note">
+                    {t("weeklyComplete")}
+                  </p>
+                )}
+                {p.showHints && p.restToday && (
+                  <p className="ld-help ld-weekly-note">
+                    {t("weeklyRestToday")}
+                    {p.nextEligible
+                      ? " · " +
+                        t("weeklyEarliest").replace(
+                          "{date}",
+                          weekdayLabel(p.nextEligible),
+                        )
+                      : ""}
+                  </p>
+                )}
+                {p.showWarning && ["tight", "short"].includes(p.risk) && (
+                  <p className="ld-weekly-note ld-weekly-warning" role="status">
+                    {t(p.risk === "tight" ? "weeklyTight" : "weeklyShort")
+                      .replace("{n}", String(p.remaining))
+                      .replace("{m}", String(p.capacity))}
+                  </p>
+                )}
+                {p.showHints && !!p.suggested.length && (
+                  <p className="ld-help ld-weekly-note">
+                    {t("weeklySuggested").replace(
+                      "{dates}",
+                      p.suggested.map(weekdayLabel).join("、"),
+                    )}
+                  </p>
+                )}
+                {p.showHints && p.changesWithinWeek && (
+                  <p className="ld-help ld-weekly-note">
+                    {t("weeklyRuleChanges")}
+                  </p>
+                )}
+                {p.showHints && !!p.plannedConflicts.length && (
+                  <p className="ld-weekly-note ld-weekly-warning">
+                    {t("weeklyPlanReview")}
+                  </p>
+                )}
+                {(!!p.plannedDates.length ||
+                  (p.showHints && !!p.suggested.length)) && (
+                  <details className="ld-weekly-plans">
+                    <summary>
+                      {t("weeklyManagePlans")}
+                      {p.plannedDates.length
+                        ? " · " + p.plannedDates.length
+                        : ""}
+                    </summary>
+                    <div className="ld-actions">
+                      {p.plannedDates.map((date) => (
+                        <Btn
+                          disabled={busy}
+                          key={date}
+                          title={t("weeklyCancelDate").replace("{date}", date)}
+                          onClick={() => plan(date, true)}
+                        >
+                          {weekdayLabel(date)} {date.slice(5)} ×
+                        </Btn>
+                      ))}
+                      {p.showHints &&
+                        p.suggested
+                          .filter((date) => !p.plannedDates.includes(date))
+                          .map((date) => (
+                            <Btn
+                              disabled={busy}
+                              key={date}
+                              onClick={() => plan(date)}
+                            >
+                              {t("weeklyPlanDate").replace(
+                                "{date}",
+                                weekdayLabel(date),
+                              )}
+                            </Btn>
+                          ))}
+                    </div>
+                    <p className="ld-help">{t("weeklyPlanOnly")}</p>
+                  </details>
+                )}
               </div>
             );
           })}
@@ -696,6 +842,21 @@ export function apply(ctx: any) {
                     : t("checkInHint");
               })()}
             </p>
+            {habitRule(currentRecord, recordDate)?.mode === "weekly" &&
+              recordRest?.violation &&
+              !habitProgress(data, currentRecord, recordDate).done && (
+                <div className="ld-rest-checkin">
+                  <p className="ld-help">{t("weeklyRestRecordHint")}</p>
+                  <label className="ld-check-label">
+                    <input
+                      type="checkbox"
+                      checked={confirmRest}
+                      onChange={(e) => setConfirmRest(e.target.checked)}
+                    />
+                    {t("weeklyRestRecordConfirm")}
+                  </label>
+                </div>
+              )}
             <div className="ld-form">
               {["quantity", "duration"].includes(
                 habitRule(record, recordDate)?.mode,
@@ -727,13 +888,19 @@ export function apply(ctx: any) {
             <div className="ld-actions">
               <Btn
                 primary
-                disabled={busy}
+                disabled={
+                  busy ||
+                  (habitRule(currentRecord, recordDate)?.mode === "weekly" &&
+                    (habitProgress(data, currentRecord, recordDate).done ||
+                      (!!recordRest?.violation && !confirmRest)))
+                }
                 onClick={async () => {
                   if (
                     await run({
                       action: "habitLog",
                       id: record.id,
                       date: recordDate,
+                      confirmRest,
                       value: ["quantity", "duration"].includes(
                         habitRule(record, recordDate)?.mode,
                       )
@@ -3624,8 +3791,13 @@ export function apply(ctx: any) {
                         const mode = e.target.value;
                         changeRule("mode", mode);
                         if (mode !== "daily") change("reviewLinked", false);
-                        if (mode === "weekly")
+                        if (mode !== "weekly") changeRule("restDays", 0);
+                        if (mode === "weekly") {
                           changeRule("allowNextDay", false);
+                          changeRule("unit", "次");
+                          if (!Number.isInteger(rule.target) || rule.target > 7)
+                            changeRule("target", 3);
+                        }
                         if (mode === "duration") {
                           if (rule.target > 1440 || rule.target < 1)
                             changeRule("target", 30);
@@ -3654,7 +3826,9 @@ export function apply(ctx: any) {
                       label={
                         rule.mode === "duration"
                           ? t("targetMinutes")
-                          : t("target")
+                          : rule.mode === "weekly"
+                            ? t("weeklyTarget")
+                            : t("target")
                       }
                     >
                       <input
@@ -3674,6 +3848,36 @@ export function apply(ctx: any) {
                         }
                       />
                     </Field>
+                  )}
+                  {rule.mode === "weekly" && (
+                    <>
+                      <Field label={t("weeklyRestSetting")}>
+                        <select
+                          value={rule.restDays || 0}
+                          onChange={(e) =>
+                            changeRule("restDays", Number(e.target.value))
+                          }
+                        >
+                          <option value={0}>{t("weeklyNoRest")}</option>
+                          {[1, 2, 3, 4, 5, 6].map((n) => (
+                            <option key={n} value={n}>
+                              {t("weeklyRestOption").replace("{n}", String(n))}
+                            </option>
+                          ))}
+                        </select>
+                      </Field>
+                      <p className="ld-help ld-wide">{t("weeklyRestHelp")}</p>
+                      <label className="ld-check-label ld-wide">
+                        <input
+                          type="checkbox"
+                          checked={rule.weeklyHints ?? true}
+                          onChange={(e) =>
+                            changeRule("weeklyHints", e.target.checked)
+                          }
+                        />
+                        {t("weeklyHintsSetting")}
+                      </label>
+                    </>
                   )}
                   {rule.mode === "quantity" && (
                     <Field label={t("unit")}>

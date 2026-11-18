@@ -1,3 +1,4 @@
+import { habitRestInfo, weeklyHabitStatus } from "./weekly-habits.js";
 import { applyLessonAction, validateLessonData } from "./lesson-actions.js";
 import { hasReviewContent, normalizeTemplate } from "./review-template.js";
 import { randomUUID } from "node:crypto";
@@ -293,8 +294,17 @@ export function applyAction(current, a, now = Date.now()) {
     const h = live(s, "habits", a.id);
     const date = day.parse(a.date || localDay);
     if (a.status === "planned" || a.status === "unplanned") {
-      if (!habitDue(h, date) || habitRule(h, date)?.mode !== "weekly")
+      if (
+        a.status === "planned" &&
+        (!habitDue(h, date) || habitRule(h, date)?.mode !== "weekly")
+      )
         fail("只能安排有效的每周次数习惯");
+      if (
+        a.status === "planned" &&
+        habitRestInfo(s, h, date, now, true).violation &&
+        a.confirmRest !== true
+      )
+        fail("该安排与休息间隔或已有计划冲突，请核对并确认");
       h.plannedDates = [
         ...new Set([
           ...(h.plannedDates || []).filter((d) => d !== date),
@@ -344,6 +354,14 @@ export function applyAction(current, a, now = Date.now()) {
         logs.some((x) => !x.skipped && x.value > 0)
       )
         fail("当天已打卡，可先撤销再修改");
+      if (
+        rule.mode === "weekly" &&
+        !a.skipped &&
+        value > 0 &&
+        habitRestInfo(s, h, date, now).violation &&
+        a.confirmRest !== true
+      )
+        fail("按当前休息间隔，这一天原应休息；如确已完成，请确认后如实记录");
       if (logs.some((x) => x.skipped) && !a.skipped)
         for (const l of logs.filter((x) => x.skipped)) {
           l.deletedAt = iso;
@@ -602,6 +620,21 @@ export async function createService(unit, clock = () => Date.now()) {
     async operate(a) {
       const run = queue.then(async () => {
         if (a.action === "read") return structuredClone(current);
+        if (a.action === "plan" && a.command === "habits") {
+          const date = day.parse(
+            a.date || today(current.settings.timeZone, clock()),
+          );
+          return {
+            revision: current.revision,
+            dataEpoch: current.dataEpoch,
+            date,
+            weekly: current.habits
+              .filter(
+                (h) => !h.deletedAt && habitRule(h, date)?.mode === "weekly",
+              )
+              .map((h) => weeklyHabitStatus(current, h, date, clock())),
+          };
+        }
         if (a.action === "plan" && (!a.command || a.command === "read")) {
           const date = day.parse(
             a.date || today(current.settings.timeZone, clock()),

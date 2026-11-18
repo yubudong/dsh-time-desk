@@ -513,6 +513,90 @@ try {
     "reliability: varying attendance reversals, audit links, schedule history, complete backup restore, stale draft protection and lossless Agent receipt passed",
   );
 
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Shanghai",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const weeklyToday = ["year", "month", "day"]
+    .map((k) => parts.find((p) => p.type === k).value)
+    .join("-");
+  const weeklyCreated = await post({
+    action: "save",
+    collection: "habits",
+    item: {
+      title: "Synthetic spaced weekly",
+      rules: [
+        {
+          effective: shiftDate(weeklyToday, -7),
+          mode: "weekly",
+          target: 3,
+          restDays: 1,
+          weeklyHints: true,
+        },
+      ],
+    },
+  });
+  const weeklyId = weeklyCreated.habits.find(
+    (h) => h.title === "Synthetic spaced weekly",
+  ).id;
+  await post({
+    action: "habitLog",
+    id: weeklyId,
+    date: shiftDate(weeklyToday, -1),
+    value: 1,
+  });
+  const early = await request({
+    action: "habitLog",
+    id: weeklyId,
+    date: weeklyToday,
+    value: 1,
+    revision: await revisionNow(),
+  });
+  assert.equal(early.status, 400);
+  assert.match((await early.json()).error, /休息|间隔/);
+  await post({
+    action: "habitLog",
+    id: weeklyId,
+    date: weeklyToday,
+    value: 1,
+    confirmRest: true,
+  });
+  const readRevision = await revisionNow();
+  const weeklyForecast = await tool.execute({
+    action: "plan",
+    command: "habits",
+    date: weeklyToday,
+  });
+  assert.equal(await revisionNow(), readRevision);
+  const weeklyRow = weeklyForecast.weekly.find((h) => h.habitId === weeklyId);
+  assert.equal(weeklyRow.todayDone, true);
+  assert.equal(weeklyRow.availableDates.includes(weeklyToday), false);
+  assert.deepEqual(JSON.parse(JSON.stringify(weeklyForecast)), weeklyForecast);
+  assert.equal(tool.parameters.properties.confirmRest.type, "boolean");
+  const weeklyBackup = (await (await request({ action: "backup" })).json())
+    .value;
+  await post({
+    action: "save",
+    collection: "habits",
+    id: weeklyId,
+    item: { note: "Temporary synthetic note" },
+  });
+  const weeklyRestored = await post({
+    action: "restoreBackup",
+    backup: weeklyBackup,
+    confirm: true,
+  });
+  assert.equal(
+    weeklyRestored.habits.find((h) => h.id === weeklyId).rules.at(-1).restDays,
+    1,
+  );
+  assert.deepEqual(weeklyRestored.habitLogs, weeklyBackup.state.habitLogs);
+  console.log(
+    "weekly habits: rest confirmation, truthful override, read-only forecast, week progress and backup restoration passed",
+  );
+
   for (const callback of disposers.splice(0).reverse())
     if (typeof callback === "function") await callback();
   const reopened = await backend.kv.open({
@@ -529,7 +613,11 @@ try {
   );
   const storedReview = (await reopened.loadAll()).global;
   assert.equal(storedReview.reviews[0].text, "Edited synthetic review");
-  assert.equal(storedReview.habitLogs.length, 1);
+  assert.equal(storedReview.habitLogs.length, 3);
+  assert.equal(
+    storedReview.habits.find((h) => h.id === weeklyId).rules.at(-1).restDays,
+    1,
+  );
   assert.ok(storedReview.settings.reviewTemplate.includes("收获"));
   assert.deepEqual(storedReview.settings.homeModules.hidden, ["due"]);
   assert.equal(storedReview.lessons.length, 2);

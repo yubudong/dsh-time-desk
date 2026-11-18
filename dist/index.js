@@ -34653,6 +34653,7 @@ function validDate(s) {
 }
 var shift = (d, n) => new Date(Date.parse(d + "T00:00:00Z") + n * DAY).toISOString().slice(0, 10);
 var weekday = (d) => (/* @__PURE__ */ new Date(d + "T00:00:00Z")).getUTCDay();
+var monday = (d) => shift(d, -((weekday(d) + 6) % 7));
 function today(zone = "Asia/Shanghai", now = Date.now()) {
   const p = new Intl.DateTimeFormat("en-CA", {
     timeZone: zone,
@@ -34842,6 +34843,128 @@ function habitProgress(state, habit, date5, now = Date.now()) {
   };
 }
 
+// src/weekly-habits.js
+function habitCompletedDates(state, habit, now = Date.now()) {
+  const localDay = today(state.settings.timeZone, now);
+  const totals = /* @__PURE__ */ new Map();
+  for (const row of state.habitLogs) {
+    if (row.deletedAt || row.habitId !== habit.id || row.skipped || row.date > localDay)
+      continue;
+    totals.set(row.date, (totals.get(row.date) || 0) + row.value);
+  }
+  return [...totals].filter(([date5, value]) => {
+    const rule = habitRule(habit, date5);
+    return !!rule && value >= (["quantity", "duration"].includes(rule.mode) ? rule.target : 1);
+  }).map(([date5]) => date5).sort();
+}
+function spacing(earlier, later, habit) {
+  const rule = habitRule(habit, later);
+  const rest = rule?.mode === "weekly" ? rule.restDays || 0 : 0;
+  return later > shift(earlier, rest);
+}
+function habitRestInfo(state, habit, date5, now = Date.now(), includePlans = false, knownDates = null) {
+  const rule = habitRule(habit, date5);
+  const done = knownDates || habitCompletedDates(state, habit, now);
+  const dates = [
+    .../* @__PURE__ */ new Set([
+      ...done,
+      ...includePlans ? (habit.plannedDates || []).filter(
+        (d) => d >= today(state.settings.timeZone, now) && habitDue(habit, d) && habitRule(habit, d)?.mode === "weekly"
+      ) : []
+    ])
+  ].filter((d) => d !== date5).sort();
+  const previous = dates.filter((d) => d < date5).at(-1) || "";
+  const next = dates.find((d) => d > date5) || "";
+  const before = !!previous && !spacing(previous, date5, habit);
+  const after = !!next && !spacing(date5, next, habit);
+  return {
+    restDays: rule?.mode === "weekly" ? rule.restDays || 0 : 0,
+    previous,
+    next,
+    violation: before || after,
+    earliest: previous ? shift(previous, (rule?.mode === "weekly" ? rule.restDays || 0 : 0) + 1) : date5
+  };
+}
+function weeklyHabitStatus(state, habit, viewDate, now = Date.now()) {
+  const rule = habitRule(habit, viewDate);
+  const from = monday(viewDate), to = shift(from, 6), localDay = today(state.settings.timeZone, now);
+  const completedDates = habitCompletedDates(state, habit, now);
+  const completed = completedDates.filter((d) => d >= from && d <= to);
+  const target = rule?.mode === "weekly" ? rule.target : 0;
+  const remaining = Math.max(0, target - completed.length);
+  const past = to < localDay;
+  const start = localDay > from ? localDay : from;
+  const candidates = [];
+  const actualPlans = [...new Set(habit.plannedDates || [])].filter(
+    (d) => d >= start && d <= to && !completedDates.includes(d)
+  );
+  for (let date5 = start; date5 <= to; date5 = shift(date5, 1)) {
+    const r = habitRule(habit, date5), p = habitProgress(state, habit, date5, now);
+    if (r?.mode !== "weekly" || !habitDue(habit, date5) || p.done || p.skipped || p.missed)
+      continue;
+    if (habitRestInfo(state, habit, date5, now, false, completedDates).violation)
+      continue;
+    candidates.push(date5);
+  }
+  const feasible = [];
+  for (let mask = 0; mask < 1 << candidates.length; mask++) {
+    const chosen = candidates.filter((_d, i) => mask & 1 << i);
+    if (chosen.some((d, i) => i > 0 && !spacing(chosen[i - 1], d, habit)))
+      continue;
+    feasible.push(chosen);
+  }
+  const capacity = feasible.reduce((m, ds) => Math.max(m, ds.length), 0);
+  const want = Math.min(remaining, capacity);
+  const planned = new Set(actualPlans);
+  const score = (ds) => ds.filter((d) => planned.has(d)).length;
+  const choices = feasible.filter((ds) => ds.length === want).sort(
+    (a, b) => score(b) - score(a) || a.join(",").localeCompare(b.join(","))
+  );
+  const suggested = choices[0] || [];
+  const plannedConflicts = actualPlans.filter(
+    (d) => !candidates.includes(d) || habitRestInfo(state, habit, d, now, true, completedDates).violation
+  );
+  const dayProgress = habitProgress(state, habit, viewDate, now);
+  const rest = habitRestInfo(
+    state,
+    habit,
+    viewDate,
+    now,
+    false,
+    completedDates
+  );
+  const applicable = rule?.mode === "weekly" && !rule.paused && !habit.deletedAt;
+  const risk = past ? "historical" : !remaining ? "complete" : capacity < remaining ? "short" : capacity === remaining ? "tight" : "open";
+  return {
+    habitId: habit.id,
+    title: habit.title,
+    from,
+    to,
+    localDay,
+    target,
+    completed: completed.length,
+    completedDates: completed,
+    remaining,
+    capacity,
+    suggested,
+    availableDates: candidates,
+    plannedDates: actualPlans,
+    plannedConflicts,
+    changesWithinWeek: habit.rules.some(
+      (r) => r.effective > from && r.effective <= to
+    ),
+    restDays: rule?.restDays || 0,
+    restToday: applicable && viewDate === localDay && !dayProgress.done && rest.violation,
+    nextEligible: candidates[0] || "",
+    nextUnplanned: suggested.find((d) => !planned.has(d)) || "",
+    todayDone: dayProgress.done,
+    applicable,
+    risk,
+    showHints: applicable && !past && (rule?.weeklyHints ?? true),
+    showWarning: applicable && !past && viewDate === localDay && (rule?.weeklyHints ?? true) && remaining > 0
+  };
+}
+
 // src/home-modules.js
 var HOME_MODULES = [
   { id: "plan", region: "main", titleKey: "dailyPlan" },
@@ -35027,10 +35150,18 @@ var HabitRule = external_exports.object({
   target: external_exports.number().positive().max(1e6).default(1),
   unit: str(20).default("\u6B21"),
   paused: external_exports.boolean().default(false),
-  allowNextDay: external_exports.boolean().default(false)
+  allowNextDay: external_exports.boolean().default(false),
+  restDays: external_exports.number().int().min(0).max(6).default(0),
+  weeklyHints: external_exports.boolean().default(true)
 }).refine(
   (r) => r.mode !== "duration" || Number.isInteger(r.target) && r.target <= 1440,
   "\u65F6\u95F4\u76EE\u6807\u5E94\u4E3A 1\u20131440 \u7684\u6574\u6570\u5206\u949F"
+).refine(
+  (r) => r.mode === "weekly" || r.restDays === 0,
+  "\u4F11\u606F\u95F4\u9694\u4EC5\u7528\u4E8E\u6BCF\u5468\u6B21\u6570\u4E60\u60EF"
+).refine(
+  (r) => r.mode !== "weekly" || Number.isInteger(r.target) && r.target <= 7,
+  "\u6BCF\u5468\u76EE\u6807\u5E94\u4E3A 1\u20137 \u4E2A\u4E0D\u540C\u65E5\u671F"
 );
 var HabitInput = external_exports.object({
   title: str().min(1),
@@ -36147,8 +36278,10 @@ function applyAction(current, a, now = Date.now()) {
     const h = live2(s, "habits", a.id);
     const date5 = day.parse(a.date || localDay);
     if (a.status === "planned" || a.status === "unplanned") {
-      if (!habitDue(h, date5) || habitRule(h, date5)?.mode !== "weekly")
+      if (a.status === "planned" && (!habitDue(h, date5) || habitRule(h, date5)?.mode !== "weekly"))
         fail2("\u53EA\u80FD\u5B89\u6392\u6709\u6548\u7684\u6BCF\u5468\u6B21\u6570\u4E60\u60EF");
+      if (a.status === "planned" && habitRestInfo(s, h, date5, now, true).violation && a.confirmRest !== true)
+        fail2("\u8BE5\u5B89\u6392\u4E0E\u4F11\u606F\u95F4\u9694\u6216\u5DF2\u6709\u8BA1\u5212\u51B2\u7A81\uFF0C\u8BF7\u6838\u5BF9\u5E76\u786E\u8BA4");
       h.plannedDates = [
         .../* @__PURE__ */ new Set([
           ...(h.plannedDates || []).filter((d) => d !== date5),
@@ -36187,6 +36320,8 @@ function applyAction(current, a, now = Date.now()) {
       );
       if (!measured && !a.skipped && logs.some((x) => !x.skipped && x.value > 0))
         fail2("\u5F53\u5929\u5DF2\u6253\u5361\uFF0C\u53EF\u5148\u64A4\u9500\u518D\u4FEE\u6539");
+      if (rule.mode === "weekly" && !a.skipped && value > 0 && habitRestInfo(s, h, date5, now).violation && a.confirmRest !== true)
+        fail2("\u6309\u5F53\u524D\u4F11\u606F\u95F4\u9694\uFF0C\u8FD9\u4E00\u5929\u539F\u5E94\u4F11\u606F\uFF1B\u5982\u786E\u5DF2\u5B8C\u6210\uFF0C\u8BF7\u786E\u8BA4\u540E\u5982\u5B9E\u8BB0\u5F55");
       if (logs.some((x) => x.skipped) && !a.skipped)
         for (const l of logs.filter((x) => x.skipped)) {
           l.deletedAt = iso;
@@ -36408,6 +36543,19 @@ async function createService(unit, clock2 = () => Date.now()) {
     async operate(a) {
       const run = queue.then(async () => {
         if (a.action === "read") return structuredClone(current);
+        if (a.action === "plan" && a.command === "habits") {
+          const date5 = day.parse(
+            a.date || today(current.settings.timeZone, clock2())
+          );
+          return {
+            revision: current.revision,
+            dataEpoch: current.dataEpoch,
+            date: date5,
+            weekly: current.habits.filter(
+              (h) => !h.deletedAt && habitRule(h, date5)?.mode === "weekly"
+            ).map((h) => weeklyHabitStatus(current, h, date5, clock2()))
+          };
+        }
         if (a.action === "plan" && (!a.command || a.command === "read")) {
           const date5 = day.parse(
             a.date || today(current.settings.timeZone, clock2())
@@ -36507,7 +36655,7 @@ var SPIRIT_PROMPT = `\u4F60\u662F\u201C\u65F6\u95F4\u7CBE\u7075\u201D\uFF0C\u662
 \u666E\u901A\u4EFB\u52A1\u4ECE\u5B89\u6392\u65E5\u5F00\u59CB\uFF0C\u672A\u5B8C\u6210\u5C31\u5C5E\u4E8E\u540E\u7EED\u65E5\u671F\u7684\u6267\u884C\u5F85\u529E\uFF0C\u622A\u6B62\u65E5\u53EA\u8868\u793A\u6700\u665A\u671F\u9650\uFF1B\u4E0D\u8981\u4E3A\u4E86\u8BA9\u65E7\u4EFB\u52A1\u663E\u793A\u5728\u4ECA\u5929\u800C\u64C5\u81EA\u4FEE\u6539\u5B89\u6392\u65E5\u6216\u622A\u6B62\u65E5\u3002\u660E\u786E\u6539\u671F\u5230\u672A\u6765\u7684\u4EFB\u52A1\u9075\u4ECE\u6539\u671F\uFF1B\u91CD\u590D\u4E8B\u9879\u6309\u53D1\u751F\u6B21\u5E8F\u72EC\u7ACB\u5904\u7406\uFF0C\u4E60\u60EF\u4E0D\u7D2F\u79EF\u6628\u5929\u7684\u6B21\u6570\u3002
 \u67E5\u770B\u4ECA\u65E5\u8BA1\u5212\u4F18\u5148\u4F7F\u7528 life_desk action=plan command=read\uFF0C\u5EF6\u7EED\u5F85\u529E\u9700\u8981\u7528\u6237\u6311\u9009\u624D\u8BA1\u5165\u8BA1\u5212\u8D1F\u8377\uFF1B\u7528 pick/unpick \u9009\u62E9\u6216\u53D6\u6D88\u5EF6\u7EED\u4EFB\u52A1\uFF0C\u4E0D\u6539\u539F\u65E5\u671F\u3002\u53EF\u7528\u65F6\u95F4\u672A\u8BBE\u7F6E\u5C31\u8BF4\u660E\u672A\u8BBE\u7F6E\uFF0C\u672A\u4F30\u65F6\u4E8B\u9879\u4E0D\u80FD\u5F53\u4F5C\u96F6\u65F6\u957F\u3002\u6574\u7406\u6536\u4EF6\u7BB1\u3001\u6279\u91CF\u5B89\u6392\u548C\u4ECA\u65E5\u8BA1\u5212\u5EFA\u8BAE\u5148\u5217\u51FA\u53D7\u5F71\u54CD\u4E8B\u9879\u4E0E\u65E5\u671F\uFF0C\u7B49\u7528\u6237\u660E\u786E\u540C\u610F\u518D\u9010\u9879\u6267\u884C\uFF0C\u53D6\u6D88\u91CD\u70B9\u53EA\u6E05 priorityDate\uFF0C\u4E0D\u6539\u5B89\u6392\u65E5\u548C\u622A\u6B62\u65E5\u3002
 \u672C\u8F6E\u53D6\u6D88\u4E0D\u4F1A\u56DE\u6EDA\u5DF2\u7ECF\u5B8C\u6210\u7684\u4FEE\u6539\uFF1B\u7528\u6237\u60F3\u6062\u590D\u65F6\u5148\u8BFB\u5F53\u524D\u72B6\u6001\uFF0C\u518D\u4F7F\u7528\u64A4\u9500\u6216\u76F8\u5E94\u53CD\u5411\u64CD\u4F5C\u3002
-\u8BFE\u7A0B\u4E0E\u8BFE\u65F6\uFF1A\u8BFE\u8868\u5728 lessons\uFF0C\u56FA\u5B9A\u5468\u51E0\u3001\u65F6\u95F4\u3001\u65F6\u957F\u4E0E\u4E0A\u8BFE\u4EBA\uFF1B\u5355\u6B21\u8C03\u8BFE\u3001\u8BF7\u5047\u3001\u6062\u590D\u7528 lessonSession\uFF0C\u53EA\u6709\u7528\u6237\u786E\u8BA4\u51FA\u5E2D\u624D\u7528 complete \u6263\u8BFE\u65F6\uFF0C\u4E34\u65F6\u8BFE\u7528 add\u3002\u8BFE\u65F6\u5305\u7528 lessonCharge \u8BB0\u5145\u503C\u3001\u8D60\u9001\u3001\u9996\u6B21\u4F59\u989D\u548C\u8C03\u6574\uFF0C\u4F59\u989D\u4E0D\u8DB3\u9700\u7528\u6237\u786E\u8BA4\uFF1B\u5305\u5E74\u8BFE\u7A0B mode=term \u5FC5\u987B\u6709\u6709\u6548\u671F\uFF0C\u5230\u671F\u4E0D\u81EA\u52A8\u7B97\u5B8C\u6210\uFF0C\u7EED\u671F\u7528 lessonTerm renew \u5E76\u4FDD\u7559\u65E7\u5468\u671F\u3002\u4E0D\u80FD\u63D0\u524D\u786E\u8BA4\u672A\u6765\u65E5\u671F\u5DF2\u7ECF\u4E0A\u8BFE\u3002\u8BF7\u5047\u9ED8\u8BA4\u4E0D\u6263\u8D39\uFF1B\u5982\u673A\u6784\u4ECD\u6263\u8BFE\u65F6\uFF0C\u5148\u5C55\u793A\u6570\u91CF\u5E76\u83B7\u786E\u8BA4\u3002\u4FEE\u6539\u540E\u7EED\u8BFE\u8868\u9700\u8981 from \u548C confirm=true\uFF0C\u4FDD\u7559\u65E7 effective \u4E0E\u6392\u671F\u5386\u53F2\uFF1B\u7CFB\u7EDF\u6263\u51CF\u548C\u8FD4\u8FD8\u4E0D\u80FD\u76F4\u63A5\u4FEE\u6539\u6216\u5220\u9664\u3002read \u8FD4\u56DE\u7684 dataEpoch \u5EFA\u8BAE\u968F\u8BFE\u7A0B\u5199\u5165\u4F20\u5165\uFF0C\u5907\u4EFD\u6062\u590D\u540E\u8981\u91CD\u65B0\u6838\u5BF9\u65E7\u8349\u7A3F\u3002\u4E0D\u8981\u731C\u4E0A\u8BFE\u4EBA\u3001\u4EF7\u683C\u6216\u6709\u6548\u671F\u3002\u9996\u9875\u6A21\u5757\u504F\u597D\u4EC5\u5728\u7528\u6237\u660E\u786E\u8981\u6C42\u65F6\u6539 settings.homeModules\u3002
+\u8BFE\u7A0B\u4E0E\u8BFE\u65F6\uFF1A\u8BFE\u8868\u5728 lessons\uFF0C\u56FA\u5B9A\u5468\u51E0\u3001\u65F6\u95F4\u3001\u65F6\u957F\u4E0E\u4E0A\u8BFE\u4EBA\uFF1B\u5355\u6B21\u8C03\u8BFE\u3001\u8BF7\u5047\u3001\u6062\u590D\u7528 lessonSession\uFF0C\u53EA\u6709\u7528\u6237\u786E\u8BA4\u51FA\u5E2D\u624D\u7528 complete \u6263\u8BFE\u65F6\uFF0C\u4E34\u65F6\u8BFE\u7528 add\u3002\u8BFE\u65F6\u5305\u7528 lessonCharge \u8BB0\u5145\u503C\u3001\u8D60\u9001\u3001\u9996\u6B21\u4F59\u989D\u548C\u8C03\u6574\uFF0C\u4F59\u989D\u4E0D\u8DB3\u9700\u7528\u6237\u786E\u8BA4\uFF1B\u5305\u5E74\u8BFE\u7A0B mode=term \u5FC5\u987B\u6709\u6709\u6548\u671F\uFF0C\u5230\u671F\u4E0D\u81EA\u52A8\u7B97\u5B8C\u6210\uFF0C\u7EED\u671F\u7528 lessonTerm renew \u5E76\u4FDD\u7559\u65E7\u5468\u671F\u3002\u4E0D\u80FD\u63D0\u524D\u786E\u8BA4\u672A\u6765\u65E5\u671F\u5DF2\u7ECF\u4E0A\u8BFE\u3002\u8BF7\u5047\u9ED8\u8BA4\u4E0D\u6263\u8D39\uFF1B\u5982\u673A\u6784\u4ECD\u6263\u8BFE\u65F6\uFF0C\u5148\u5C55\u793A\u6570\u91CF\u5E76\u83B7\u786E\u8BA4\u3002\u4FEE\u6539\u540E\u7EED\u8BFE\u8868\u9700\u8981 from \u548C confirm=true\uFF0C\u4FDD\u7559\u65E7 effective \u4E0E\u6392\u671F\u5386\u53F2\uFF1B\u7CFB\u7EDF\u6263\u51CF\u548C\u8FD4\u8FD8\u4E0D\u80FD\u76F4\u63A5\u4FEE\u6539\u6216\u5220\u9664\u3002read \u8FD4\u56DE\u7684 dataEpoch \u5EFA\u8BAE\u968F\u8BFE\u7A0B\u5199\u5165\u4F20\u5165\uFF0C\u5907\u4EFD\u6062\u590D\u540E\u8981\u91CD\u65B0\u6838\u5BF9\u65E7\u8349\u7A3F\u3002\u4E0D\u8981\u731C\u4E0A\u8BFE\u4EBA\u3001\u4EF7\u683C\u6216\u6709\u6548\u671F\u3002\u6BCF\u5468\u4E60\u60EF\u53EF\u8BBE restDays=0\u20136\uFF08\u5B8C\u6210\u540E\u4F11\u606F\u7684\u81EA\u7136\u65E5\uFF0C\u8DE8\u5468\u5EF6\u7EED\uFF09\uFF0CweeklyHints \u63A7\u5236\u8FDB\u5EA6\u5EFA\u8BAE\u3002\u5148\u7528 plan command=habits \u8BFB\u53D6\u5BB9\u91CF\u4E0E\u5EFA\u8BAE\uFF1B\u8BA1\u5212\u4E0D\u8BA1\u4E3A\u5B8C\u6210\u3002\u5B9E\u9645\u8FDE\u7EED\u8BAD\u7EC3\u6216\u8865\u8BB0\u4E0E\u95F4\u9694\u4E0D\u4E00\u81F4\u65F6\uFF0C\u89E3\u91CA\u540E\u83B7\u7528\u6237\u660E\u786E\u786E\u8BA4\u624D\u4F20 confirmRest=true\uFF1B\u4E0D\u80FD\u66FF\u7528\u6237\u786E\u8BA4\uFF0C\u4E5F\u4E0D\u80FD\u81EA\u52A8\u8865\u6253\u5361\u3001\u964D\u4F4E\u76EE\u6807\u3001\u987A\u5EF6\u6B20\u6B21\u6570\u6216\u8981\u6C42\u8FDE\u7EC3\u3002\u4F11\u606F\u4E0D\u7B49\u4E8E\u6F0F\u6253\u5361\u3002\u9996\u9875\u6A21\u5757\u504F\u597D\u4EC5\u5728\u7528\u6237\u660E\u786E\u8981\u6C42\u65F6\u6539 settings.homeModules\u3002
 \u590D\u76D8\u5148\u660E\u786E\u5F52\u5C5E\u65E5\u671F\uFF1B\u4E2A\u4EBA\u6A21\u677F\u5728 settings.reviewTemplate\uFF0C\u6CA1\u6709\u65F6\u4F7F\u7528\u7B80\u77ED\u5185\u7F6E\u95EE\u9898\u3002\u8BF7\u6C42\u5E2E\u52A9\u590D\u76D8\u65F6\u4E00\u6B21\u95EE\u4E00\u4E2A\u95EE\u9898\uFF0C\u901A\u5E38\u4E24\u4E09\u4E2A\uFF0C\u7528\u6237\u60F3\u7ED3\u675F\u5C31\u6536\u675F\uFF1B\u5148\u7ED9\u53EF\u7F16\u8F91\u8349\u7A3F\uFF0C\u660E\u786E\u786E\u8BA4\u4FDD\u5B58\u540E\u518D\u7528 review \u5199\u5165\uFF0C\u4E0D\u80FD\u628A\u6A21\u677F\u6807\u9898\u5F53\u56DE\u7B54\uFF0C\u4E5F\u4E0D\u80FD\u53EA\u6253\u5361\u4EE3\u66FF\u5173\u8054\u590D\u76D8\u3002\u5141\u8BB8\u6B21\u65E5\u5B8C\u6210\u7684\u4E60\u60EF\u6309\u6B21\u65E5\u5168\u5929\u8BA1\u7B97\uFF0C\u89C4\u5219\u5199\u5728 rules.allowNextDay \u5E76\u4ECE effective \u751F\u6548\uFF1B\u4E0D\u8981\u6539\u52A8\u8FC7\u53BB\u89C4\u5219\u3002\u4FEE\u6539\u6A21\u677F\u53EA\u4FDD\u5B58\u95EE\u9898\u7ED3\u6784\uFF0C\u4E0D\u81EA\u52A8\u628A\u5F53\u5929\u56DE\u7B54\u53D8\u6210\u6A21\u677F\u3002
 \u5148\u5B8C\u6210\u5B9E\u9645\u64CD\u4F5C\uFF0C\u518D\u7B80\u660E\u8BF4\u6E05\u7ED3\u679C\u3002\u9664\u975E\u7528\u6237\u8981\u6C42\u65B9\u6848\uFF0C\u4E0D\u8981\u53EA\u7ED9\u5EFA\u8BAE\u800C\u4E0D\u6267\u884C\u5DF2\u660E\u786E\u6388\u6743\u7684\u4E8B\u9879\u3002`;
 var REVIEW_SPIRIT_PROMPT = `\u4F60\u662F\u65F6\u95F4\u7CBE\u7075\u7684\u590D\u76D8\u52A9\u624B\uFF0C\u7528\u6237\u4E3B\u52A8\u8BF7\u4F60\u5E2E\u52A9\u56DE\u987E\u6240\u9009\u65E5\u671F\u3002\u53EA\u5904\u7406\u5F53\u524D\u590D\u76D8\uFF0C\u4E0D\u64CD\u4F5C\u4EFB\u52A1\u3001\u4E60\u60EF\u3001\u8BBE\u7F6E\u6216\u5176\u4ED6\u8BB0\u5F55\u3002
@@ -37494,7 +37642,7 @@ var guide = {
   lessonTerm: "\u6709\u6548\u671F\uFF1Aid=lessonId\uFF0Ccommand=renew \u4ECE\u4E0A\u4E00\u5468\u671F\u7ED3\u675F\u6B21\u65E5\u8D77\u65B0\u589E\u5468\u671F\uFF0Citem={start,end,purchased,amount,note}\uFF1Bcommand=remove \u52A0 removeId \u4EC5\u5220\u9664\u65E0\u4E0A\u8BFE\u8BB0\u5F55\u7684\u5468\u671F\u3002\u6709\u6548\u671F\u4E0D\u80FD\u6392\u9664\u5DF2\u4E0A\u8BFE\u65E5\u671F\uFF0C\u4E0D\u80FD\u91CD\u53E0\u3002",
   lessonSession: "\u8BFE\u8868\u5355\u6B21\u64CD\u4F5C\uFF1Aid=lessonId\u3001originalDate=\u539F\u5B9A\u65E5\u3002command=save \u8C03\u8BFE\uFF08date/time/place\uFF0C\u4EC5\u8FD9\u4E00\u6B21\uFF1B\u5982\u91CD\u53E0\u9700 confirmConflict=true\uFF09\uFF0Crestore \u6062\u590D\u539F\u5B89\u6392\uFF0Cskip \u8BF7\u5047\u9ED8\u8BA4\u4E0D\u6263\u8BFE\u65F6\uFF0C\u53EA\u6709\u7528\u6237\u660E\u786E\u786E\u8BA4\u673A\u6784\u6263\u8D39\u65F6\u624D\u4F20 deduction\uFF1Bcomplete \u4E0D\u5141\u8BB8\u672A\u6765\u65E5\u671F\uFF0C\u786E\u8BA4\u4E0A\u8BFE\uFF08deduction \u9ED8\u8BA4\u6309\u8BFE\u7A0B\uFF09\uFF0Cundo \u64A4\u9500\u4E0A\u8BFE\u5E76\u8FD4\u8FD8\u8BFE\u65F6\uFF0Cadd \u4F5C\u4E3A\u4E34\u65F6\u52A0\u8BFE\uFF08originalDate \u4E3A\u7A7A\uFF09\uFF0Cremove \u5220\u9664\u4E34\u65F6\u8BFE\u3002\u5DF2\u4E0A\u8BFE\u5148 undo \u624D\u80FD\u6539\u671F\u3002\u671F\u9650\u8BFE\u7A0B\u7684\u65B0\u65E5\u671F\u5FC5\u987B\u5728\u6709\u6548\u671F\u5185\u3002",
   lessonCharge: "\u8BFE\u65F6\u5305\u6D41\u6C34\uFF1Aid=lessonId\uFF0Citem={date,delta,kind=purchase/gift/opening/adjust,amount,expiresOn,note}\u3002delta \u4E3A\u5B9E\u9645\u589E\u51CF\uFF08\u5145\u503C\u4E3A\u6B63\uFF0Cadjust \u53EF\u4E3A\u8D1F\uFF09\uFF0C\u4E0A\u8BFE\u6263\u51CF\u53EA\u80FD\u7531 lessonSession complete \u4EA7\u751F\uFF1B\u5220\u9664\u8BEF\u5F55\u5145\u503C\u7528 command=remove + removeId\uFF0Cuse/refund \u7CFB\u7EDF\u8BB0\u5F55\u4E0D\u80FD\u5220\u9664\u6216\u76F4\u63A5\u65B0\u5EFA\uFF0C\u8C03\u6574\u5FC5\u987B\u586B\u5199\u539F\u56E0\uFF1B\u6570\u5B57\u6700\u591A\u516D\u4F4D\u5C0F\u6570\u3002\u4F59\u989D\u4E0D\u8DB3\u65F6 complete \u9700\u7528\u6237\u786E\u8BA4\u540E\u4F20 confirmShort=true\u3002",
-  habitLog: "id=habitId\u3001date\u3001value=\u672C\u6B21\u589E\u52A0\u6570\u91CF\uFF0Cduration \u4E60\u60EF\u5219\u4E3A\u672C\u6B21\u5206\u949F\uFF081\u20131440 \u6574\u6570\uFF09\u3001note \u53EF\u9009\u3001skipped \u53EF\u9009\u3002status=missed \u6807\u8BB0\u672A\u8FBE\u6210\uFF1Bstatus=planned/unplanned \u5B89\u6392\u6216\u53D6\u6D88\u8BE5\u65E5\u7684\u6BCF\u5468\u6B21\u6570\u4E60\u60EF\uFF0C\u4E0D\u4EA7\u751F\u6253\u5361\u3002\u64A4\u9500\u6253\u5361\u7528 removeId=habitLogId\u3002\u5468\u6B21\u6570\u6309\u4E0D\u540C\u5929\u8BA1\u7B97\u3002",
+  habitLog: "id=habitId\u3001date\u3001value=\u672C\u6B21\u589E\u52A0\u6570\u91CF\uFF0Cduration \u4E60\u60EF\u5219\u4E3A\u672C\u6B21\u5206\u949F\uFF081\u20131440 \u6574\u6570\uFF09\u3001note \u53EF\u9009\u3001skipped \u53EF\u9009\u3002status=missed \u6807\u8BB0\u672A\u8FBE\u6210\uFF1Bstatus=planned/unplanned \u5B89\u6392\u6216\u53D6\u6D88\u8BE5\u65E5\u7684\u6BCF\u5468\u6B21\u6570\u4E60\u60EF\uFF0C\u4E0D\u4EA7\u751F\u6253\u5361\u3002\u64A4\u9500\u6253\u5361\u7528 removeId=habitLogId\u3002\u5468\u6B21\u6570\u6309\u4E0D\u540C\u65E5\u671F\u8BA1\u7B97\u3002\u6BCF\u5468\u89C4\u5219\u53EF\u8BBE restDays=0\u20136\uFF08\u5B8C\u6210\u540E\u4F11\u606F\u7684\u81EA\u7136\u65E5\uFF0C\u9ED8\u8BA40\uFF09\uFF0CweeklyHints=true/false \u63A7\u5236\u754C\u9762\u5EFA\u8BAE\u3002\u5468\u4E00\u81F3\u5468\u65E5\uFF0C\u95F4\u9694\u8DE8\u5468\u5EF6\u7EED\uFF1B\u8BA1\u5212\u4E0D\u8BA1\u4E3A\u5B8C\u6210\u3002plan command=habits \u53EF\u53EA\u8BFB\u67E5\u8BE2\u6307\u5B9A\u5468\u7684\u5B9E\u9645\u8FDB\u5EA6\u3001\u5BB9\u91CF\u3001\u5EFA\u8BAE\u65E5\u671F\u3001\u5DF2\u6709\u8BA1\u5212\u4E0E\u51B2\u7A81\u3002\u8FDE\u7EED\u8BAD\u7EC3\u6216\u8865\u8BB0\u4E0E\u95F4\u9694\u51B2\u7A81\u65F6\uFF0C\u5B9E\u9645\u786E\u8BA4\u540E\u4F20 confirmRest=true\uFF1B\u4E0D\u5F97\u66FF\u7528\u6237\u786E\u8BA4\u3001\u81EA\u52A8\u8865\u6253\u5361\u3001\u964D\u4F4E\u76EE\u6807\u6216\u987A\u5EF6\u6B20\u6B21\u6570\u3002\u53D6\u6D88\u8BA1\u5212\u4ECD\u5141\u8BB8\u5728\u89C4\u5219\u53D8\u66F4\u540E\u6267\u884C\u3002",
   review: "date\u3001kind=day/week\u3001text\uFF08\u5FC5\u987B\u6709\u56DE\u7B54\u5185\u5BB9\uFF0C\u7A7A\u767D\u6216\u53EA\u6709\u6A21\u677F\u95EE\u9898\u4E0D\u7B97\u5B8C\u6210\uFF09\uFF0C\u5EFA\u8BAE\u5E26\u590D\u76D8\u8BB0\u5F55 version\uFF08\u65B0\u5EFA\u4E3A0\uFF09\u9632\u6B62\u8986\u76D6\u3002\u590D\u76D8\u6309\u5F52\u5C5E\u65E5\u671F\u8BB0\u5F55\uFF0C\u9996\u6B21\u5B8C\u6210\u65F6\u95F4\u4FDD\u7559\uFF0C\u7F16\u8F91\u4E0D\u91CD\u7F6E\uFF1B\u5173\u8054\u4E60\u60EF\u53EA\u63A5\u53D7\u4FDD\u5B58\u65E5\u590D\u76D8\u5B8C\u6210\uFF0C\u4E0D\u5141\u8BB8\u53EA\u6253\u5361\u3002HabitRule.allowNextDay \u53EF\u9009\uFF0C\u9ED8\u8BA4false\uFF0C\u5F00\u542F\u540E\u5230\u6B21\u65E5\u5168\u5929\u7ED3\u675F\u4ECD\u6309\u65F6\uFF1B\u8FC7\u7A97\u672A\u8BB0\u5F55\u4E0D\u81EA\u52A8\u5224\u672A\u8FBE\u6210\u3002\u8BE5\u89C4\u5219\u6309 effective \u751F\u6548\u4E0D\u8FFD\u6EAF\u6539\u8FC7\u53BB\u3002settings.reviewTemplate \u4E00\u4EFD\u4E2A\u4EBA\u9ED8\u8BA4\u65E5\u590D\u76D8\u95EE\u9898\uFF0C\u6BCF\u884C\u4E00\u4E2A\u3001\u6700\u591A8\u884C2000\u5B57\uFF0C\u4E0D\u80FD\u4ECE\u5F53\u65E5\u56DE\u7B54\u81EA\u52A8\u63D0\u53D6\u3002",
   timer: "command=start/pause/resume/await/finish/discard\uFF1Bstart \u652F\u6301 phase=focus/short/long\u3001taskId\u3001originalDate\uFF0C\u53EF\u901A\u8FC7 item.minutes \u8BBE\u7F6E\u4EC5\u672C\u8F6E\u4E13\u6CE8\u65F6\u957F\uFF081\u2013180 \u6574\u6570\uFF0C\u4E0D\u6539\u53D8\u9ED8\u8BA4\uFF09\u3002\u4FEE\u6539\u9ED8\u8BA4\u7528 settings item.focusMinutes\uFF0C\u4E0D\u5F71\u54CD\u8FD0\u884C\u4E2D\u8BA1\u65F6\uFF1Bsettings.timerFace \u53EF\u4E3A digital/ring/flip/hourglass\u3002\u5176\u4F59\u8BA1\u65F6\u64CD\u4F5C\u9700\u8981 timerId\u3002\u63D0\u524D finish \u53EF\u4F20\u4FEE\u6B63 seconds\u3002",
   backup: "\u8FD4\u56DE\u5907\u4EFD\uFF1BrestoreBackup \u9700\u8981 backup\u3001confirm=true \u548C\u6700\u65B0 revision\uFF0C\u5148\u5F97\u5230\u7528\u6237\u660E\u786E\u540C\u610F\u3002restorePrevious \u6062\u590D\u5BFC\u5165\u524D\u7684\u6301\u4E45\u5907\u4EFD\u3002read \u8FD4\u56DE dataEpoch\uFF0C\u8BFE\u7A0B\u5199\u5165\u5EFA\u8BAE\u5E26\u4E0A\u5B83\uFF1B\u6062\u590D\u540E\u65E7\u8349\u7A3F\u987B\u91CD\u65B0\u6838\u5BF9\uFF0C\u4E0D\u80FD\u7ED5\u8FC7\u68C0\u67E5\u3002",
@@ -37531,7 +37679,7 @@ async function apply(ctx) {
       hasGlobal: true,
       layout: "single"
     });
-    const currentVersion = true ? "0.10.1" : "0.0.0";
+    const currentVersion = true ? "0.11.0" : "0.0.0";
     updateService = createUpdateService({
       unit: updateUnit,
       currentVersion,
@@ -37555,7 +37703,7 @@ async function apply(ctx) {
     });
     upgradeService = createUpgradeService({
       unit: upgradeUnit,
-      currentVersion: true ? "0.10.1" : null,
+      currentVersion: true ? "0.11.0" : null,
       isBusy: async () => !!(spiritService && (await spiritService.operate({ action: "read" })).busy || reviewSpiritService && (await reviewSpiritService.operate({ action: "read" })).busy),
       readState: () => service.operate({ action: "read" }),
       restoreState: (a) => service.operate({
@@ -37694,6 +37842,10 @@ async function apply(ctx) {
           sessionId: { type: "string" },
           deduction: { type: "number" },
           confirmShort: { type: "boolean" },
+          confirmRest: {
+            type: "boolean",
+            description: "\u4EC5\u5728\u7528\u6237\u786E\u8BA4\u5B9E\u9645\u8BAD\u7EC3\u6216\u660E\u786E\u5B89\u6392\u4E0E\u95F4\u9694\u51B2\u7A81\u7684\u65E5\u671F\u540E\u4F20 true\u3002"
+          },
           confirmConflict: { type: "boolean" },
           opening: { type: "number" },
           offset: { type: "integer" },

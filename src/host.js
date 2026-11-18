@@ -38,7 +38,7 @@ const guide = {
   lessonCharge:
     "课时包流水：id=lessonId，item={date,delta,kind=purchase/gift/opening/adjust,amount,expiresOn,note}。delta 为实际增减（充值为正，adjust 可为负），上课扣减只能由 lessonSession complete 产生；删除误录充值用 command=remove + removeId，use/refund 系统记录不能删除或直接新建，调整必须填写原因；数字最多六位小数。余额不足时 complete 需用户确认后传 confirmShort=true。",
   habitLog:
-    "id=habitId、date、value=本次增加数量，duration 习惯则为本次分钟（1–1440 整数）、note 可选、skipped 可选。status=missed 标记未达成；status=planned/unplanned 安排或取消该日的每周次数习惯，不产生打卡。撤销打卡用 removeId=habitLogId。周次数按不同天计算。",
+    "id=habitId、date、value=本次增加数量，duration 习惯则为本次分钟（1–1440 整数）、note 可选、skipped 可选。status=missed 标记未达成；status=planned/unplanned 安排或取消该日的每周次数习惯，不产生打卡。撤销打卡用 removeId=habitLogId。周次数按不同日期计算。每周规则可设 restDays=0–6（完成后休息的自然日，默认0），weeklyHints=true/false 控制界面建议。周一至周日，间隔跨周延续；计划不计为完成。plan command=habits 可只读查询指定周的实际进度、容量、建议日期、已有计划与冲突。连续训练或补记与间隔冲突时，实际确认后传 confirmRest=true；不得替用户确认、自动补打卡、降低目标或顺延欠次数。取消计划仍允许在规则变更后执行。",
   review:
     "date、kind=day/week、text（必须有回答内容，空白或只有模板问题不算完成），建议带复盘记录 version（新建为0）防止覆盖。复盘按归属日期记录，首次完成时间保留，编辑不重置；关联习惯只接受保存日复盘完成，不允许只打卡。HabitRule.allowNextDay 可选，默认false，开启后到次日全天结束仍按时；过窗未记录不自动判未达成。该规则按 effective 生效不追溯改过去。settings.reviewTemplate 一份个人默认日复盘问题，每行一个、最多8行2000字，不能从当日回答自动提取。",
   timer:
@@ -265,6 +265,11 @@ export async function apply(ctx) {
           sessionId: { type: "string" },
           deduction: { type: "number" },
           confirmShort: { type: "boolean" },
+          confirmRest: {
+            type: "boolean",
+            description:
+              "仅在用户确认实际训练或明确安排与间隔冲突的日期后传 true。",
+          },
           confirmConflict: { type: "boolean" },
           opening: { type: "number" },
           offset: { type: "integer" },
