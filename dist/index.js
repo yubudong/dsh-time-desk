@@ -34913,17 +34913,21 @@ function weeklyHabitStatus(state, habit, viewDate, now = Date.now()) {
       continue;
     feasible.push(chosen);
   }
-  const capacity = feasible.reduce((m, ds) => Math.max(m, ds.length), 0);
-  const want = Math.min(remaining, capacity);
-  const planned = new Set(actualPlans);
-  const score = (ds) => ds.filter((d) => planned.has(d)).length;
-  const choices = feasible.filter((ds) => ds.length === want).sort(
-    (a, b) => score(b) - score(a) || a.join(",").localeCompare(b.join(","))
-  );
-  const suggested = choices[0] || [];
   const plannedConflicts = actualPlans.filter(
     (d) => !candidates.includes(d) || habitRestInfo(state, habit, d, now, true, completedDates).violation
   );
+  const fixedPlans = actualPlans.filter((d) => !plannedConflicts.includes(d));
+  const compatible = feasible.filter(
+    (ds) => fixedPlans.every((d) => ds.includes(d))
+  );
+  const capacity = compatible.reduce((m, ds) => Math.max(m, ds.length), 0);
+  const want = remaining === 0 ? 0 : Math.max(Math.min(remaining, capacity), fixedPlans.length);
+  const planned = new Set(actualPlans);
+  const score = (ds) => ds.filter((d) => planned.has(d)).length;
+  const choices = compatible.filter((ds) => ds.length === want).sort(
+    (a, b) => score(b) - score(a) || a.join(",").localeCompare(b.join(","))
+  );
+  const suggested = remaining === 0 ? [] : choices[0] || [];
   const dayProgress = habitProgress(state, habit, viewDate, now);
   const rest = habitRestInfo(
     state,
@@ -34955,7 +34959,7 @@ function weeklyHabitStatus(state, habit, viewDate, now = Date.now()) {
     ),
     restDays: rule?.restDays || 0,
     restToday: applicable && viewDate === localDay && !dayProgress.done && rest.violation,
-    nextEligible: candidates[0] || "",
+    nextEligible: candidates.find((d) => compatible.some((ds) => ds.includes(d))) || "",
     nextUnplanned: suggested.find((d) => !planned.has(d)) || "",
     todayDone: dayProgress.done,
     applicable,

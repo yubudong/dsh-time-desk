@@ -15211,17 +15211,21 @@ function weeklyHabitStatus(state, habit, viewDate, now = Date.now()) {
       continue;
     feasible.push(chosen);
   }
-  const capacity = feasible.reduce((m3, ds) => Math.max(m3, ds.length), 0);
-  const want = Math.min(remaining, capacity);
-  const planned = new Set(actualPlans);
-  const score = (ds) => ds.filter((d2) => planned.has(d2)).length;
-  const choices = feasible.filter((ds) => ds.length === want).sort(
-    (a3, b3) => score(b3) - score(a3) || a3.join(",").localeCompare(b3.join(","))
-  );
-  const suggested = choices[0] || [];
   const plannedConflicts = actualPlans.filter(
     (d2) => !candidates.includes(d2) || habitRestInfo(state, habit, d2, now, true, completedDates).violation
   );
+  const fixedPlans = actualPlans.filter((d2) => !plannedConflicts.includes(d2));
+  const compatible = feasible.filter(
+    (ds) => fixedPlans.every((d2) => ds.includes(d2))
+  );
+  const capacity = compatible.reduce((m3, ds) => Math.max(m3, ds.length), 0);
+  const want = remaining === 0 ? 0 : Math.max(Math.min(remaining, capacity), fixedPlans.length);
+  const planned = new Set(actualPlans);
+  const score = (ds) => ds.filter((d2) => planned.has(d2)).length;
+  const choices = compatible.filter((ds) => ds.length === want).sort(
+    (a3, b3) => score(b3) - score(a3) || a3.join(",").localeCompare(b3.join(","))
+  );
+  const suggested = remaining === 0 ? [] : choices[0] || [];
   const dayProgress = habitProgress(state, habit, viewDate, now);
   const rest = habitRestInfo(
     state,
@@ -15253,7 +15257,7 @@ function weeklyHabitStatus(state, habit, viewDate, now = Date.now()) {
     ),
     restDays: rule?.restDays || 0,
     restToday: applicable && viewDate === localDay && !dayProgress.done && rest.violation,
-    nextEligible: candidates[0] || "",
+    nextEligible: candidates.find((d2) => compatible.some((ds) => ds.includes(d2))) || "",
     nextUnplanned: suggested.find((d2) => !planned.has(d2)) || "",
     todayDone: dayProgress.done,
     applicable,
@@ -34838,7 +34842,7 @@ function apply(ctx) {
       const weekdayLabel = (date) => t3("weekdayShort" + weekday(date));
       const actualDay = today(timeZone, clock);
       const plannedToday = h3.plannedDates.includes(day) && !p3.todayDone && day >= actualDay;
-      const targetDate = plannedToday ? day : p3.nextUnplanned;
+      const targetDate = plannedToday ? day : day > actualDay && p3.remaining > 0 && p3.availableDates.includes(day) && !p3.plannedDates.includes(day) ? day : p3.nextUnplanned;
       const plan = async (date, remove = false) => {
         const info = habitRestInfo(data, h3, date, Date.now(), true);
         const confirm = remove || !info.violation || window.confirm(t3("weeklyPlanConflict"));

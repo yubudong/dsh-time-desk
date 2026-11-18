@@ -613,7 +613,14 @@ export function apply(ctx: any) {
             const actualDay = today(timeZone, clock);
             const plannedToday =
               h.plannedDates.includes(day) && !p.todayDone && day >= actualDay;
-            const targetDate = plannedToday ? day : p.nextUnplanned;
+            const targetDate = plannedToday
+              ? day
+              : day > actualDay &&
+                  p.remaining > 0 &&
+                  p.availableDates.includes(day) &&
+                  !p.plannedDates.includes(day)
+                ? day
+                : p.nextUnplanned;
             const plan = async (date: string, remove = false) => {
               const info = habitRestInfo(data, h, date, Date.now(), true);
               const confirm =

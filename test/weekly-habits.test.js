@@ -368,3 +368,29 @@ test("read-only forecast and restored backup keep spacing, hints, plans and orig
   assert.deepEqual(after.weekly[0].suggested, ["2026-11-20", "2026-11-22"]);
   await service.close();
 });
+
+test("an existing Thursday plan constrains the real capacity instead of being ignored for a three-session goal", () => {
+  const f = fixture("2026-11-18", 1, 3);
+  f.run({
+    action: "habitLog",
+    id: f.id,
+    date: "2026-11-19",
+    status: "planned",
+  });
+  const p = f.status();
+  assert.equal(p.capacity, 2);
+  assert.equal(p.risk, "short");
+  assert.deepEqual(p.suggested, ["2026-11-19", "2026-11-21"]);
+  assert.deepEqual(p.plannedConflicts, []);
+  assert.deepEqual(f.habit.plannedDates, ["2026-11-19"]);
+});
+test("valid plans beyond the remaining goal are retained without making extra actual completions", () => {
+  const f = fixture("2026-11-18", 1, 1);
+  for (const date of ["2026-11-20", "2026-11-22"])
+    f.run({ action: "habitLog", id: f.id, date, status: "planned" });
+  const p = f.status();
+  assert.equal(p.remaining, 1);
+  assert.deepEqual(p.suggested, ["2026-11-20", "2026-11-22"]);
+  assert.equal(p.completed, 0);
+  assert.equal(f.state.habitLogs.length, 0);
+});
