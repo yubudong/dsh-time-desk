@@ -29304,8 +29304,20 @@ var copy = {
   plannedTodos: ["\u8BA1\u5212\u5F85\u529E", "Planned tasks"],
   carryBacklog: ["\u5EF6\u7EED\u5F85\u529E \xB7 \u5F85\u6311\u9009", "Carried tasks \xB7 Choose for today"],
   carryHint: [
-    "\u4EE5\u524D\u672A\u5B8C\u6210\u7684\u4E8B\u9879\u4F1A\u7559\u5728\u8FD9\u91CC\u3002\u52A0\u5165\u4ECA\u65E5\u8BA1\u5212\u53EA\u5F71\u54CD\u8FD9\u4E00\u5929\u7684\u9009\u62E9\uFF0C\u4E0D\u6539\u539F\u5B89\u6392\u65E5\u6216\u622A\u6B62\u65E5\u3002",
-    "Unfinished tasks remain here. Choosing one for this day preserves its original start and deadline."
+    "\u628A\u8981\u505A\u7684\u4E8B\u9879\u62D6\u5165\u300C\u8BA1\u5212\u5F85\u529E\u300D\uFF0C\u4E5F\u53EF\u70B9 + \u52A0\u5165\u6240\u9009\u65E5\u671F\uFF1B\u4E0D\u6539\u539F\u5B89\u6392\u65E5\u6216\u622A\u6B62\u65E5\u3002",
+    "Drag tasks into Planned tasks, or use + to select them for this day. Original dates and deadlines stay unchanged."
+  ],
+  dragCarriedTask: [
+    "\u62D6\u5165\u8BA1\u5212\u5F85\u529E\uFF0C\u52A0\u5165\u6240\u9009\u65E5\u671F",
+    "Drag into Planned tasks for the selected date"
+  ],
+  dropCarriedTask: [
+    "\u677E\u5F00\uFF0C\u52A0\u5165\u6240\u9009\u65E5\u671F\u7684\u8BA1\u5212\u5F85\u529E",
+    "Drop to add to planned tasks for this day"
+  ],
+  taskAddedToPlan: [
+    "\u5DF2\u52A0\u5165 {date} \u7684\u8BA1\u5212\u5F85\u529E",
+    "Added to planned tasks for {date}"
   ],
   pickForDay: ["\u52A0\u5165\u5F53\u65E5\u8BA1\u5212", "Add to this day's plan"],
   unpickForDay: ["\u79FB\u56DE\u5EF6\u7EED\u5F85\u9009", "Return to carried tasks"],
@@ -31395,7 +31407,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.13.0",
+        "data-reader-version": "0.14.0",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -31487,7 +31499,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React8.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React8.createElement("small", { className: "ld-reader-build" }, "v", "0.13.0")))
+      )), /* @__PURE__ */ React8.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React8.createElement("small", { className: "ld-reader-build" }, "v", "0.14.0")))
     );
   }
   return {
@@ -32061,6 +32073,36 @@ function createPlanningUI({ t: t3, Btn, Field }) {
     ), /* @__PURE__ */ React9.createElement(Btn, { type: "submit", primary: true, disabled: busy }, t3("save")), /* @__PURE__ */ React9.createElement(Btn, { type: "button", onClick: () => setEditing(false) }, t3("cancel"))), /* @__PURE__ */ React9.createElement("p", { className: "ld-help" }, t3("triageHint"))), error && /* @__PURE__ */ React9.createElement("p", { className: "ld-error", role: "alert" }, error));
   }
   return { QuickCapture, InboxItem };
+}
+
+// src/plan-drag.js
+var PLAN_DRAG_TYPE = "application/x-dsh-time-desk-carried-task";
+function startPlanDrag(task, context, backlog) {
+  const item = backlog.find((x4) => planKey(x4) === planKey(task));
+  if (!item || item.event || item.status === "done" || context.busy || !context.token)
+    return null;
+  return {
+    key: planKey(item),
+    date: context.date,
+    revision: context.revision,
+    dataEpoch: context.dataEpoch,
+    token: context.token
+  };
+}
+function planDropAction(session, context, backlog, token) {
+  if (!session || context.busy || !token || token !== session.token || session.date !== context.date || session.revision !== context.revision || session.dataEpoch !== context.dataEpoch)
+    return null;
+  const item = backlog.find((x4) => planKey(x4) === session.key);
+  if (!item || item.event || item.status === "done") return null;
+  return {
+    action: "plan",
+    command: "pick",
+    date: context.date,
+    id: item.id,
+    originalDate: item.originalDate || item.date || "",
+    dataEpoch: context.dataEpoch,
+    requestId: "plan-drag:" + session.token
+  };
 }
 
 // src/habit-templates.js
@@ -34743,7 +34785,7 @@ var focus_default = `/* Quiet timer controls inherit DSH tokens. The reader's ex
 `;
 
 // src/planning.css
-var planning_default = "/* Resident toolbar with a bounded capture sheet; the page remains the scroller. */\n.ld-toolbar-wrap {\n  position: relative;\n  min-width: 0;\n  z-index: 21;\n}\n.ld-toolbar-wrap .ld-page-top {\n  flex-wrap: wrap;\n}\n.ld-toolbar-wrap .ld-search {\n  min-width: 120px;\n}\n.ld-quick-panel {\n  position: absolute;\n  inset-inline: var(--ld-page-inline);\n  top: 100%;\n  z-index: 25;\n  padding: 20px;\n  border: 1px solid var(--ld-line);\n  border-radius: 12px;\n  background: var(--ld-base);\n  box-shadow: 0 12px 34px color-mix(in srgb, var(--ld-muted) 18%, transparent);\n  max-height: min(70vh, 480px);\n  overflow: auto;\n  -webkit-app-region: no-drag;\n}\n.ld-quick-panel fieldset {\n  border: 0;\n  padding: 0;\n  margin: 0;\n  min-width: 0;\n}\n.ld-capture-title {\n  display: flex;\n  gap: 8px;\n  align-items: center;\n}\n.ld-capture-title > input {\n  flex: 1;\n  min-width: 80px;\n  padding: 9px;\n  border: 1px solid var(--ld-line);\n  border-radius: 6px;\n  background: var(--ld-base);\n  color: var(--ld-ink);\n  font: inherit;\n}\n.ld-quick-panel summary {\n  font-size: 12px;\n  color: var(--ld-muted);\n  margin: 14px 0 8px;\n  cursor: pointer;\n}\n.ld-capture-fields {\n  margin: 12px 0;\n}\n.ld-inbox-item {\n  border-bottom: 1px solid var(--ld-line);\n  padding: 16px 0;\n}\n.ld-inbox-heading {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\n.ld-inbox-heading .ld-task-body {\n  flex: 1;\n  min-width: 0;\n}\n.ld-task-tools {\n  flex-wrap: wrap;\n}\n@media (max-width: 600px) {\n  .ld-quick-panel {\n    inset-inline: 8px;\n    padding: 14px;\n  }\n  .ld-capture-title {\n    flex-wrap: wrap;\n  }\n  .ld-capture-title > input {\n    flex-basis: 100%;\n  }\n}\n";
+var planning_default = '/* Resident toolbar with a bounded capture sheet; the page remains the scroller. */\n.ld-toolbar-wrap {\n  position: relative;\n  min-width: 0;\n  z-index: 21;\n}\n.ld-toolbar-wrap .ld-page-top {\n  flex-wrap: wrap;\n}\n.ld-toolbar-wrap .ld-search {\n  min-width: 120px;\n}\n.ld-quick-panel {\n  position: absolute;\n  inset-inline: var(--ld-page-inline);\n  top: 100%;\n  z-index: 25;\n  padding: 20px;\n  border: 1px solid var(--ld-line);\n  border-radius: 12px;\n  background: var(--ld-base);\n  box-shadow: 0 12px 34px color-mix(in srgb, var(--ld-muted) 18%, transparent);\n  max-height: min(70vh, 480px);\n  overflow: auto;\n  -webkit-app-region: no-drag;\n}\n.ld-quick-panel fieldset {\n  border: 0;\n  padding: 0;\n  margin: 0;\n  min-width: 0;\n}\n.ld-capture-title {\n  display: flex;\n  gap: 8px;\n  align-items: center;\n}\n.ld-capture-title > input {\n  flex: 1;\n  min-width: 80px;\n  padding: 9px;\n  border: 1px solid var(--ld-line);\n  border-radius: 6px;\n  background: var(--ld-base);\n  color: var(--ld-ink);\n  font: inherit;\n}\n.ld-quick-panel summary {\n  font-size: 12px;\n  color: var(--ld-muted);\n  margin: 14px 0 8px;\n  cursor: pointer;\n}\n.ld-capture-fields {\n  margin: 12px 0;\n}\n.ld-inbox-item {\n  border-bottom: 1px solid var(--ld-line);\n  padding: 16px 0;\n}\n.ld-inbox-heading {\n  display: flex;\n  align-items: center;\n  gap: 12px;\n}\n.ld-inbox-heading .ld-task-body {\n  flex: 1;\n  min-width: 0;\n}\n.ld-task-tools {\n  flex-wrap: wrap;\n}\n.ld-task-draggable[draggable="true"],\n.ld-task-draggable[draggable="true"] .ld-task-body {\n  cursor: grab;\n}\n.ld-task-drag-handle {\n  display: inline-flex;\n  flex: 0 0 14px;\n  align-self: center;\n  margin-inline-end: -4px;\n  color: var(--ld-muted);\n  opacity: 0.6;\n}\n.ld-task-draggable:hover .ld-task-drag-handle,\n.ld-task-draggable:focus-within .ld-task-drag-handle {\n  opacity: 1;\n}\n.ld-task-dragging {\n  opacity: 0.45;\n}\n.ld-plan-drop-target {\n  border-radius: 8px;\n  outline: 1px solid transparent;\n  outline-offset: 6px;\n}\n.ld-plan-drop-target.is-drag-ready {\n  min-height: 72px;\n  outline-color: color-mix(in srgb, var(--ld-accent) 35%, transparent);\n  background: color-mix(in srgb, var(--ld-accent) 3%, transparent);\n}\n.ld-plan-drop-target.is-drag-over {\n  outline: 2px solid var(--ld-accent);\n  background: color-mix(in srgb, var(--ld-accent) 8%, var(--ld-base));\n}\n.ld-plan-drop-hint {\n  margin: 8px 0;\n  font-size: 12px;\n  color: var(--ld-accent);\n}\n@media (max-width: 600px) {\n  .ld-quick-panel {\n    inset-inline: 8px;\n    padding: 14px;\n  }\n  .ld-capture-title {\n    flex-wrap: wrap;\n  }\n  .ld-capture-title > input {\n    flex-basis: 100%;\n  }\n}\n';
 
 // src/review.css
 var review_default = '/* Review content and templates remain separate; all text is rendered inertly. */\n.ld-review-editor {\n  min-width: 0;\n}\n.ld-review-options {\n  flex-wrap: wrap;\n  margin: 10px 0;\n}\n.ld-review-options .ld-btn {\n  font-size: 11px;\n}\n.ld-review-editor .ld-field {\n  margin: 12px 0;\n}\n.ld-review-text {\n  width: 100%;\n  box-sizing: border-box;\n}\n.ld-review-assistant {\n  margin: 20px 0 10px;\n  padding: 16px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  background: var(--dsw-alias-bg-layer-1);\n}\n.ld-review-assistant h3 {\n  margin: 0;\n  font-size: 13px;\n}\n.ld-review-chat {\n  max-height: 260px;\n  overflow: auto;\n  margin: 12px 0;\n}\n.ld-review-chat-message {\n  margin-bottom: 12px;\n  font-size: 12px;\n}\n.ld-review-chat-message strong {\n  font-size: 10px;\n  color: var(--ld-muted);\n  font-weight: 500;\n}\n.ld-review-chat-message p,\n.ld-review-chat > p,\n.ld-review-candidate > p {\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  line-height: 1.7;\n}\n.ld-review-candidate {\n  margin-top: 15px;\n  padding-top: 14px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-review-assistant textarea {\n  min-height: 65px;\n}\n.ld-previous-habits {\n  margin-bottom: 22px;\n  padding: 12px 14px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n}\n.ld-previous-habits h3 {\n  margin: 0 0 8px;\n}\n.ld-week-dots > .ld-habit-late {\n  outline: 1px dashed var(--ld-accent);\n  outline-offset: 2px;\n}\n.ld-root[data-reduce-motion="true"] .ld-fold-chevron {\n  transition: none;\n}\n@container life-desk (max-width: 530px) {\n  .ld-review-assistant {\n    padding: 12px;\n  }\n}\n';
@@ -34782,6 +34824,7 @@ var paths = {
   search: "M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0",
   star: "m12 3 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z",
   more: "M5 12h.01M12 12h.01M19 12h.01",
+  grip: "M9 5h.01M15 5h.01M9 12h.01M15 12h.01M9 19h.01M15 19h.01",
   ai: "m12 3 2.3 6.7L21 12l-6.7 2.3L12 21l-2.3-6.7L3 12l6.7-2.3Z"
 };
 function Icon({ name = "focus", size = 20 }) {
@@ -35065,10 +35108,11 @@ function apply(ctx) {
     onFold = () => {
     },
     className = "",
-    children
+    children,
+    ...sectionProps
   }) {
     const open = !folded;
-    return /* @__PURE__ */ React12.createElement("section", { className: "ld-section ld-fold " + className }, /* @__PURE__ */ React12.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React12.createElement("h2", null, /* @__PURE__ */ React12.createElement(
+    return /* @__PURE__ */ React12.createElement("section", { className: "ld-section ld-fold " + className, ...sectionProps }, /* @__PURE__ */ React12.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React12.createElement("h2", null, /* @__PURE__ */ React12.createElement(
       "button",
       {
         type: "button",
@@ -35604,7 +35648,7 @@ function apply(ctx) {
     const [error, setError] = useState7("");
     const [showNotes, setShowNotes] = useState7(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.13.0";
+    const current = v3.currentVersion || "0.14.0";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -35954,6 +35998,18 @@ function apply(ctx) {
     const [captureDirty, setCaptureDirty] = useState7(false);
     const captureButton = useRef7(null);
     const homeDragRef = useRef7("");
+    const [taskDrag, setTaskDrag] = useState7(false);
+    const [planDropOver, setPlanDropOver] = useState7(false);
+    const [planRevealed, setPlanRevealed] = useState7(false);
+    const taskDragRef = useRef7(null);
+    const taskDropPending = useRef7(false);
+    const taskDragAllowed = useRef7(true);
+    const suppressTaskClickUntil = useRef7(0);
+    const cancelTaskDrag = () => {
+      taskDragRef.current = null;
+      setTaskDrag(false);
+      setPlanDropOver(false);
+    };
     const [updateView, setUpdateView] = useState7(null);
     const [upgradeView, setUpgradeView] = useState7(null);
     const [updateNotice, setUpdateNotice] = useState7("");
@@ -35961,6 +36017,25 @@ function apply(ctx) {
     const spiritBusyRef = useRef7(false);
     const timeZone = data?.settings?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone;
     const day = selectedDay || today(timeZone);
+    useEffect7(() => {
+      const end = () => cancelTaskDrag();
+      window.addEventListener("dragend", end);
+      window.addEventListener("drop", end);
+      window.addEventListener("blur", end);
+      return () => {
+        window.removeEventListener("dragend", end);
+        window.removeEventListener("drop", end);
+        window.removeEventListener("blur", end);
+      };
+    }, []);
+    useEffect7(() => {
+      cancelTaskDrag();
+      setPlanRevealed(false);
+    }, [day, tab, search, data?.dataEpoch]);
+    useEffect7(() => {
+      if (taskDragRef.current && taskDragRef.current.revision !== data?.revision)
+        cancelTaskDrag();
+    }, [data?.revision]);
     const run = async (a3) => {
       try {
         const result = await act(a3);
@@ -36117,10 +36192,49 @@ function apply(ctx) {
       openLesson: (v3) => setLessonModal(v3),
       refresh
     };
+    const plannedVisible = homeModules(data.settings, "main").some(
+      (m3) => m3.id === "planned"
+    );
+    const planDragContext = {
+      date: day,
+      revision: data.revision,
+      dataEpoch: data.dataEpoch,
+      busy
+    };
+    const acceptsPlanDrag = (e3) => !busy && !taskDropPending.current && !!taskDragRef.current && Array.from(e3.dataTransfer?.types || []).includes(PLAN_DRAG_TYPE) && !!planDropAction(
+      taskDragRef.current,
+      planDragContext,
+      planForDay.backlog,
+      taskDragRef.current.token
+    );
+    const dropCarriedTask = async (e3) => {
+      if (!acceptsPlanDrag(e3)) return;
+      e3.preventDefault();
+      e3.stopPropagation();
+      const action = planDropAction(
+        taskDragRef.current,
+        planDragContext,
+        planForDay.backlog,
+        e3.dataTransfer.getData(PLAN_DRAG_TYPE)
+      );
+      cancelTaskDrag();
+      if (!action) return;
+      taskDropPending.current = true;
+      setPlanRevealed(true);
+      try {
+        const result = await run(action);
+        if (result) setMessage(t3("taskAddedToPlan").replace("{date}", day));
+        else setPlanRevealed(false);
+      } finally {
+        taskDropPending.current = false;
+      }
+    };
     function taskRows(items, empty = true) {
       return items.length ? /* @__PURE__ */ React12.createElement("div", { className: "ld-task-list" }, items.map((x4) => {
         const isOccurrence = !!x4.originalDate;
         const done = x4.status === "done";
+        const canDrag = tab === "today" && !query && plannedVisible && !done && !x4.event && planForDay.backlog.some((q3) => planKey(q3) === planKey(x4));
+        const dragging = taskDrag && taskDragRef.current?.key === planKey(x4);
         const p3 = projects.find((p4) => p4.id === x4.projectId);
         const complete = () => {
           if (isOccurrence)
@@ -36144,9 +36258,54 @@ function apply(ctx) {
         return /* @__PURE__ */ React12.createElement(
           "div",
           {
-            className: "ld-task " + (done ? "ld-task-done" : ""),
-            key: x4.id + "@" + (x4.originalDate || "")
+            className: "ld-task " + (done ? "ld-task-done " : "") + (canDrag ? "ld-task-draggable " : "") + (dragging ? "ld-task-dragging" : ""),
+            key: x4.id + "@" + (x4.originalDate || ""),
+            draggable: canDrag && !busy,
+            onPointerDownCapture: (e3) => {
+              const control = e3.target.closest(
+                "button, input, select, textarea, a, [contenteditable]"
+              );
+              taskDragAllowed.current = !control || control.hasAttribute("data-plan-drag-source");
+            },
+            onDragStart: (e3) => {
+              if (!canDrag || !taskDragAllowed.current || taskDropPending.current) {
+                e3.preventDefault();
+                return;
+              }
+              const session = startPlanDrag(
+                x4,
+                { ...planDragContext, token: uid() },
+                planForDay.backlog
+              );
+              if (!session) {
+                e3.preventDefault();
+                return;
+              }
+              taskDragRef.current = session;
+              e3.dataTransfer.setData(PLAN_DRAG_TYPE, session.token);
+              e3.dataTransfer.effectAllowed = "move";
+              setTaskDrag(true);
+            },
+            onDragEnd: () => {
+              suppressTaskClickUntil.current = Date.now() + 250;
+              cancelTaskDrag();
+            },
+            onClickCapture: (e3) => {
+              if (Date.now() < suppressTaskClickUntil.current) {
+                e3.preventDefault();
+                e3.stopPropagation();
+              }
+            }
           },
+          canDrag && /* @__PURE__ */ React12.createElement(
+            "span",
+            {
+              className: "ld-task-drag-handle",
+              title: t3("dragCarriedTask"),
+              "aria-hidden": "true"
+            },
+            /* @__PURE__ */ React12.createElement(Icon, { name: "grip", size: 14 })
+          ),
           x4.event ? /* @__PURE__ */ React12.createElement("span", { className: "ld-event-dot" }, /* @__PURE__ */ React12.createElement(Icon, { name: "calendar", size: 17 })) : /* @__PURE__ */ React12.createElement(
             "button",
             {
@@ -36163,6 +36322,8 @@ function apply(ctx) {
             "button",
             {
               className: "ld-task-body",
+              "data-plan-drag-source": canDrag ? "true" : void 0,
+              title: canDrag ? t3("dragCarriedTask") : void 0,
               onClick: () => openTask(
                 tasks.find((t4) => t4.id === x4.id),
                 isOccurrence ? { occurrence: x4 } : {}
@@ -36370,8 +36531,33 @@ function apply(ctx) {
               {
                 title: t3("plannedTodos"),
                 count: groups.todos.length,
-                ...foldProps("planned")
+                ...foldProps("planned"),
+                folded: isFolded(data.settings, "planned") && !planDropOver && !planRevealed,
+                onFold: () => {
+                  if (isFolded(data.settings, "planned") && (planDropOver || planRevealed)) {
+                    setPlanRevealed(false);
+                    setPlanDropOver(false);
+                  } else foldProps("planned").onFold();
+                },
+                className: "ld-plan-drop-target" + (taskDrag ? " is-drag-ready" : "") + (planDropOver ? " is-drag-over" : ""),
+                onDragEnter: (e3) => {
+                  if (!acceptsPlanDrag(e3)) return;
+                  e3.preventDefault();
+                  setPlanDropOver(true);
+                },
+                onDragOver: (e3) => {
+                  if (!acceptsPlanDrag(e3)) return;
+                  e3.preventDefault();
+                  e3.dataTransfer.dropEffect = "move";
+                  setPlanDropOver(true);
+                },
+                onDragLeave: (e3) => {
+                  if (!e3.currentTarget.contains(e3.relatedTarget))
+                    setPlanDropOver(false);
+                },
+                onDrop: dropCarriedTask
               },
+              taskDrag && /* @__PURE__ */ React12.createElement("p", { className: "ld-plan-drop-hint", role: "status" }, t3("dropCarriedTask")),
               taskRows(groups.todos)
             );
           if (id === "carry")
@@ -36855,7 +37041,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React12.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.13.0", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React12.createElement(
+        /* @__PURE__ */ React12.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.14.0", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React12.createElement(
           "button",
           {
             className: "ld-update-badge",

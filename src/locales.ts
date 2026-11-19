@@ -537,8 +537,20 @@ export const copy = {
   plannedTodos: ["计划待办", "Planned tasks"],
   carryBacklog: ["延续待办 · 待挑选", "Carried tasks · Choose for today"],
   carryHint: [
-    "以前未完成的事项会留在这里。加入今日计划只影响这一天的选择，不改原安排日或截止日。",
-    "Unfinished tasks remain here. Choosing one for this day preserves its original start and deadline.",
+    "把要做的事项拖入「计划待办」，也可点 + 加入所选日期；不改原安排日或截止日。",
+    "Drag tasks into Planned tasks, or use + to select them for this day. Original dates and deadlines stay unchanged.",
+  ],
+  dragCarriedTask: [
+    "拖入计划待办，加入所选日期",
+    "Drag into Planned tasks for the selected date",
+  ],
+  dropCarriedTask: [
+    "松开，加入所选日期的计划待办",
+    "Drop to add to planned tasks for this day",
+  ],
+  taskAddedToPlan: [
+    "已加入 {date} 的计划待办",
+    "Added to planned tasks for {date}",
   ],
   pickForDay: ["加入当日计划", "Add to this day's plan"],
   unpickForDay: ["移回延续待选", "Return to carried tasks"],

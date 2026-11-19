@@ -70,6 +70,44 @@
 .ld-task-tools {
   flex-wrap: wrap;
 }
+.ld-task-draggable[draggable="true"],
+.ld-task-draggable[draggable="true"] .ld-task-body {
+  cursor: grab;
+}
+.ld-task-drag-handle {
+  display: inline-flex;
+  flex: 0 0 14px;
+  align-self: center;
+  margin-inline-end: -4px;
+  color: var(--ld-muted);
+  opacity: 0.6;
+}
+.ld-task-draggable:hover .ld-task-drag-handle,
+.ld-task-draggable:focus-within .ld-task-drag-handle {
+  opacity: 1;
+}
+.ld-task-dragging {
+  opacity: 0.45;
+}
+.ld-plan-drop-target {
+  border-radius: 8px;
+  outline: 1px solid transparent;
+  outline-offset: 6px;
+}
+.ld-plan-drop-target.is-drag-ready {
+  min-height: 72px;
+  outline-color: color-mix(in srgb, var(--ld-accent) 35%, transparent);
+  background: color-mix(in srgb, var(--ld-accent) 3%, transparent);
+}
+.ld-plan-drop-target.is-drag-over {
+  outline: 2px solid var(--ld-accent);
+  background: color-mix(in srgb, var(--ld-accent) 8%, var(--ld-base));
+}
+.ld-plan-drop-hint {
+  margin: 8px 0;
+  font-size: 12px;
+  color: var(--ld-accent);
+}
 @media (max-width: 600px) {
   .ld-quick-panel {
     inset-inline: 8px;

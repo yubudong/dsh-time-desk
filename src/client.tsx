@@ -22,6 +22,7 @@ import {
   upcomingPlans,
 } from "./planning.js";
 import { createPlanningUI } from "./PlanningUI";
+import { PLAN_DRAG_TYPE, startPlanDrag, planDropAction } from "./plan-drag.js";
 import { HABIT_TEMPLATES, habitFromTemplate } from "./habit-templates.js";
 import { createReviewUI } from "./ReviewUI";
 import { createLessonsUI } from "./LessonsUI";
@@ -98,6 +99,7 @@ const paths = {
   search: "M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0",
   star: "m12 3 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z",
   more: "M5 12h.01M12 12h.01M19 12h.01",
+  grip: "M9 5h.01M15 5h.01M9 12h.01M15 12h.01M9 19h.01M15 19h.01",
   ai: "m12 3 2.3 6.7L21 12l-6.7 2.3L12 21l-2.3-6.7L3 12l6.7-2.3Z",
 };
 function Icon({ name = "focus", size = 20 }: { name?: string; size?: number }) {
@@ -410,10 +412,11 @@ export function apply(ctx: any) {
     onFold = () => {},
     className = "",
     children,
+    ...sectionProps
   }: any) {
     const open = !folded;
     return (
-      <section className={"ld-section ld-fold " + className}>
+      <section className={"ld-section ld-fold " + className} {...sectionProps}>
         <div className="ld-section-heading">
           <h2>
             <button
@@ -1942,6 +1945,18 @@ export function apply(ctx: any) {
     const [captureDirty, setCaptureDirty] = useState(false);
     const captureButton = useRef<HTMLButtonElement>(null);
     const homeDragRef = useRef("");
+    const [taskDrag, setTaskDrag] = useState(false);
+    const [planDropOver, setPlanDropOver] = useState(false);
+    const [planRevealed, setPlanRevealed] = useState(false);
+    const taskDragRef = useRef<any>(null);
+    const taskDropPending = useRef(false);
+    const taskDragAllowed = useRef(true);
+    const suppressTaskClickUntil = useRef(0);
+    const cancelTaskDrag = () => {
+      taskDragRef.current = null;
+      setTaskDrag(false);
+      setPlanDropOver(false);
+    };
     const [updateView, setUpdateView] = useState<any>(null);
     const [upgradeView, setUpgradeView] = useState<any>(null);
     const [updateNotice, setUpdateNotice] = useState("");
@@ -1951,6 +1966,28 @@ export function apply(ctx: any) {
       data?.settings?.timeZone ||
       Intl.DateTimeFormat().resolvedOptions().timeZone;
     const day = selectedDay || today(timeZone);
+    useEffect(() => {
+      const end = () => cancelTaskDrag();
+      window.addEventListener("dragend", end);
+      window.addEventListener("drop", end);
+      window.addEventListener("blur", end);
+      return () => {
+        window.removeEventListener("dragend", end);
+        window.removeEventListener("drop", end);
+        window.removeEventListener("blur", end);
+      };
+    }, []);
+    useEffect(() => {
+      cancelTaskDrag();
+      setPlanRevealed(false);
+    }, [day, tab, search, data?.dataEpoch]);
+    useEffect(() => {
+      if (
+        taskDragRef.current &&
+        taskDragRef.current.revision !== data?.revision
+      )
+        cancelTaskDrag();
+    }, [data?.revision]);
     const run = async (a: any) => {
       try {
         const result = await act(a);
@@ -2128,12 +2165,63 @@ export function apply(ctx: any) {
       openLesson: (v: any) => setLessonModal(v),
       refresh,
     };
+    const plannedVisible = homeModules(data.settings, "main").some(
+      (m: any) => m.id === "planned",
+    );
+    const planDragContext = {
+      date: day,
+      revision: data.revision,
+      dataEpoch: data.dataEpoch,
+      busy,
+    };
+    const acceptsPlanDrag = (e: any) =>
+      !busy &&
+      !taskDropPending.current &&
+      !!taskDragRef.current &&
+      Array.from(e.dataTransfer?.types || []).includes(PLAN_DRAG_TYPE) &&
+      !!planDropAction(
+        taskDragRef.current,
+        planDragContext,
+        planForDay.backlog,
+        taskDragRef.current.token,
+      );
+    const dropCarriedTask = async (e: any) => {
+      if (!acceptsPlanDrag(e)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const action = planDropAction(
+        taskDragRef.current,
+        planDragContext,
+        planForDay.backlog,
+        e.dataTransfer.getData(PLAN_DRAG_TYPE),
+      );
+      cancelTaskDrag();
+      if (!action) return;
+      taskDropPending.current = true;
+      setPlanRevealed(true);
+      try {
+        const result = await run(action);
+        if (result) setMessage(t("taskAddedToPlan").replace("{date}", day));
+        else setPlanRevealed(false);
+      } finally {
+        taskDropPending.current = false;
+      }
+    };
     function taskRows(items: any[], empty = true) {
       return items.length ? (
         <div className="ld-task-list">
           {items.map((x) => {
             const isOccurrence = !!x.originalDate;
             const done = x.status === "done";
+            const canDrag =
+              tab === "today" &&
+              !query &&
+              plannedVisible &&
+              !done &&
+              !x.event &&
+              planForDay.backlog.some((q: any) => planKey(q) === planKey(x));
+            const dragging =
+              taskDrag && taskDragRef.current?.key === planKey(x);
             const p = projects.find((p: any) => p.id === x.projectId);
             const complete = () => {
               if (isOccurrence)
@@ -2156,9 +2244,64 @@ export function apply(ctx: any) {
             };
             return (
               <div
-                className={"ld-task " + (done ? "ld-task-done" : "")}
+                className={
+                  "ld-task " +
+                  (done ? "ld-task-done " : "") +
+                  (canDrag ? "ld-task-draggable " : "") +
+                  (dragging ? "ld-task-dragging" : "")
+                }
                 key={x.id + "@" + (x.originalDate || "")}
+                draggable={canDrag && !busy}
+                onPointerDownCapture={(e) => {
+                  const control = (e.target as Element).closest(
+                    "button, input, select, textarea, a, [contenteditable]",
+                  );
+                  taskDragAllowed.current =
+                    !control || control.hasAttribute("data-plan-drag-source");
+                }}
+                onDragStart={(e) => {
+                  if (
+                    !canDrag ||
+                    !taskDragAllowed.current ||
+                    taskDropPending.current
+                  ) {
+                    e.preventDefault();
+                    return;
+                  }
+                  const session = startPlanDrag(
+                    x,
+                    { ...planDragContext, token: uid() },
+                    planForDay.backlog,
+                  );
+                  if (!session) {
+                    e.preventDefault();
+                    return;
+                  }
+                  taskDragRef.current = session;
+                  e.dataTransfer.setData(PLAN_DRAG_TYPE, session.token);
+                  e.dataTransfer.effectAllowed = "move";
+                  setTaskDrag(true);
+                }}
+                onDragEnd={() => {
+                  suppressTaskClickUntil.current = Date.now() + 250;
+                  cancelTaskDrag();
+                }}
+                onClickCapture={(e) => {
+                  if (Date.now() < suppressTaskClickUntil.current) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }
+                }}
               >
+                {canDrag && (
+                  <span
+                    className="ld-task-drag-handle"
+                    title={t("dragCarriedTask")}
+                    aria-hidden="true"
+                  >
+                    <Icon name="grip" size={14} />
+                  </span>
+                )}
                 {x.event ? (
                   <span className="ld-event-dot">
                     <Icon name="calendar" size={17} />
@@ -2177,6 +2320,8 @@ export function apply(ctx: any) {
                 )}
                 <button
                   className="ld-task-body"
+                  data-plan-drag-source={canDrag ? "true" : undefined}
+                  title={canDrag ? t("dragCarriedTask") : undefined}
                   onClick={() =>
                     openTask(
                       tasks.find((t: any) => t.id === x.id),
@@ -2475,7 +2620,47 @@ export function apply(ctx: any) {
                 title={t("plannedTodos")}
                 count={groups.todos.length}
                 {...foldProps("planned")}
+                folded={
+                  isFolded(data.settings, "planned") &&
+                  !planDropOver &&
+                  !planRevealed
+                }
+                onFold={() => {
+                  if (
+                    isFolded(data.settings, "planned") &&
+                    (planDropOver || planRevealed)
+                  ) {
+                    setPlanRevealed(false);
+                    setPlanDropOver(false);
+                  } else foldProps("planned").onFold();
+                }}
+                className={
+                  "ld-plan-drop-target" +
+                  (taskDrag ? " is-drag-ready" : "") +
+                  (planDropOver ? " is-drag-over" : "")
+                }
+                onDragEnter={(e: any) => {
+                  if (!acceptsPlanDrag(e)) return;
+                  e.preventDefault();
+                  setPlanDropOver(true);
+                }}
+                onDragOver={(e: any) => {
+                  if (!acceptsPlanDrag(e)) return;
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = "move";
+                  setPlanDropOver(true);
+                }}
+                onDragLeave={(e: any) => {
+                  if (!e.currentTarget.contains(e.relatedTarget))
+                    setPlanDropOver(false);
+                }}
+                onDrop={dropCarriedTask}
               >
+                {taskDrag && (
+                  <p className="ld-plan-drop-hint" role="status">
+                    {t("dropCarriedTask")}
+                  </p>
+                )}
                 {taskRows(groups.todos)}
               </FoldSection>
             );
