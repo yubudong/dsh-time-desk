@@ -188,3 +188,90 @@ test("yesterday incomplete habits do not create extra obligations today", () => 
   assert.equal(todayHabits(f.s, date).pending.length, 1);
   assert.equal(todayHabits(f.s, "2026-11-16").pending.length, 1);
 });
+
+test("completing a recurring scheduled task removes its deadline and undo restores it", () => {
+  const f = fixture();
+  const task = f.task({
+    title: "Synthetic monthly bill",
+    date,
+    deadline: date,
+    repeat: { kind: "monthly", day: 15 },
+  });
+  const view = () => todayTasks(f.s, occurrences(f.s, date, date), date);
+  assert.equal(view().todos.length, 1);
+  assert.equal(view().due.length, 1);
+  f.act({
+    action: "occurrence",
+    id: task.id,
+    originalDate: date,
+    status: "done",
+  });
+  assert.equal(view().todos.length, 0);
+  assert.equal(view().completed.length, 1);
+  assert.equal(view().due.length, 0);
+  assert.equal(f.s.tasks[0].status, "todo");
+  assert.equal(f.s.tasks[0].deadline, date);
+  assert.equal(occurrences(f.s, "2026-12-15", "2026-12-15")[0].status, "todo");
+  f.act({
+    action: "occurrence",
+    id: task.id,
+    originalDate: date,
+    status: "todo",
+  });
+  assert.equal(view().due.length, 1);
+  assert.equal(view().todos.length, 1);
+});
+
+test("a future recurrence completion never suppresses an earlier unpaid deadline", () => {
+  const f = fixture();
+  const task = f.task({
+    title: "Synthetic recurring payment",
+    date,
+    deadline: date,
+    repeat: { kind: "monthly", day: 15 },
+  });
+  f.act(
+    {
+      action: "occurrence",
+      id: task.id,
+      originalDate: "2026-12-15",
+      status: "done",
+    },
+    Date.parse("2026-12-15T04:00:00Z"),
+  );
+  assert.equal(todayTasks(f.s, [], date).due.length, 1);
+  f.act({
+    action: "occurrence",
+    id: task.id,
+    originalDate: date,
+    status: "done",
+  });
+  assert.equal(todayTasks(f.s, [], date).due.length, 0);
+});
+
+test("rescheduled recurring instances resolve deadlines by original identity", () => {
+  const f = fixture();
+  const task = f.task({
+    title: "Synthetic rescheduled bill",
+    date,
+    deadline: date,
+    repeat: { kind: "monthly", day: 15 },
+  });
+  f.act({
+    action: "occurrence",
+    id: task.id,
+    originalDate: date,
+    date: "2026-11-16",
+  });
+  assert.equal(todayTasks(f.s, [], date).due.length, 1);
+  f.act(
+    { action: "occurrence", id: task.id, originalDate: date, status: "done" },
+    now + 86400000,
+  );
+  assert.equal(todayTasks(f.s, [], "2026-11-16").due.length, 0);
+  const restored = State.parse(JSON.parse(JSON.stringify(f.s)));
+  assert.equal(todayTasks(restored, [], "2026-11-16").due.length, 0);
+  const tombstoned = structuredClone(restored);
+  tombstoned.occurrences[0].deletedAt = new Date(now).toISOString();
+  assert.equal(todayTasks(tombstoned, [], "2026-11-16").due.length, 1);
+});

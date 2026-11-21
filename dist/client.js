@@ -30071,6 +30071,7 @@ function createSpiritPanel({ send, t: t3, refresh }) {
   return function SpiritPanel({
     open,
     onClose,
+    reviewRequest,
     reducedMotion = false,
     onBusyChange = () => {
     }
@@ -30080,6 +30081,23 @@ function createSpiritPanel({ send, t: t3, refresh }) {
     useEffect2(() => {
       onBusyChange(pending || !!view?.busy);
     }, [pending, view?.busy]);
+    const consumedReview = useRef2("");
+    useEffect2(() => {
+      if (!open || !reviewRequest || consumedReview.current === reviewRequest.id)
+        return;
+      consumedReview.current = reviewRequest.id;
+      const context = reviewRequest;
+      const prompt = `\u8BF7\u5E2E\u6211\u590D\u76D8 ${context.date}\u3002\u8BF7\u56F4\u7ED5\u8FD9\u4E00\u5929\u63D0\u95EE\uFF0C\u534F\u52A9\u6574\u7406\u590D\u76D8\u8349\u7A3F\uFF1B\u5728\u6211\u660E\u786E\u786E\u8BA4\u524D\uFF0C\u4E0D\u4FDD\u5B58\u590D\u76D8\u3001\u4E0D\u5B8C\u6210\u4E60\u60EF\u6253\u5361\u3002
+\u590D\u76D8\u6A21\u677F\uFF1A
+${context.template}
+\u73B0\u6709\u590D\u76D8\u5185\u5BB9\uFF08\u4EC5\u4F9B\u53C2\u8003\uFF09\uFF1A
+${context.text || "\uFF08\u5C1A\u672A\u586B\u5199\uFF09"}`;
+      setDraft(
+        (existing) => existing.trim() ? existing + "\n\n" + prompt : prompt
+      );
+      requestId.current = crypto.randomUUID();
+      input.current?.focus();
+    }, [open, reviewRequest?.id]);
     const receive = (v3) => {
       setView(v3);
       const tool = v3.messages?.filter((r3) => r3.role === "operation" && r3.state !== "running").at(-1);
@@ -30524,7 +30542,14 @@ function todayTasks(state, items, date) {
       (x4) => x4.date < date && !x4.deletedAt && !x4.event && !singleOutstanding(x4) && unfinished(x4) && !priorityKeys.has(occurrenceKey(x4))
     ),
     due: tasks.filter(
-      (x4) => x4.deadline && x4.deadline <= shift(date, 7) && unfinished(singles.get(x4.id) || x4) && !x4.event
+      (x4) => x4.deadline && x4.deadline <= shift(date, 7) && // A stored deadline belongs to the task's original scheduled instance.
+      // Calendar recurrences keep their completion on that instance, not on
+      // the series record. Do not let another month's completion hide it.
+      unfinished(
+        singles.get(x4.id) || state.occurrences.find(
+          (o2) => !o2.deletedAt && o2.taskId === x4.id && o2.originalDate === x4.date
+        ) || x4
+      ) && !x4.event
     ).sort((a3, b3) => a3.deadline.localeCompare(b3.deadline))
   };
 }
@@ -31407,7 +31432,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.14.0",
+        "data-reader-version": "0.14.1",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -31499,7 +31524,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React8.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React8.createElement("small", { className: "ld-reader-build" }, "v", "0.14.0")))
+      )), /* @__PURE__ */ React8.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React8.createElement("small", { className: "ld-reader-build" }, "v", "0.14.1")))
     );
   }
   return {
@@ -32211,7 +32236,6 @@ function hasReviewContent(text, template = "", fallback = DEFAULT_REVIEW_TEMPLAT
 var { useState: useState5, useEffect: useEffect5, useRef: useRef5, useId: useId2 } = React10;
 function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
   const versions = /* @__PURE__ */ new Map();
-  const request = createRequest(send, t3, "api/life-desk-review-spirit", 45e3);
   function TemplateModal({ data, busy, close }) {
     const [original, setOriginal] = useState5(
       data.settings.reviewTemplate || ""
@@ -32284,105 +32308,14 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
       t3("restoreDefaultTemplate")
     ), /* @__PURE__ */ React10.createElement(Btn, { disabled: busy, onClick: closeSafely }, t3("cancel"))));
   }
-  function ReviewAssistant({ date, text, version, onUse, close }) {
-    const initial = useRef5({
-      action: "startReview",
-      date,
-      text,
-      version,
-      requestId: crypto.randomUUID()
-    });
-    const [view, setView] = useState5(null), [answer, setAnswer] = useState5(""), [error, setError] = useState5(""), [pending, setPending] = useState5(false), [attempt, setAttempt] = useState5(0);
-    const answerId = useRef5(crypto.randomUUID());
-    useEffect5(() => {
-      const controller = new AbortController();
-      let alive = true;
-      (async () => {
-        try {
-          setError("");
-          let v3 = await request(initial.current, controller.signal);
-          if (alive) setView(v3);
-          while (alive && !controller.signal.aborted) {
-            v3 = await request(
-              { action: "watch", after: v3.version },
-              controller.signal
-            );
-            if (alive) setView(v3);
-          }
-        } catch (e3) {
-          if (alive) setError(e3.message);
-        }
-      })();
-      return () => {
-        alive = false;
-        controller.abort();
-      };
-    }, [attempt]);
-    const sendAnswer = async (e3) => {
-      e3.preventDefault();
-      if (pending || view?.busy || !answer.trim()) return;
-      setPending(true);
-      setError("");
-      try {
-        const v3 = await request({
-          action: "send",
-          text: answer,
-          requestId: answerId.current
-        });
-        setView(v3);
-        setAnswer("");
-        answerId.current = crypto.randomUUID();
-      } catch (e4) {
-        setError(e4.message);
-      } finally {
-        setPending(false);
-      }
-    };
-    const stop = async () => {
-      try {
-        setView(await request({ action: "cancel" }));
-      } catch (e3) {
-        setError(e3.message);
-      }
-    };
-    return /* @__PURE__ */ React10.createElement("section", { className: "ld-review-assistant", "aria-label": t3("reviewAI") }, /* @__PURE__ */ React10.createElement("div", { className: "ld-section-heading" }, /* @__PURE__ */ React10.createElement("h3", null, t3("reviewAI"), " \xB7 ", date), /* @__PURE__ */ React10.createElement(Btn, { onClick: close }, t3("close"))), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("reviewAIHint")), /* @__PURE__ */ React10.createElement("div", { className: "ld-review-chat", "aria-live": "polite" }, view?.messages?.filter(
-      (m3) => ["user", "assistant", "error"].includes(m3.role)
-    ).map((m3, i3) => /* @__PURE__ */ React10.createElement("div", { key: m3.id, className: "ld-review-chat-message" }, /* @__PURE__ */ React10.createElement("strong", null, m3.role === "assistant" ? t3("spirit") : m3.role === "error" ? t3("reviewAIError") : t3("reviewYou")), /* @__PURE__ */ React10.createElement("p", null, i3 === 0 && m3.role === "user" ? t3("reviewAIStarted") : m3.text))), view?.liveText && /* @__PURE__ */ React10.createElement("p", null, view.liveText)), error && /* @__PURE__ */ React10.createElement("p", { className: "ld-error", role: "alert" }, error, " ", /* @__PURE__ */ React10.createElement(Btn, { onClick: () => setAttempt((x4) => x4 + 1) }, t3("retry"))), /* @__PURE__ */ React10.createElement("form", { onSubmit: sendAnswer }, /* @__PURE__ */ React10.createElement("label", { className: "ld-field" }, /* @__PURE__ */ React10.createElement("span", null, t3("reviewAnswer")), /* @__PURE__ */ React10.createElement(
-      "textarea",
-      {
-        value: answer,
-        rows: 2,
-        maxLength: 16e3,
-        onChange: (e3) => {
-          setAnswer(e3.target.value);
-          answerId.current = crypto.randomUUID();
-        },
-        disabled: pending
-      }
-    )), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
-      Btn,
-      {
-        type: "submit",
-        disabled: pending || !view || view.busy || !answer.trim()
-      },
-      t3("reviewSend")
-    ), view?.busy && /* @__PURE__ */ React10.createElement(Btn, { onClick: stop }, t3("reviewStop")))), view?.review?.draft && /* @__PURE__ */ React10.createElement("div", { className: "ld-review-candidate" }, /* @__PURE__ */ React10.createElement("h3", null, t3("reviewCandidate")), /* @__PURE__ */ React10.createElement("p", null, view.review.draft), /* @__PURE__ */ React10.createElement(
-      Btn,
-      {
-        primary: true,
-        disabled: pending || view.busy,
-        onClick: () => onUse(view.review.draft)
-      },
-      t3("reviewUseDraft")
-    ), /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("reviewCandidateHint"))));
-  }
   function ReviewEditor({
     data,
     date,
     kind = "day",
     habitId,
     busy,
-    onSaved
+    onSaved,
+    onOpenSpirit
   }) {
     const key = kind + ":" + date;
     const record = data.reviews.find(
@@ -32392,7 +32325,7 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
     const [text, setText] = useState5(drafts.get(key) ?? record?.text ?? "");
     const [baseVersion, setBaseVersion] = useState5(initialVersion);
     const requestId = useRef5(crypto.randomUUID());
-    const [error, setError] = useState5(""), [saved, setSaved] = useState5(false), [showPrompts, setPrompts] = useState5(true), [templateOpen, setTemplateOpen] = useState5(false), [assistantOpen, setAssistantOpen] = useState5(false);
+    const [error, setError] = useState5(""), [saved, setSaved] = useState5(false), [showPrompts, setPrompts] = useState5(true), [templateOpen, setTemplateOpen] = useState5(false);
     const textareaId = useId2();
     useEffect5(() => {
       if (!drafts.has(key)) {
@@ -32432,7 +32365,6 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         );
         setBaseVersion(stored?.version || baseVersion + 1);
         setSaved(true);
-        setAssistantOpen(false);
         onSaved?.(result);
       } catch (e3) {
         setError(e3.message);
@@ -32491,21 +32423,20 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         onClick: save
       },
       t3(habitId ? "saveReviewComplete" : "save")
-    ), kind === "day" && !assistantOpen && /* @__PURE__ */ React10.createElement(Btn, { disabled: busy, onClick: () => setAssistantOpen(true) }, t3("reviewAI"))), !valid && !!text.trim() && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("reviewEmpty")), assistantOpen && /* @__PURE__ */ React10.createElement(
-      ReviewAssistant,
+    ), kind === "day" && /* @__PURE__ */ React10.createElement(
+      Btn,
       {
-        date,
-        text,
-        version: baseVersion,
-        close: () => setAssistantOpen(false),
-        onUse: (candidate) => {
-          if (text.trim() && !window.confirm(t3("reviewReplaceDraft")))
-            return;
-          change(candidate);
-          setAssistantOpen(false);
-        }
-      }
-    ), templateOpen && /* @__PURE__ */ React10.createElement(
+        disabled: busy,
+        onClick: () => onOpenSpirit({
+          date,
+          text,
+          version: baseVersion,
+          habitId,
+          template: data.settings.reviewTemplate || t3("defaultReviewTemplate")
+        })
+      },
+      t3("reviewAI")
+    )), !valid && !!text.trim() && /* @__PURE__ */ React10.createElement("p", { className: "ld-help" }, t3("reviewEmpty")), templateOpen && /* @__PURE__ */ React10.createElement(
       TemplateModal,
       {
         data,
@@ -32519,7 +32450,8 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
     base,
     data,
     busy,
-    close
+    close,
+    onOpenSpirit
   }) {
     const [date, setDate] = useState5(base);
     const current = today(data.settings.timeZone), yesterday = shift(current, -1);
@@ -32594,7 +32526,11 @@ function createReviewUI({ t: t3, Btn, Modal, act, send, drafts }) {
         date,
         habitId: habit.id,
         busy,
-        onSaved: close
+        onSaved: close,
+        onOpenSpirit: (context) => {
+          onOpenSpirit(context);
+          close();
+        }
       }
     ), /* @__PURE__ */ React10.createElement("details", { className: "ld-details" }, /* @__PURE__ */ React10.createElement("summary", null, t3("reviewOtherActions")), /* @__PURE__ */ React10.createElement("div", { className: "ld-actions" }, /* @__PURE__ */ React10.createElement(
       Btn,
@@ -35315,6 +35251,7 @@ function apply(ctx) {
         base: review.date,
         data,
         busy,
+        onOpenSpirit: env.openReviewSpirit,
         close: () => setReview(null)
       }
     ), record && /* @__PURE__ */ React12.createElement(
@@ -35460,7 +35397,8 @@ function apply(ctx) {
         data,
         date,
         kind,
-        busy
+        busy,
+        onOpenSpirit: env.openReviewSpirit
       }
     ), /* @__PURE__ */ React12.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React12.createElement("h2", null, t3("savedLogs")), records.length ? records.map((r3) => /* @__PURE__ */ React12.createElement("div", { className: "ld-log", key: r3.id }, /* @__PURE__ */ React12.createElement("span", null, r3.date, " \xB7 ", r3.title || t3("directFocus")), /* @__PURE__ */ React12.createElement("span", null, Math.floor(r3.seconds / 60), " ", t3("min")))) : /* @__PURE__ */ React12.createElement("p", { className: "ld-muted" }, t3("noRecord"))), /* @__PURE__ */ React12.createElement("section", { className: "ld-section" }, /* @__PURE__ */ React12.createElement("h2", null, t3("projects")), projects.map((p3) => /* @__PURE__ */ React12.createElement("div", { className: "ld-log", key: p3.id }, /* @__PURE__ */ React12.createElement("span", null, p3.title), /* @__PURE__ */ React12.createElement("span", null, tasks.filter(
       (x4) => x4.projectId === p3.id && x4.status === "done"
@@ -35648,7 +35586,7 @@ function apply(ctx) {
     const [error, setError] = useState7("");
     const [showNotes, setShowNotes] = useState7(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.14.0";
+    const current = v3.currentVersion || "0.14.1";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -35992,6 +35930,7 @@ function apply(ctx) {
     const { data, error, busy } = useStore();
     const panelLayout = usePanelWidths();
     const [tab, setTab] = useState7("today"), [project, setProject] = useState7(""), [selectedDay, setDay] = useState7(""), [search, setSearch] = useState7(""), [collapsed, setCollapsed] = useState7(false), [board, setBoard] = useState7(false), [editor, setEditor] = useState7(null), [message, setMessage] = useState7(""), [ai, setAi] = useState7(false), [lessonModal, setLessonModal] = useState7(null), [homeOpen, setHomeOpen] = useState7(false), [homeDrag, setHomeDrag] = useState7(""), [homeDrop, setHomeDrop] = useState7(""), [lifeCategory, setLifeCategory] = useState7("");
+    const [spiritReview, setSpiritReview] = useState7(null);
     const [captureOpen, setCaptureOpen] = useState7(false);
     const [captureReset, setCaptureReset] = useState7(0);
     const [templateOpen, setTemplateOpen] = useState7(false);
@@ -36161,7 +36100,12 @@ function apply(ctx) {
     const tasks = live2("tasks");
     const habits = live2("habits");
     const planForDay = dailyPlan(data, day, range);
+    const openReviewSpirit = (context) => {
+      setSpiritReview({ ...context, id: uid() });
+      setAi(true);
+    };
     const viewEnv = {
+      openReviewSpirit,
       data,
       day,
       timeZone,
@@ -37041,7 +36985,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React12.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.14.0", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React12.createElement(
+        /* @__PURE__ */ React12.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.14.1", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React12.createElement(
           "button",
           {
             className: "ld-update-badge",
@@ -37070,6 +37014,7 @@ function apply(ctx) {
       ), /* @__PURE__ */ React12.createElement(
         SpiritPanel,
         {
+          reviewRequest: spiritReview,
           open: ai,
           onClose: () => setAi(false),
           reducedMotion: data.settings.reduceMotion,

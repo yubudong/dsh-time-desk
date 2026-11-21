@@ -845,6 +845,7 @@ export function apply(ctx: any) {
             base={review.date}
             data={data}
             busy={busy}
+            onOpenSpirit={env.openReviewSpirit}
             close={() => setReview(null)}
           />
         )}
@@ -1085,6 +1086,7 @@ export function apply(ctx: any) {
           date={date}
           kind={kind}
           busy={busy}
+          onOpenSpirit={env.openReviewSpirit}
         />
         <section className="ld-section">
           <h2>{t("savedLogs")}</h2>
@@ -1939,6 +1941,7 @@ export function apply(ctx: any) {
       [homeDrag, setHomeDrag] = useState(""),
       [homeDrop, setHomeDrop] = useState(""),
       [lifeCategory, setLifeCategory] = useState("");
+    const [spiritReview, setSpiritReview] = useState<any>(null);
     const [captureOpen, setCaptureOpen] = useState(false);
     const [captureReset, setCaptureReset] = useState(0);
     const [templateOpen, setTemplateOpen] = useState(false);
@@ -2130,7 +2133,12 @@ export function apply(ctx: any) {
     const tasks = live("tasks");
     const habits = live("habits");
     const planForDay = dailyPlan(data, day, range);
+    const openReviewSpirit = (context: any) => {
+      setSpiritReview({ ...context, id: uid() });
+      setAi(true);
+    };
     const viewEnv = {
+      openReviewSpirit,
       data,
       day,
       timeZone,
@@ -3500,6 +3508,7 @@ export function apply(ctx: any) {
               />
             )}
             <SpiritPanel
+              reviewRequest={spiritReview}
               open={ai}
               onClose={() => setAi(false)}
               reducedMotion={data.settings.reduceMotion}

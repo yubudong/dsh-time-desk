@@ -8,6 +8,7 @@ export function createSpiritPanel({ send, t, refresh }: any) {
   return function SpiritPanel({
     open,
     onClose,
+    reviewRequest,
     reducedMotion = false,
     onBusyChange = () => {},
   }: any) {
@@ -24,6 +25,23 @@ export function createSpiritPanel({ send, t, refresh }: any) {
     useEffect(() => {
       onBusyChange(pending || !!view?.busy);
     }, [pending, view?.busy]);
+    const consumedReview = useRef("");
+    useEffect(() => {
+      if (
+        !open ||
+        !reviewRequest ||
+        consumedReview.current === reviewRequest.id
+      )
+        return;
+      consumedReview.current = reviewRequest.id;
+      const context = reviewRequest;
+      const prompt = `请帮我复盘 ${context.date}。请围绕这一天提问，协助整理复盘草稿；在我明确确认前，不保存复盘、不完成习惯打卡。\n复盘模板：\n${context.template}\n现有复盘内容（仅供参考）：\n${context.text || "（尚未填写）"}`;
+      setDraft((existing) =>
+        existing.trim() ? existing + "\n\n" + prompt : prompt,
+      );
+      requestId.current = crypto.randomUUID();
+      input.current?.focus();
+    }, [open, reviewRequest?.id]);
     const receive = (v: any) => {
       setView(v);
       const tool = v.messages

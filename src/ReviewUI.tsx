@@ -1,5 +1,4 @@
 import * as React from "react";
-import { createRequest } from "./transport.js";
 import {
   reviewPrompts,
   normalizeTemplate,
@@ -9,7 +8,6 @@ import { today, shift, habitProgress, habitDue } from "./dates.js";
 const { useState, useEffect, useRef, useId } = React;
 export function createReviewUI({ t, Btn, Modal, act, send, drafts }: any) {
   const versions = new Map<string, number>();
-  const request = createRequest(send, t, "api/life-desk-review-spirit", 45000);
   function TemplateModal({ data, busy, close }: any) {
     const [original, setOriginal] = useState(
       data.settings.reviewTemplate || "",
@@ -106,148 +104,6 @@ export function createReviewUI({ t, Btn, Modal, act, send, drafts }: any) {
       </Modal>
     );
   }
-  function ReviewAssistant({ date, text, version, onUse, close }: any) {
-    const initial = useRef({
-      action: "startReview",
-      date,
-      text,
-      version,
-      requestId: crypto.randomUUID(),
-    });
-    const [view, setView] = useState<any>(null),
-      [answer, setAnswer] = useState(""),
-      [error, setError] = useState(""),
-      [pending, setPending] = useState(false),
-      [attempt, setAttempt] = useState(0);
-    const answerId = useRef(crypto.randomUUID());
-    useEffect(() => {
-      const controller = new AbortController();
-      let alive = true;
-      (async () => {
-        try {
-          setError("");
-          let v = await request(initial.current, controller.signal);
-          if (alive) setView(v);
-          while (alive && !controller.signal.aborted) {
-            v = await request(
-              { action: "watch", after: v.version },
-              controller.signal,
-            );
-            if (alive) setView(v);
-          }
-        } catch (e: any) {
-          if (alive) setError(e.message);
-        }
-      })();
-      return () => {
-        alive = false;
-        controller.abort();
-      };
-    }, [attempt]);
-    const sendAnswer = async (e: any) => {
-      e.preventDefault();
-      if (pending || view?.busy || !answer.trim()) return;
-      setPending(true);
-      setError("");
-      try {
-        const v = await request({
-          action: "send",
-          text: answer,
-          requestId: answerId.current,
-        });
-        setView(v);
-        setAnswer("");
-        answerId.current = crypto.randomUUID();
-      } catch (e: any) {
-        setError(e.message);
-      } finally {
-        setPending(false);
-      }
-    };
-    const stop = async () => {
-      try {
-        setView(await request({ action: "cancel" }));
-      } catch (e: any) {
-        setError(e.message);
-      }
-    };
-    return (
-      <section className="ld-review-assistant" aria-label={t("reviewAI")}>
-        <div className="ld-section-heading">
-          <h3>
-            {t("reviewAI")} · {date}
-          </h3>
-          <Btn onClick={close}>{t("close")}</Btn>
-        </div>
-        <p className="ld-help">{t("reviewAIHint")}</p>
-        <div className="ld-review-chat" aria-live="polite">
-          {view?.messages
-            ?.filter((m: any) =>
-              ["user", "assistant", "error"].includes(m.role),
-            )
-            .map((m: any, i: number) => (
-              <div key={m.id} className="ld-review-chat-message">
-                <strong>
-                  {m.role === "assistant"
-                    ? t("spirit")
-                    : m.role === "error"
-                      ? t("reviewAIError")
-                      : t("reviewYou")}
-                </strong>
-                <p>
-                  {i === 0 && m.role === "user" ? t("reviewAIStarted") : m.text}
-                </p>
-              </div>
-            ))}
-          {view?.liveText && <p>{view.liveText}</p>}
-        </div>
-        {error && (
-          <p className="ld-error" role="alert">
-            {error}{" "}
-            <Btn onClick={() => setAttempt((x) => x + 1)}>{t("retry")}</Btn>
-          </p>
-        )}
-        <form onSubmit={sendAnswer}>
-          <label className="ld-field">
-            <span>{t("reviewAnswer")}</span>
-            <textarea
-              value={answer}
-              rows={2}
-              maxLength={16000}
-              onChange={(e) => {
-                setAnswer(e.target.value);
-                answerId.current = crypto.randomUUID();
-              }}
-              disabled={pending}
-            />
-          </label>
-          <div className="ld-actions">
-            <Btn
-              type="submit"
-              disabled={pending || !view || view.busy || !answer.trim()}
-            >
-              {t("reviewSend")}
-            </Btn>
-            {view?.busy && <Btn onClick={stop}>{t("reviewStop")}</Btn>}
-          </div>
-        </form>
-        {view?.review?.draft && (
-          <div className="ld-review-candidate">
-            <h3>{t("reviewCandidate")}</h3>
-            <p>{view.review.draft}</p>
-            <Btn
-              primary
-              disabled={pending || view.busy}
-              onClick={() => onUse(view.review.draft)}
-            >
-              {t("reviewUseDraft")}
-            </Btn>
-            <p className="ld-help">{t("reviewCandidateHint")}</p>
-          </div>
-        )}
-      </section>
-    );
-  }
   function ReviewEditor({
     data,
     date,
@@ -255,6 +111,7 @@ export function createReviewUI({ t, Btn, Modal, act, send, drafts }: any) {
     habitId,
     busy,
     onSaved,
+    onOpenSpirit,
   }: {
     data: any;
     date: string;
@@ -262,6 +119,7 @@ export function createReviewUI({ t, Btn, Modal, act, send, drafts }: any) {
     habitId?: string;
     busy: boolean;
     onSaved?: (result: any) => void;
+    onOpenSpirit: (context: any) => void;
   }) {
     const key = kind + ":" + date;
     const record = data.reviews.find(
@@ -274,8 +132,7 @@ export function createReviewUI({ t, Btn, Modal, act, send, drafts }: any) {
     const [error, setError] = useState(""),
       [saved, setSaved] = useState(false),
       [showPrompts, setPrompts] = useState(true),
-      [templateOpen, setTemplateOpen] = useState(false),
-      [assistantOpen, setAssistantOpen] = useState(false);
+      [templateOpen, setTemplateOpen] = useState(false);
     const textareaId = useId();
     useEffect(() => {
       if (!drafts.has(key)) {
@@ -315,7 +172,6 @@ export function createReviewUI({ t, Btn, Modal, act, send, drafts }: any) {
         );
         setBaseVersion(stored?.version || baseVersion + 1);
         setSaved(true);
-        setAssistantOpen(false);
         onSaved?.(result);
       } catch (e: any) {
         setError(e.message);
@@ -417,28 +273,26 @@ export function createReviewUI({ t, Btn, Modal, act, send, drafts }: any) {
           >
             {t(habitId ? "saveReviewComplete" : "save")}
           </Btn>
-          {kind === "day" && !assistantOpen && (
-            <Btn disabled={busy} onClick={() => setAssistantOpen(true)}>
+          {kind === "day" && (
+            <Btn
+              disabled={busy}
+              onClick={() =>
+                onOpenSpirit({
+                  date,
+                  text,
+                  version: baseVersion,
+                  habitId,
+                  template:
+                    data.settings.reviewTemplate || t("defaultReviewTemplate"),
+                })
+              }
+            >
               {t("reviewAI")}
             </Btn>
           )}
         </div>
         {!valid && !!text.trim() && (
           <p className="ld-help">{t("reviewEmpty")}</p>
-        )}
-        {assistantOpen && (
-          <ReviewAssistant
-            date={date}
-            text={text}
-            version={baseVersion}
-            close={() => setAssistantOpen(false)}
-            onUse={(candidate: string) => {
-              if (text.trim() && !window.confirm(t("reviewReplaceDraft")))
-                return;
-              change(candidate);
-              setAssistantOpen(false);
-            }}
-          />
         )}
         {templateOpen && (
           <TemplateModal
@@ -456,12 +310,14 @@ export function createReviewUI({ t, Btn, Modal, act, send, drafts }: any) {
     data,
     busy,
     close,
+    onOpenSpirit,
   }: {
     habit: any;
     base: string;
     data: any;
     busy: boolean;
     close: () => void;
+    onOpenSpirit: (context: any) => void;
   }) {
     const [date, setDate] = useState(base);
     const current = today(data.settings.timeZone),
@@ -558,6 +414,10 @@ export function createReviewUI({ t, Btn, Modal, act, send, drafts }: any) {
           habitId={habit.id}
           busy={busy}
           onSaved={close}
+          onOpenSpirit={(context: any) => {
+            onOpenSpirit(context);
+            close();
+          }}
         />
         <details className="ld-details">
           <summary>{t("reviewOtherActions")}</summary>

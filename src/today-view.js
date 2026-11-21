@@ -109,7 +109,19 @@ export function todayTasks(state, items, date) {
         (x) =>
           x.deadline &&
           x.deadline <= shift(date, 7) &&
-          unfinished(singles.get(x.id) || x) &&
+          // A stored deadline belongs to the task's original scheduled instance.
+          // Calendar recurrences keep their completion on that instance, not on
+          // the series record. Do not let another month's completion hide it.
+          unfinished(
+            singles.get(x.id) ||
+              state.occurrences.find(
+                (o) =>
+                  !o.deletedAt &&
+                  o.taskId === x.id &&
+                  o.originalDate === x.date,
+              ) ||
+              x,
+          ) &&
           !x.event,
       )
       .sort((a, b) => a.deadline.localeCompare(b.deadline)),

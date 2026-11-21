@@ -35984,7 +35984,14 @@ function todayTasks(state, items, date5) {
       (x) => x.date < date5 && !x.deletedAt && !x.event && !singleOutstanding(x) && unfinished(x) && !priorityKeys.has(occurrenceKey(x))
     ),
     due: tasks.filter(
-      (x) => x.deadline && x.deadline <= shift(date5, 7) && unfinished(singles.get(x.id) || x) && !x.event
+      (x) => x.deadline && x.deadline <= shift(date5, 7) && // A stored deadline belongs to the task's original scheduled instance.
+      // Calendar recurrences keep their completion on that instance, not on
+      // the series record. Do not let another month's completion hide it.
+      unfinished(
+        singles.get(x.id) || state.occurrences.find(
+          (o) => !o.deletedAt && o.taskId === x.id && o.originalDate === x.date
+        ) || x
+      ) && !x.event
     ).sort((a, b) => a.deadline.localeCompare(b.deadline))
   };
 }
@@ -37683,7 +37690,7 @@ async function apply(ctx) {
       hasGlobal: true,
       layout: "single"
     });
-    const currentVersion = true ? "0.14.0" : "0.0.0";
+    const currentVersion = true ? "0.14.1" : "0.0.0";
     updateService = createUpdateService({
       unit: updateUnit,
       currentVersion,
@@ -37707,7 +37714,7 @@ async function apply(ctx) {
     });
     upgradeService = createUpgradeService({
       unit: upgradeUnit,
-      currentVersion: true ? "0.14.0" : null,
+      currentVersion: true ? "0.14.1" : null,
       isBusy: async () => !!(spiritService && (await spiritService.operate({ action: "read" })).busy || reviewSpiritService && (await reviewSpiritService.operate({ action: "read" })).busy),
       readState: () => service.operate({ action: "read" }),
       restoreState: (a) => service.operate({
