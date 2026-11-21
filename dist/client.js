@@ -24945,6 +24945,350 @@ function runNow(f3) {
   f3();
 }
 
+// src/lessons.js
+var live = (rows) => (rows || []).filter((x4) => !x4.deletedAt);
+var minutesOf = (time) => {
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time || ""))
+    return time ? Number.NaN : 0;
+  const [h3, m3] = time.split(":").map(Number);
+  return h3 * 60 + m3;
+};
+var lessonTerms = (state, lessonId) => live(state.lessonTerms).filter((x4) => x4.lessonId === lessonId).sort((a3, b3) => a3.start.localeCompare(b3.start));
+function lessonBounds(lesson, terms) {
+  const own = live(terms).filter((x4) => x4.lessonId === lesson.id);
+  if (lesson.mode === "term" && own.length)
+    return own.map((x4) => ({
+      start: x4.start > lesson.effective ? x4.start : lesson.effective,
+      end: x4.end
+    }));
+  return [{ start: lesson.effective, end: lesson.until || "" }];
+}
+var inBounds = (bounds, date) => bounds.some((b3) => date >= b3.start && (!b3.end || date <= b3.end));
+function lessonScheduleAt(lesson, date) {
+  if (date < lesson.effective) return null;
+  const history = lesson.scheduleHistory || [];
+  return history.length ? [...history].reverse().find((x4) => x4.from <= date) || null : { ...lesson, from: lesson.effective };
+}
+function lessonTimeFor(lesson, date) {
+  const rule = lessonScheduleAt(lesson, date);
+  const per = (rule?.weekdayTimes || []).find(
+    (x4) => x4.weekday === weekday(date) && x4.time
+  );
+  return per?.time ?? rule?.time ?? "";
+}
+function lessonDue(lesson, date, terms) {
+  const r3 = lessonScheduleAt(lesson, date);
+  if (!r3 || r3.until && date > r3.until) return false;
+  if (!inBounds(lessonBounds(lesson, terms), date)) return false;
+  return r3.weekdays.length ? r3.weekdays.includes(weekday(date)) : date === r3.from;
+}
+function occurrenceOf(state, lesson, originalDate, row) {
+  const date = row?.date || originalDate;
+  const rule = lessonScheduleAt(lesson, originalDate || date) || lesson;
+  return {
+    lessonId: lesson.id,
+    title: lesson.title,
+    participant: lesson.participant,
+    originalDate,
+    date,
+    time: row?.time ?? lessonTimeFor(lesson, originalDate || date),
+    durationMinutes: row?.durationMinutes ?? rule.durationMinutes,
+    place: row?.place ?? rule.place,
+    status: row?.status || "scheduled",
+    note: row?.note || "",
+    deduction: row?.deduction ?? rule.defaultDeduction,
+    completedAt: row?.completedAt ?? null,
+    extra: !!row?.extra,
+    movedFrom: row && originalDate && row.date !== originalDate ? originalDate : "",
+    sessionId: row?.id || "",
+    version: row?.version || 0,
+    changes: row?.changes || [],
+    charged: !!row && !!activeLessonUsage(state, row),
+    key: lesson.id + "@" + (originalDate || "extra:" + (row?.id || ""))
+  };
+}
+function lessonOccurrences(state, lesson, from, to) {
+  if (lesson.deletedAt) return [];
+  const rows = live(state.lessonSessions).filter(
+    (x4) => x4.lessonId === lesson.id
+  );
+  const byOriginal = new Map(
+    rows.filter((x4) => x4.originalDate).map((x4) => [x4.originalDate, x4])
+  );
+  const out = [], emitted = /* @__PURE__ */ new Set();
+  for (let d2 = from; d2 <= to; d2 = shift(d2, 1)) {
+    if (!lessonDue(lesson, d2, state.lessonTerms)) continue;
+    const row = byOriginal.get(d2), x4 = occurrenceOf(state, lesson, d2, row);
+    if (row) emitted.add(row.id);
+    if (x4.date >= from && x4.date <= to) out.push(x4);
+  }
+  for (const row of rows) {
+    if (row.date < from || row.date > to || emitted.has(row.id)) continue;
+    out.push(occurrenceOf(state, lesson, row.originalDate || "", row));
+  }
+  return out.sort(
+    (a3, b3) => (a3.date + (a3.time || "99:99")).localeCompare(
+      b3.date + (b3.time || "99:99")
+    ) || a3.key.localeCompare(b3.key)
+  );
+}
+var sumCredits = (values) => values.reduce((s3, n2) => s3 + Math.round(n2 * 1e6), 0) / 1e6;
+function activeLessonUsage(state, session) {
+  const stack = [];
+  for (const row of live(state.lessonCharges).filter(
+    (x4) => x4.sessionId === session.id
+  )) {
+    if (row.kind === "use") stack.push(row);
+    if (row.kind === "refund") {
+      const i3 = row.reversesId ? stack.findIndex((x4) => x4.id === row.reversesId) : stack.length - 1;
+      if (i3 >= 0) stack.splice(i3, 1);
+    }
+  }
+  return stack.at(-1) || null;
+}
+function lessonDone(state, lesson, from, to) {
+  return lessonOccurrences(state, lesson, from, to).filter(
+    (x4) => x4.status === "done"
+  );
+}
+function lessonAccount(state, lesson) {
+  const rows = live(state.lessonCharges).filter(
+    (x4) => x4.lessonId === lesson.id
+  );
+  const sum = (f3) => sumCredits(rows.filter(f3).map((x4) => x4.delta));
+  return {
+    balance: sumCredits(rows.map((x4) => x4.delta)),
+    purchased: sum((x4) => x4.kind === "purchase"),
+    gifted: sum((x4) => x4.kind === "gift"),
+    opening: sum((x4) => x4.kind === "opening"),
+    used: -sum((x4) => x4.kind === "use"),
+    refunded: sum((x4) => x4.kind === "refund"),
+    netUsed: -sum((x4) => x4.kind === "use" || x4.kind === "refund"),
+    adjusted: sum((x4) => x4.kind === "adjust"),
+    entries: rows.sort(
+      (a3, b3) => b3.date.localeCompare(a3.date) || b3.createdAt.localeCompare(a3.createdAt)
+    )
+  };
+}
+function lessonSummary(state, lesson, date) {
+  const terms = lessonTerms(state, lesson.id);
+  const account = lesson.mode === "credit" ? lessonAccount(state, lesson) : null;
+  const currentTerm = lesson.mode === "term" ? terms.find((x4) => date >= x4.start && date <= x4.end) || terms.find((x4) => x4.start > date) || null : null;
+  const termBounds = currentTerm ? { start: currentTerm.start, end: currentTerm.end } : lesson.mode === "term" && terms.length ? { start: terms.at(-1).start, end: terms.at(-1).end } : null;
+  const stats = lesson.mode === "term" && termBounds ? lessonStats(state, lesson, termBounds.start, termBounds.end) : null;
+  const expired = lesson.mode === "term" && !!terms.length && !terms.some((x4) => x4.end >= date);
+  const endsIn = lesson.mode === "term" && currentTerm ? Math.round(
+    (Date.parse(currentTerm.end + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
+  ) : null;
+  return {
+    account,
+    currentTerm,
+    terms,
+    stats,
+    expired,
+    endsIn,
+    termStatus: currentTerm ? currentTerm.start > date ? "upcoming" : "active" : expired ? "expired" : "none"
+  };
+}
+function lessonStats(state, lesson, from, to) {
+  const done = lessonDone(state, lesson, from, to);
+  return {
+    sessions: done.length,
+    units: sumCredits(done.map((x4) => Number(x4.deduction) || 0)),
+    skipped: lessonOccurrences(state, lesson, from, to).filter(
+      (x4) => x4.status === "skipped"
+    ).length,
+    from,
+    to
+  };
+}
+function lessonExpiring(state, date, withinDays) {
+  const out = [];
+  for (const l3 of live(state.lessons)) {
+    if (l3.expiryWarnDays === null) continue;
+    const threshold = l3.expiryWarnDays ?? 30;
+    const effectiveLimit = shift(
+      date,
+      Math.min(withinDays ?? threshold, threshold)
+    );
+    if (l3.mode === "term") {
+      for (const term of lessonTerms(state, l3.id))
+        if (term.end >= date && term.end <= effectiveLimit)
+          out.push({
+            kind: "term",
+            lessonId: l3.id,
+            title: l3.title,
+            date: term.end,
+            days: Math.round(
+              (Date.parse(term.end + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
+            )
+          });
+    }
+    if (l3.mode === "credit") {
+      for (const row of live(state.lessonCharges).filter(
+        (x4) => x4.lessonId === l3.id && x4.expiresOn && x4.delta > 0
+      ))
+        if (row.expiresOn >= date && row.expiresOn <= effectiveLimit)
+          out.push({
+            kind: "credit-expiry",
+            lessonId: l3.id,
+            title: l3.title,
+            date: row.expiresOn,
+            amount: row.delta,
+            days: Math.round(
+              (Date.parse(row.expiresOn + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
+            )
+          });
+    }
+  }
+  return out.sort((a3, b3) => a3.date.localeCompare(b3.date));
+}
+function lessonReminders(state, now, zone) {
+  const date = today(zone, now), out = [];
+  for (const l3 of live(state.lessons)) {
+    if (l3.reminderMinutes == null) continue;
+    const lead = Math.ceil(l3.reminderMinutes / 1440) + 1;
+    for (const x4 of lessonOccurrences(
+      state,
+      l3,
+      shift(date, -1),
+      shift(date, lead)
+    )) {
+      if (x4.status !== "scheduled" || !x4.time) continue;
+      try {
+        const at = zonedStamp(x4.date, x4.time, zone) - l3.reminderMinutes * 6e4;
+        if (at > now || now - at > 12 * 60 * 6e4) continue;
+        out.push({
+          key: "lesson:" + x4.key + ":" + x4.date + ":" + x4.time + ":" + at,
+          title: x4.title + " \xB7 " + x4.date + " " + lessonTimeLabel(x4),
+          at,
+          date: x4.date,
+          time: x4.time,
+          lessonId: l3.id
+        });
+      } catch {
+      }
+    }
+  }
+  return out.sort((a3, b3) => a3.at - b3.at);
+}
+function lessonTimeLabel(lesson) {
+  if (!lesson.time) return "";
+  const start = minutesOf(lesson.time);
+  const end = start + (Number(lesson.durationMinutes) || 0);
+  if (!Number.isFinite(end)) return lesson.time;
+  return lesson.time + (lesson.durationMinutes ? "\u2013" + fmtTime(end) : "");
+}
+function fmtTime(minutes) {
+  const dayMinutes = (minutes % 1440 + 1440) % 1440;
+  return String(Math.floor(dayMinutes / 60)).padStart(2, "0") + ":" + String(dayMinutes % 60).padStart(2, "0");
+}
+function lessonWeeklyLabel(lesson, t3) {
+  if (!lesson.weekdays.length)
+    return t3("lessonOnce") + (lesson.time ? " " + lesson.time : "");
+  return lesson.weekdays.slice().sort((a3, b3) => (a3 + 6) % 7 - (b3 + 6) % 7).map((d2) => {
+    const per = (lesson.weekdayTimes || []).find(
+      (x4) => x4.weekday === d2 && x4.time
+    );
+    const time = per?.time || lesson.time;
+    return t3("weekdayShort" + d2) + (time ? " " + time : "");
+  }).join(" \xB7 ");
+}
+function lessonScheduleSignature(lesson) {
+  return JSON.stringify({
+    weekdays: [...lesson.weekdays || []].sort((a3, b3) => a3 - b3),
+    weekdayTimes: [...lesson.weekdayTimes || []].filter((x4) => x4.time).sort((a3, b3) => a3.weekday - b3.weekday),
+    time: lesson.time || "",
+    durationMinutes: lesson.durationMinutes,
+    place: lesson.place || "",
+    until: lesson.until || "",
+    defaultDeduction: lesson.defaultDeduction
+  });
+}
+
+// src/calendar-events.js
+function present(event, completed) {
+  return {
+    ...event,
+    title: (completed ? "\u2713 " : "") + event.title,
+    classNames: [
+      ...event.classNames || [],
+      ...completed ? ["ld-event-done"] : []
+    ],
+    extendedProps: {
+      ...event.extendedProps,
+      completionOrder: completed ? 1 : 0
+    }
+  };
+}
+function endAt(date, time, minutes) {
+  return time && minutes ? new Date(Date.parse(date + "T" + time + ":00Z") + minutes * 6e4).toISOString().replace("Z", "") : void 0;
+}
+function calendarEventOrder(view) {
+  return view === "dayGridMonth" ? "completionOrder,start,-duration,allDay,title" : "start,-duration,allDay,completionOrder,title";
+}
+function calendarEvents(state, from, to, filter = "all") {
+  const events = [];
+  if (!["habits", "lessons"].includes(filter))
+    for (const x4 of occurrences(state, from, to)) {
+      if (["cancelled", "skipped"].includes(x4.status)) continue;
+      if (filter !== "all" && x4.area !== filter) continue;
+      events.push(
+        present(
+          {
+            id: x4.id + "@" + x4.originalDate,
+            title: x4.title,
+            start: x4.date + (x4.time ? "T" + x4.time : ""),
+            end: endAt(x4.date, x4.time, x4.minutes),
+            allDay: !x4.time,
+            extendedProps: { source: x4 }
+          },
+          x4.status === "done"
+        )
+      );
+    }
+  if (filter === "all" || filter === "habits")
+    for (let d2 = from; d2 <= to; d2 = shift(d2, 1))
+      for (const h3 of state.habits.filter((x4) => !x4.deletedAt)) {
+        const rule = habitRule(h3, d2);
+        if (rule?.mode === "weekly" || !habitDue(h3, d2)) continue;
+        events.push(
+          present(
+            {
+              id: "habit:" + h3.id + "@" + d2,
+              title: h3.title,
+              allDay: true,
+              start: d2,
+              editable: false,
+              classNames: ["ld-event-habit"],
+              extendedProps: { habit: h3, date: d2 }
+            },
+            habitProgress(state, h3, d2).done
+          )
+        );
+      }
+  if (filter === "all" || filter === "lessons")
+    for (const lesson of state.lessons.filter((x4) => !x4.deletedAt))
+      for (const x4 of lessonOccurrences(state, lesson, from, to)) {
+        if (x4.status === "skipped") continue;
+        events.push(
+          present(
+            {
+              id: "lesson:" + x4.key,
+              title: x4.title + (x4.participant ? " \xB7 " + x4.participant : ""),
+              start: x4.date + (x4.time ? "T" + x4.time : ""),
+              end: endAt(x4.date, x4.time, x4.durationMinutes),
+              allDay: !x4.time,
+              classNames: ["ld-event-lesson"],
+              extendedProps: { lesson: x4 }
+            },
+            x4.status === "done"
+          )
+        );
+      }
+  return events;
+}
+
 // node_modules/@fullcalendar/daygrid/internal.js
 var TableView = class extends DateComponent {
   constructor() {
@@ -31432,7 +31776,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
           WebkitAppRegion: "no-drag"
         },
         "data-reader-mode": mode,
-        "data-reader-version": "0.14.1",
+        "data-reader-version": "0.14.2",
         role: "dialog",
         "aria-modal": "true",
         "aria-label": t3("fullscreenFocus"),
@@ -31524,7 +31868,7 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
               });
           }
         }
-      )), /* @__PURE__ */ React8.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React8.createElement("small", { className: "ld-reader-build" }, "v", "0.14.1")))
+      )), /* @__PURE__ */ React8.createElement("p", null, t3("fullscreenHint"), " ", /* @__PURE__ */ React8.createElement("small", { className: "ld-reader-build" }, "v", "0.14.2")))
     );
   }
   return {
@@ -31548,267 +31892,6 @@ function createTimerUI({ useStore, act, t: t3, ctx }) {
       listeners.clear();
     }
   };
-}
-
-// src/lessons.js
-var live = (rows) => (rows || []).filter((x4) => !x4.deletedAt);
-var minutesOf = (time) => {
-  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(time || ""))
-    return time ? Number.NaN : 0;
-  const [h3, m3] = time.split(":").map(Number);
-  return h3 * 60 + m3;
-};
-var lessonTerms = (state, lessonId) => live(state.lessonTerms).filter((x4) => x4.lessonId === lessonId).sort((a3, b3) => a3.start.localeCompare(b3.start));
-function lessonBounds(lesson, terms) {
-  const own = live(terms).filter((x4) => x4.lessonId === lesson.id);
-  if (lesson.mode === "term" && own.length)
-    return own.map((x4) => ({
-      start: x4.start > lesson.effective ? x4.start : lesson.effective,
-      end: x4.end
-    }));
-  return [{ start: lesson.effective, end: lesson.until || "" }];
-}
-var inBounds = (bounds, date) => bounds.some((b3) => date >= b3.start && (!b3.end || date <= b3.end));
-function lessonScheduleAt(lesson, date) {
-  if (date < lesson.effective) return null;
-  const history = lesson.scheduleHistory || [];
-  return history.length ? [...history].reverse().find((x4) => x4.from <= date) || null : { ...lesson, from: lesson.effective };
-}
-function lessonTimeFor(lesson, date) {
-  const rule = lessonScheduleAt(lesson, date);
-  const per = (rule?.weekdayTimes || []).find(
-    (x4) => x4.weekday === weekday(date) && x4.time
-  );
-  return per?.time ?? rule?.time ?? "";
-}
-function lessonDue(lesson, date, terms) {
-  const r3 = lessonScheduleAt(lesson, date);
-  if (!r3 || r3.until && date > r3.until) return false;
-  if (!inBounds(lessonBounds(lesson, terms), date)) return false;
-  return r3.weekdays.length ? r3.weekdays.includes(weekday(date)) : date === r3.from;
-}
-function occurrenceOf(state, lesson, originalDate, row) {
-  const date = row?.date || originalDate;
-  const rule = lessonScheduleAt(lesson, originalDate || date) || lesson;
-  return {
-    lessonId: lesson.id,
-    title: lesson.title,
-    participant: lesson.participant,
-    originalDate,
-    date,
-    time: row?.time ?? lessonTimeFor(lesson, originalDate || date),
-    durationMinutes: row?.durationMinutes ?? rule.durationMinutes,
-    place: row?.place ?? rule.place,
-    status: row?.status || "scheduled",
-    note: row?.note || "",
-    deduction: row?.deduction ?? rule.defaultDeduction,
-    completedAt: row?.completedAt ?? null,
-    extra: !!row?.extra,
-    movedFrom: row && originalDate && row.date !== originalDate ? originalDate : "",
-    sessionId: row?.id || "",
-    version: row?.version || 0,
-    changes: row?.changes || [],
-    charged: !!row && !!activeLessonUsage(state, row),
-    key: lesson.id + "@" + (originalDate || "extra:" + (row?.id || ""))
-  };
-}
-function lessonOccurrences(state, lesson, from, to) {
-  if (lesson.deletedAt) return [];
-  const rows = live(state.lessonSessions).filter(
-    (x4) => x4.lessonId === lesson.id
-  );
-  const byOriginal = new Map(
-    rows.filter((x4) => x4.originalDate).map((x4) => [x4.originalDate, x4])
-  );
-  const out = [], emitted = /* @__PURE__ */ new Set();
-  for (let d2 = from; d2 <= to; d2 = shift(d2, 1)) {
-    if (!lessonDue(lesson, d2, state.lessonTerms)) continue;
-    const row = byOriginal.get(d2), x4 = occurrenceOf(state, lesson, d2, row);
-    if (row) emitted.add(row.id);
-    if (x4.date >= from && x4.date <= to) out.push(x4);
-  }
-  for (const row of rows) {
-    if (row.date < from || row.date > to || emitted.has(row.id)) continue;
-    out.push(occurrenceOf(state, lesson, row.originalDate || "", row));
-  }
-  return out.sort(
-    (a3, b3) => (a3.date + (a3.time || "99:99")).localeCompare(
-      b3.date + (b3.time || "99:99")
-    ) || a3.key.localeCompare(b3.key)
-  );
-}
-var sumCredits = (values) => values.reduce((s3, n2) => s3 + Math.round(n2 * 1e6), 0) / 1e6;
-function activeLessonUsage(state, session) {
-  const stack = [];
-  for (const row of live(state.lessonCharges).filter(
-    (x4) => x4.sessionId === session.id
-  )) {
-    if (row.kind === "use") stack.push(row);
-    if (row.kind === "refund") {
-      const i3 = row.reversesId ? stack.findIndex((x4) => x4.id === row.reversesId) : stack.length - 1;
-      if (i3 >= 0) stack.splice(i3, 1);
-    }
-  }
-  return stack.at(-1) || null;
-}
-function lessonDone(state, lesson, from, to) {
-  return lessonOccurrences(state, lesson, from, to).filter(
-    (x4) => x4.status === "done"
-  );
-}
-function lessonAccount(state, lesson) {
-  const rows = live(state.lessonCharges).filter(
-    (x4) => x4.lessonId === lesson.id
-  );
-  const sum = (f3) => sumCredits(rows.filter(f3).map((x4) => x4.delta));
-  return {
-    balance: sumCredits(rows.map((x4) => x4.delta)),
-    purchased: sum((x4) => x4.kind === "purchase"),
-    gifted: sum((x4) => x4.kind === "gift"),
-    opening: sum((x4) => x4.kind === "opening"),
-    used: -sum((x4) => x4.kind === "use"),
-    refunded: sum((x4) => x4.kind === "refund"),
-    netUsed: -sum((x4) => x4.kind === "use" || x4.kind === "refund"),
-    adjusted: sum((x4) => x4.kind === "adjust"),
-    entries: rows.sort(
-      (a3, b3) => b3.date.localeCompare(a3.date) || b3.createdAt.localeCompare(a3.createdAt)
-    )
-  };
-}
-function lessonSummary(state, lesson, date) {
-  const terms = lessonTerms(state, lesson.id);
-  const account = lesson.mode === "credit" ? lessonAccount(state, lesson) : null;
-  const currentTerm = lesson.mode === "term" ? terms.find((x4) => date >= x4.start && date <= x4.end) || terms.find((x4) => x4.start > date) || null : null;
-  const termBounds = currentTerm ? { start: currentTerm.start, end: currentTerm.end } : lesson.mode === "term" && terms.length ? { start: terms.at(-1).start, end: terms.at(-1).end } : null;
-  const stats = lesson.mode === "term" && termBounds ? lessonStats(state, lesson, termBounds.start, termBounds.end) : null;
-  const expired = lesson.mode === "term" && !!terms.length && !terms.some((x4) => x4.end >= date);
-  const endsIn = lesson.mode === "term" && currentTerm ? Math.round(
-    (Date.parse(currentTerm.end + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
-  ) : null;
-  return {
-    account,
-    currentTerm,
-    terms,
-    stats,
-    expired,
-    endsIn,
-    termStatus: currentTerm ? currentTerm.start > date ? "upcoming" : "active" : expired ? "expired" : "none"
-  };
-}
-function lessonStats(state, lesson, from, to) {
-  const done = lessonDone(state, lesson, from, to);
-  return {
-    sessions: done.length,
-    units: sumCredits(done.map((x4) => Number(x4.deduction) || 0)),
-    skipped: lessonOccurrences(state, lesson, from, to).filter(
-      (x4) => x4.status === "skipped"
-    ).length,
-    from,
-    to
-  };
-}
-function lessonExpiring(state, date, withinDays) {
-  const out = [];
-  for (const l3 of live(state.lessons)) {
-    if (l3.expiryWarnDays === null) continue;
-    const threshold = l3.expiryWarnDays ?? 30;
-    const effectiveLimit = shift(
-      date,
-      Math.min(withinDays ?? threshold, threshold)
-    );
-    if (l3.mode === "term") {
-      for (const term of lessonTerms(state, l3.id))
-        if (term.end >= date && term.end <= effectiveLimit)
-          out.push({
-            kind: "term",
-            lessonId: l3.id,
-            title: l3.title,
-            date: term.end,
-            days: Math.round(
-              (Date.parse(term.end + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
-            )
-          });
-    }
-    if (l3.mode === "credit") {
-      for (const row of live(state.lessonCharges).filter(
-        (x4) => x4.lessonId === l3.id && x4.expiresOn && x4.delta > 0
-      ))
-        if (row.expiresOn >= date && row.expiresOn <= effectiveLimit)
-          out.push({
-            kind: "credit-expiry",
-            lessonId: l3.id,
-            title: l3.title,
-            date: row.expiresOn,
-            amount: row.delta,
-            days: Math.round(
-              (Date.parse(row.expiresOn + "T00:00:00Z") - Date.parse(date + "T00:00:00Z")) / 864e5
-            )
-          });
-    }
-  }
-  return out.sort((a3, b3) => a3.date.localeCompare(b3.date));
-}
-function lessonReminders(state, now, zone) {
-  const date = today(zone, now), out = [];
-  for (const l3 of live(state.lessons)) {
-    if (l3.reminderMinutes == null) continue;
-    const lead = Math.ceil(l3.reminderMinutes / 1440) + 1;
-    for (const x4 of lessonOccurrences(
-      state,
-      l3,
-      shift(date, -1),
-      shift(date, lead)
-    )) {
-      if (x4.status !== "scheduled" || !x4.time) continue;
-      try {
-        const at = zonedStamp(x4.date, x4.time, zone) - l3.reminderMinutes * 6e4;
-        if (at > now || now - at > 12 * 60 * 6e4) continue;
-        out.push({
-          key: "lesson:" + x4.key + ":" + x4.date + ":" + x4.time + ":" + at,
-          title: x4.title + " \xB7 " + x4.date + " " + lessonTimeLabel(x4),
-          at,
-          date: x4.date,
-          time: x4.time,
-          lessonId: l3.id
-        });
-      } catch {
-      }
-    }
-  }
-  return out.sort((a3, b3) => a3.at - b3.at);
-}
-function lessonTimeLabel(lesson) {
-  if (!lesson.time) return "";
-  const start = minutesOf(lesson.time);
-  const end = start + (Number(lesson.durationMinutes) || 0);
-  if (!Number.isFinite(end)) return lesson.time;
-  return lesson.time + (lesson.durationMinutes ? "\u2013" + fmtTime(end) : "");
-}
-function fmtTime(minutes) {
-  const dayMinutes = (minutes % 1440 + 1440) % 1440;
-  return String(Math.floor(dayMinutes / 60)).padStart(2, "0") + ":" + String(dayMinutes % 60).padStart(2, "0");
-}
-function lessonWeeklyLabel(lesson, t3) {
-  if (!lesson.weekdays.length)
-    return t3("lessonOnce") + (lesson.time ? " " + lesson.time : "");
-  return lesson.weekdays.slice().sort((a3, b3) => (a3 + 6) % 7 - (b3 + 6) % 7).map((d2) => {
-    const per = (lesson.weekdayTimes || []).find(
-      (x4) => x4.weekday === d2 && x4.time
-    );
-    const time = per?.time || lesson.time;
-    return t3("weekdayShort" + d2) + (time ? " " + time : "");
-  }).join(" \xB7 ");
-}
-function lessonScheduleSignature(lesson) {
-  return JSON.stringify({
-    weekdays: [...lesson.weekdays || []].sort((a3, b3) => a3 - b3),
-    weekdayTimes: [...lesson.weekdayTimes || []].filter((x4) => x4.time).sort((a3, b3) => a3.weekday - b3.weekday),
-    time: lesson.time || "",
-    durationMinutes: lesson.durationMinutes,
-    place: lesson.place || "",
-    until: lesson.until || "",
-    defaultDeduction: lesson.defaultDeduction
-  });
 }
 
 // src/planning.js
@@ -33988,7 +34071,7 @@ function reorderHomeRegion(settings, region, ids) {
 }
 
 // src/style.css
-var style_default = '/* All surfaces inherit the active DSH theme. Mood accents derive from its semantic palette. */\n.ld-root {\n  --ld-accent: var(--dsw-alias-brand-primary);\n  --ld-ink: var(--dsw-alias-label-primary);\n  --ld-muted: var(--dsw-alias-label-secondary);\n  --ld-base: var(--dsw-alias-bg-base);\n  --ld-surface: var(--dsw-alias-bg-layer-1);\n  --ld-line: var(--dsw-alias-border-l1);\n  color: var(--ld-ink);\n  font:\n    14px/1.65 -apple-system,\n    BlinkMacSystemFont,\n    "Segoe UI",\n    "Microsoft YaHei",\n    sans-serif;\n  min-height: 0;\n}\n.ld-root.ld-bright {\n  --ld-accent: var(--dsw-alias-state-warn-primary);\n}\n.ld-root.ld-focus {\n  --ld-accent: var(--dsw-alias-brand-primary);\n}\n.ld-root.ld-calm {\n  --ld-accent: var(--dsw-alias-state-success-primary);\n}\n.ld-root * {\n  box-sizing: border-box;\n}\n.ld-shell {\n  display: grid;\n  grid-template-columns: 188px minmax(0, 1fr);\n  height: 100%;\n  min-height: 0;\n  background: var(--ld-base);\n}\n.ld-root:has(> .ld-shell) {\n  height: 100%;\n  overflow: hidden;\n  container: life-desk / inline-size;\n}\n.ld-shell.ld-collapsed {\n  grid-template-columns: 66px minmax(0, 1fr);\n}\n.ld-root button,\n.ld-root input,\n.ld-root select,\n.ld-root textarea {\n  font: inherit;\n  color: inherit;\n}\n.ld-root button {\n  cursor: pointer;\n}\n.ld-root button:disabled {\n  opacity: 0.45;\n  cursor: default;\n}\n.ld-root button {\n  border: 0;\n  background: transparent;\n}\n.ld-root input,\n.ld-root select,\n.ld-root textarea {\n  background: var(--ld-surface);\n  border: 1px solid var(--ld-line);\n  border-radius: 7px;\n  padding: 8px 10px;\n  min-width: 0;\n  max-width: 100%;\n}\n.ld-root textarea {\n  resize: vertical;\n  width: 100%;\n}\n.ld-root input[type="checkbox"] {\n  accent-color: var(--ld-accent);\n  width: 16px;\n  height: 16px;\n}\n.ld-root :focus-visible {\n  outline: 2px solid var(--ld-accent);\n  outline-offset: 3px;\n}\n.ld-root h1,\n.ld-root h2,\n.ld-root h3,\n.ld-root p {\n  margin: 0;\n}\n.ld-root h1 {\n  font-size: 30px;\n  line-height: 1.3;\n  font-weight: 650;\n  letter-spacing: -0.8px;\n}\n.ld-root h2 {\n  font-size: 15px;\n  font-weight: 600;\n  letter-spacing: 0.1px;\n}\n.ld-root h3 {\n  font-size: 14px;\n  font-weight: 600;\n}\n.ld-root p + p {\n  margin-top: 10px;\n}\n.ld-root svg {\n  flex-shrink: 0;\n  vertical-align: middle;\n}\n.ld-root strong {\n  font-weight: 600;\n}\n.ld-nav {\n  background: color-mix(\n    in srgb,\n    var(--dsw-alias-bg-layer-2) 60%,\n    var(--ld-base)\n  );\n  padding: 30px 14px 18px;\n  display: flex;\n  flex-direction: column;\n  gap: 5px;\n  overflow: auto;\n  border-right: 1px solid var(--ld-line);\n}\n.ld-brand {\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  font-size: 14px;\n  font-weight: 650;\n  padding: 3px 7px 26px;\n  white-space: nowrap;\n}\n.ld-nav button {\n  display: flex;\n  align-items: center;\n  gap: 11px;\n  width: 100%;\n  text-align: left;\n  min-height: 38px;\n  padding: 8px 10px;\n  border-radius: 7px;\n  color: var(--ld-muted);\n}\n.ld-nav button:hover,\n.ld-nav button.selected {\n  background: var(--dsw-alias-bg-layer-2);\n  color: var(--ld-ink);\n}\n.ld-nav button.selected svg {\n  color: var(--ld-accent);\n}\n.ld-nav .ld-nav-add {\n  color: var(--ld-ink);\n  border: 1px solid var(--ld-line);\n  background: var(--ld-surface);\n  margin-bottom: 18px;\n}\n.ld-nav-items {\n  display: grid;\n  gap: 3px;\n}\n.ld-nav .ld-nav-project {\n  padding-left: 13px;\n  font-size: 12px;\n  min-height: 31px;\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n}\n.ld-project-bullet {\n  height: 5px;\n  width: 5px;\n  flex: none;\n  border-radius: 50%;\n  background: var(--ld-muted);\n  margin: 0 7px;\n}\n.ld-nav-bottom {\n  margin-top: auto;\n  padding-top: 35px;\n}\n.ld-nav-bottom button {\n  font-size: 12px;\n}\n/* The toolbar is a separate grid row, outside the only page scroller. */\n.ld-workspace {\n  --ld-page-inline: clamp(22px, 3vw, 48px);\n  display: grid;\n  grid-template-rows: auto minmax(0, 1fr);\n  min-width: 0;\n  min-height: 0;\n  height: 100%;\n}\n.ld-content {\n  padding: 26px var(--ld-page-inline) 26px;\n  overflow: auto;\n  min-height: 0;\n}\n.ld-page-top {\n  display: flex;\n  justify-content: space-between;\n  gap: 18px;\n  align-items: center;\n  margin: 0;\n  min-width: 0;\n  padding: 20px var(--ld-page-inline) 16px;\n  background: var(--ld-base);\n  border-bottom: 1px solid var(--ld-line);\n  position: relative;\n  z-index: 20;\n}\n.ld-page-top,\n.ld-page-top * {\n  -webkit-app-region: no-drag;\n  app-region: no-drag;\n}\n.ld-page-top > .ld-actions {\n  margin-left: auto;\n  flex-shrink: 0;\n  max-width: 100%;\n}\n.ld-page-top .ld-btn {\n  flex-shrink: 0;\n  white-space: nowrap;\n}\n.ld-search {\n  flex: 1;\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  min-width: 100px;\n  color: var(--ld-muted);\n}\n.ld-search input {\n  border: 0;\n  background: transparent;\n  width: 230px;\n  font-size: 12px;\n  padding: 5px 0;\n}\n.ld-mood {\n  max-width: 112px;\n  font-size: 12px !important;\n  border-color: transparent !important;\n  background: transparent !important;\n}\n.ld-page-heading {\n  display: flex;\n  align-items: flex-end;\n  justify-content: space-between;\n  gap: 15px;\n  margin-bottom: 35px;\n  flex-wrap: wrap;\n}\n.ld-eyebrow {\n  font-size: 12px;\n  color: var(--ld-muted);\n  letter-spacing: 0.5px;\n  margin-bottom: 8px;\n}\n.ld-day-nav {\n  display: flex;\n  align-items: center;\n  gap: 3px;\n  font-size: 12px;\n}\n.ld-day-nav > button {\n  padding: 3px 7px;\n  font-size: 20px;\n  color: var(--ld-muted);\n}\n.ld-day-nav input {\n  padding: 3px 5px;\n  font-size: 11px;\n  background: transparent;\n  border-color: transparent;\n  width: 115px;\n}\n.ld-day-nav .ld-btn {\n  font-size: 12px;\n}\n.ld-today-grid {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) 248px;\n  gap: 40px;\n}\n.ld-main-col {\n  min-width: 0;\n}\n.ld-support {\n  min-width: 0;\n  border-left: 1px solid var(--ld-line);\n  padding-left: 28px;\n}\n.ld-section {\n  margin: 0 0 34px;\n}\n.ld-section-heading,\n.ld-section-title {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  margin-bottom: 14px;\n}\n.ld-section-title {\n  justify-content: flex-start;\n  font-size: 13px;\n  color: var(--ld-muted);\n}\n.ld-section > h2 {\n  margin-bottom: 16px;\n}\n.ld-help,\n.ld-muted {\n  color: var(--ld-muted);\n}\n.ld-help {\n  font-size: 11px;\n  line-height: 1.7;\n}\n.ld-empty {\n  padding: 18px 0;\n  color: var(--ld-muted);\n  font-size: 12px;\n}\n.ld-task {\n  display: flex;\n  align-items: flex-start;\n  gap: 11px;\n  min-height: 55px;\n  padding: 10px 0;\n}\n.ld-task + .ld-task {\n  border-top: 1px solid color-mix(in srgb, var(--ld-line) 55%, transparent);\n}\n.ld-check {\n  width: 18px;\n  height: 18px;\n  border: 1.3px solid var(--dsw-alias-border-l2) !important;\n  border-radius: 5px;\n  margin-top: 4px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  flex: none;\n}\n.ld-task-done .ld-check {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent) !important;\n}\n.ld-task-done .ld-task-title {\n  text-decoration: line-through;\n  color: var(--ld-muted);\n}\n.ld-task-body {\n  flex: 1;\n  min-width: 0;\n  text-align: left;\n  padding: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 3px;\n}\n.ld-task-title {\n  font-size: 14px;\n  overflow-wrap: anywhere;\n}\n.ld-task-meta {\n  font-size: 11px;\n  color: var(--ld-muted);\n  overflow-wrap: anywhere;\n}\n.ld-task-tools {\n  display: flex;\n  align-items: center;\n  flex: none;\n  opacity: 0.35;\n}\n.ld-task:hover .ld-task-tools,\n.ld-task:focus-within .ld-task-tools {\n  opacity: 1;\n}\n.ld-icon-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 28px;\n  height: 28px;\n  border-radius: 6px;\n  padding: 0;\n  color: var(--ld-muted) !important;\n}\n.ld-icon-btn:hover {\n  background: var(--dsw-alias-bg-layer-2);\n}\n.ld-star {\n  color: var(--ld-accent);\n}\n.ld-event-dot {\n  padding-top: 4px;\n  color: var(--ld-muted);\n}\n.ld-btn {\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  gap: 6px;\n  font-size: 12px !important;\n  padding: 7px 11px;\n  min-height: 32px;\n  border: 1px solid var(--ld-line) !important;\n  border-radius: 7px;\n  line-height: 1.4;\n  background: var(--ld-surface) !important;\n  text-decoration: none;\n  cursor: pointer;\n}\n.ld-btn:hover {\n  background: var(--dsw-alias-bg-layer-2) !important;\n}\n.ld-btn.ld-primary {\n  background: color-mix(\n    in srgb,\n    var(--ld-accent) 12%,\n    var(--ld-base)\n  ) !important;\n  border-color: color-mix(\n    in srgb,\n    var(--ld-accent) 35%,\n    var(--ld-line)\n  ) !important;\n  color: var(--ld-accent);\n}\n.ld-btn[aria-pressed="true"] {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent) !important;\n}\n.ld-actions {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n.ld-toolbar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  margin-bottom: 20px;\n}\n.ld-details {\n  border-top: 1px solid var(--ld-line);\n  padding: 14px 0;\n  color: var(--ld-muted);\n  font-size: 12px;\n}\n.ld-details summary {\n  cursor: pointer;\n}\n.ld-details .ld-task-list {\n  color: var(--ld-ink);\n  margin-top: 12px;\n}\n.ld-welcome {\n  padding: 5px 0 30px;\n}\n.ld-welcome > svg {\n  color: var(--ld-accent);\n  margin-bottom: 12px;\n}\n.ld-welcome h2 {\n  font-size: 19px;\n  margin-bottom: 9px;\n}\n.ld-welcome p {\n  color: var(--ld-muted);\n  font-size: 12px;\n  margin-bottom: 18px;\n}\n.ld-focus-card {\n  padding-bottom: 27px;\n  margin-bottom: 24px;\n  border-bottom: 1px solid var(--ld-line);\n}\n.ld-timer-title {\n  font-size: 12px;\n  color: var(--ld-muted);\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.ld-time {\n  font-size: 49px;\n  font-weight: 350;\n  letter-spacing: -2px;\n  line-height: 1.5;\n  font-variant-numeric: tabular-nums;\n  margin: 8px 0;\n}\n.ld-progress {\n  height: 3px;\n  background: var(--dsw-alias-bg-layer-2);\n  border-radius: 3px;\n  margin: 0 0 22px;\n  overflow: hidden;\n}\n.ld-progress i {\n  display: block;\n  height: 100%;\n  background: var(--ld-accent);\n}\n.ld-timer-end {\n  margin-top: 15px;\n}\n.ld-timer-end .ld-field {\n  margin: 10px 0;\n}\n.ld-habit {\n  padding: 9px 0;\n}\n.ld-habit + .ld-habit {\n  border-top: 1px solid var(--ld-line);\n}\n.ld-habit-main {\n  display: flex;\n  gap: 12px;\n  align-items: center;\n}\n/* Keep habit metadata beside the title, retaining its existing 11px type. */\n.ld-habit-main > .ld-task-body {\n  flex-direction: row;\n  flex-wrap: wrap;\n  align-items: baseline;\n  column-gap: 10px;\n  row-gap: 2px;\n}\n.ld-habit-main > .ld-task-body > .ld-task-title,\n.ld-habit-main > .ld-task-body > .ld-task-meta {\n  flex: 0 1 auto;\n  min-width: 0;\n  max-width: 100%;\n}\n.ld-habit-list-full .ld-habit {\n  padding: 8px 0;\n}\n.ld-habit-list-full .ld-week-dots {\n  margin: 6px 0 0;\n  gap: 6px;\n}\n.ld-habit-period {\n  margin-left: 6px;\n  font-size: 10px;\n  color: var(--ld-muted);\n}\n.ld-habit-check {\n  border: 1px solid var(--ld-line) !important;\n  width: 28px;\n  height: 28px;\n  border-radius: 50%;\n  color: var(--ld-muted) !important;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex: none;\n}\n.ld-habit-check.checked {\n  color: var(--ld-accent) !important;\n  background: color-mix(in srgb, var(--ld-accent) 10%, transparent);\n}\n.ld-week-dots {\n  display: flex;\n  gap: 8px;\n  align-items: center;\n  margin: 12px 0;\n  flex-wrap: wrap;\n}\n.ld-week-dots > button:not(.ld-btn) {\n  min-width: 28px;\n  height: 28px;\n  border-radius: 50%;\n  font-size: 11px;\n  background: var(--dsw-alias-bg-layer-2);\n}\n.ld-week-dots > button.checked {\n  color: var(--ld-accent);\n}\n.ld-upcoming {\n  display: flex;\n  flex-direction: column;\n  gap: 3px;\n  text-align: left;\n  width: 100%;\n  padding: 8px 0;\n}\n.ld-upcoming strong {\n  font-size: 12px;\n}\n.ld-upcoming span {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-project-row {\n  display: flex;\n  align-items: center;\n  gap: 13px;\n  width: 100%;\n  padding: 17px 0;\n  text-align: left;\n  border-bottom: 1px solid var(--ld-line) !important;\n}\n.ld-project-row > span:first-of-type {\n  display: flex;\n  flex: 1;\n  flex-direction: column;\n}\n.ld-project-row small {\n  font-size: 11px;\n  color: var(--ld-muted);\n  margin-top: 3px;\n}\n.ld-project-goal {\n  white-space: pre-wrap;\n  color: var(--ld-muted);\n  margin: 0 0 25px !important;\n}\n.ld-board {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  gap: 20px;\n  margin-top: 24px;\n  overflow: auto;\n}\n.ld-board > section {\n  min-width: 160px;\n  padding: 14px;\n  background: var(--dsw-alias-bg-layer-1);\n  border-radius: 8px;\n}\n.ld-board .ld-task {\n  flex-wrap: wrap;\n}\n.ld-board .ld-task-tools {\n  margin-left: auto;\n}\n.ld-review-stats {\n  display: flex;\n  gap: 35px;\n  padding: 30px 0;\n  flex-wrap: wrap;\n}\n.ld-review-stats > div {\n  display: flex;\n  flex-direction: column;\n}\n.ld-review-stats strong {\n  font-size: 30px;\n  font-weight: 450;\n}\n.ld-review-stats span {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-review-text {\n  min-height: 240px;\n  margin: 7px 0 15px;\n  line-height: 1.8;\n}\n.ld-log {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 15px;\n  padding: 12px 0;\n  border-bottom: 1px solid var(--ld-line);\n  font-size: 12px;\n}\n.ld-footer {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  font-size: 10px;\n  color: var(--ld-muted);\n  margin-top: 45px;\n}\n.ld-footer button {\n  font-size: 10px;\n  text-decoration: underline;\n}\n.ld-status {\n  font-size: 12px;\n  padding: 8px 10px;\n  background: var(--dsw-alias-bg-layer-1);\n  color: var(--dsw-alias-state-success-primary);\n  margin-bottom: 15px;\n  border-radius: 6px;\n  display: flex;\n  gap: 15px;\n  align-items: center;\n}\n.ld-status button {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-error {\n  color: var(--dsw-alias-state-error-primary);\n  font-size: 12px;\n  padding: 12px 0;\n}\n.ld-loading {\n  padding: 48px;\n}\n.ld-dialog {\n  padding: 24px;\n  border: 1px solid var(--ld-line);\n  border-radius: 14px;\n  background: var(--ld-base);\n  color: var(--ld-ink);\n  width: min(650px, calc(100% - 30px));\n  max-height: 85vh;\n  overflow: auto;\n  box-shadow: 0 15px 70px color-mix(in srgb, var(--ld-ink) 12%, transparent);\n}\n.ld-dialog::backdrop {\n  background: color-mix(\n    in srgb,\n    var(--dsw-alias-label-primary) 20%,\n    transparent\n  );\n}\n.ld-dialog > header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 22px;\n}\n.ld-dialog h2 {\n  font-size: 18px;\n}\n.ld-dialog h3 {\n  margin: 22px 0 10px;\n}\n.ld-dialog p {\n  margin: 10px 0;\n}\n.ld-form {\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 17px;\n}\n.ld-field {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n  font-size: 12px;\n}\n.ld-field > span {\n  color: var(--ld-muted);\n}\n.ld-field input,\n.ld-field select {\n  width: 100%;\n}\n.ld-wide {\n  grid-column: 1/-1;\n}\n.ld-check-label {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 12px;\n  min-height: 30px;\n}\n.ld-modal-footer {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 15px;\n  margin-top: 25px;\n  padding-top: 18px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-days {\n  display: flex;\n  gap: 6px;\n  flex-wrap: wrap;\n  align-items: center;\n}\n.ld-days button {\n  width: auto;\n  min-width: 32px;\n  height: 32px;\n  padding: 0 10px;\n  border: 1px solid var(--ld-line);\n  border-radius: 16px;\n  white-space: nowrap;\n  line-height: 1;\n  font-size: 12px;\n}\n.ld-days button[aria-pressed="true"] {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent);\n  background: color-mix(in srgb, var(--ld-accent) 10%, transparent);\n}\n.ld-scope {\n  padding: 12px;\n  background: var(--dsw-alias-bg-layer-1);\n  border-radius: 8px;\n  margin-bottom: 20px;\n}\n.ld-file {\n  position: relative;\n  overflow: hidden;\n}\n.ld-file input {\n  position: absolute;\n  inset: 0;\n  opacity: 0;\n  cursor: pointer;\n  width: 100%;\n}\n.ld-restore {\n  margin-top: 20px;\n  padding: 15px;\n  border: 1px solid var(--ld-line);\n  border-radius: 8px;\n}\n.ld-global-timer {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  font-size: 11px !important;\n  font-variant-numeric: tabular-nums;\n  color: var(--ld-accent) !important;\n  padding: 4px;\n}\n.ld-global-notice {\n  position: fixed;\n  right: 24px;\n  bottom: 24px;\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  max-width: min(440px, 90vw);\n  background: var(--ld-surface);\n  padding: 14px 18px;\n  border: 1px solid var(--ld-line);\n  border-radius: 10px;\n  box-shadow: 0 8px 30px color-mix(in srgb, var(--ld-ink) 10%, transparent);\n  font-size: 12px;\n  pointer-events: auto;\n  z-index: 1000;\n}\n.ld-root .fc {\n  --fc-border-color: var(--ld-line);\n  --fc-page-bg-color: var(--ld-base);\n  --fc-neutral-bg-color: var(--dsw-alias-bg-layer-1);\n  --fc-neutral-text-color: var(--ld-muted);\n  --fc-button-text-color: var(--ld-ink);\n  --fc-button-bg-color: var(--ld-surface);\n  --fc-button-border-color: var(--ld-line);\n  --fc-button-hover-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-button-hover-border-color: var(--ld-line);\n  --fc-button-active-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-button-active-border-color: var(--ld-accent);\n  --fc-event-bg-color: color-mix(in srgb, var(--ld-accent) 12%, var(--ld-base));\n  --fc-event-border-color: color-mix(\n    in srgb,\n    var(--ld-accent) 25%,\n    var(--ld-line)\n  );\n  --fc-event-text-color: var(--ld-ink);\n  --fc-today-bg-color: color-mix(in srgb, var(--ld-accent) 5%, transparent);\n  --fc-now-indicator-color: var(--ld-accent);\n  font-size: 12px;\n  margin-top: 18px;\n}\n.ld-root .fc .fc-toolbar-title {\n  font-size: 17px;\n  font-weight: 550;\n}\n.ld-root .fc .fc-button {\n  font-size: 12px;\n  border: 1px solid var(--ld-line);\n  padding: 5px 9px;\n}\n.ld-root .fc .fc-daygrid-day-number {\n  padding: 8px;\n}\n.ld-root .fc .fc-col-header-cell-cushion {\n  padding: 9px 0;\n  font-weight: 500;\n  color: var(--ld-muted);\n}\n.ld-root .fc-event {\n  border-radius: 4px;\n  padding: 2px 4px;\n}\n.ld-root .fc-event-done {\n  opacity: 0.5;\n  text-decoration: line-through;\n}\n.ld-root .ld-event-habit {\n  --fc-event-border-color: var(--ld-line);\n  --fc-event-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-event-text-color: var(--ld-muted);\n}\n@container life-desk (max-width:1050px) {\n  .ld-today-grid {\n    grid-template-columns: minmax(0, 1fr) 210px;\n    gap: 25px;\n  }\n  .ld-support {\n    padding-left: 22px;\n  }\n  .ld-shell {\n    grid-template-columns: 160px minmax(0, 1fr);\n  }\n  .ld-workspace {\n    --ld-page-inline: 25px;\n  }\n  .ld-search input {\n    width: 150px;\n  }\n}\n@container life-desk (max-width:820px) {\n  .ld-shell {\n    grid-template-columns: 60px minmax(0, 1fr);\n  }\n  .ld-nav {\n    padding-inline: 8px;\n  }\n  .ld-nav button > span,\n  .ld-brand > span,\n  .ld-nav-project,\n  .ld-nav-bottom button,\n  .ld-nav-add {\n    font-size: 0 !important;\n  }\n  .ld-nav button {\n    gap: 0;\n    justify-content: center;\n  }\n  .ld-nav .ld-nav-project {\n    display: none;\n  }\n  .ld-brand {\n    padding-inline: 8px;\n  }\n  .ld-nav-add svg,\n  .ld-nav-bottom svg {\n    width: 20px;\n  }\n  .ld-today-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n  .ld-support {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 25px;\n    border-left: 0;\n    border-top: 1px solid var(--ld-line);\n    padding: 25px 0 0;\n  }\n  .ld-support > .ld-section:last-child {\n    grid-column: 1/-1;\n  }\n  .ld-board {\n    grid-template-columns: 1fr;\n  }\n  .ld-day-nav {\n    width: 100%;\n  }\n}\n@container life-desk (max-width:530px) {\n  .ld-workspace {\n    --ld-page-inline: 16px;\n  }\n  .ld-content {\n    padding: 22px var(--ld-page-inline);\n  }\n  .ld-page-top {\n    padding-top: 16px;\n    padding-bottom: 12px;\n    flex-wrap: wrap;\n    gap: 10px;\n  }\n  .ld-page-top .ld-mood {\n    max-width: 88px;\n  }\n  .ld-search {\n    width: 100%;\n  }\n  .ld-search input {\n    width: 100%;\n  }\n  .ld-support {\n    grid-template-columns: 1fr;\n  }\n  .ld-root h1 {\n    font-size: 26px;\n  }\n  .ld-task-tools {\n    opacity: 1;\n  }\n  .ld-task-tools .ld-icon-btn:first-child {\n    display: none;\n  }\n}\n@media (max-width: 550px) {\n  .ld-form {\n    grid-template-columns: 1fr;\n  }\n  .ld-modal-footer {\n    align-items: flex-start;\n    flex-direction: column;\n  }\n  .ld-dialog {\n    padding: 18px;\n  }\n}\n@media (prefers-reduced-motion: reduce) {\n  .ld-root * {\n    animation: none !important;\n    transition: none !important;\n  }\n}\n\n/* Phase 2A: version visibility. Read-only discovery, never installs anything. */\n.ld-update {\n  margin-top: 34px;\n  padding-top: 24px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-update-meta {\n  display: grid;\n  grid-template-columns: max-content minmax(0, 1fr);\n  gap: 7px 20px;\n  font-size: 12px;\n}\n.ld-update-meta > span {\n  color: var(--ld-muted);\n}\n.ld-update-meta strong {\n  font-weight: 500;\n  overflow-wrap: anywhere;\n}\n.ld-update-ok {\n  margin-top: 12px;\n  font-size: 12px;\n  color: var(--dsw-alias-state-success-primary);\n}\n.ld-update-card {\n  margin-top: 14px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  padding: 14px;\n  background: var(--ld-surface);\n  display: grid;\n  gap: 9px;\n}\n.ld-update-card .ld-actions {\n  flex-wrap: wrap;\n}\n.ld-update-toggle {\n  justify-self: start;\n  font-size: 11px;\n  color: var(--ld-muted);\n  padding: 2px 0;\n}\n.ld-release-notes {\n  margin: 0;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  font: 11px/1.7 var(--dsh-font-family-code-default, ui-monospace, monospace);\n  background: var(--dsw-alias-bg-layer-2);\n  border-radius: 7px;\n  padding: 10px 12px;\n  max-height: 220px;\n  overflow: auto;\n  color: var(--ld-muted);\n}\n.ld-update-badge {\n  font-size: 10px;\n  color: var(--ld-accent);\n  text-decoration: none !important;\n  border: 1px solid color-mix(in srgb, var(--ld-accent) 40%, var(--ld-line));\n  border-radius: 20px;\n  padding: 1px 8px;\n}\n.ld-root a.ld-btn {\n  color: inherit;\n}\n.ld-snapshot-row {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  align-items: center;\n  gap: 2px 12px;\n  padding: 9px 0;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-snapshot-row:first-of-type {\n  border-top: 0;\n}\n.ld-snapshot-row > span {\n  font-size: 12px;\n  overflow-wrap: anywhere;\n}\n.ld-snapshot-row > small {\n  grid-column: 1;\n  color: var(--ld-muted);\n  font-size: 10px;\n}\n.ld-snapshot-row > .ld-btn {\n  grid-row: 1 / span 2;\n  grid-column: 2;\n}\n.ld-template-list {\n  display: grid;\n  gap: 0;\n  margin: 14px 0;\n}\n.ld-template {\n  display: grid;\n  gap: 4px;\n  text-align: left;\n  padding: 12px 0;\n  border-bottom: 1px solid var(--ld-line);\n}\n.ld-template-title {\n  font-size: 13px;\n}\n.ld-template-note {\n  font-size: 11px;\n  color: var(--ld-muted);\n  line-height: 1.6;\n}\n.ld-completion {\n  border: 0;\n  padding: 0;\n  margin: 4px 0 0;\n  display: grid;\n  gap: 7px;\n}\n.ld-completion legend {\n  font-size: 11px;\n  color: var(--ld-muted);\n  padding: 0;\n  margin-bottom: 4px;\n}\n.ld-fold-toggle {\n  display: inline-flex;\n  align-items: center;\n  gap: 7px;\n  font: inherit;\n  color: inherit;\n  font-weight: inherit;\n  padding: 0;\n  text-align: left;\n}\n.ld-fold-chevron {\n  display: inline-flex;\n  color: var(--ld-muted);\n  transition: transform 0.15s ease;\n}\n.ld-fold-toggle[aria-expanded="true"] .ld-fold-chevron {\n  transform: rotate(90deg);\n}\n.ld-fold-count {\n  margin-left: auto;\n  font-size: 11px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n@media (prefers-reduced-motion: reduce) {\n  .ld-fold-chevron {\n    transition: none;\n  }\n}\n.ld-review-prompts {\n  margin: 8px 0 10px;\n  padding-left: 18px;\n  color: var(--ld-muted);\n  font-size: 12px;\n  line-height: 1.8;\n}\n.ld-review-date {\n  margin-bottom: 12px;\n  flex-wrap: wrap;\n}\n';
+var style_default = '/* All surfaces inherit the active DSH theme. Mood accents derive from its semantic palette. */\n.ld-root {\n  --ld-accent: var(--dsw-alias-brand-primary);\n  --ld-ink: var(--dsw-alias-label-primary);\n  --ld-muted: var(--dsw-alias-label-secondary);\n  --ld-base: var(--dsw-alias-bg-base);\n  --ld-surface: var(--dsw-alias-bg-layer-1);\n  --ld-line: var(--dsw-alias-border-l1);\n  color: var(--ld-ink);\n  font:\n    14px/1.65 -apple-system,\n    BlinkMacSystemFont,\n    "Segoe UI",\n    "Microsoft YaHei",\n    sans-serif;\n  min-height: 0;\n}\n.ld-root.ld-bright {\n  --ld-accent: var(--dsw-alias-state-warn-primary);\n}\n.ld-root.ld-focus {\n  --ld-accent: var(--dsw-alias-brand-primary);\n}\n.ld-root.ld-calm {\n  --ld-accent: var(--dsw-alias-state-success-primary);\n}\n.ld-root * {\n  box-sizing: border-box;\n}\n.ld-shell {\n  display: grid;\n  grid-template-columns: 188px minmax(0, 1fr);\n  height: 100%;\n  min-height: 0;\n  background: var(--ld-base);\n}\n.ld-root:has(> .ld-shell) {\n  height: 100%;\n  overflow: hidden;\n  container: life-desk / inline-size;\n}\n.ld-shell.ld-collapsed {\n  grid-template-columns: 66px minmax(0, 1fr);\n}\n.ld-root button,\n.ld-root input,\n.ld-root select,\n.ld-root textarea {\n  font: inherit;\n  color: inherit;\n}\n.ld-root button {\n  cursor: pointer;\n}\n.ld-root button:disabled {\n  opacity: 0.45;\n  cursor: default;\n}\n.ld-root button {\n  border: 0;\n  background: transparent;\n}\n.ld-root input,\n.ld-root select,\n.ld-root textarea {\n  background: var(--ld-surface);\n  border: 1px solid var(--ld-line);\n  border-radius: 7px;\n  padding: 8px 10px;\n  min-width: 0;\n  max-width: 100%;\n}\n.ld-root textarea {\n  resize: vertical;\n  width: 100%;\n}\n.ld-root input[type="checkbox"] {\n  accent-color: var(--ld-accent);\n  width: 16px;\n  height: 16px;\n}\n.ld-root :focus-visible {\n  outline: 2px solid var(--ld-accent);\n  outline-offset: 3px;\n}\n.ld-root h1,\n.ld-root h2,\n.ld-root h3,\n.ld-root p {\n  margin: 0;\n}\n.ld-root h1 {\n  font-size: 30px;\n  line-height: 1.3;\n  font-weight: 650;\n  letter-spacing: -0.8px;\n}\n.ld-root h2 {\n  font-size: 15px;\n  font-weight: 600;\n  letter-spacing: 0.1px;\n}\n.ld-root h3 {\n  font-size: 14px;\n  font-weight: 600;\n}\n.ld-root p + p {\n  margin-top: 10px;\n}\n.ld-root svg {\n  flex-shrink: 0;\n  vertical-align: middle;\n}\n.ld-root strong {\n  font-weight: 600;\n}\n.ld-nav {\n  background: color-mix(\n    in srgb,\n    var(--dsw-alias-bg-layer-2) 60%,\n    var(--ld-base)\n  );\n  padding: 30px 14px 18px;\n  display: flex;\n  flex-direction: column;\n  gap: 5px;\n  overflow: auto;\n  border-right: 1px solid var(--ld-line);\n}\n.ld-brand {\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  font-size: 14px;\n  font-weight: 650;\n  padding: 3px 7px 26px;\n  white-space: nowrap;\n}\n.ld-nav button {\n  display: flex;\n  align-items: center;\n  gap: 11px;\n  width: 100%;\n  text-align: left;\n  min-height: 38px;\n  padding: 8px 10px;\n  border-radius: 7px;\n  color: var(--ld-muted);\n}\n.ld-nav button:hover,\n.ld-nav button.selected {\n  background: var(--dsw-alias-bg-layer-2);\n  color: var(--ld-ink);\n}\n.ld-nav button.selected svg {\n  color: var(--ld-accent);\n}\n.ld-nav .ld-nav-add {\n  color: var(--ld-ink);\n  border: 1px solid var(--ld-line);\n  background: var(--ld-surface);\n  margin-bottom: 18px;\n}\n.ld-nav-items {\n  display: grid;\n  gap: 3px;\n}\n.ld-nav .ld-nav-project {\n  padding-left: 13px;\n  font-size: 12px;\n  min-height: 31px;\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n}\n.ld-project-bullet {\n  height: 5px;\n  width: 5px;\n  flex: none;\n  border-radius: 50%;\n  background: var(--ld-muted);\n  margin: 0 7px;\n}\n.ld-nav-bottom {\n  margin-top: auto;\n  padding-top: 35px;\n}\n.ld-nav-bottom button {\n  font-size: 12px;\n}\n/* The toolbar is a separate grid row, outside the only page scroller. */\n.ld-workspace {\n  --ld-page-inline: clamp(22px, 3vw, 48px);\n  display: grid;\n  grid-template-rows: auto minmax(0, 1fr);\n  min-width: 0;\n  min-height: 0;\n  height: 100%;\n}\n.ld-content {\n  padding: 26px var(--ld-page-inline) 26px;\n  overflow: auto;\n  min-height: 0;\n}\n.ld-page-top {\n  display: flex;\n  justify-content: space-between;\n  gap: 18px;\n  align-items: center;\n  margin: 0;\n  min-width: 0;\n  padding: 20px var(--ld-page-inline) 16px;\n  background: var(--ld-base);\n  border-bottom: 1px solid var(--ld-line);\n  position: relative;\n  z-index: 20;\n}\n.ld-page-top,\n.ld-page-top * {\n  -webkit-app-region: no-drag;\n  app-region: no-drag;\n}\n.ld-page-top > .ld-actions {\n  margin-left: auto;\n  flex-shrink: 0;\n  max-width: 100%;\n}\n.ld-page-top .ld-btn {\n  flex-shrink: 0;\n  white-space: nowrap;\n}\n.ld-search {\n  flex: 1;\n  display: flex;\n  align-items: center;\n  gap: 9px;\n  min-width: 100px;\n  color: var(--ld-muted);\n}\n.ld-search input {\n  border: 0;\n  background: transparent;\n  width: 230px;\n  font-size: 12px;\n  padding: 5px 0;\n}\n.ld-mood {\n  max-width: 112px;\n  font-size: 12px !important;\n  border-color: transparent !important;\n  background: transparent !important;\n}\n.ld-page-heading {\n  display: flex;\n  align-items: flex-end;\n  justify-content: space-between;\n  gap: 15px;\n  margin-bottom: 35px;\n  flex-wrap: wrap;\n}\n.ld-eyebrow {\n  font-size: 12px;\n  color: var(--ld-muted);\n  letter-spacing: 0.5px;\n  margin-bottom: 8px;\n}\n.ld-day-nav {\n  display: flex;\n  align-items: center;\n  gap: 3px;\n  font-size: 12px;\n}\n.ld-day-nav > button {\n  padding: 3px 7px;\n  font-size: 20px;\n  color: var(--ld-muted);\n}\n.ld-day-nav input {\n  padding: 3px 5px;\n  font-size: 11px;\n  background: transparent;\n  border-color: transparent;\n  width: 115px;\n}\n.ld-day-nav .ld-btn {\n  font-size: 12px;\n}\n.ld-today-grid {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) 248px;\n  gap: 40px;\n}\n.ld-main-col {\n  min-width: 0;\n}\n.ld-support {\n  min-width: 0;\n  border-left: 1px solid var(--ld-line);\n  padding-left: 28px;\n}\n.ld-section {\n  margin: 0 0 34px;\n}\n.ld-section-heading,\n.ld-section-title {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  margin-bottom: 14px;\n}\n.ld-section-title {\n  justify-content: flex-start;\n  font-size: 13px;\n  color: var(--ld-muted);\n}\n.ld-section > h2 {\n  margin-bottom: 16px;\n}\n.ld-help,\n.ld-muted {\n  color: var(--ld-muted);\n}\n.ld-help {\n  font-size: 11px;\n  line-height: 1.7;\n}\n.ld-empty {\n  padding: 18px 0;\n  color: var(--ld-muted);\n  font-size: 12px;\n}\n.ld-task {\n  display: flex;\n  align-items: flex-start;\n  gap: 11px;\n  min-height: 55px;\n  padding: 10px 0;\n}\n.ld-task + .ld-task {\n  border-top: 1px solid color-mix(in srgb, var(--ld-line) 55%, transparent);\n}\n.ld-check {\n  width: 18px;\n  height: 18px;\n  border: 1.3px solid var(--dsw-alias-border-l2) !important;\n  border-radius: 5px;\n  margin-top: 4px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 0;\n  flex: none;\n}\n.ld-task-done .ld-check {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent) !important;\n}\n.ld-task-done .ld-task-title {\n  text-decoration: line-through;\n  color: var(--ld-muted);\n}\n.ld-task-body {\n  flex: 1;\n  min-width: 0;\n  text-align: left;\n  padding: 0;\n  display: flex;\n  flex-direction: column;\n  gap: 3px;\n}\n.ld-task-title {\n  font-size: 14px;\n  overflow-wrap: anywhere;\n}\n.ld-task-meta {\n  font-size: 11px;\n  color: var(--ld-muted);\n  overflow-wrap: anywhere;\n}\n.ld-task-tools {\n  display: flex;\n  align-items: center;\n  flex: none;\n  opacity: 0.35;\n}\n.ld-task:hover .ld-task-tools,\n.ld-task:focus-within .ld-task-tools {\n  opacity: 1;\n}\n.ld-icon-btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 28px;\n  height: 28px;\n  border-radius: 6px;\n  padding: 0;\n  color: var(--ld-muted) !important;\n}\n.ld-icon-btn:hover {\n  background: var(--dsw-alias-bg-layer-2);\n}\n.ld-star {\n  color: var(--ld-accent);\n}\n.ld-event-dot {\n  padding-top: 4px;\n  color: var(--ld-muted);\n}\n.ld-btn {\n  display: inline-flex;\n  justify-content: center;\n  align-items: center;\n  gap: 6px;\n  font-size: 12px !important;\n  padding: 7px 11px;\n  min-height: 32px;\n  border: 1px solid var(--ld-line) !important;\n  border-radius: 7px;\n  line-height: 1.4;\n  background: var(--ld-surface) !important;\n  text-decoration: none;\n  cursor: pointer;\n}\n.ld-btn:hover {\n  background: var(--dsw-alias-bg-layer-2) !important;\n}\n.ld-btn.ld-primary {\n  background: color-mix(\n    in srgb,\n    var(--ld-accent) 12%,\n    var(--ld-base)\n  ) !important;\n  border-color: color-mix(\n    in srgb,\n    var(--ld-accent) 35%,\n    var(--ld-line)\n  ) !important;\n  color: var(--ld-accent);\n}\n.ld-btn[aria-pressed="true"] {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent) !important;\n}\n.ld-actions {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  flex-wrap: wrap;\n}\n.ld-toolbar {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  margin-bottom: 20px;\n}\n.ld-details {\n  border-top: 1px solid var(--ld-line);\n  padding: 14px 0;\n  color: var(--ld-muted);\n  font-size: 12px;\n}\n.ld-details summary {\n  cursor: pointer;\n}\n.ld-details .ld-task-list {\n  color: var(--ld-ink);\n  margin-top: 12px;\n}\n.ld-welcome {\n  padding: 5px 0 30px;\n}\n.ld-welcome > svg {\n  color: var(--ld-accent);\n  margin-bottom: 12px;\n}\n.ld-welcome h2 {\n  font-size: 19px;\n  margin-bottom: 9px;\n}\n.ld-welcome p {\n  color: var(--ld-muted);\n  font-size: 12px;\n  margin-bottom: 18px;\n}\n.ld-focus-card {\n  padding-bottom: 27px;\n  margin-bottom: 24px;\n  border-bottom: 1px solid var(--ld-line);\n}\n.ld-timer-title {\n  font-size: 12px;\n  color: var(--ld-muted);\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.ld-time {\n  font-size: 49px;\n  font-weight: 350;\n  letter-spacing: -2px;\n  line-height: 1.5;\n  font-variant-numeric: tabular-nums;\n  margin: 8px 0;\n}\n.ld-progress {\n  height: 3px;\n  background: var(--dsw-alias-bg-layer-2);\n  border-radius: 3px;\n  margin: 0 0 22px;\n  overflow: hidden;\n}\n.ld-progress i {\n  display: block;\n  height: 100%;\n  background: var(--ld-accent);\n}\n.ld-timer-end {\n  margin-top: 15px;\n}\n.ld-timer-end .ld-field {\n  margin: 10px 0;\n}\n.ld-habit {\n  padding: 9px 0;\n}\n.ld-habit + .ld-habit {\n  border-top: 1px solid var(--ld-line);\n}\n.ld-habit-main {\n  display: flex;\n  gap: 12px;\n  align-items: center;\n}\n/* Keep habit metadata beside the title, retaining its existing 11px type. */\n.ld-habit-main > .ld-task-body {\n  flex-direction: row;\n  flex-wrap: wrap;\n  align-items: baseline;\n  column-gap: 10px;\n  row-gap: 2px;\n}\n.ld-habit-main > .ld-task-body > .ld-task-title,\n.ld-habit-main > .ld-task-body > .ld-task-meta {\n  flex: 0 1 auto;\n  min-width: 0;\n  max-width: 100%;\n}\n.ld-habit-list-full .ld-habit {\n  padding: 8px 0;\n}\n.ld-habit-list-full .ld-week-dots {\n  margin: 6px 0 0;\n  gap: 6px;\n}\n.ld-habit-period {\n  margin-left: 6px;\n  font-size: 10px;\n  color: var(--ld-muted);\n}\n.ld-habit-check {\n  border: 1px solid var(--ld-line) !important;\n  width: 28px;\n  height: 28px;\n  border-radius: 50%;\n  color: var(--ld-muted) !important;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex: none;\n}\n.ld-habit-check.checked {\n  color: var(--ld-accent) !important;\n  background: color-mix(in srgb, var(--ld-accent) 10%, transparent);\n}\n.ld-week-dots {\n  display: flex;\n  gap: 8px;\n  align-items: center;\n  margin: 12px 0;\n  flex-wrap: wrap;\n}\n.ld-week-dots > button:not(.ld-btn) {\n  min-width: 28px;\n  height: 28px;\n  border-radius: 50%;\n  font-size: 11px;\n  background: var(--dsw-alias-bg-layer-2);\n}\n.ld-week-dots > button.checked {\n  color: var(--ld-accent);\n}\n.ld-upcoming {\n  display: flex;\n  flex-direction: column;\n  gap: 3px;\n  text-align: left;\n  width: 100%;\n  padding: 8px 0;\n}\n.ld-upcoming strong {\n  font-size: 12px;\n}\n.ld-upcoming span {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-project-row {\n  display: flex;\n  align-items: center;\n  gap: 13px;\n  width: 100%;\n  padding: 17px 0;\n  text-align: left;\n  border-bottom: 1px solid var(--ld-line) !important;\n}\n.ld-project-row > span:first-of-type {\n  display: flex;\n  flex: 1;\n  flex-direction: column;\n}\n.ld-project-row small {\n  font-size: 11px;\n  color: var(--ld-muted);\n  margin-top: 3px;\n}\n.ld-project-goal {\n  white-space: pre-wrap;\n  color: var(--ld-muted);\n  margin: 0 0 25px !important;\n}\n.ld-board {\n  display: grid;\n  grid-template-columns: repeat(3, minmax(0, 1fr));\n  gap: 20px;\n  margin-top: 24px;\n  overflow: auto;\n}\n.ld-board > section {\n  min-width: 160px;\n  padding: 14px;\n  background: var(--dsw-alias-bg-layer-1);\n  border-radius: 8px;\n}\n.ld-board .ld-task {\n  flex-wrap: wrap;\n}\n.ld-board .ld-task-tools {\n  margin-left: auto;\n}\n.ld-review-stats {\n  display: flex;\n  gap: 35px;\n  padding: 30px 0;\n  flex-wrap: wrap;\n}\n.ld-review-stats > div {\n  display: flex;\n  flex-direction: column;\n}\n.ld-review-stats strong {\n  font-size: 30px;\n  font-weight: 450;\n}\n.ld-review-stats span {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-review-text {\n  min-height: 240px;\n  margin: 7px 0 15px;\n  line-height: 1.8;\n}\n.ld-log {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 15px;\n  padding: 12px 0;\n  border-bottom: 1px solid var(--ld-line);\n  font-size: 12px;\n}\n.ld-footer {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  font-size: 10px;\n  color: var(--ld-muted);\n  margin-top: 45px;\n}\n.ld-footer button {\n  font-size: 10px;\n  text-decoration: underline;\n}\n.ld-status {\n  font-size: 12px;\n  padding: 8px 10px;\n  background: var(--dsw-alias-bg-layer-1);\n  color: var(--dsw-alias-state-success-primary);\n  margin-bottom: 15px;\n  border-radius: 6px;\n  display: flex;\n  gap: 15px;\n  align-items: center;\n}\n.ld-status button {\n  font-size: 11px;\n  color: var(--ld-muted);\n}\n.ld-error {\n  color: var(--dsw-alias-state-error-primary);\n  font-size: 12px;\n  padding: 12px 0;\n}\n.ld-loading {\n  padding: 48px;\n}\n.ld-dialog {\n  padding: 24px;\n  border: 1px solid var(--ld-line);\n  border-radius: 14px;\n  background: var(--ld-base);\n  color: var(--ld-ink);\n  width: min(650px, calc(100% - 30px));\n  max-height: 85vh;\n  overflow: auto;\n  box-shadow: 0 15px 70px color-mix(in srgb, var(--ld-ink) 12%, transparent);\n}\n.ld-dialog::backdrop {\n  background: color-mix(\n    in srgb,\n    var(--dsw-alias-label-primary) 20%,\n    transparent\n  );\n}\n.ld-dialog > header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 22px;\n}\n.ld-dialog h2 {\n  font-size: 18px;\n}\n.ld-dialog h3 {\n  margin: 22px 0 10px;\n}\n.ld-dialog p {\n  margin: 10px 0;\n}\n.ld-form {\n  display: grid;\n  grid-template-columns: repeat(2, minmax(0, 1fr));\n  gap: 17px;\n}\n.ld-field {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n  font-size: 12px;\n}\n.ld-field > span {\n  color: var(--ld-muted);\n}\n.ld-field input,\n.ld-field select {\n  width: 100%;\n}\n.ld-wide {\n  grid-column: 1/-1;\n}\n.ld-check-label {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  font-size: 12px;\n  min-height: 30px;\n}\n.ld-modal-footer {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 15px;\n  margin-top: 25px;\n  padding-top: 18px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-days {\n  display: flex;\n  gap: 6px;\n  flex-wrap: wrap;\n  align-items: center;\n}\n.ld-days button {\n  width: auto;\n  min-width: 32px;\n  height: 32px;\n  padding: 0 10px;\n  border: 1px solid var(--ld-line);\n  border-radius: 16px;\n  white-space: nowrap;\n  line-height: 1;\n  font-size: 12px;\n}\n.ld-days button[aria-pressed="true"] {\n  color: var(--ld-accent);\n  border-color: var(--ld-accent);\n  background: color-mix(in srgb, var(--ld-accent) 10%, transparent);\n}\n.ld-scope {\n  padding: 12px;\n  background: var(--dsw-alias-bg-layer-1);\n  border-radius: 8px;\n  margin-bottom: 20px;\n}\n.ld-file {\n  position: relative;\n  overflow: hidden;\n}\n.ld-file input {\n  position: absolute;\n  inset: 0;\n  opacity: 0;\n  cursor: pointer;\n  width: 100%;\n}\n.ld-restore {\n  margin-top: 20px;\n  padding: 15px;\n  border: 1px solid var(--ld-line);\n  border-radius: 8px;\n}\n.ld-global-timer {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  font-size: 11px !important;\n  font-variant-numeric: tabular-nums;\n  color: var(--ld-accent) !important;\n  padding: 4px;\n}\n.ld-global-notice {\n  position: fixed;\n  right: 24px;\n  bottom: 24px;\n  display: flex;\n  align-items: center;\n  gap: 12px;\n  max-width: min(440px, 90vw);\n  background: var(--ld-surface);\n  padding: 14px 18px;\n  border: 1px solid var(--ld-line);\n  border-radius: 10px;\n  box-shadow: 0 8px 30px color-mix(in srgb, var(--ld-ink) 10%, transparent);\n  font-size: 12px;\n  pointer-events: auto;\n  z-index: 1000;\n}\n.ld-root .fc {\n  --fc-border-color: var(--ld-line);\n  --fc-page-bg-color: var(--ld-base);\n  --fc-neutral-bg-color: var(--dsw-alias-bg-layer-1);\n  --fc-neutral-text-color: var(--ld-muted);\n  --fc-button-text-color: var(--ld-ink);\n  --fc-button-bg-color: var(--ld-surface);\n  --fc-button-border-color: var(--ld-line);\n  --fc-button-hover-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-button-hover-border-color: var(--ld-line);\n  --fc-button-active-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-button-active-border-color: var(--ld-accent);\n  --fc-event-bg-color: color-mix(in srgb, var(--ld-accent) 12%, var(--ld-base));\n  --fc-event-border-color: color-mix(\n    in srgb,\n    var(--ld-accent) 25%,\n    var(--ld-line)\n  );\n  --fc-event-text-color: var(--ld-ink);\n  --fc-today-bg-color: color-mix(in srgb, var(--ld-accent) 5%, transparent);\n  --fc-now-indicator-color: var(--ld-accent);\n  font-size: 12px;\n  margin-top: 18px;\n}\n.ld-root .fc .fc-toolbar-title {\n  font-size: 17px;\n  font-weight: 550;\n}\n.ld-root .fc .fc-button {\n  font-size: 12px;\n  border: 1px solid var(--ld-line);\n  padding: 5px 9px;\n}\n.ld-root .fc .fc-daygrid-day-number {\n  padding: 8px;\n}\n.ld-root .fc .fc-col-header-cell-cushion {\n  padding: 9px 0;\n  font-weight: 500;\n  color: var(--ld-muted);\n}\n.ld-root .fc-event {\n  border-radius: 4px;\n  padding: 2px 4px;\n}\n.ld-root .fc .ld-event-done {\n  --fc-event-bg-color: color-mix(in srgb, var(--ld-accent) 4%, var(--ld-base));\n  --fc-event-border-color: var(--ld-line);\n  --fc-event-text-color: var(--ld-muted);\n  background-color: var(--fc-event-bg-color);\n  border-color: var(--ld-line);\n  color: var(--ld-muted);\n  font-weight: 400;\n  text-decoration: none;\n}\n.ld-root .ld-event-habit {\n  --fc-event-border-color: var(--ld-line);\n  --fc-event-bg-color: var(--dsw-alias-bg-layer-2);\n  --fc-event-text-color: var(--ld-muted);\n}\n@container life-desk (max-width:1050px) {\n  .ld-today-grid {\n    grid-template-columns: minmax(0, 1fr) 210px;\n    gap: 25px;\n  }\n  .ld-support {\n    padding-left: 22px;\n  }\n  .ld-shell {\n    grid-template-columns: 160px minmax(0, 1fr);\n  }\n  .ld-workspace {\n    --ld-page-inline: 25px;\n  }\n  .ld-search input {\n    width: 150px;\n  }\n}\n@container life-desk (max-width:820px) {\n  .ld-shell {\n    grid-template-columns: 60px minmax(0, 1fr);\n  }\n  .ld-nav {\n    padding-inline: 8px;\n  }\n  .ld-nav button > span,\n  .ld-brand > span,\n  .ld-nav-project,\n  .ld-nav-bottom button,\n  .ld-nav-add {\n    font-size: 0 !important;\n  }\n  .ld-nav button {\n    gap: 0;\n    justify-content: center;\n  }\n  .ld-nav .ld-nav-project {\n    display: none;\n  }\n  .ld-brand {\n    padding-inline: 8px;\n  }\n  .ld-nav-add svg,\n  .ld-nav-bottom svg {\n    width: 20px;\n  }\n  .ld-today-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n  .ld-support {\n    display: grid;\n    grid-template-columns: 1fr 1fr;\n    gap: 25px;\n    border-left: 0;\n    border-top: 1px solid var(--ld-line);\n    padding: 25px 0 0;\n  }\n  .ld-support > .ld-section:last-child {\n    grid-column: 1/-1;\n  }\n  .ld-board {\n    grid-template-columns: 1fr;\n  }\n  .ld-day-nav {\n    width: 100%;\n  }\n}\n@container life-desk (max-width:530px) {\n  .ld-workspace {\n    --ld-page-inline: 16px;\n  }\n  .ld-content {\n    padding: 22px var(--ld-page-inline);\n  }\n  .ld-page-top {\n    padding-top: 16px;\n    padding-bottom: 12px;\n    flex-wrap: wrap;\n    gap: 10px;\n  }\n  .ld-page-top .ld-mood {\n    max-width: 88px;\n  }\n  .ld-search {\n    width: 100%;\n  }\n  .ld-search input {\n    width: 100%;\n  }\n  .ld-support {\n    grid-template-columns: 1fr;\n  }\n  .ld-root h1 {\n    font-size: 26px;\n  }\n  .ld-task-tools {\n    opacity: 1;\n  }\n  .ld-task-tools .ld-icon-btn:first-child {\n    display: none;\n  }\n}\n@media (max-width: 550px) {\n  .ld-form {\n    grid-template-columns: 1fr;\n  }\n  .ld-modal-footer {\n    align-items: flex-start;\n    flex-direction: column;\n  }\n  .ld-dialog {\n    padding: 18px;\n  }\n}\n@media (prefers-reduced-motion: reduce) {\n  .ld-root * {\n    animation: none !important;\n    transition: none !important;\n  }\n}\n\n/* Phase 2A: version visibility. Read-only discovery, never installs anything. */\n.ld-update {\n  margin-top: 34px;\n  padding-top: 24px;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-update-meta {\n  display: grid;\n  grid-template-columns: max-content minmax(0, 1fr);\n  gap: 7px 20px;\n  font-size: 12px;\n}\n.ld-update-meta > span {\n  color: var(--ld-muted);\n}\n.ld-update-meta strong {\n  font-weight: 500;\n  overflow-wrap: anywhere;\n}\n.ld-update-ok {\n  margin-top: 12px;\n  font-size: 12px;\n  color: var(--dsw-alias-state-success-primary);\n}\n.ld-update-card {\n  margin-top: 14px;\n  border: 1px solid var(--ld-line);\n  border-radius: 9px;\n  padding: 14px;\n  background: var(--ld-surface);\n  display: grid;\n  gap: 9px;\n}\n.ld-update-card .ld-actions {\n  flex-wrap: wrap;\n}\n.ld-update-toggle {\n  justify-self: start;\n  font-size: 11px;\n  color: var(--ld-muted);\n  padding: 2px 0;\n}\n.ld-release-notes {\n  margin: 0;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n  font: 11px/1.7 var(--dsh-font-family-code-default, ui-monospace, monospace);\n  background: var(--dsw-alias-bg-layer-2);\n  border-radius: 7px;\n  padding: 10px 12px;\n  max-height: 220px;\n  overflow: auto;\n  color: var(--ld-muted);\n}\n.ld-update-badge {\n  font-size: 10px;\n  color: var(--ld-accent);\n  text-decoration: none !important;\n  border: 1px solid color-mix(in srgb, var(--ld-accent) 40%, var(--ld-line));\n  border-radius: 20px;\n  padding: 1px 8px;\n}\n.ld-root a.ld-btn {\n  color: inherit;\n}\n.ld-snapshot-row {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  align-items: center;\n  gap: 2px 12px;\n  padding: 9px 0;\n  border-top: 1px solid var(--ld-line);\n}\n.ld-snapshot-row:first-of-type {\n  border-top: 0;\n}\n.ld-snapshot-row > span {\n  font-size: 12px;\n  overflow-wrap: anywhere;\n}\n.ld-snapshot-row > small {\n  grid-column: 1;\n  color: var(--ld-muted);\n  font-size: 10px;\n}\n.ld-snapshot-row > .ld-btn {\n  grid-row: 1 / span 2;\n  grid-column: 2;\n}\n.ld-template-list {\n  display: grid;\n  gap: 0;\n  margin: 14px 0;\n}\n.ld-template {\n  display: grid;\n  gap: 4px;\n  text-align: left;\n  padding: 12px 0;\n  border-bottom: 1px solid var(--ld-line);\n}\n.ld-template-title {\n  font-size: 13px;\n}\n.ld-template-note {\n  font-size: 11px;\n  color: var(--ld-muted);\n  line-height: 1.6;\n}\n.ld-completion {\n  border: 0;\n  padding: 0;\n  margin: 4px 0 0;\n  display: grid;\n  gap: 7px;\n}\n.ld-completion legend {\n  font-size: 11px;\n  color: var(--ld-muted);\n  padding: 0;\n  margin-bottom: 4px;\n}\n.ld-fold-toggle {\n  display: inline-flex;\n  align-items: center;\n  gap: 7px;\n  font: inherit;\n  color: inherit;\n  font-weight: inherit;\n  padding: 0;\n  text-align: left;\n}\n.ld-fold-chevron {\n  display: inline-flex;\n  color: var(--ld-muted);\n  transition: transform 0.15s ease;\n}\n.ld-fold-toggle[aria-expanded="true"] .ld-fold-chevron {\n  transform: rotate(90deg);\n}\n.ld-fold-count {\n  margin-left: auto;\n  font-size: 11px;\n  color: var(--ld-muted);\n  font-variant-numeric: tabular-nums;\n}\n@media (prefers-reduced-motion: reduce) {\n  .ld-fold-chevron {\n    transition: none;\n  }\n}\n.ld-review-prompts {\n  margin: 8px 0 10px;\n  padding-left: 18px;\n  color: var(--ld-muted);\n  font-size: 12px;\n  line-height: 1.8;\n}\n.ld-review-date {\n  margin-bottom: 12px;\n  flex-wrap: wrap;\n}\n';
 
 // src/spirit.css
 var spirit_default = '.ld-root:has(> .ld-shell) {\n  position: relative;\n}\n.ld-shell.ld-spirit-open {\n  grid-template-columns: 188px minmax(0, 1fr) 370px;\n}\n.ld-shell.ld-collapsed.ld-spirit-open {\n  grid-template-columns: 66px minmax(0, 1fr) 370px;\n}\n.ld-spirit-panel {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;\n  min-height: 0;\n  height: 100%;\n  background: var(--ld-base);\n  border-left: 1px solid var(--ld-line);\n  padding: 24px 18px 18px;\n  overflow: hidden;\n}\n.ld-spirit-header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 8px;\n  margin-bottom: 15px;\n  flex: none;\n}\n.ld-spirit-heading {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n}\n.ld-spirit-heading > svg {\n  color: var(--ld-accent);\n}\n.ld-spirit-heading strong {\n  font-size: 14px;\n}\n.ld-spirit-dot {\n  height: 6px;\n  width: 6px;\n  border-radius: 50%;\n  background: var(--dsw-alias-state-success-primary);\n  margin-left: 3px;\n}\n.ld-spirit-dot.working {\n  background: var(--ld-accent);\n}\n.ld-spirit-controls {\n  display: flex;\n  gap: 5px;\n}\n.ld-spirit-controls button {\n  width: 27px;\n  height: 27px;\n  font-size: 20px;\n  color: var(--ld-muted);\n  border-radius: 5px;\n}\n.ld-spirit-controls button:hover {\n  background: var(--dsw-alias-bg-layer-2);\n}\n.ld-spirit-model {\n  display: flex;\n  align-items: center;\n  gap: 7px;\n}\n.ld-spirit-model select {\n  flex: 1;\n  min-width: 0;\n  font-size: 11px;\n  padding: 7px;\n}\n.ld-spirit-model button {\n  width: 28px;\n  height: 28px;\n  color: var(--ld-muted);\n}\n.ld-spirit-model-caption {\n  font-size: 10px;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  color: var(--ld-muted);\n  margin: 7px 0 16px;\n}\n.ld-spirit-messages {\n  flex: 1;\n  min-height: 0;\n  overflow: auto;\n  padding: 8px 2px 15px;\n  scroll-behavior: smooth;\n  overflow-wrap: anywhere;\n}\n.ld-spirit-welcome {\n  padding: 30px 7px 20px;\n}\n.ld-spirit-welcome > .ld-spirit-art {\n  color: var(--ld-accent);\n  margin-bottom: 18px;\n}\n.ld-spirit-welcome h2 {\n  font-size: 21px;\n  line-height: 1.6;\n  font-weight: 500;\n  max-width: 250px;\n  margin-bottom: 12px;\n}\n.ld-spirit-welcome p {\n  font-size: 12px;\n  color: var(--ld-muted);\n  line-height: 1.9;\n}\n.ld-spirit-examples {\n  display: grid;\n  gap: 8px;\n  margin-top: 30px;\n}\n.ld-spirit-examples button {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 12px;\n  font-size: 11px;\n  line-height: 1.8;\n  text-align: left;\n  padding: 9px;\n  border: 1px solid var(--ld-line);\n  border-radius: 7px;\n}\n.ld-spirit-examples button span {\n  color: var(--ld-muted);\n  flex: none;\n}\n.ld-spirit-message {\n  font-size: 12px;\n  line-height: 1.9;\n  margin: 0 0 18px;\n  white-space: pre-wrap;\n  overflow-wrap: anywhere;\n}\n.ld-spirit-message small {\n  display: block;\n  font-size: 10px;\n  color: var(--ld-muted);\n  margin-bottom: 5px;\n}\n.ld-spirit-user {\n  background: var(--dsw-alias-bg-layer-2);\n  padding: 10px 12px;\n  border-radius: 10px 10px 3px 10px;\n  margin-left: 22px;\n}\n.ld-spirit-assistant {\n  padding: 3px 3px 3px 0;\n}\n.ld-spirit-operation {\n  font-size: 10px;\n  color: var(--ld-muted);\n  padding: 6px 0;\n  display: flex;\n  gap: 7px;\n  align-items: flex-start;\n  flex-wrap: wrap;\n}\n.ld-spirit-operation p {\n  width: 100%;\n  font-size: 10px;\n  max-height: 100px;\n  overflow: auto;\n}\n.ld-operation-state {\n  font-size: 12px;\n  min-width: 12px;\n}\n.ld-operation-state.done {\n  color: var(--dsw-alias-state-success-primary);\n}\n.ld-operation-state.error,\n.ld-spirit-error,\n.ld-spirit-message.ld-spirit-error {\n  color: var(--dsw-alias-state-error-primary);\n}\n.ld-spirit-thinking {\n  font-size: 11px;\n  color: var(--ld-muted);\n  padding: 5px 0 15px;\n}\n.ld-spirit-thinking span {\n  margin-left: 5px;\n}\n.ld-spirit-error {\n  font-size: 11px;\n  border-top: 1px solid var(--ld-line);\n  padding: 9px 0;\n  overflow-wrap: anywhere;\n}\n.ld-spirit-error button {\n  margin-left: 8px;\n  font-size: 11px;\n  text-decoration: underline;\n}\n.ld-spirit-provider-errors {\n  font-size: 10px;\n  color: var(--ld-muted);\n  padding: 7px 0;\n  max-height: 100px;\n  overflow: auto;\n}\n.ld-spirit-provider-errors summary {\n  cursor: pointer;\n}\n.ld-spirit-compose {\n  flex: none;\n  border: 1px solid var(--dsw-alias-border-l2);\n  border-radius: 12px;\n  padding: 10px 11px;\n  background: var(--ld-surface);\n  margin-top: 8px;\n}\n.ld-spirit-compose textarea {\n  border: 0;\n  background: transparent;\n  padding: 0;\n  width: 100%;\n  min-height: 58px;\n  max-height: 170px;\n  resize: vertical;\n  font-size: 12px;\n  line-height: 1.8;\n}\n.ld-spirit-compose textarea:focus-visible {\n  outline: none;\n}\n.ld-spirit-compose:focus-within {\n  border-color: var(--ld-accent);\n}\n.ld-spirit-compose-foot {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 8px;\n  padding-top: 6px;\n}\n.ld-spirit-compose-foot > span {\n  font-size: 9px;\n  color: var(--ld-muted);\n}\n.ld-life-template-help {\n  margin-bottom: 10px !important;\n}\n.ld-life-templates {\n  margin-bottom: 24px;\n}\n.ld-life-filters {\n  border-top: 1px solid var(--ld-line);\n  padding-top: 18px;\n  margin-bottom: 23px;\n}\n.ld-life-filters .ld-btn {\n  border-color: transparent !important;\n  background: transparent !important;\n}\n.ld-life-filters .ld-btn[aria-pressed="true"] {\n  background: var(--dsw-alias-bg-layer-2) !important;\n}\n.ld-review-link summary {\n  font-size: 12px;\n  color: var(--ld-muted);\n  cursor: pointer;\n}\n.ld-review-link .ld-check-label {\n  margin-top: 8px;\n}\n.ld-dialog .ld-form + .ld-actions {\n  margin-top: 18px;\n}\n@container life-desk (max-width:1250px) {\n  .ld-shell.ld-spirit-open {\n    grid-template-columns: 160px minmax(0, 1fr) 340px;\n  }\n  .ld-shell.ld-collapsed.ld-spirit-open {\n    grid-template-columns: 66px minmax(0, 1fr) 340px;\n  }\n  .ld-spirit-open .ld-today-grid {\n    grid-template-columns: minmax(0, 1fr);\n  }\n  .ld-spirit-open .ld-support {\n    border-left: 0;\n    border-top: 1px solid var(--ld-line);\n    padding: 22px 0 0;\n  }\n  .ld-spirit-open .ld-page-top {\n    flex-wrap: wrap;\n  }\n}\n@container life-desk (max-width:950px) {\n  .ld-shell.ld-spirit-open,\n  .ld-shell.ld-collapsed.ld-spirit-open {\n    grid-template-columns: 60px minmax(0, 1fr);\n  }\n  .ld-spirit-panel {\n    position: absolute;\n    right: 0;\n    top: 0;\n    bottom: 0;\n    width: min(370px, calc(100% - 60px));\n    z-index: 30;\n    box-shadow: -12px 0 35px color-mix(in srgb, var(--ld-ink) 6%, transparent);\n  }\n  .ld-spirit-open .ld-nav button > span,\n  .ld-spirit-open .ld-brand > span {\n    display: none;\n  }\n  .ld-spirit-open .ld-nav-project {\n    display: none;\n  }\n  .ld-spirit-open .ld-nav button {\n    font-size: 0;\n    justify-content: center;\n    gap: 0;\n  }\n  .ld-spirit-open .ld-nav {\n    padding-inline: 8px;\n  }\n  .ld-spirit-open .ld-brand {\n    padding-inline: 8px;\n  }\n}\n@media (prefers-reduced-motion: reduce) {\n  .ld-spirit-messages {\n    scroll-behavior: auto;\n  }\n}\n';
@@ -35405,65 +35488,14 @@ function apply(ctx) {
     ).length, "/", tasks.filter((x4) => x4.projectId === p3.id).length)))));
   }
   function Calendar2({ env }) {
-    const { data, day, tasks, habits, setDay, setTab, openTask } = env;
+    const { data, day, tasks, setDay, setTab, openTask } = env;
     const [view, setView] = useState7("dayGridMonth"), [filter, setFilter] = useState7("all");
     const [bounds, setBounds] = useState7([shift(day, -40), shift(day, 40)]);
     const ref = useRef7(null);
     useEffect7(() => {
       ref.current?.getApi().gotoDate(day);
     }, [day]);
-    const range = occurrences(data, bounds[0], bounds[1]);
-    const ev = range.filter(
-      (x4) => !["cancelled", "skipped"].includes(x4.status) && (filter === "all" || (filter === "work" ? x4.area === "work" : x4.area === "life"))
-    ).map((x4) => ({
-      id: x4.id + "@" + x4.originalDate,
-      title: x4.title,
-      start: x4.date + (x4.time ? "T" + x4.time : ""),
-      end: x4.time && x4.minutes ? new Date(
-        Date.parse(x4.date + "T" + x4.time + ":00Z") + x4.minutes * 6e4
-      ).toISOString().replace("Z", "") : void 0,
-      allDay: !x4.time,
-      extendedProps: { source: x4 },
-      classNames: [x4.status === "done" ? "ld-event-done" : ""]
-    }));
-    const habitEvents = [];
-    if (filter === "all" || filter === "habits")
-      for (let d2 = bounds[0]; d2 <= bounds[1]; d2 = shift(d2, 1)) {
-        for (const h3 of habits) {
-          const r3 = habitRule(h3, d2);
-          if (r3?.mode !== "weekly" && habitDue(h3, d2))
-            habitEvents.push({
-              id: "habit:" + h3.id + "@" + d2,
-              title: h3.title,
-              allDay: true,
-              start: d2,
-              editable: false,
-              classNames: ["ld-event-habit"],
-              extendedProps: { habit: h3, date: d2 }
-            });
-        }
-      }
-    const lessonEvents = [];
-    if (filter === "all" || filter === "lessons") {
-      for (const l3 of data.lessons.filter((x4) => !x4.deletedAt))
-        for (const x4 of lessonOccurrences(data, l3, bounds[0], bounds[1]))
-          if (x4.status !== "skipped")
-            lessonEvents.push({
-              id: "lesson:" + x4.key,
-              title: x4.title + (x4.participant ? " \xB7 " + x4.participant : ""),
-              start: x4.date + (x4.time ? "T" + x4.time : ""),
-              end: x4.time && x4.durationMinutes ? new Date(
-                Date.parse(x4.date + "T" + x4.time + ":00Z") + x4.durationMinutes * 6e4
-              ).toISOString().replace("Z", "") : void 0,
-              allDay: !x4.time,
-              extendedProps: { lesson: x4 },
-              classNames: [
-                "ld-event-lesson",
-                x4.status === "done" ? "ld-event-done" : ""
-              ]
-            });
-    }
-    const events = filter === "habits" ? habitEvents : filter === "lessons" ? lessonEvents : [...ev, ...habitEvents, ...lessonEvents];
+    const events = calendarEvents(data, bounds[0], bounds[1], filter);
     return /* @__PURE__ */ React12.createElement(React12.Fragment, null, /* @__PURE__ */ React12.createElement("div", { className: "ld-toolbar" }, /* @__PURE__ */ React12.createElement("div", { className: "ld-actions" }, [
       ["dayGridMonth", "monthView"],
       ["timeGridWeek", "weekView"],
@@ -35509,6 +35541,8 @@ function apply(ctx) {
           right: ""
         },
         events,
+        eventOrder: calendarEventOrder(view),
+        eventOrderStrict: true,
         editable: true,
         selectable: true,
         nowIndicator: true,
@@ -35586,7 +35620,7 @@ function apply(ctx) {
     const [error, setError] = useState7("");
     const [showNotes, setShowNotes] = useState7(false);
     const v3 = update || {};
-    const current = v3.currentVersion || "0.14.1";
+    const current = v3.currentVersion || "0.14.2";
     const state = v3.state || { kind: "none" };
     const cache = v3.cache?.release || null;
     const install = v3.installKind || "unknown";
@@ -36985,7 +37019,7 @@ function apply(ctx) {
           "\xD7"
         )),
         Body(),
-        /* @__PURE__ */ React12.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.14.1", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React12.createElement(
+        /* @__PURE__ */ React12.createElement("footer", { className: "ld-footer" }, t3("local"), " \xB7 ", timeZone, " \xB7 v", "0.14.2", " ", updateView?.state?.kind === "available" && /* @__PURE__ */ React12.createElement(
           "button",
           {
             className: "ld-update-badge",

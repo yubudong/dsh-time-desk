@@ -903,9 +903,15 @@
   border-radius: 4px;
   padding: 2px 4px;
 }
-.ld-root .fc-event-done {
-  opacity: 0.5;
-  text-decoration: line-through;
+.ld-root .fc .ld-event-done {
+  --fc-event-bg-color: color-mix(in srgb, var(--ld-accent) 4%, var(--ld-base));
+  --fc-event-border-color: var(--ld-line);
+  --fc-event-text-color: var(--ld-muted);
+  background-color: var(--fc-event-bg-color);
+  border-color: var(--ld-line);
+  color: var(--ld-muted);
+  font-weight: 400;
+  text-decoration: none;
 }
 .ld-root .ld-event-habit {
   --fc-event-border-color: var(--ld-line);

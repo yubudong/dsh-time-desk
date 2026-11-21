@@ -4,6 +4,7 @@ import panelResizeCss from "./panel-resize.css";
 import { habitRestInfo, weeklyHabitStatus } from "./weekly-habits.js";
 import * as React from "react";
 import FullCalendar from "@fullcalendar/react";
+import { calendarEvents, calendarEventOrder } from "./calendar-events.js";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -1125,7 +1126,7 @@ export function apply(ctx: any) {
     );
   }
   function Calendar({ env }: any) {
-    const { data, day, tasks, habits, setDay, setTab, openTask } = env;
+    const { data, day, tasks, setDay, setTab, openTask } = env;
     const [view, setView] = useState("dayGridMonth"),
       [filter, setFilter] = useState("all");
     const [bounds, setBounds] = useState([shift(day, -40), shift(day, 40)]);
@@ -1133,78 +1134,7 @@ export function apply(ctx: any) {
     useEffect(() => {
       ref.current?.getApi().gotoDate(day);
     }, [day]);
-    const range = occurrences(data, bounds[0], bounds[1]);
-    const ev = range
-      .filter(
-        (x: any) =>
-          !["cancelled", "skipped"].includes(x.status) &&
-          (filter === "all" ||
-            (filter === "work" ? x.area === "work" : x.area === "life")),
-      )
-      .map((x: any) => ({
-        id: x.id + "@" + x.originalDate,
-        title: x.title,
-        start: x.date + (x.time ? "T" + x.time : ""),
-        end:
-          x.time && x.minutes
-            ? new Date(
-                Date.parse(x.date + "T" + x.time + ":00Z") + x.minutes * 60000,
-              )
-                .toISOString()
-                .replace("Z", "")
-            : undefined,
-        allDay: !x.time,
-        extendedProps: { source: x },
-        classNames: [x.status === "done" ? "ld-event-done" : ""],
-      }));
-    const habitEvents = [];
-    if (filter === "all" || filter === "habits")
-      for (let d = bounds[0]; d <= bounds[1]; d = shift(d, 1)) {
-        for (const h of habits) {
-          const r = habitRule(h, d);
-          if (r?.mode !== "weekly" && habitDue(h, d))
-            habitEvents.push({
-              id: "habit:" + h.id + "@" + d,
-              title: h.title,
-              allDay: true,
-              start: d,
-              editable: false,
-              classNames: ["ld-event-habit"],
-              extendedProps: { habit: h, date: d },
-            });
-        }
-      }
-    const lessonEvents = [];
-    if (filter === "all" || filter === "lessons")
-      for (const l of data.lessons.filter((x: any) => !x.deletedAt))
-        for (const x of lessonOccurrences(data, l, bounds[0], bounds[1]))
-          if (x.status !== "skipped")
-            lessonEvents.push({
-              id: "lesson:" + x.key,
-              title: x.title + (x.participant ? " · " + x.participant : ""),
-              start: x.date + (x.time ? "T" + x.time : ""),
-              end:
-                x.time && x.durationMinutes
-                  ? new Date(
-                      Date.parse(x.date + "T" + x.time + ":00Z") +
-                        x.durationMinutes * 60000,
-                    )
-                      .toISOString()
-                      .replace("Z", "")
-                  : undefined,
-              allDay: !x.time,
-              extendedProps: { lesson: x },
-              classNames: [
-                "ld-event-lesson",
-                x.status === "done" ? "ld-event-done" : "",
-              ],
-            });
-    const events =
-      filter === "habits"
-        ? habitEvents
-        : filter === "lessons"
-          ? lessonEvents
-          : [...ev, ...habitEvents, ...lessonEvents];
+    const events = calendarEvents(data, bounds[0], bounds[1], filter);
     return (
       <>
         <div className="ld-toolbar">
@@ -1262,6 +1192,8 @@ export function apply(ctx: any) {
             right: "",
           }}
           events={events}
+          eventOrder={calendarEventOrder(view)}
+          eventOrderStrict
           editable
           selectable
           nowIndicator
