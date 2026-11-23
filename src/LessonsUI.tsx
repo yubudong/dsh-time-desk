@@ -1366,34 +1366,37 @@ export function createLessonsUI({
             {x.date} {x.time}
           </span>
           <span>
+            {x.status === "done" ? "✓ " : ""}
             {statusText(x.status)}
             {x.movedFrom
               ? " · " + t("lessonMovedFrom") + " " + x.movedFrom
               : ""}
           </span>
           <div className="ld-actions">
-            {(x.status === "scheduled" || x.status === "skipped") && (
-              <Btn
-                disabled={
-                  env.busy ||
-                  x.date > today(env.data.settings.timeZone) ||
-                  x.charged
-                }
-                onClick={() =>
-                  open({
-                    type: "session",
-                    mode: "complete",
-                    lessonId: lesson.id,
-                    originalDate: x.originalDate,
-                    sessionId: x.sessionId,
-                    occurrence: x,
-                    date: x.date,
-                  })
-                }
-              >
-                {t("lessonComplete")}
-              </Btn>
-            )}
+            {(x.status === "scheduled" || x.status === "skipped") &&
+              !x.charged &&
+              x.date <= today(env.data.settings.timeZone) && (
+                <Btn
+                  disabled={
+                    env.busy ||
+                    x.date > today(env.data.settings.timeZone) ||
+                    x.charged
+                  }
+                  onClick={() =>
+                    open({
+                      type: "session",
+                      mode: "complete",
+                      lessonId: lesson.id,
+                      originalDate: x.originalDate,
+                      sessionId: x.sessionId,
+                      occurrence: x,
+                      date: x.date,
+                    })
+                  }
+                >
+                  {t("lessonComplete")}
+                </Btn>
+              )}
             {x.status === "scheduled" && (
               <Btn
                 onClick={() =>
@@ -1809,6 +1812,98 @@ export function createLessonsUI({
       </fieldset>
     );
   }
+  function LessonQuickActions({ occurrence: x, env }: any) {
+    const menu = useRef<HTMLDetailsElement>(null);
+    const [expanded, setExpanded] = useState(false);
+    useEffect(() => {
+      if (!expanded) return;
+      const outside = (e: PointerEvent) => {
+        if (!menu.current?.contains(e.target as Node) && menu.current)
+          menu.current.open = false;
+      };
+      document.addEventListener("pointerdown", outside);
+      return () => document.removeEventListener("pointerdown", outside);
+    }, [expanded]);
+    const choose = (mode: string) => {
+      if (menu.current) menu.current.open = false;
+      env.openLesson(
+        mode === "detail"
+          ? { type: "detail", lessonId: x.lessonId }
+          : {
+              type: "session",
+              mode,
+              lessonId: x.lessonId,
+              originalDate: x.originalDate,
+              sessionId: x.sessionId,
+              occurrence: x,
+              date: x.date,
+              time: x.time,
+              place: x.place,
+            },
+      );
+    };
+    return (
+      <div className="ld-lesson-quick-actions">
+        {x.status === "scheduled" &&
+          !x.charged &&
+          x.date <= today(env.data.settings.timeZone) && (
+            <Btn disabled={env.busy} onClick={() => choose("complete")}>
+              {t("lessonComplete")}
+            </Btn>
+          )}
+        <details
+          ref={menu}
+          className="ld-lesson-quick-menu"
+          onToggle={(e) => setExpanded(e.currentTarget.open)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape" && menu.current?.open) {
+              e.preventDefault();
+              e.stopPropagation();
+              menu.current.open = false;
+              menu.current.querySelector("summary")?.focus();
+            }
+          }}
+        >
+          <summary
+            aria-label={
+              t("lessonMoreActions") + " · " + x.title + " · " + x.date
+            }
+          >
+            <Icon name="more" size={18} />
+          </summary>
+          <div
+            className="ld-lesson-quick-menu-panel"
+            role="group"
+            aria-label={t("lessonMoreActions")}
+          >
+            {x.status === "scheduled" && (
+              <>
+                <Btn disabled={env.busy} onClick={() => choose("move")}>
+                  {t("lessonReschedule")}
+                </Btn>
+                <Btn disabled={env.busy} onClick={() => choose("skip")}>
+                  {t("lessonSkip")}
+                </Btn>
+              </>
+            )}
+            {(x.status === "done" || x.charged) && (
+              <Btn disabled={env.busy} onClick={() => choose("undo")}>
+                {t("lessonUndoComplete")}
+              </Btn>
+            )}
+            {x.status === "skipped" && !x.charged && (
+              <Btn disabled={env.busy} onClick={() => choose("unskip")}>
+                {t("lessonUnskip")}
+              </Btn>
+            )}
+            <Btn disabled={env.busy} onClick={() => choose("detail")}>
+              {t("lessonViewDetail")}
+            </Btn>
+          </div>
+        </details>
+      </div>
+    );
+  }
   function TodayLessons({ env }: any) {
     const data = env.data,
       day = env.day;
@@ -1853,24 +1948,7 @@ export function createLessonsUI({
                       {accountLine(data, l, day)}
                     </span>
                   </button>
-                  {x.status === "scheduled" && (
-                    <Btn
-                      disabled={env.busy}
-                      onClick={() =>
-                        env.openLesson({
-                          type: "session",
-                          mode: "complete",
-                          lessonId: x.lessonId,
-                          originalDate: x.originalDate,
-                          sessionId: x.sessionId,
-                          occurrence: x,
-                          date: x.date,
-                        })
-                      }
-                    >
-                      {t("lessonComplete")}
-                    </Btn>
-                  )}
+                  <LessonQuickActions occurrence={x} env={env} />
                 </div>
               );
             })
@@ -1929,24 +2007,7 @@ export function createLessonsUI({
               : ""}
           </span>
         </button>
-        {x.status === "scheduled" && (
-          <Btn
-            disabled={env.busy || x.date > today(env.data.settings.timeZone)}
-            onClick={() =>
-              open({
-                type: "session",
-                mode: "complete",
-                lessonId: x.lessonId,
-                originalDate: x.originalDate,
-                sessionId: x.sessionId,
-                occurrence: x,
-                date: x.date,
-              })
-            }
-          >
-            {t("lessonComplete")}
-          </Btn>
-        )}
+        <LessonQuickActions occurrence={x} env={env} />
       </div>
     );
     const nextFor = (l: any) =>

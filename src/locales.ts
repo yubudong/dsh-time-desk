@@ -343,7 +343,9 @@ export const copy = {
   lessonSchedule: ["课程安排", "Schedule"],
   lessonMovedFrom: ["原定", "moved from"],
   lessonNoUpcoming: ["接下来没有课程安排。", "No upcoming sessions."],
-  lessonComplete: ["已上课", "Attended"],
+  lessonComplete: ["确认上课", "Confirm attendance"],
+  lessonMoreActions: ["课次更多操作", "More session actions"],
+  lessonViewDetail: ["查看课程详情", "View course details"],
   lessonCompleteHint: [
     "按实际出席确认，确认后才扣除课时或计入本期统计。请假不要点这里。",
     "Confirm actual attendance. Credits or term totals change only after you confirm. Use Skip for an absence.",

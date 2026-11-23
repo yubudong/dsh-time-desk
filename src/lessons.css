@@ -17,8 +17,9 @@
 .ld-lesson-card:first-of-type {
   border-top: 0;
 }
-.ld-lesson-today.is-done {
-  opacity: 0.72;
+.ld-lesson-today.is-done > .ld-task-body,
+.ld-lesson-today.is-done .ld-task-title {
+  color: var(--ld-muted);
 }
 .ld-lesson-today > .ld-task-body {
   flex: 1;
@@ -139,6 +140,57 @@
   color: var(--ld-muted);
   font-size: 11px;
   line-height: 1.6;
+}
+.ld-lesson-quick-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+}
+.ld-lesson-quick-menu {
+  position: relative;
+}
+.ld-lesson-quick-menu > summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 30px;
+  padding: 5px;
+  border: 1px solid var(--ld-line);
+  border-radius: 6px;
+  list-style: none;
+  cursor: pointer;
+  color: var(--ld-muted);
+}
+.ld-lesson-quick-menu > summary::-webkit-details-marker {
+  display: none;
+}
+.ld-lesson-quick-menu[open] {
+  z-index: 25;
+}
+.ld-lesson-quick-menu-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 25;
+  min-width: 190px;
+  max-width: min(280px, 80vw);
+  max-height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  background: var(--ld-base);
+  border: 1px solid var(--ld-line);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--ld-ink) 12%, transparent);
+}
+.ld-lesson-quick-menu-panel .ld-btn {
+  justify-content: flex-start;
+  text-align: left;
+  white-space: normal;
 }
 .ld-lesson-row {
   display: flex;
