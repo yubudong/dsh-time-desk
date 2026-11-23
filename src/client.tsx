@@ -25,6 +25,8 @@ import {
 import { createPlanningUI } from "./PlanningUI";
 import { PLAN_DRAG_TYPE, startPlanDrag, planDropAction } from "./plan-drag.js";
 import { HABIT_TEMPLATES, habitFromTemplate } from "./habit-templates.js";
+import { createHabitViews } from "./HabitViews";
+import habitViewsCss from "./habit-views.css";
 import { createReviewUI } from "./ReviewUI";
 import { createLessonsUI } from "./LessonsUI";
 import {
@@ -60,6 +62,7 @@ import reviewCss from "./review.css";
 import lessonsCss from "./lessons.css";
 const css =
   baseCss +
+  habitViewsCss +
   spiritCss +
   todayCss +
   focusCss +
@@ -448,6 +451,7 @@ export function apply(ctx: any) {
       </label>
     );
   }
+  const HabitViews = createHabitViews({ t, Btn });
   function HabitCards({
     full = false,
     weeklyOnly = false,
@@ -457,7 +461,6 @@ export function apply(ctx: any) {
   }: any) {
     const { data, day, timeZone, habits, busy, run, openHabit, setDay, live } =
       env;
-    const list = habits.filter((h: any) => full || habitDue(h, day));
     const groups = todayHabits(data, day);
     const [record, setRecord] = useState<any>(null);
     const [review, setReview] = useState<any>(null);
@@ -488,7 +491,7 @@ export function apply(ctx: any) {
     const openLog = (h: any, date: string) => {
       const r = habitRule(h, date),
         p = habitProgress(data, h, date);
-      if (h.reviewLinked && r?.mode === "daily") {
+      if (h.reviewLinked && r?.mode === "daily" && habitDue(h, date)) {
         setReview({ habit: h, date });
         return;
       }
@@ -517,7 +520,7 @@ export function apply(ctx: any) {
             <button
               className="ld-task-body"
               onClick={() => {
-                if (full) openHabit(h);
+                if (full) openLog(h, day);
                 else openLog(h, day);
               }}
             >
@@ -565,43 +568,10 @@ export function apply(ctx: any) {
             </button>
           </div>
           {full && (
-            <div className="ld-week-dots">
-              {weekDays.map((d) => {
-                const q = habitProgress(data, h, d);
-                return (
-                  <button
-                    key={d}
-                    className={
-                      (q.done ? "checked" : "") +
-                      (q.status === "late" ? " ld-habit-late" : "")
-                    }
-                    disabled={d > today(timeZone) || !habitDue(h, d)}
-                    title={
-                      d +
-                      " · " +
-                      t(
-                        q.status === "late"
-                          ? "habitLate"
-                          : q.status === "onTime"
-                            ? "habitOnTime"
-                            : q.status === "missed"
-                              ? "missedHabit"
-                              : q.status === "skipped"
-                                ? "skipped"
-                                : q.status === "unrecorded"
-                                  ? "habitUnrecorded"
-                                  : "todo",
-                      )
-                    }
-                    onClick={() => openLog(h, d)}
-                  >
-                    {d.slice(8)}
-                    {q.done ? " ·" : ""}
-                  </button>
-                );
-              })}
-              <Btn onClick={() => openHabit(h)}>{t("edit")}</Btn>
-            </div>
+            <details className="ld-habit-more">
+              <summary aria-label={t("edit") + " " + h.title}>···</summary>
+              <Btn onClick={() => openHabit(h)}>{t("habitEditRule")}</Btn>
+            </details>
           )}
         </div>
       );
@@ -779,40 +749,46 @@ export function apply(ctx: any) {
           })}
         </section>
       ) : null;
+    const previousBlock = previous.length > 0 && (
+      <section className="ld-previous-habits">
+        <h3>
+          {t("yesterdayPending")} · {previous.length}
+        </h3>
+        <p className="ld-help">{t("previousHabitHint")}</p>
+        {previous.map(({ habit, date }: any) => (
+          <div className="ld-habit" key={habit.id + date}>
+            <div className="ld-habit-main">
+              <button
+                className="ld-task-body"
+                onClick={() => openLog(habit, date)}
+              >
+                <span className="ld-task-title">{habit.title}</span>
+                <span className="ld-task-meta">{date}</span>
+              </button>
+              <Btn disabled={busy} onClick={() => openLog(habit, date)}>
+                {t("log")}
+              </Btn>
+            </div>
+          </div>
+        ))}
+      </section>
+    );
     if (weeklyOnly)
       return weeklyBlock || <p className="ld-help">{t("noWeeklyHabits")}</p>;
     return (
       <>
         {full ? (
-          <div className="ld-habit-list ld-habit-list-full">
-            {list.map(renderHabit)}
-          </div>
+          <HabitViews
+            env={env}
+            renderHabit={renderHabit}
+            openLog={openLog}
+            weeklyBlock={weeklyBlock}
+            previousBlock={previousBlock}
+            clock={clock}
+          />
         ) : (
           <>
-            {previous.length > 0 && (
-              <section className="ld-previous-habits">
-                <h3>
-                  {t("yesterdayPending")} · {previous.length}
-                </h3>
-                <p className="ld-help">{t("previousHabitHint")}</p>
-                {previous.map(({ habit, date }: any) => (
-                  <div className="ld-habit" key={habit.id + date}>
-                    <div className="ld-habit-main">
-                      <button
-                        className="ld-task-body"
-                        onClick={() => openLog(habit, date)}
-                      >
-                        <span className="ld-task-title">{habit.title}</span>
-                        <span className="ld-task-meta">{date}</span>
-                      </button>
-                      <Btn disabled={busy} onClick={() => openLog(habit, date)}>
-                        {t("log")}
-                      </Btn>
-                    </div>
-                  </div>
-                ))}
-              </section>
-            )}
+            {previousBlock}
             {groups.pending.length > 0 && (
               <div className="ld-habit-list">
                 {groups.pending.map(renderHabit)}
@@ -913,6 +889,8 @@ export function apply(ctx: any) {
                 primary
                 disabled={
                   busy ||
+                  !habitDue(currentRecord, recordDate) ||
+                  recordDate > today(timeZone) ||
                   (habitRule(currentRecord, recordDate)?.mode === "weekly" &&
                     (habitProgress(data, currentRecord, recordDate).done ||
                       (!!recordRest?.violation && !confirmRest)))
@@ -944,7 +922,11 @@ export function apply(ctx: any) {
                 )}
               </Btn>
               <Btn
-                disabled={busy}
+                disabled={
+                  busy ||
+                  !habitDue(currentRecord, recordDate) ||
+                  recordDate > today(timeZone)
+                }
                 onClick={async () => {
                   if (
                     await run({
@@ -961,7 +943,11 @@ export function apply(ctx: any) {
                 {t("skip")}
               </Btn>
               <Btn
-                disabled={busy || recordDate > today(timeZone)}
+                disabled={
+                  busy ||
+                  !habitDue(currentRecord, recordDate) ||
+                  recordDate > today(timeZone)
+                }
                 onClick={async () => {
                   if (
                     await run({
