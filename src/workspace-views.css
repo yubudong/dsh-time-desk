@@ -1,0 +1,143 @@
+.ld-workspace-period-scroll {
+  overflow-x: auto;
+  margin: 18px 0;
+}
+.ld-workspace-period-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  min-width: 650px;
+  gap: 6px;
+  align-items: stretch;
+}
+.ld-workspace-date-cell {
+  min-width: 0;
+  min-height: 180px;
+  padding: 10px 7px;
+  border: 1px solid var(--ld-line);
+  border-radius: 6px;
+  background: var(--ld-base);
+}
+.ld-workspace-date-cell h3 {
+  font-size: 12px;
+  font-weight: 500;
+  margin: 0 0 10px;
+  color: var(--ld-muted);
+}
+.ld-workspace-date-cell.is-selected {
+  border-color: var(--ld-accent);
+}
+.ld-workspace-date-cell.is-outside {
+  opacity: 0.5;
+}
+.ld-workspace-date-items {
+  max-height: 300px;
+  overflow-y: auto;
+}
+.ld-workspace-period-grid.is-month .ld-workspace-date-cell {
+  min-height: 120px;
+}
+.ld-workspace-period-grid.is-month .ld-workspace-date-items {
+  max-height: 210px;
+}
+.ld-workspace-weekday {
+  text-align: center;
+  color: var(--ld-muted);
+  font-size: 12px;
+}
+.ld-workspace-period-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+  width: 100%;
+  border: 1px solid var(--ld-line);
+  border-radius: 5px;
+  padding: 7px 6px;
+  margin: 0 0 5px;
+  background: color-mix(in srgb, var(--ld-accent) 5%, var(--ld-base));
+  color: var(--ld-ink);
+  font: inherit;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.ld-workspace-period-item strong {
+  font-weight: 500;
+  font-size: 12px;
+}
+.ld-workspace-period-item span,
+.ld-workspace-period-item small {
+  font-size: 11px;
+  color: var(--ld-muted);
+}
+.ld-workspace-period-item.is-done {
+  background: var(--ld-surface);
+  color: var(--ld-muted);
+}
+.ld-workspace-period-item:hover {
+  border-color: var(--ld-accent);
+}
+.ld-workspace-completed .ld-task-title {
+  color: var(--ld-muted);
+}
+.ld-workspace-period-nav {
+  font-size: 12px;
+}
+.ld-project-overview > span {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ld-project-overview small {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  white-space: normal;
+}
+.ld-project-next-label {
+  color: var(--ld-ink) !important;
+}
+.ld-project-next-task {
+  display: block;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: var(--ld-ink);
+  font: inherit;
+  padding: 8px 0;
+  cursor: pointer;
+}
+.ld-project-next-task small {
+  color: var(--ld-muted);
+  margin-inline-start: 8px;
+}
+.ld-project-next-select {
+  display: block;
+  margin: 8px 0;
+  font-size: 12px;
+  color: var(--ld-muted);
+}
+.ld-project-next-select select {
+  max-width: 100%;
+  font: inherit;
+  color: var(--ld-ink);
+  padding: 6px;
+  border: 1px solid var(--ld-line);
+  border-radius: 5px;
+  background: var(--ld-base);
+}
+.ld-project-ready {
+  margin: 16px 0;
+  padding: 14px;
+  border: 1px solid var(--ld-line);
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--ld-accent) 5%, var(--ld-base));
+}
+.ld-project-ready p {
+  margin: 0 0 8px;
+}
+.ld-life-views h3 {
+  font-size: 15px;
+}

@@ -1,4 +1,68 @@
 export const copy = {
+  workspaceViews: ["记录视图", "Record views"],
+  workspacePeriodLabel: [
+    "周月安排，可横向滚动查看",
+    "Week or month schedule; scroll horizontally to view",
+  ],
+  workspaceLifeTemplates: ["常用生活事项模板", "Common life templates"],
+  workspaceAllItems: ["全部事项", "All items"],
+  workspaceDayCount: [
+    "所选日已完成 {done} / {total}",
+    "Selected day: {done} / {total} completed",
+  ],
+  workspacePending: ["待完成", "To complete"],
+  lifeDayEmpty: [
+    "所选日没有待完成的生活事项。",
+    "No pending life tasks for this day.",
+  ],
+  workspaceReminders: ["当日提醒", "Reminders for this day"],
+  workspaceReminder: ["提醒事项", "Reminder"],
+  workspaceCarried: ["以前未完成", "Carried tasks"],
+  workspacePastRecurring: [
+    "过去未完成的重复事项",
+    "Past unfinished occurrences",
+  ],
+  workspaceUnscheduled: ["未安排日期", "Unscheduled"],
+  workspaceOtherStates: ["其他状态", "Other statuses"],
+  workspaceScheduleOnly: [
+    "只展示已安排日期的事项；点击查看或修改对应这一次。未安排的事项可在日视图下方或全部事项查看。",
+    "Shows scheduled items. Select an occurrence to view or edit. Unscheduled items are available in Day or All items.",
+  ],
+  workspaceAllSeriesHint: [
+    "此处管理全部事项及重复规则；每一次完成记录请在日、周或月视图查看。",
+    "Manage all items and recurring rules here; view individual completions in Day, Week or Month.",
+  ],
+  lessonManagement: ["课程管理", "Manage courses"],
+  lessonPending: ["待上课", "Upcoming sessions"],
+  projectFilter_active: ["进行中的项目", "Active projects"],
+  projectFilter_done: ["已完成项目", "Completed projects"],
+  projectFilter_archived: ["已归档项目", "Archived projects"],
+  projectNext: ["下一步", "Next step"],
+  projectReady: [
+    "清单已完成，待确认项目结果",
+    "Checklist complete; confirm the project outcome",
+  ],
+  projectNoNext: ["暂无待推进任务", "No pending next step"],
+  projectGoalEmpty: [
+    "写下一句话，说明做到什么程度算完成。",
+    "Describe the outcome that will make this project complete.",
+  ],
+  projectCompletePrompt: [
+    "任务清单已全部完成。项目目标也达成了吗？确认后再将项目标为完成。",
+    "All tasks are complete. Has the project goal been achieved? Confirm to complete the project.",
+  ],
+  projectCompleteConfirm: ["确认完成项目", "Confirm project completion"],
+  projectReopen: ["重新推进项目", "Reopen project"],
+  projectArchive: ["归档项目", "Archive project"],
+  projectUnarchive: ["取消归档", "Unarchive project"],
+  projectNextChosen: ["已指定", "Selected"],
+  projectNextSuggested: ["建议", "Suggested"],
+  projectChooseNext: ["指定下一步", "Choose the next step"],
+  projectNextAuto: ["自动建议下一项", "Suggest automatically"],
+  projectDateHint: [
+    "有日期的任务会同步到对应日期的今日和日历；未安排日期的任务留在项目中，不算今日欠账。归档项目只收起项目，不删除或取消任务。",
+    "Dated tasks appear in Today and Calendar; unscheduled tasks stay in the project. Archiving only files the project away; tasks are not deleted or cancelled.",
+  ],
   habitViews: ["习惯打卡视图", "Habit record views"],
   habitDaySummary: [
     "所选日已完成 {done} / {total}",

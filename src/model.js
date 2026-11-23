@@ -157,6 +157,17 @@ export function applyAction(current, a, now = Date.now()) {
           }
         : nowMeta(now)),
     };
+    if (
+      collection === "projects" &&
+      record.nextTaskId &&
+      record.nextTaskId !== old?.nextTaskId
+    ) {
+      const next = s.tasks.find(
+        (x) => x.id === record.nextTaskId && !x.deletedAt,
+      );
+      if (!next || next.projectId !== record.id)
+        fail("下一步必须选择本项目内未删除的任务");
+    }
     if (collection === "tasks") {
       if (
         old &&

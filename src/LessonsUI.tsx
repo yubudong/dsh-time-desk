@@ -1,4 +1,6 @@
 import * as React from "react";
+import { WorkspacePeriodGrid, WorkspacePeriodNav } from "./WorkspaceViews";
+import { workspacePeriod, lessonViewRows } from "./workspace-views.js";
 import { createLessonDraftStore } from "./lesson-drafts.js";
 import { monday, shift, today, weekday } from "./dates.js";
 import {
@@ -1890,6 +1892,7 @@ export function createLessonsUI({
     const data = env.data;
     const lessons = live(data, "lessons");
     const [person, setPerson] = useState("");
+    const [view, setView] = useState("day");
     const people = [
       ...new Set(lessons.map((x: any) => x.participant).filter(Boolean)),
     ];
@@ -1897,13 +1900,54 @@ export function createLessonsUI({
       ? lessons.filter((x: any) => x.participant === person)
       : lessons;
     const open = (v: any) => env.openLesson(v);
-    const dayRows = filtered.flatMap((l: any) =>
-      lessonOccurrences(data, l, env.day, env.day),
-    );
-    const start = monday(env.day),
-      dates = Array.from({ length: 7 }, (_, i) => shift(start, i));
-    const weekRows = filtered.flatMap((l: any) =>
-      lessonOccurrences(data, l, start, shift(start, 6)),
+    const dayRows = lessonViewRows(data, filtered, env.day, env.day);
+    const period = workspacePeriod(env.day, view);
+    const periodRows = ["week", "month"].includes(view)
+      ? lessonViewRows(data, filtered, period.from, period.to)
+      : [];
+    const openDetail = (x: any) => {
+      env.setDay(x.date);
+      open({ type: "detail", lessonId: x.lessonId });
+    };
+    const renderDayRow = (x: any) => (
+      <div
+        className={"ld-lesson-today " + (x.status === "done" ? "is-done" : "")}
+        key={x.key}
+      >
+        <button className="ld-task-body" onClick={() => openDetail(x)}>
+          <span className="ld-task-title">
+            <span className="ld-lesson-time">{x.time || t("allDay")}</span>
+            {x.status === "done" ? "✓ " : ""}
+            {x.title}
+            {x.participant ? " · " + x.participant : ""}
+          </span>
+          <span className="ld-task-meta">
+            {statusText(x.status)}
+            {x.place ? " · " + x.place : ""}
+            {x.movedFrom
+              ? " · " + t("lessonMovedFrom") + " " + x.movedFrom
+              : ""}
+          </span>
+        </button>
+        {x.status === "scheduled" && (
+          <Btn
+            disabled={env.busy || x.date > today(env.data.settings.timeZone)}
+            onClick={() =>
+              open({
+                type: "session",
+                mode: "complete",
+                lessonId: x.lessonId,
+                originalDate: x.originalDate,
+                sessionId: x.sessionId,
+                occurrence: x,
+                date: x.date,
+              })
+            }
+          >
+            {t("lessonComplete")}
+          </Btn>
+        )}
+      </div>
     );
     const nextFor = (l: any) =>
       lessonOccurrences(data, l, env.day, shift(env.day, 45)).find(
@@ -1928,9 +1972,27 @@ export function createLessonsUI({
             </select>
           )}
         </div>
+        <div className="ld-toolbar">
+          <div
+            className="ld-actions"
+            role="group"
+            aria-label={t("workspaceViews")}
+          >
+            {["day", "week", "month", "manage"].map((v) => (
+              <Btn key={v} aria-pressed={view === v} onClick={() => setView(v)}>
+                {t(v === "manage" ? "lessonManagement" : v + "View")}
+              </Btn>
+            ))}
+          </div>
+          {["week", "month"].includes(view) && (
+            <WorkspacePeriodNav env={env} view={view} t={t} Btn={Btn} />
+          )}
+        </div>
         {(() => {
-          const warnings = lessonExpiring(data, env.day);
-          const low = lessons
+          const warnings = lessonExpiring(data, env.day).filter((x: any) =>
+            filtered.some((l: any) => l.id === x.lessonId),
+          );
+          const low = filtered
             .filter(
               (l: any) =>
                 l.mode === "credit" &&
@@ -1971,170 +2033,126 @@ export function createLessonsUI({
             </section>
           ) : null;
         })()}
-        <section className="ld-section">
-          <div className="ld-section-heading">
-            <h2>{t("lessonDay")}</h2>
-            <span className="ld-fold-count">{dayRows.length}</span>
-          </div>
-          {dayRows.length ? (
-            dayRows
-              .sort((a: any, b: any) =>
-                (a.time || "99:99").localeCompare(b.time || "99:99"),
-              )
-              .map((x: any) => (
-                <div
-                  className={
-                    "ld-lesson-today " + (x.status === "done" ? "is-done" : "")
-                  }
-                  key={x.key}
-                >
-                  <button
-                    className="ld-task-body"
-                    onClick={() =>
-                      open({ type: "detail", lessonId: x.lessonId })
-                    }
-                  >
-                    <span className="ld-task-title">
-                      <span className="ld-lesson-time">
-                        {x.time || t("allDay")}
-                      </span>
-                      {x.title}
-                      {x.participant ? " · " + x.participant : ""}
-                    </span>
-                    <span className="ld-task-meta">
-                      {statusText(x.status)}
-                      {x.place ? " · " + x.place : ""}
-                      {x.movedFrom
-                        ? " · " + t("lessonMovedFrom") + " " + x.movedFrom
-                        : ""}
-                    </span>
-                  </button>
-                  {x.status === "scheduled" && (
-                    <Btn
-                      onClick={() =>
-                        open({
-                          type: "session",
-                          mode: "complete",
-                          lessonId: x.lessonId,
-                          originalDate: x.originalDate,
-                          sessionId: x.sessionId,
-                          occurrence: x,
-                          date: x.date,
-                        })
-                      }
-                    >
-                      {t("lessonComplete")}
-                    </Btn>
-                  )}
-                </div>
-              ))
-          ) : (
-            <p className="ld-help">{t("lessonDayEmpty")}</p>
-          )}
-        </section>
-        <section className="ld-section">
-          <div className="ld-section-heading">
-            <h2>{t("lessonWeek")}</h2>
-            <span className="ld-help">
-              {start} – {shift(start, 6)}
-            </span>
-          </div>
-          <div className="ld-week-grid">
-            {dates.map((d: any) => (
-              <div className="ld-week-cell" key={d}>
-                <h3>
-                  {t("weekdayShort" + weekday(d))} <small>{d.slice(5)}</small>
-                </h3>
-                {weekRows
-                  .filter((x: any) => x.date === d)
-                  .sort((a: any, b: any) =>
-                    (a.time || "99:99").localeCompare(b.time || "99:99"),
-                  )
-                  .map((x: any) => (
-                    <button
-                      key={x.key}
-                      className={
-                        "ld-week-lesson " +
-                        (x.status === "done" ? "is-done" : "")
-                      }
-                      onClick={() =>
-                        open({ type: "detail", lessonId: x.lessonId })
-                      }
-                    >
-                      <span>{x.time}</span>
-                      <strong>{x.title}</strong>
-                      <small>
-                        {x.participant || ""}
-                        {x.status === "skipped"
-                          ? " · " + t("lessonStatusSkipped")
-                          : ""}
-                      </small>
-                    </button>
-                  ))}
-              </div>
-            ))}
-          </div>
-        </section>
-        <section className="ld-section">
-          <div className="ld-section-heading">
-            <h2>{t("lessonCourses")}</h2>
-            <span className="ld-fold-count">{filtered.length}</span>
-          </div>
-          {filtered.length ? (
-            <div className="ld-lesson-cards">
-              {filtered.map((l: any) => {
-                const next = nextFor(l);
-                return (
-                  <div className="ld-lesson-card" key={l.id}>
-                    <button
-                      className="ld-task-body"
-                      onClick={() => open({ type: "detail", lessonId: l.id })}
-                    >
-                      <span className="ld-task-title">
-                        {l.title}
-                        {l.participant ? " · " + l.participant : ""}
-                      </span>
-                      <span className="ld-task-meta">
-                        {lessonWeeklyLabel(l, t)}
-                        {l.place ? " · " + l.place : ""}
-                      </span>
-                      <span className="ld-task-meta">
-                        {modeText(l.mode)}
-                        {accountLine(data, l, env.day)
-                          ? " · " + accountLine(data, l, env.day)
-                          : ""}
-                      </span>
-                      {next && (
-                        <span className="ld-task-meta">
-                          {t("lessonNext")} {next.date} {next.time}
-                        </span>
-                      )}
-                    </button>
-                    <div className="ld-actions">
-                      <Btn
+        {view === "day" && (
+          <>
+            {!dayRows.length ? (
+              <p className="ld-help">{t("lessonDayEmpty")}</p>
+            ) : (
+              [
+                ["scheduled", "lessonPending"],
+                ["done", "lessonStatusDone"],
+                ["skipped", "lessonStatusSkipped"],
+              ].map(([status, label]) => {
+                const rows = dayRows.filter((x: any) => x.status === status);
+                return rows.length ? (
+                  <section className="ld-section" key={status}>
+                    <h3>
+                      {t(label)} · {rows.length}
+                    </h3>
+                    {rows.map(renderDayRow)}
+                  </section>
+                ) : null;
+              })
+            )}
+          </>
+        )}
+        {["week", "month"].includes(view) && (
+          <WorkspacePeriodGrid
+            dates={period.dates}
+            day={env.day}
+            rows={periodRows}
+            t={t}
+            month={view === "month"}
+            renderItem={(x: any) => (
+              <button
+                key={x.key}
+                className={
+                  "ld-workspace-period-item" +
+                  (x.status === "done" ? " is-done" : "")
+                }
+                onClick={() => openDetail(x)}
+              >
+                <span>{x.time || t("allDay")}</span>
+                <strong>
+                  {x.status === "done" ? "✓ " : ""}
+                  {x.title}
+                </strong>
+                <small>
+                  {x.participant || ""} · {statusText(x.status)}
+                  {x.movedFrom
+                    ? " · " + t("lessonMovedFrom") + " " + x.movedFrom
+                    : ""}
+                </small>
+              </button>
+            )}
+          />
+        )}
+        {view === "manage" && (
+          <section className="ld-section">
+            <div className="ld-section-heading">
+              <h2>{t("lessonCourses")}</h2>
+              <span className="ld-fold-count">{filtered.length}</span>
+            </div>
+            {filtered.length ? (
+              <div className="ld-lesson-cards">
+                {filtered.map((l: any) => {
+                  const next = nextFor(l);
+                  return (
+                    <div className="ld-lesson-card" key={l.id}>
+                      <button
+                        className="ld-task-body"
                         onClick={() => open({ type: "detail", lessonId: l.id })}
                       >
-                        {t("lessonDetail")}
-                      </Btn>
-                      <Btn onClick={() => open({ type: "editor", lesson: l })}>
-                        {t("edit")}
-                      </Btn>
+                        <span className="ld-task-title">
+                          {l.title}
+                          {l.participant ? " · " + l.participant : ""}
+                        </span>
+                        <span className="ld-task-meta">
+                          {lessonWeeklyLabel(l, t)}
+                          {l.place ? " · " + l.place : ""}
+                        </span>
+                        <span className="ld-task-meta">
+                          {modeText(l.mode)}
+                          {accountLine(data, l, env.day)
+                            ? " · " + accountLine(data, l, env.day)
+                            : ""}
+                        </span>
+                        {next && (
+                          <span className="ld-task-meta">
+                            {t("lessonNext")} {next.date} {next.time}
+                          </span>
+                        )}
+                      </button>
+                      <div className="ld-actions">
+                        <Btn
+                          onClick={() =>
+                            open({ type: "detail", lessonId: l.id })
+                          }
+                        >
+                          {t("lessonDetail")}
+                        </Btn>
+                        <Btn
+                          onClick={() => open({ type: "editor", lesson: l })}
+                        >
+                          {t("edit")}
+                        </Btn>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="ld-welcome">
-              <Icon name="lessons" size={28} />
-              <h2>{t("lessonEmptyTitle")}</h2>
-              <p>{t("lessonEmptyText")}</p>
-              <Btn primary onClick={() => open({ type: "editor" })}>
-                {t("lessonAdd")}
-              </Btn>
-            </div>
-          )}
-        </section>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="ld-welcome">
+                <Icon name="lessons" size={28} />
+                <h2>{t("lessonEmptyTitle")}</h2>
+                <p>{t("lessonEmptyText")}</p>
+                <Btn primary onClick={() => open({ type: "editor" })}>
+                  {t("lessonAdd")}
+                </Btn>
+              </div>
+            )}
+          </section>
+        )}
       </div>
     );
   }

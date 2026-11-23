@@ -35031,6 +35031,8 @@ var ProjectInput = external_exports.object({
   title: str().min(1),
   group: str(80).default(""),
   goal: str(5e3).default(""),
+  nextTaskId: external_exports.string().default(""),
+  archived: external_exports.boolean().default(false),
   status: external_exports.enum(["todo", "doing", "done", "paused"]).default("todo"),
   deadline: optionalDay
 });
@@ -36174,6 +36176,13 @@ function applyAction(current, a, now = Date.now()) {
         deletedAt: null
       } : nowMeta(now)
     };
+    if (collection === "projects" && record2.nextTaskId && record2.nextTaskId !== old?.nextTaskId) {
+      const next = s.tasks.find(
+        (x) => x.id === record2.nextTaskId && !x.deletedAt
+      );
+      if (!next || next.projectId !== record2.id)
+        fail2("\u4E0B\u4E00\u6B65\u5FC5\u987B\u9009\u62E9\u672C\u9879\u76EE\u5185\u672A\u5220\u9664\u7684\u4EFB\u52A1");
+    }
     if (collection === "tasks") {
       if (old && old.repeat.kind !== "none" && s.occurrences.some((x) => x.taskId === old.id && !x.deletedAt) && JSON.stringify([old.date, old.repeat]) !== JSON.stringify([record2.date, record2.repeat]))
         fail2("\u5DF2\u6709\u5386\u53F2\u7684\u91CD\u590D\u4E8B\u9879\u8BF7\u7528\u201C\u8FD9\u6B21\u53CA\u4EE5\u540E\u201D\u4FEE\u6539");
@@ -37690,7 +37699,7 @@ async function apply(ctx) {
       hasGlobal: true,
       layout: "single"
     });
-    const currentVersion = true ? "0.15.0" : "0.0.0";
+    const currentVersion = true ? "0.16.0" : "0.0.0";
     updateService = createUpdateService({
       unit: updateUnit,
       currentVersion,
@@ -37714,7 +37723,7 @@ async function apply(ctx) {
     });
     upgradeService = createUpgradeService({
       unit: upgradeUnit,
-      currentVersion: true ? "0.15.0" : null,
+      currentVersion: true ? "0.16.0" : null,
       isBusy: async () => !!(spiritService && (await spiritService.operate({ action: "read" })).busy || reviewSpiritService && (await reviewSpiritService.operate({ action: "read" })).busy),
       readState: () => service.operate({ action: "read" }),
       restoreState: (a) => service.operate({

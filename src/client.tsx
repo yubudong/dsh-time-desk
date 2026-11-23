@@ -25,6 +25,8 @@ import {
 import { createPlanningUI } from "./PlanningUI";
 import { PLAN_DRAG_TYPE, startPlanDrag, planDropAction } from "./plan-drag.js";
 import { HABIT_TEMPLATES, habitFromTemplate } from "./habit-templates.js";
+import { createWorkspaceViews } from "./WorkspaceViews";
+import workspaceViewsCss from "./workspace-views.css";
 import { createHabitViews } from "./HabitViews";
 import habitViewsCss from "./habit-views.css";
 import { createReviewUI } from "./ReviewUI";
@@ -62,6 +64,7 @@ import reviewCss from "./review.css";
 import lessonsCss from "./lessons.css";
 const css =
   baseCss +
+  workspaceViewsCss +
   habitViewsCss +
   spiritCss +
   todayCss +
@@ -452,6 +455,7 @@ export function apply(ctx: any) {
     );
   }
   const HabitViews = createHabitViews({ t, Btn });
+  const { LifeViews, ProjectsView } = createWorkspaceViews({ t, Btn });
   function HabitCards({
     full = false,
     weeklyOnly = false,
@@ -2819,117 +2823,30 @@ export function apply(ctx: any) {
           </>
         );
       }
-      if (tab === "projects") {
-        if (!project)
-          return (
-            <>
-              <div className="ld-actions">
-                <Btn
-                  primary
-                  icon="plus"
-                  onClick={() =>
-                    setEditor({
-                      type: "project",
-                      item: {
-                        title: "",
-                        group: "",
-                        goal: "",
-                        deadline: "",
-                        status: "todo",
-                      },
-                    })
-                  }
-                >
-                  {t("addProject")}
-                </Btn>
-              </div>
-              {projects.length ? (
-                Array.from(
-                  new Set(projects.map((p: any) => p.group || t("projects"))),
-                ).map((group: any) => (
-                  <section key={group} className="ld-section">
-                    <h2>{group}</h2>
-                    {projects
-                      .filter((p: any) => (p.group || t("projects")) === group)
-                      .map((p: any) => {
-                        const list = tasks.filter(
-                          (x: any) => x.projectId === p.id,
-                        );
-                        return (
-                          <button
-                            key={p.id}
-                            className="ld-project-row"
-                            onClick={() => setProject(p.id)}
-                          >
-                            <Icon name="projects" />
-                            <span>
-                              <strong>{p.title}</strong>
-                              <small>
-                                {t(p.status)}
-                                {p.deadline ? " · " + p.deadline : ""}
-                              </small>
-                            </span>
-                            <span className="ld-muted">
-                              {
-                                list.filter((x: any) => x.status === "done")
-                                  .length
-                              }
-                              /{list.length}
-                            </span>
-                            <Icon name="chevron" size={16} />
-                          </button>
-                        );
-                      })}
-                  </section>
-                ))
-              ) : (
-                <p className="ld-empty">{t("empty")}</p>
-              )}
-            </>
-          );
-        const list = tasks.filter((x: any) => x.projectId === project);
+      if (tab === "projects")
         return (
-          <>
-            <div className="ld-toolbar">
-              <Btn onClick={() => setProject("")}>← {t("projects")}</Btn>
-              <div className="ld-actions">
-                <Btn aria-pressed={!board} onClick={() => setBoard(false)}>
-                  {t("list")}
-                </Btn>
-                <Btn aria-pressed={board} onClick={() => setBoard(true)}>
-                  {t("board")}
-                </Btn>
-                <Btn
-                  onClick={() =>
-                    setEditor({ type: "project", item: projectItem })
-                  }
-                >
-                  {t("edit")}
-                </Btn>
-              </div>
-            </div>
-            <p className="ld-project-goal">{projectItem?.goal}</p>
-            <Btn primary icon="plus" onClick={() => openTask()}>
-              {t("addTask")}
-            </Btn>
-            {board ? (
-              <div className="ld-board">
-                {["todo", "doing", "done"].map((status) => (
-                  <section key={status}>
-                    <h3>
-                      {t(status)} ·{" "}
-                      {list.filter((x: any) => x.status === status).length}
-                    </h3>
-                    {taskRows(list.filter((x: any) => x.status === status))}
-                  </section>
-                ))}
-              </div>
-            ) : (
-              taskRows(list)
-            )}
-          </>
+          <ProjectsView
+            env={viewEnv}
+            project={project}
+            setProject={setProject}
+            taskRows={taskRows}
+            board={board}
+            setBoard={setBoard}
+            editProject={(p: any) => setEditor({ type: "project", item: p })}
+            createProject={() =>
+              setEditor({
+                type: "project",
+                item: {
+                  title: "",
+                  group: "",
+                  goal: "",
+                  deadline: "",
+                  status: "todo",
+                },
+              })
+            }
+          />
         );
-      }
       if (tab === "habits")
         return (
           <>
@@ -2948,45 +2865,50 @@ export function apply(ctx: any) {
               <Btn
                 primary
                 icon="plus"
-                onClick={() => openTask({ area: "life", tag: lifeCategory })}
+                onClick={() =>
+                  openTask({ area: "life", tag: lifeCategory, date: day })
+                }
               >
                 {t("addLife")}
               </Btn>
             </div>
-            <p className="ld-help ld-life-template-help">
-              {t("lifeTemplateHelp")}
-            </p>
-            <div className="ld-actions ld-life-templates">
-              {["subscription", "payment", "shopping", "anniversary"].map(
-                (k) => (
-                  <Btn
-                    key={k}
-                    onClick={() =>
-                      openTask({
-                        title: t(k),
-                        area: "life",
-                        tag: t(k),
-                        event: k === "anniversary",
-                        steps: k === "shopping" ? [] : [],
-                        repeat: {
-                          kind: ["subscription", "payment"].includes(k)
-                            ? "monthly"
-                            : k === "anniversary"
-                              ? "yearly"
-                              : "none",
-                          interval: 1,
-                          days: [1],
-                          missing: "last",
-                          until: "",
-                        },
-                      })
-                    }
-                  >
-                    {t(k)}
-                  </Btn>
-                ),
-              )}
-            </div>
+            <details className="ld-details">
+              <summary>{t("workspaceLifeTemplates")}</summary>
+              <p className="ld-help ld-life-template-help">
+                {t("lifeTemplateHelp")}
+              </p>
+              <div className="ld-actions ld-life-templates">
+                {["subscription", "payment", "shopping", "anniversary"].map(
+                  (k) => (
+                    <Btn
+                      key={k}
+                      onClick={() =>
+                        openTask({
+                          title: t(k),
+                          area: "life",
+                          tag: t(k),
+                          event: k === "anniversary",
+                          steps: k === "shopping" ? [] : [],
+                          repeat: {
+                            kind: ["subscription", "payment"].includes(k)
+                              ? "monthly"
+                              : k === "anniversary"
+                                ? "yearly"
+                                : "none",
+                            interval: 1,
+                            days: [1],
+                            missing: "last",
+                            until: "",
+                          },
+                        })
+                      }
+                    >
+                      {t(k)}
+                    </Btn>
+                  ),
+                )}
+              </div>
+            </details>
             <div className="ld-actions ld-life-filters">
               <Btn
                 aria-pressed={!lifeCategory}
@@ -3010,14 +2932,11 @@ export function apply(ctx: any) {
                 </Btn>
               ))}
             </div>
-            {section(
-              lifeCategory || t("lifeTasks"),
-              tasks.filter(
-                (x: any) =>
-                  x.area === "life" &&
-                  (!lifeCategory || x.tag === lifeCategory),
-              ),
-            )}
+            <LifeViews
+              env={viewEnv}
+              category={lifeCategory}
+              taskRows={taskRows}
+            />
           </>
         );
       if (tab === "lessons") return <LessonsPage env={viewEnv} />;
@@ -3067,7 +2986,9 @@ export function apply(ctx: any) {
               <InboxItem
                 key={task.id}
                 task={task}
-                projects={projects.filter((p: any) => p.status !== "done")}
+                projects={projects.filter(
+                  (p: any) => p.status !== "done" && !p.archived,
+                )}
                 act={act}
                 busy={busy}
                 onEdit={openTask}
@@ -3170,7 +3091,8 @@ export function apply(ctx: any) {
             {!collapsed &&
               projects
                 .filter(
-                  (p: any) => p.status !== "done" && p.status !== "paused",
+                  (p: any) =>
+                    p.status !== "done" && p.status !== "paused" && !p.archived,
                 )
                 .slice(0, 6)
                 .map((p: any) => (
@@ -3291,7 +3213,9 @@ export function apply(ctx: any) {
                   setCaptureOpen(false);
                   captureButton.current?.focus();
                 }}
-                projects={projects.filter((p: any) => p.status !== "done")}
+                projects={projects.filter(
+                  (p: any) => p.status !== "done" && !p.archived,
+                )}
                 act={act}
                 busy={busy}
                 onSaved={() => setMessage(t("saved"))}

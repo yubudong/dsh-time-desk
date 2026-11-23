@@ -50,6 +50,8 @@ export const ProjectInput = z.object({
   title: str().min(1),
   group: str(80).default(""),
   goal: str(5000).default(""),
+  nextTaskId: z.string().default(""),
+  archived: z.boolean().default(false),
   status: z.enum(["todo", "doing", "done", "paused"]).default("todo"),
   deadline: optionalDay,
 });
