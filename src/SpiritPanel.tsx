@@ -125,7 +125,22 @@ export function createSpiritPanel({ send, t, refresh }: any) {
         })
       : "follow";
     const selected = view?.selection || catalog?.default;
-    const modelLabel = selected ? selected.provider + "/" + selected.model : "";
+    const selectedGroup = catalog?.groups?.find(
+      (g: any) => g.id === selected?.provider,
+    );
+    const selectedModel = selectedGroup?.models?.find(
+      (m: any) => m.id === selected?.model,
+    );
+    const modelIdentity = selected
+      ? selected.provider + "/" + selected.model
+      : "";
+    const modelLabel = selected
+      ? (selectedModel?.name || selected.model) +
+        " · " +
+        (view?.selection
+          ? selectedGroup?.name || selected.provider
+          : t("spiritDefaultShort"))
+      : t("loading");
     return (
       <aside
         className="ld-spirit-panel"
@@ -170,57 +185,6 @@ export function createSpiritPanel({ send, t, refresh }: any) {
             </button>
           </div>
         </header>
-        <div className="ld-spirit-model">
-          <select
-            aria-label={t("spiritModel")}
-            value={value}
-            disabled={!catalog || pending || view?.busy}
-            onChange={async (e) => {
-              if (
-                await command({
-                  action: "selectModel",
-                  selection:
-                    e.target.value === "follow"
-                      ? null
-                      : JSON.parse(e.target.value),
-                })
-              )
-                setAttempt((x) => x + 1);
-            }}
-          >
-            <option value="follow">{t("spiritFollow")}</option>
-            {catalog?.groups?.map((g: any) => (
-              <optgroup key={g.id} label={g.name}>
-                {g.models.map((m: any) => (
-                  <option
-                    key={m.id}
-                    value={JSON.stringify({ provider: g.id, model: m.id })}
-                  >
-                    {m.name || m.id}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
-          <button
-            type="button"
-            title={t("spiritModelsRefresh")}
-            aria-label={t("spiritModelsRefresh")}
-            onClick={async () => {
-              try {
-                setCatalog(await request({ action: "models" }));
-                setError("");
-              } catch (e) {
-                setError(e.message);
-              }
-            }}
-          >
-            ↻
-          </button>
-        </div>
-        <div className="ld-spirit-model-caption" title={modelLabel}>
-          {modelLabel || t("loading")}
-        </div>
         <div
           className="ld-spirit-messages"
           aria-live="polite"
@@ -337,25 +301,105 @@ export function createSpiritPanel({ send, t, refresh }: any) {
             }}
           />
           <div className="ld-spirit-compose-foot">
-            <span>{t("spiritEnterHint")}</span>
-            {view?.busy ? (
+            <span className="ld-spirit-enter-hint">{t("spiritEnterHint")}</span>
+            <div className="ld-spirit-compose-actions">
+              <label
+                className="ld-spirit-model-picker"
+                title={
+                  modelIdentity +
+                  (view?.selection ? "" : " · " + t("spiritFollow"))
+                }
+              >
+                <span aria-hidden="true">{modelLabel}</span>
+                <svg
+                  aria-hidden="true"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                >
+                  <path
+                    d="m3 4.5 3 3 3-3"
+                    stroke="currentColor"
+                    strokeWidth="1.3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <select
+                  aria-label={t("spiritModel") + " · " + modelLabel}
+                  value={value}
+                  disabled={!catalog || !view || pending || view?.busy}
+                  onChange={async (e) => {
+                    if (
+                      await command({
+                        action: "selectModel",
+                        selection:
+                          e.target.value === "follow"
+                            ? null
+                            : JSON.parse(e.target.value),
+                      })
+                    )
+                      setAttempt((x) => x + 1);
+                  }}
+                >
+                  <option value="follow">{t("spiritFollow")}</option>
+                  {view?.selection && !selectedModel && (
+                    <option value={value}>{selected.model}</option>
+                  )}
+                  {catalog?.groups?.map((g: any) => (
+                    <optgroup key={g.id} label={g.name}>
+                      {g.models.map((m: any) => (
+                        <option
+                          key={m.id}
+                          value={JSON.stringify({
+                            provider: g.id,
+                            model: m.id,
+                          })}
+                        >
+                          {m.name || m.id}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </label>
               <button
                 type="button"
-                className="ld-btn"
-                disabled={pending}
-                onClick={() => void command({ action: "cancel" })}
+                className="ld-spirit-model-refresh"
+                disabled={pending || view?.busy}
+                title={t("spiritModelsRefresh")}
+                aria-label={t("spiritModelsRefresh")}
+                onClick={async () => {
+                  try {
+                    setCatalog(await request({ action: "models" }));
+                    setError("");
+                  } catch (e) {
+                    setError(e.message);
+                  }
+                }}
               >
-                {t("spiritStop")}
+                ↻
               </button>
-            ) : (
-              <button
-                type="submit"
-                className="ld-btn ld-primary"
-                disabled={!draft.trim() || pending || !view}
-              >
-                {t("spiritSend")} ↑
-              </button>
-            )}
+              {view?.busy ? (
+                <button
+                  type="button"
+                  className="ld-btn"
+                  disabled={pending}
+                  onClick={() => void command({ action: "cancel" })}
+                >
+                  {t("spiritStop")}
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  className="ld-btn ld-primary"
+                  disabled={!draft.trim() || pending || !view}
+                >
+                  {t("spiritSend")} ↑
+                </button>
+              )}
+            </div>
           </div>
         </form>
       </aside>

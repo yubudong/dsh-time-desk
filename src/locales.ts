@@ -1,4 +1,5 @@
 export const copy = {
+  spiritDefaultShort: ["默认", "Default"],
   workspaceViews: ["记录视图", "Record views"],
   workspacePeriodLabel: [
     "周月安排，可横向滚动查看",
