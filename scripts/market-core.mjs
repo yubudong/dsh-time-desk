@@ -49,8 +49,8 @@ export function marketMaterials({
     "name: " + repository,
     "category: workflow",
     "description:",
-    "  en: 'A local-first DSH time desk for tasks, rest-aware habits, courses and credit ledgers, with focus timers and a general personal assistant.'",
-    "  zh: 'DSH 原生时间工作台：待办、带休息间隔的习惯、课程课时账本与专注计时，内置通用时间精灵助手。'",
+    "  en: 'A local-first DSH time desk with daily, weekly and monthly life, habit and course views, project next steps, credit ledgers, focus timers and Time Spirit.'",
+    "  zh: 'DSH 原生时间工作台：生活、习惯与课程日周月视图、项目下一步、课时账本与专注计时，内置时间精灵助手。'",
     "icon: https://raw.githubusercontent.com/" +
       repository +
       "/" +
